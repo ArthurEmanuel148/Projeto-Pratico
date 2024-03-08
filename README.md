@@ -20,7 +20,11 @@
 
 - `Objetivo 1`: 
 - `Objetivo 2`: 
+<<<<<<< Updated upstream
 - `Objetivo 3`:
+=======
+- `Objetivo 3`: ...
+>>>>>>> Stashed changes
 
 ## Autores
 

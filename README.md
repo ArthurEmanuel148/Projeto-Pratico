@@ -19,7 +19,7 @@
 #  Objetivos
 
 - `Objetivo 1`: Oi Bina!
-- `Objetivo 2`: Oi Confes!
+- `Objetivo 2`: Oi Confes!!
 - `Objetivo 3`:
 
 ## Autores

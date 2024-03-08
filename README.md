@@ -18,13 +18,13 @@
 
 #  Objetivos
 
+
 - `Objetivo 1`: 
 - `Objetivo 2`: 
-<<<<<<< Updated upstream
+- `Objetivo 1`: Oi Bina!
+- `Objetivo 2`: Oi Confes!
 - `Objetivo 3`:
-=======
-- `Objetivo 3`: ...
->>>>>>> Stashed changes
+
 
 ## Autores
 

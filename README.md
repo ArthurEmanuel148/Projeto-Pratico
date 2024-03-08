@@ -20,8 +20,7 @@
 
 - `Objetivo 1`: 
 - `Objetivo 2`: 
-- `Objetivo 3`:
-- `Objetivo 4`: 
+- `Objetivo 3`: 
 
 ## Autores
 

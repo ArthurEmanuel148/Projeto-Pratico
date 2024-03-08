@@ -20,9 +20,9 @@
 
 
 
-- `Objetivo 1`: Oi Bina!
-- `Objetivo 2`: Oi Confes!
-- `Objetivo 3`: Oi Bertoldo!
+- `Objetivo 1`: 
+- `Objetivo 2`: 
+- `Objetivo 3`: 
 
 
 ## Autores

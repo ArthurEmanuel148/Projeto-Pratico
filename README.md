@@ -1,4 +1,4 @@
-<h4>***</h4> 
+<h4>Sistema para gerenciamento do Projeto Social Instituto Raimundo Anício</h4> 
 
 <img loading="lazy" src="https://img.shields.io/badge/Status-Em_Desenvolvimento-gren--"/>
 

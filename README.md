@@ -23,6 +23,7 @@
 - `Objetivo 3`: Gerenciamento de uniformes emprestados
 - `Objetivo 4`: Gerenciamento do método escola da ponte
 - `Objetivo 5`: Gerenciamento de advertências
+- `Objetivo 6`: Planejamento de aulas
 
 ## Autores
 

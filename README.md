@@ -23,7 +23,7 @@
 - `Objetivo 1`: Fazer o registro  de alunos
 - `Objetivo 2`: Gerenciamento da biblioteca(roda de leitura)
 - `Objetivo 3`: Gerenciamento de uniformes emprestados
-- `Objetivo 4`: Gerenciamento do método escola da ponte
+- `Objetivo 4`: Gerenciamento do método escola da ponte.
 
 ## Autores
 

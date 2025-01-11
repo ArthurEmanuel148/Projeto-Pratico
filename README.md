@@ -1,4 +1,4 @@
-<h4>***</h4> 
+<h1>Sistema para gerenciamento do Projeto Social Instituto Raimundo Anício</h1> 
 
 <img loading="lazy" src="https://img.shields.io/badge/Status-Em_Desenvolvimento-gren--"/>
 
@@ -16,6 +16,7 @@
   Esse projeto visa a criação de um sistema de gerenciamento de determinadas funções para o Instituto Raimundo Anício, projeto social gerenciado gela empresa CIPALAM.
 </p>
 
+
 [Nosso diário de bordo](https://docs.google.com/document/d/1O_9YP4MXyyApjfNgafMVZj3pOgQmG42KksJX9XE6mps/edit?usp=sharing)
 
 #  Objetivos
@@ -23,7 +24,9 @@
 - `Objetivo 1`: Fazer o registro  de alunos
 - `Objetivo 2`: Gerenciamento da biblioteca(roda de leitura)
 - `Objetivo 3`: Gerenciamento de uniformes emprestados
-- `Objetivo 4`: Gerenciamento do método escola da ponte.
+- `Objetivo 4`: Gerenciamento do método escola da ponte
+- `Objetivo 5`: Gerenciamento de advertências
+- `Objetivo 6`: Planejamento de aulas
 
 ## Autores
 

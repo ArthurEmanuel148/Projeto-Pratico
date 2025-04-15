@@ -21,9 +21,8 @@
 - `Objetivo 1`: Fazer o registro  de alunos
 - `Objetivo 2`: Gerenciamento da biblioteca(roda de leitura)
 - `Objetivo 3`: Gerenciamento de uniformes emprestados
-- `Objetivo 4`: Gerenciamento do método escola da ponte
-- `Objetivo 5`: Gerenciamento de advertências
-- `Objetivo 6`: Planejamento de aulas
+- `Objetivo 4`: Gerenciamento de advertências
+- `Objetivo 5`: Planejamento de aulas
 
 ## Autores
 

@@ -16,6 +16,9 @@
   Esse projeto visa a criação de um sistema de gerenciamento de determinadas funções para o Instituto Raimundo Anício, projeto social gerenciado gela empresa CIPALAM.
 </p>
 
+
+[Nosso diário de bordo](https://docs.google.com/document/d/1O_9YP4MXyyApjfNgafMVZj3pOgQmG42KksJX9XE6mps/edit?usp=sharing)
+
 #  Objetivos
 
 - `Objetivo 1`: Fazer o registro  de alunos

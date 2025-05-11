@@ -1,0 +1,30 @@
+// src/theme/variables.scss
+:root {
+    // ... outras cores ...
+
+    --ion-color-primary-custom: #ED535D; // Um vermelho mais claro para detalhes
+    --ion-color-primary-custom-rgb: 237, 83, 93;
+    --ion-color-primary-custom-contrast: #ffffff;
+    --ion-color-primary-custom-contrast-rgb: 255, 255, 255;
+    --ion-color-primary-custom-shade: #d14952;
+    --ion-color-primary-custom-tint: #ef646d;
+
+    // Vamos usar a cor 'danger' existente e ajustá-la se necessário, ou definir uma nova
+    // Para este exemplo, vou assumir que --ion-color-danger é um vermelho adequado para o botão/título
+    // Se não for, você pode definir --ion-color-custom-strong-red aqui e usá-lo
+    --ion-color-danger: #D81B30; // Exemplo de um vermelho forte
+    --ion-color-danger-rgb: 216, 27, 48;
+    --ion-color-danger-contrast: #ffffff;
+    --ion-color-danger-contrast-rgb: 255, 255, 255;
+    --ion-color-danger-shade: #be182a;
+    --ion-color-danger-tint: #dc3245;
+}
+
+// Adicione classes para usar essas cores facilmente
+.ion-color-primary-custom {
+    --ion-color-base: var(--ion-color-primary-custom);
+    --ion-color-base-rgb: var(--ion-color-primary-custom-rgb);
+    --ion-color-contrast: var(--ion-color-primary-custom-contrast);
+    --ion-color-contrast-rgb: var(--ion-color-primary-custom-contrast-rgb);
+    --ion-color-shade: var(--ion-color-primary-custom-shade);
+    --ion-color-tint: var(--ion-color-primary-custom-tint); }

@@ -1,30 +1,98 @@
 // src/theme/variables.scss
-:root {
-    // ... outras cores ...
 
-    --ion-color-primary-custom: #ED535D; // Um vermelho mais claro para detalhes
-    --ion-color-primary-custom-rgb: 237, 83, 93;
-    --ion-color-primary-custom-contrast: #ffffff;
-    --ion-color-primary-custom-contrast-rgb: 255, 255, 255;
-    --ion-color-primary-custom-shade: #d14952;
-    --ion-color-primary-custom-tint: #ef646d;
+// -------------------------------------------------------------------
+// TEMA CLARO (PADRÃO - Aplicado quando body.light-theme ou sem classe de tema específica)
+// -------------------------------------------------------------------
+:root,
+// Aplica a todos por padrão
+body.light-theme {
+    // Aplica quando a classe light-theme está no body
 
-    // Vamos usar a cor 'danger' existente e ajustá-la se necessário, ou definir uma nova
-    // Para este exemplo, vou assumir que --ion-color-danger é um vermelho adequado para o botão/título
-    // Se não for, você pode definir --ion-color-custom-strong-red aqui e usá-lo
-    --ion-color-danger: #D81B30; // Exemplo de um vermelho forte
-    --ion-color-danger-rgb: 216, 27, 48;
-    --ion-color-danger-contrast: #ffffff;
-    --ion-color-danger-contrast-rgb: 255, 255, 255;
-    --ion-color-danger-shade: #be182a;
-    --ion-color-danger-tint: #dc3245;
+    /** Primary (Seu Vermelho) **/
+    --ion-color-primary: #D9232D; // SEU VERMELHO DEFINITIVO
+    --ion-color-primary-rgb: 217, 35, 45;
+    --ion-color-primary-contrast: #ffffff;
+    --ion-color-primary-contrast-rgb: 255, 255, 255;
+    --ion-color-primary-shade: #bf1f28;
+    --ion-color-primary-tint: #dd3942;
+
+    /** Danger (Pode ser o mesmo que primary) **/
+    --ion-color-danger: var(--ion-color-primary);
+    --ion-color-danger-rgb: var(--ion-color-primary-rgb);
+    --ion-color-danger-contrast: var(--ion-color-primary-contrast);
+    --ion-color-danger-contrast-rgb: var(--ion-color-primary-contrast-rgb);
+    --ion-color-danger-shade: var(--ion-color-primary-shade);
+    --ion-color-danger-tint: var(--ion-color-primary-tint);
+
+    /** Cores de Texto e Fundo para Tema Claro **/
+    --ion-color-dark-text: #212529; // Preto/Cinza Escuro para texto principal
+    --ion-color-medium-text: #6c757d; // Cinza Médio para texto secundário
+    --ion-color-light-text: #adb5bd; // Cinza Claro para texto menos importante
+    --ion-color-dark-rgb: 33, 37, 41; // RGB de dark-text
+
+    --ion-color-light-background: #f8f9fa; // Fundo cinza muito claro para seções (ex: submenu)
+    --ion-color-border-color: #dee2e6; // Cor para bordas sutis
+
+    // Variáveis Globais do Ionic para Tema Claro
+    --ion-background-color: #ffffff; // Fundo principal de ion-content
+    --ion-background-color-rgb: 255, 255, 255;
+
+    --ion-text-color: var(--ion-color-dark-text); // Cor de texto principal
+    --ion-text-color-rgb: var(--ion-color-dark-rgb);
+
+    --ion-item-background: #ffffff; // Fundo de ion-item
+    --ion-item-background-activated: rgba(var(--ion-color-dark-rgb), 0.08); // Item ativado
+
+    --ion-toolbar-background: var(--ion-color-primary); // Fundo de ion-toolbar
+    --ion-toolbar-color: var(--ion-color-primary-contrast); // Texto em ion-toolbar
+
+    // ... outras variáveis específicas do tema claro que você precisar
 }
 
-// Adicione classes para usar essas cores facilmente
-.ion-color-primary-custom {
-    --ion-color-base: var(--ion-color-primary-custom);
-    --ion-color-base-rgb: var(--ion-color-primary-custom-rgb);
-    --ion-color-contrast: var(--ion-color-primary-custom-contrast);
-    --ion-color-contrast-rgb: var(--ion-color-primary-custom-contrast-rgb);
-    --ion-color-shade: var(--ion-color-primary-custom-shade);
-    --ion-color-tint: var(--ion-color-primary-custom-tint); }
+
+// -------------------------------------------------------------------
+// TEMA ESCURO (Aplicado quando body.dark-theme)
+// -------------------------------------------------------------------
+body.dark-theme {
+    /** Primary no Tema Escuro (Pode ser um tom diferente de vermelho ou o mesmo) **/
+    --ion-color-primary: #ff5252; // Exemplo: Vermelho um pouco mais claro/vibrante para fundo escuro
+    --ion-color-primary-rgb: 255, 82, 82;
+    --ion-color-primary-contrast: #ffffff; // Ou #000000 se o vermelho for muito claro
+    --ion-color-primary-contrast-rgb: 255, 255, 255;
+    --ion-color-primary-shade: #e04848;
+    --ion-color-primary-tint: #ff6363;
+
+    /** Danger no Tema Escuro **/
+    --ion-color-danger: var(--ion-color-primary); // Mantendo consistente com o primário do tema escuro
+    --ion-color-danger-rgb: var(--ion-color-primary-rgb);
+    --ion-color-danger-contrast: var(--ion-color-primary-contrast);
+    --ion-color-danger-contrast-rgb: var(--ion-color-primary-contrast-rgb);
+    --ion-color-danger-shade: var(--ion-color-primary-shade);
+    --ion-color-danger-tint: var(--ion-color-primary-tint);
+
+    /** Cores de Texto e Fundo para Tema Escuro **/
+    --ion-color-dark-text: #e0e0e0; // Texto principal claro
+    --ion-color-medium-text: #b0b0b0; // Texto secundário
+    --ion-color-light-text: #858585; // Texto menos importante
+    --ion-color-dark-rgb: 224, 224, 224; // RGB de dark-text (que agora é claro)
+
+    --ion-color-light-background: #2a2a2a; // Fundo para seções (ex: submenu)
+    --ion-color-border-color: #404040; // Cor para bordas
+
+    // Variáveis Globais do Ionic para Tema Escuro
+    --ion-background-color: #121212; // Fundo principal escuro
+    --ion-background-color-rgb: 18, 18, 18;
+
+    --ion-text-color: var(--ion-color-dark-text); // Cor de texto principal (claro)
+    --ion-text-color-rgb: var(--ion-color-dark-rgb);
+
+    --ion-item-background: #1e1e1e; // Fundo de ion-item
+    --ion-item-background-activated: rgba(255, 255, 255, 0.1); // Item ativado
+
+    --ion-toolbar-background: #1f1f1f; // Fundo de ion-toolbar (pode ser o primário escuro também)
+    // --ion-toolbar-background: var(--ion-color-primary); // Se quiser toolbar vermelha no tema escuro
+    --ion-toolbar-color: var(--ion-color-dark-text); // Texto em ion-toolbar
+    // --ion-toolbar-color: var(--ion-color-primary-contrast); // Se toolbar for vermelha
+
+    // ... outras variáveis específicas do tema escuro
+}

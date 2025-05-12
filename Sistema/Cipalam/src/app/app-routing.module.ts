@@ -4,12 +4,16 @@ import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 const routes: Routes = [
   {
     path: '',
-    redirectTo: 'login',
+    redirectTo: 'painel-funcionario',
     pathMatch: 'full'
   },
   {
     path: 'login',
     loadChildren: () => import('./pages/login/login.module').then( m => m.LoginPageModule)
+  },
+  {
+    path: 'painel-funcionario',
+    loadChildren: () => import('./pages/painel-funcionario/painel-funcionario.module').then( m => m.PainelFuncionarioPageModule)
   },
 ];
 

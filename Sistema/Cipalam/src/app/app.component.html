@@ -1,3 +1,61 @@
 <ion-app>
-  <ion-router-outlet></ion-router-outlet>
+  <!-- O Menu Lateral -->
+  <ion-menu side="start" contentId="main-content-area" #appMenu>
+    <ion-header>
+      <ion-toolbar color="danger">
+        <ion-title>Menu Principal</ion-title>
+      </ion-toolbar>
+    </ion-header>
+    <ion-content>
+      <ion-list>
+        <!-- Item Simples -->
+        <ion-item button (click)="navigateTo('/painel-funcionario')" detail="false"> <!-- Ajustado para painel-funcionario -->
+          <ion-icon name="home-outline" slot="start"></ion-icon>
+          <ion-label>Início</ion-label>
+        </ion-item>
+
+        <!-- Item com Subfunções (Exemplo) -->
+        <ion-item button (click)="toggleSubmenu('cadastros')" lines="none" detail="false">
+          <ion-icon name="document-text-outline" slot="start"></ion-icon>
+          <ion-label>Cadastros</ion-label>
+          <ion-icon [name]="openSubmenus['cadastros'] ? 'chevron-down-outline' : 'chevron-forward-outline'" slot="end"></ion-icon>
+        </ion-item>
+        <ion-list *ngIf="openSubmenus['cadastros']" class="submenu-list">
+          <ion-item button (click)="navigateTo('/cadastros/Funcionario')" class="submenu-item" detail="false">
+            <ion-icon name="people-outline" slot="start"></ion-icon>
+            <ion-label>Funcionários</ion-label>
+          </ion-item>
+          <ion-item button (click)="navigateTo('/cadastros/produtos')" class="submenu-item" detail="false">
+            <ion-icon name="cube-outline" slot="start"></ion-icon>
+            <ion-label>Produtos</ion-label>
+          </ion-item>
+        </ion-list>
+
+        <!-- Outro Item Simples -->
+        <ion-item button (click)="navigateTo('/relatorios')" detail="false">
+          <ion-icon name="stats-chart-outline" slot="start"></ion-icon>
+          <ion-label>Relatórios</ion-label>
+        </ion-item>
+
+        <!-- Item de Configurações -->
+         <ion-item button (click)="navigateTo('/configuracoes')" detail="false">
+          <ion-icon name="settings-outline" slot="start"></ion-icon>
+          <ion-label>Configurações</ion-label>
+        </ion-item>
+
+        <!-- Espaçador 
+        <ion-item lines="none" style="margin-top: 30px;"></ion-item>
+-->
+        
+        <!-- Logout -->
+        <ion-item button (click)="logout()" detail="false" class="logout-item"> 
+          <ion-icon name="log-out-outline" slot="start" color="danger"></ion-icon>
+          <ion-label color="danger">Sair</ion-label>
+          </ion-item>
+      </ion-list>
+    </ion-content>
+  </ion-menu>
+
+  <!-- O Conteúdo Principal das Páginas -->
+  <ion-router-outlet id="main-content-area"></ion-router-outlet>
 </ion-app>

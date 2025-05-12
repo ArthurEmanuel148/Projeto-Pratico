@@ -16,7 +16,7 @@ export class LoginPage {
     // Por exemplo, pegar os valores dos inputs, chamar um serviço, etc.
     console.log('Botão Entrar clicado');
     // Exemplo de navegação após login (descomente e ajuste a rota)
-    // this.router.navigate(['/home']);
+    //this.router.navigate(['/home']);
   }
 
   onForgotPassword() {

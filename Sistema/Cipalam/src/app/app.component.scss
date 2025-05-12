@@ -1,0 +1,130 @@
+// src/app/app.component.scss
+
+ion-menu {
+
+    // Header do Menu Lateral
+    ion-header ion-toolbar {
+        --background: var(--ion-color-danger); // FUNDO VERMELHO
+        --color: var(--ion-color-danger-contrast); // TEXTO BRANCO
+
+        ion-title {
+            color: var(--ion-color-danger-contrast); // Título BRANCO
+        }
+    }
+
+    // Conteúdo do Menu Lateral
+    ion-content {
+        --background: #ffffff; // FUNDO BRANCO para o conteúdo do menu
+    }
+
+    ion-list {
+        padding-top: 0;
+        padding-bottom: 0;
+    }
+
+    // Itens Gerais do Menu
+    ion-item {
+        --color: var(--ion-color-dark-text); // TEXTO PRETO SUAVE para itens não ativos
+        --ripple-color: var(--ion-color-danger); // Efeito ripple VERMELHO
+        --padding-start: 16px;
+        --min-height: 48px;
+        border-bottom: 1px solid var(--ion-color-border-color); // Borda cinza sutil
+
+        &:last-child {
+            border-bottom: none;
+        }
+
+        ion-icon[slot="start"] {
+            color: var(--ion-color-medium-text); // Ícones CINZA MÉDIO para itens não ativos
+            margin-right: 20px;
+            font-size: 1.2em;
+        }
+
+        // Item Ativo/Selecionado
+        &.selected-item,
+        &.activated {
+            background: rgba(var(--ion-color-danger-rgb), 0.08); // Fundo levemente VERMELHO
+            border-left: 4px solid var(--ion-color-danger); // Borda lateral VERMELHA
+            --padding-start: 12px;
+
+            ion-label {
+                color: var(--ion-color-danger); // TEXTO VERMELHO
+                font-weight: 600;
+            }
+
+            ion-icon[slot="start"] {
+                color: var(--ion-color-danger); // ÍCONE VERMELHO
+            }
+        }
+
+        // Hover em itens não ativos
+        &:not(.selected-item):not(.activated):hover {
+            background: rgba(var(--ion-color-dark-rgb, 0, 0, 0), 0.04); // Hover cinza sutil
+        }
+    }
+
+    // Submenu
+    .submenu-list {
+        padding-left: 0;
+        background-color: var(--ion-color-light-background); // Fundo cinza muito claro para o bloco do submenu
+
+        ion-item.submenu-item {
+            --padding-start: 36px;
+            --min-height: 44px;
+            font-size: 0.9em;
+            --color: var(--ion-color-medium-text); // TEXTO CINZA MÉDIO para subitens
+            border-bottom-color: var(--ion-color-border-color);
+
+            ion-icon[slot="start"] {
+                font-size: 1.1em;
+                margin-right: 16px;
+                color: var(--ion-color-light-text); // Ícones CINZA CLARO para subitens
+            }
+
+            // Item de submenu ativo/selecionado
+            &.selected-item,
+            &.activated {
+                background: rgba(var(--ion-color-danger-rgb), 0.06); // Fundo levemente VERMELHO
+
+                ion-label {
+                    color: var(--ion-color-danger); // TEXTO VERMELHO
+                    font-weight: 500;
+                }
+
+                ion-icon[slot="start"] {
+                    color: var(--ion-color-danger); // ÍCONE VERMELHO
+                }
+            }
+
+            &:not(.selected-item):not(.activated):hover {
+                background: rgba(var(--ion-color-dark-rgb, 0, 0, 0), 0.03); // Hover cinza sutil
+            }
+        }
+    }
+
+    // Ícone de expandir/recolher submenu (chevron)
+    ion-item[button] ion-icon[slot="end"] {
+        font-size: 1.2em;
+        margin-left: auto;
+        color: var(--ion-color-medium-text); // Chevron CINZA MÉDIO
+    }
+
+    // Item de Logout
+    ion-item.logout-item {
+        margin-top: 20px;
+        border-top: 1px solid var(--ion-color-border-color);
+        --ripple-color: var(--ion-color-danger-shade);
+
+        ion-label {
+            color: var(--ion-color-danger) !important; // TEXTO VERMELHO (com !important para garantir)
+            font-weight: 500;
+        }
+
+        ion-icon[slot="start"] {
+            color: var(--ion-color-danger) !important; // ÍCONE VERMELHO (com !important para garantir)
+        }
+
+        &:hover {
+            background: rgba(var(--ion-color-danger-rgb), 0.05); // Hover levemente VERMELHO
+        }
+    } }

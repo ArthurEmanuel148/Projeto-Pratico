@@ -1,0 +1,170 @@
+// src/app/pages/painel-funcionario/painel-funcionario.page.scss
+
+// Header e Toolbar
+ion-header ion-toolbar {
+    --background: var(--ion-color-danger); // Usa o vermelho forte do login
+    --color: var(--ion-color-danger-contrast); // Texto branco no header
+
+    ion-title {
+        color: var(--ion-color-danger-contrast);
+    }
+
+    ion-menu-button {
+        --color: var(--ion-color-danger-contrast); // Cor do ícone do menu
+    }
+}
+
+// Fundo do conteúdo principal
+ion-content.home-content {
+    // Certifique-se que a classe 'home-content' está no ion-content do HTML
+    --background: var(--ion-color-light-gray, #f0f2f5); // Mesmo cinza claro do fundo da tela de login
+    --padding-top: 16px; // Adiciona um pouco de espaço no topo
+}
+
+// Mensagem de boas-vindas
+.welcome-message {
+    margin-bottom: 24px;
+    padding: 10px 16px; // Adicionado padding horizontal
+
+    // border-bottom: 1px solid var(--ion-color-step-150, #e0e0e0); // Pode remover ou suavizar
+    h3 {
+        font-weight: 600;
+        color: var(--ion-color-dark-text, #333); // Texto escuro
+    }
+
+    p {
+        font-size: 0.9em;
+        color: var(--ion-color-medium-text, #777); // Texto médio
+    }
+}
+
+// Contêineres de seção (onde ficam "Mais Utilizados", "Avisos")
+.section-container {
+    margin-bottom: 20px;
+    background-color: #ffffff; // Fundo branco, como o card de login
+    padding: 16px;
+    border-radius: 10px; // Bordas arredondadas consistentes
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.07); // Sombra sutil
+
+    ion-text h4 {
+        font-size: 1.1em;
+        font-weight: 600;
+        margin-bottom: 16px;
+        color: var(--ion-color-danger); // Títulos das seções em vermelho
+        display: flex;
+        align-items: center;
+    }
+
+    .section-icon {
+        margin-right: 8px;
+        font-size: 1.3em;
+        color: var(--ion-color-danger); // Ícones dos títulos das seções em vermelho
+    }
+}
+
+// Cards de funcionalidades ("Mais Utilizados")
+.feature-card {
+    --background: var(--ion-color-medium-gray, #e9ecef); // Um cinza um pouco mais escuro que o fundo da tela
+    // Ou, se preferir um visual mais limpo dentro do card branco da seção:
+    // --background: #fdfdfd; // Quase branco
+
+    box-shadow: none;
+    border: 1px solid var(--ion-color-step-200, #ddd);
+    border-radius: 8px;
+    height: 130px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+
+    &:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 3px 8px rgba(var(--ion-color-danger-rgb, 245, 61, 61), 0.2); // Sombra com tom vermelho no hover
+    }
+
+    ion-card-header {
+        padding: 8px 0 0 0;
+    }
+
+    .feature-icon {
+        font-size: 2.8em;
+        // A cor do ícone é definida dinamicamente no TS, mas podemos ter um padrão
+        color: var(--ion-color-danger); // Ícones dos cards em vermelho por padrão
+    }
+
+    ion-card-content {
+        padding-top: 8px;
+
+        ion-label {
+            font-size: 0.85em;
+            font-weight: 500;
+            white-space: normal;
+            color: var(--ion-color-dark-text, #555); // Texto dos cards
+        }
+    }
+}
+
+// Lista de Avisos
+.section-container ion-list {
+    ion-item {
+        --background: transparent; // Para herdar o branco da .section-container
+        --padding-start: 0; // Remove padding extra do item se a seção já tem
+        --inner-padding-end: 0;
+
+        ion-icon[slot="start"] {
+            // A cor é definida no HTML (ex: color="warning"), mas podemos ter um padrão
+            color: var(--ion-color-medium-text);
+            margin-right: 12px;
+        }
+
+        ion-label h2 {
+            font-size: 1em;
+            font-weight: 500;
+            color: var(--ion-color-dark-text);
+        }
+
+        ion-label p {
+            font-size: 0.85em;
+            color: var(--ion-color-medium-text);
+        }
+    }
+}
+
+
+// Estilo para quando não há itens (empty-state)
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    color: var(--ion-color-medium-text, #777);
+    text-align: center;
+    min-height: 100px; // Para dar um pouco de espaço
+
+    ion-icon {
+        font-size: 2.5em;
+        margin-bottom: 8px;
+        color: var(--ion-color-light-text, #aaa); // Ícone do estado vazio mais sutil
+    }
+
+    p {
+        font-size: 0.95em;
+    }
+}
+
+// Ajustes para telas menores nos cards
+@media (max-width: 380px) {
+    .feature-card {
+        height: 110px;
+
+        .feature-icon {
+            font-size: 2.2em;
+        }
+
+        ion-card-content ion-label {
+            font-size: 0.8em;
+        }
+    } }

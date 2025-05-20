@@ -62,80 +62,89 @@
     
         // Seus outros estilos para .form-container, etc.
     
-        // Força o tema claro para esta seção específica
-        .declaracao-interesse-force-light-theme {
-            // Fundo principal da página
-            --ion-background-color: #ffffff;
-            --ion-background-color-rgb: 255, 255, 255;
-    
-            // Cores de texto principais
-            --ion-text-color: #212529; // Seu --ion-color-dark-text do tema claro
-            --ion-text-color-rgb: 33, 37, 41;
-    
-            // Outras cores de texto
-            --ion-color-medium-text: #6c757d;
-            --ion-color-light-text: #adb5bd;
-    
-            // Fundo de itens e cards
-            --ion-item-background: #ffffff;
-            --ion-item-background-activated: rgba(33, 37, 41, 0.08); // Usando o dark-rgb do tema claro
-    
-            // Cores de borda e fundos sutis
-            --ion-color-light-background: #f8f9fa; // Usado nos feature-cards e submenus
-            --ion-color-border-color: #dee2e6;
-            --ion-color-step-150: #e0e0e0; // Se você usa essa variável do SCSS que me passou
-            --ion-color-step-200: #cccccc; // Se você usa essa variável do SCSS que me passou
-            --ion-color-step-250: #dddddd; // Se você usa essa variável do SCSS que me passou
-    
-            // Toolbar (se você tivesse uma toolbar no ion-content que não fosse a principal)
-            // --ion-toolbar-background: var(--ion-color-primary); // Já está definida no header
-            // --ion-toolbar-color: var(--ion-color-primary-contrast);
-    
-            // Se você tiver cores de botões ou outros elementos que dependem do tema
-            // e não usam as cores semânticas do Ionic (primary, secondary, danger, etc.),
-            // você precisará definir essas variáveis também.
-            // Exemplo:
-            // --custom-button-background: #your-light-theme-button-color;
-            // --custom-button-text-color: #your-light-theme-button-text-color;
-    
-            // Importante: Garanta que os componentes Ionic dentro desta seção
-            // respeitem essas variáveis.
-        }
-    
-        // Pode ser necessário ser mais específico se alguns componentes Ionic
-        // não pegarem as variáveis diretamente do pai.
-        .declaracao-interesse-force-light-theme {
-    
-            ion-card,
-            ion-item,
-            ion-list,
-            .section-container,
-            .feature-card {
-                // Adicione outros seletores se necessário
-                --background: var(--ion-item-background); // Força o fundo para itens e cards
-                color: var(--ion-text-color); // Força a cor do texto
-            }
-    
-            // Para garantir que os textos dentro dos cards e labels usem as cores claras
-            ion-label,
-            ion-card-title,
-            ion-card-subtitle,
-            ion-card-content,
-            p,
-            h1,
-            h2,
-            h3,
-            h4,
-            h5,
-            h6 {
-                color: var(--ion-text-color); // Cor principal do texto
-            }
-    
-            ion-label p,
-            p.explicacao-cota,
-            .description-text {
-                // Textos secundários
-                color: var(--ion-color-medium-text);
-            }
-        }
-  }
+                // Força o tema claro para esta página/seção específica
+                .declaracao-interesse-force-light-theme {
+                  /** Fundo principal da página (ion-content) **/
+                  --ion-background-color: #ffffff; // Branco, do seu tema claro
+                  --ion-background-color-rgb: 255, 255, 255;
+        
+                  /** Cores de Texto Principais **/
+                  --ion-text-color: #212529; // Preto/Cinza Escuro, do seu tema claro (--ion-color-dark-text)
+                  --ion-text-color-rgb: 33, 37, 41;
+        
+                  /** Outras Cores de Texto (Se usadas diretamente com var()) **/
+                  --ion-color-dark-text: #212529;
+                  --ion-color-medium-text: #6c757d;
+                  --ion-color-light-text: #adb5bd;
+                  --ion-color-dark-rgb: 33, 37, 41; // Para consistência, se algum componente usa
+        
+                  /** Fundo de Itens, Cards, Listas e Seções **/
+                  --ion-item-background: #ffffff; // Fundo branco para itens
+                  --ion-item-background-activated: rgba(var(--ion-color-dark-rgb, 33, 37, 41), 0.08); // Item ativado no tema claro
+        
+                  // Para cards (se diferentes do item)
+                  // Se os cards devem ter o mesmo fundo que itens:
+                  // --ion-card-background: var(--ion-item-background);
+                  // Ou se quiser que eles tenham um fundo sutil como .section-container na sua outra página:
+                  --ion-card-background: #f8f9fa; // Um cinza muito claro
+        
+                  /** Cores de Borda e Fundos Sutis **/
+                  --ion-color-light-background: #f8f9fa; // Para fundos de seções ou elementos "mais claros"
+                  --ion-color-border-color: #dee2e6; // Cor de borda sutil
+                  --ion-color-step-100: #f8f9fa; // Defina suas variáveis step se usadas diretamente
+                  --ion-color-step-150: #e9ecef;
+                  --ion-color-step-200: #dee2e6;
+                  --ion-color-step-250: #ced4da;
+                  // ... e assim por diante para todas as 'step' colors que você usa.
+        
+                  /** Cores Primárias, de Perigo, etc. (Herda do :root, mas pode sobrescrever se necessário) **/
+                  // Geralmente você quer que as cores como 'primary', 'danger' sejam consistentes,
+                  // então elas podem vir do :root. Mas se esta página externa tiver um branding
+                  // ligeiramente diferente, você pode sobrescrevê-las aqui:
+                  // --ion-color-primary: #SeuVermelhoEspecificoParaEstaPagina;
+                  // --ion-color-primary-rgb: R,G,B;
+                  // --ion-color-primary-contrast: #ffffff;
+                  // --ion-color-danger: var(--ion-color-primary); // etc.
+        
+                  /** Toolbars DENTRO DESTE ion-content (se houver alguma que não seja o header principal) **/
+                  // --ion-toolbar-background: #f8f9fa; // Exemplo de toolbar clara dentro do conteúdo
+                  // --ion-toolbar-color: var(--ion-text-color);
+        
+                  // Importante: Assegurar que os componentes Ionic usem essas variáveis.
+                  // O Ionic é bom em cascatear essas variáveis para seus componentes filhos.
+        
+                  // Estilos específicos para garantir que os textos peguem as cores corretas
+                  // Pode não ser sempre necessário se os componentes Ionic herdarem bem.
+                  ion-label,
+                  ion-card-title,
+                  ion-card-subtitle,
+                  ion-card-content,
+                  p,
+                  h1,
+                  h2,
+                  h3,
+                  h4,
+                  h5,
+                  h6,
+                  span,
+                  div {
+                    // Ser mais genérico para textos
+                    color: var(--ion-text-color);
+                    // Para alguns elementos, você pode querer a cor secundária:
+                    // &.texto-secundario { color: var(--ion-color-medium-text); }
+                  }
+        
+                  // Se você tiver placeholders de input, eles também devem respeitar o tema.
+                  // O Ionic geralmente lida com isso, mas para inputs customizados:
+                  // ::placeholder {
+                  //   color: var(--ion-color-medium-text);
+                  //   opacity: 1;
+                  // }
+        
+                  // Para ícones, se eles não estiverem pegando a cor do texto ou uma cor semântica
+                  ion-icon {
+                    color: var(--ion-color-medium-text); // Cor padrão para ícones gerais nesta seção
+                    // Ícones com cores semânticas (danger, primary, etc.) usarão as variáveis dessas cores.
+                  }
+                }
+              }

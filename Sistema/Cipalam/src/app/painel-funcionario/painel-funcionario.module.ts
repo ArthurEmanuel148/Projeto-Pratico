@@ -17,4 +17,4 @@ import { PainelFuncionarioPage } from './painel-funcionario.page';
   ],
   declarations: [PainelFuncionarioPage]
 })
-export class PainelFuncionarioPageModule {}
+export class PainelFuncionarioPageModule { }

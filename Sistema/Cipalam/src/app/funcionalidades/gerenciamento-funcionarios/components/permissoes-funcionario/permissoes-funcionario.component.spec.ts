@@ -1,19 +1,19 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { IonicModule } from '@ionic/angular';
 
-import { PermicoesFuncionarioComponent } from './permicoes-funcionario.component';
+import { PermissoesFuncionarioComponent } from './permissoes-funcionario.component';
 
-describe('PermicoesFuncionarioComponent', () => {
-  let component: PermicoesFuncionarioComponent;
-  let fixture: ComponentFixture<PermicoesFuncionarioComponent>;
+describe('PermissoesFuncionarioComponent', () => {
+  let component: PermissoesFuncionarioComponent;
+  let fixture: ComponentFixture<PermissoesFuncionarioComponent>;
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ PermicoesFuncionarioComponent ],
+      declarations: [ PermissoesFuncionarioComponent ],
       imports: [IonicModule.forRoot()]
     }).compileComponents();
 
-    fixture = TestBed.createComponent(PermicoesFuncionarioComponent);
+    fixture = TestBed.createComponent(PermissoesFuncionarioComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   }));

@@ -35,3 +35,21 @@
 /* @import "@ionic/angular/css/palettes/dark.always.css"; */
 /* @import "@ionic/angular/css/palettes/dark.class.css"; */
 @import "@ionic/angular/css/palettes/dark.system.css";
+
+// src/global.scss
+.permissoes-modal-css {
+    --width: 90%; // Largura do modal em relação à tela
+    --max-width: 550px; // Largura máxima para telas maiores
+    --height: 75vh; // Altura do modal em relação à altura da tela (ex: 75% da altura da viewport)
+    --max-height: 600px; // Altura máxima absoluta
+    --border-radius: 12px; // Bordas arredondadas para o modal
+    // overflow: hidden;             // É melhor deixar o ion-content interno lidar com o scroll.
+    // Adicione se tiver problemas de conteúdo vazando do modal em si.
+
+    // Para garantir que o conteúdo dentro do modal use o espaço corretamente
+    .modal-wrapper {
+        // O Ionic geralmente usa esta classe para o conteúdo do modal
+        display: flex;
+        flex-direction: column;
+        height: 100%; // Faz o wrapper interno ocupar toda a altura do modal definida acima
+    } }

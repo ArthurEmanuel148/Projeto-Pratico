@@ -1,13 +1,88 @@
 <ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>cadastro-funcionario</ion-title>
+  <ion-toolbar color="danger">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/paineis/gerenciamento-funcionarios"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Cadastro de Funcionário</ion-title>
+    <ion-buttons slot="end">
+      <!-- MUDANÇA: Botão para prosseguir, não salvar diretamente -->
+      <ion-button (click)="prosseguirParaPermissoes()" [disabled]="!cadastroForm.valid">
+        Permissões <ion-icon slot="end" name="arrow-forward-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">cadastro-funcionario</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content [fullscreen]="true" class="ion-padding">
+  <form [formGroup]="cadastroForm">
+    <ion-list>
+      <ion-item>
+        <ion-label position="floating">Nome Completo</ion-label>
+        <ion-input type="text" formControlName="nomeCompleto" required></ion-input>
+      </ion-item>
+      <div *ngIf="cadastroForm.get('nomeCompleto')?.invalid && cadastroForm.get('nomeCompleto')?.touched"
+        class="error-message">
+        <small *ngIf="cadastroForm.get('nomeCompleto')?.errors?.['required']">Nome é obrigatório.</small>
+      </div>
+
+      <ion-item>
+        <ion-label position="floating">E-mail</ion-label>
+        <ion-input type="email" formControlName="email" required email></ion-input>
+      </ion-item>
+      <div *ngIf="cadastroForm.get('email')?.invalid && cadastroForm.get('email')?.touched" class="error-message">
+        <small *ngIf="cadastroForm.get('email')?.errors?.['required']">E-mail é obrigatório.</small>
+        <small *ngIf="cadastroForm.get('email')?.errors?.['email']">E-mail inválido.</small>
+      </div>
+
+      <ion-item>
+        <ion-label position="floating">Data de Nascimento</ion-label>
+        <ion-input type="date" formControlName="dataNascimento" required></ion-input>
+      </ion-item>
+      <div *ngIf="cadastroForm.get('dataNascimento')?.invalid && cadastroForm.get('dataNascimento')?.touched"
+        class="error-message">
+        <small *ngIf="cadastroForm.get('dataNascimento')?.errors?.['required']">Data de nascimento obrigatória.</small>
+      </div>
+
+      <ion-item>
+        <ion-label position="floating">Data de Entrada no Instituto</ion-label>
+        <ion-input type="date" formControlName="dataEntradaInstituto" required></ion-input>
+      </ion-item>
+      <div
+        *ngIf="cadastroForm.get('dataEntradaInstituto')?.invalid && cadastroForm.get('dataEntradaInstituto')?.touched"
+        class="error-message">
+        <small *ngIf="cadastroForm.get('dataEntradaInstituto')?.errors?.['required']">Data de entrada
+          obrigatória.</small>
+      </div>
+
+      <ion-item>
+        <ion-label position="floating">Telefone</ion-label>
+        <ion-input type="tel" formControlName="telefone" required></ion-input>
+      </ion-item>
+      <div *ngIf="cadastroForm.get('telefone')?.invalid && cadastroForm.get('telefone')?.touched" class="error-message">
+        <small *ngIf="cadastroForm.get('telefone')?.errors?.['required']">Telefone obrigatório.</small>
+      </div>
+
+      <ion-item-divider color="light">
+        <ion-label>Acesso ao Sistema</ion-label>
+      </ion-item-divider>
+
+      <ion-item>
+        <ion-label position="floating">Usuário</ion-label>
+        <ion-input type="text" formControlName="usuarioSistema" required></ion-input>
+      </ion-item>
+      <div *ngIf="cadastroForm.get('usuarioSistema')?.invalid && cadastroForm.get('usuarioSistema')?.touched"
+        class="error-message">
+        <small *ngIf="cadastroForm.get('usuarioSistema')?.errors?.['required']">Usuário obrigatório.</small>
+      </div>
+
+      <ion-item>
+        <ion-label position="floating">Senha</ion-label>
+        <ion-input type="password" formControlName="senhaSistema" required></ion-input>
+      </ion-item>
+      <div *ngIf="cadastroForm.get('senhaSistema')?.invalid && cadastroForm.get('senhaSistema')?.touched"
+        class="error-message">
+        <small *ngIf="cadastroForm.get('senhaSistema')?.errors?.['required']">Senha obrigatória.</small>
+      </div>
+    </ion-list>
+  </form>
 </ion-content>

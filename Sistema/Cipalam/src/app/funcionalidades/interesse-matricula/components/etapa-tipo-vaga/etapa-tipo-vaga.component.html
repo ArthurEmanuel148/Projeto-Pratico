@@ -1,0 +1,42 @@
+<div [formGroup]="form"> <!-- Usa o FormGroup 'tipoVaga' passado via Input -->
+  <ion-list lines="none">
+    <ion-item-divider color="light">
+      <ion-label>Qual o tipo de vaga desejada?</ion-label>
+    </ion-item-divider>
+
+    <ion-radio-group formControlName="tipoCota">
+      <ion-item class="radio-option">
+        <ion-label class="ion-text-wrap">
+          <h3>Cota de Funcionário</h3>
+          <p class="explicacao-cota">{{ explicacaoCotas.funcionario }}</p>
+        </ion-label>
+        <ion-radio slot="start" value="funcionario"></ion-radio>
+      </ion-item>
+
+      <ion-item class="radio-option">
+        <ion-label class="ion-text-wrap">
+          <h3>Cota Econômica (Critério de Renda)</h3>
+          <p class="explicacao-cota">{{ explicacaoCotas.economica }}</p>
+        </ion-label>
+        <ion-radio slot="start" value="economica"></ion-radio>
+      </ion-item>
+
+      <ion-item class="radio-option">
+        <ion-label class="ion-text-wrap">
+          <h3>Cota Livre (Ampla Concorrência)</h3>
+          <p class="explicacao-cota">{{ explicacaoCotas.livre }}</p>
+        </ion-label>
+        <ion-radio slot="start" value="livre"></ion-radio>
+      </ion-item>
+    </ion-radio-group>
+
+    <div *ngIf="form.get('tipoCota')?.invalid && form.get('tipoCota')?.touched" class="error-message ion-padding-start">
+      <small>Por favor, selecione um tipo de cota.</small>
+    </div>
+  </ion-list>
+
+  <ion-button expand="block" (click)="proximo()" class="ion-margin-top" [disabled]="form.invalid">
+    Próximo <ion-icon slot="end" name="arrow-forward-outline"></ion-icon>
+  </ion-button>
+</div>
+<div class="error-message-placeholder"></div>

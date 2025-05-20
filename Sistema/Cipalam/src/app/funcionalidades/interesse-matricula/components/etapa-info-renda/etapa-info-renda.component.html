@@ -1,0 +1,107 @@
+<div [formGroup]="form"> <!-- Recebe o FormGroup 'infoRenda' -->
+  <ion-list lines="full">
+    <ion-item-divider color="light">
+      <ion-label>Informações de Renda Familiar</ion-label>
+    </ion-item-divider>
+    <p class="ion-padding">
+      <small>
+        Para análise da cota econômica, por favor, informe os dados de todas as pessoas que residem na casa e
+        contribuem ou dependem da renda familiar. Comprovantes poderão ser solicitados posteriormente.
+      </small>
+    </p>
+
+    <div formArrayName="integrantesRenda">
+      <div *ngFor="let integranteCtrl of integrantesRenda.controls; let i = index" [formGroupName]="i"
+        class="integrante-card">
+        <ion-item lines="none" class="integrante-header">
+          <ion-label>Integrante {{ i + 1 }}</ion-label>
+          <ion-button fill="clear" color="danger" (click)="removerIntegrante(i)" *ngIf="integrantesRenda.length > 1"
+            slot="end" size="small" aria-label="Remover Integrante">
+            <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
+          </ion-button>
+        </ion-item>
+
+        <ion-item>
+          <ion-label position="floating">Nome Completo <ion-text color="danger">*</ion-text></ion-label>
+          <ion-input type="text" formControlName="nome" required></ion-input>
+        </ion-item>
+        <div *ngIf="integranteCtrl.get('nome')?.invalid && integranteCtrl.get('nome')?.touched" class="error-message">
+          <small>Nome do integrante é obrigatório.</small>
+        </div>
+
+        <ion-item>
+          <ion-label position="floating">Parentesco com o Responsável <ion-text color="danger">*</ion-text></ion-label>
+          <ion-input type="text" formControlName="parentesco" required></ion-input>
+        </ion-item>
+        <div *ngIf="integranteCtrl.get('parentesco')?.invalid && integranteCtrl.get('parentesco')?.touched"
+          class="error-message">
+          <small>Parentesco é obrigatório.</small>
+        </div>
+
+        <ion-item>
+          <ion-label position="floating">Renda Mensal Bruta (R$) <ion-text color="danger">*</ion-text></ion-label>
+          <ion-input type="number" inputmode="decimal" formControlName="rendaMensal" required min="0"
+            placeholder="Ex: 1200.00"></ion-input>
+        </ion-item>
+        <div *ngIf="integranteCtrl.get('rendaMensal')?.invalid && integranteCtrl.get('rendaMensal')?.touched"
+          class="error-message">
+          <small *ngIf="integranteCtrl.get('rendaMensal')?.errors?.['required']">Renda é obrigatória.</small>
+          <small *ngIf="integranteCtrl.get('rendaMensal')?.errors?.['min']">Renda não pode ser negativa.</small>
+        </div>
+        <!-- Futuro campo para upload de comprovante de renda do integrante -->
+        <!--
+        <ion-item>
+          <ion-label position="stacked">Comprovante de Renda (Integrante {{i+1}})</ion-label>
+          <input type="file" (change)="onFileSelected($event, 'comprovanteRendaFile', i)" class="custom-file-input"/>
+          <ion-note slot="helper" *ngIf="integranteCtrl.get('comprovanteRendaFile')?.value">
+            {{ integranteCtrl.get('comprovanteRendaFile')?.value }}
+          </ion-note>
+        </ion-item>
+        -->
+      </div>
+    </div>
+
+    <ion-item lines="none" class="ion-margin-top">
+      <ion-button fill="outline" (click)="adicionarIntegrante()" expand="block" color="medium">
+        <ion-icon name="add-circle-outline" slot="start"></ion-icon>
+        Adicionar Membro da Família
+      </ion-button>
+    </ion-item>
+    <div
+      *ngIf="integrantesRenda.invalid && (integrantesRenda.touched || integrantesRenda.dirty) && integrantesRenda.errors?.['minlength']"
+      class="error-message ion-text-center">
+      <small>É necessário informar pelo menos um integrante da família.</small>
+    </div>
+
+
+    <ion-item-divider color="light" class="ion-margin-top">
+      <ion-label>Endereço Residencial</ion-label>
+    </ion-item-divider>
+    <ion-item>
+      <ion-label position="floating">Endereço Completo (Rua, Nº, Bairro, Cidade, CEP) <ion-text
+          color="danger">*</ion-text></ion-label>
+      <ion-textarea formControlName="enderecoCompleto" required rows="3"
+        placeholder="Digite o endereço completo..."></ion-textarea>
+    </ion-item>
+    <div *ngIf="form.get('enderecoCompleto')?.invalid && form.get('enderecoCompleto')?.touched" class="error-message">
+      <small>Endereço completo é obrigatório.</small>
+    </div>
+    <!-- Futuro campo para upload de comprovante de endereço -->
+    <!--
+    <ion-item>
+      <ion-label position="stacked">Comprovante de Endereço</ion-label>
+      <input type="file" (change)="onFileSelected($event, 'comprovanteEnderecoFile')" class="custom-file-input"/>
+      <ion-note slot="helper" *ngIf="form.get('comprovanteEnderecoFile')?.value">
+        {{ form.get('comprovanteEnderecoFile')?.value }}
+      </ion-note>
+    </ion-item>
+    -->
+    <p class="ion-padding ion-text-center"><small>Obs.: Documentos de comprovação (renda e endereço) serão solicitados
+        em etapa posterior do processo seletivo.</small></p>
+  </ion-list>
+
+  <ion-button expand="block" (click)="proximo()" class="ion-margin-top" [disabled]="form.invalid">
+    Próximo <ion-icon slot="end" name="arrow-forward-outline"></ion-icon>
+  </ion-button>
+</div>
+<div class="error-message-placeholder"></div>

@@ -1,0 +1,68 @@
+<div class="comprovante-container ion-padding" *ngIf="dadosComprovante">
+  <div class="ion-text-center">
+    <ion-icon name="checkmark-circle" color="success" class="success-icon"></ion-icon>
+    <h2>Declaração Enviada com Sucesso!</h2>
+    <p>Sua declaração de interesse de matrícula foi registrada.</p>
+    <p><strong>Protocolo: {{ protocoloSimulado }}</strong></p>
+    <p><small>Guarde este protocolo para futuras consultas. Em breve, nossa equipe entrará em contato.</small></p>
+    <hr>
+  </div>
+  <ion-text color="medium" class="ion-text-center">
+    <h4>Resumo da Declaração</h4>
+  </ion-text>
+  <!-- Dados do Responsável -->
+  <ion-card class="summary-card">
+    <ion-card-header>
+      <ion-card-title>Dados do Responsável</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <p><strong>Nome:</strong> {{ dadosComprovante.dadosResponsavel?.nomeResponsavel }}</p>
+      <p><strong>CPF:</strong> {{ dadosComprovante.dadosResponsavel?.cpfResponsavel }}</p>
+      <p><strong>E-mail:</strong> {{ dadosComprovante.dadosResponsavel?.emailResponsavel }}</p>
+      <p><strong>Telefone:</strong> {{ dadosComprovante.dadosResponsavel?.telefoneResponsavel }}</p>
+    </ion-card-content>
+  </ion-card>
+  <!-- Dados do Aluno -->
+  <ion-card class="summary-card">
+    <ion-card-header>
+      <ion-card-title>Dados do Aluno(a)</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <p><strong>Nome:</strong> {{ dadosComprovante.dadosAluno?.nomeAluno }}</p>
+      <p><strong>Data de Nascimento:</strong> {{ dadosComprovante.dadosAluno?.dataNascimentoAluno | date:'dd/MM/yyyy' }}
+      </p>
+      <p><strong>CPF:</strong> {{ dadosComprovante.dadosAluno?.cpfAluno || 'Não informado' }}</p>
+    </ion-card-content>
+  </ion-card>
+  <!-- Detalhes da Vaga -->
+  <ion-card class="summary-card">
+    <ion-card-header>
+      <ion-card-title>Detalhes da Vaga de Interesse</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <p><strong>Tipo de Cota:</strong> {{ getValorCota(dadosComprovante.tipoVaga?.tipoCota) }}</p>
+      <p *ngIf="dadosComprovante.tipoVaga?.tipoCota === 'economica' && dadosComprovante.infoRenda">
+        <strong>Endereço (Cota Econômica):</strong> {{ dadosComprovante.infoRenda?.enderecoCompleto }}
+        <!-- Poderia listar os integrantes aqui também -->
+      </p>
+      <p><strong>Horários Selecionados:</strong> {{
+        getNomesHorarios(dadosComprovante.horariosVaga?.horariosSelecionados) }}</p>
+      <p *ngIf="dadosComprovante.mensagemAdicional"><strong>Mensagem Adicional:</strong> {{
+        dadosComprovante.mensagemAdicional }}</p>
+    </ion-card-content>
+  </ion-card>
+  <div class="ion-text-center ion-margin-top">
+    <p><small>No futuro, uma cópia deste comprovante será enviada para o seu e-mail.</small></p>
+    <ion-button (click)="fazerNova()" fill="outline" color="primary">
+      <ion-icon name="add-circle-outline" slot="start"></ion-icon>
+      Fazer Nova Declaração
+    </ion-button>
+  </div>
+</div>
+<div *ngIf="!dadosComprovante" class="ion-text-center ion-padding">
+  <p>Não há dados de comprovante para exibir.</p>
+  <ion-button (click)="fazerNova()" fill="outline" color="primary">
+    <ion-icon name="add-circle-outline" slot="start"></ion-icon>
+    Fazer Nova Declaração
+  </ion-button>
+  </div>

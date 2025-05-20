@@ -39,6 +39,10 @@ const routes: Routes = [
     path: 'detalhamento-familia',
     loadChildren: () => import('./funcionalidades/gerenciamento-familiar/detalhamento-familia/detalhamento-familia.module').then(m => m.DetalhamentoFamiliaPageModule)
   },
+  {
+    path: 'interesse-matricula', // URL pública: seudominio.com/interesse-matricula
+    loadChildren: () => import('./funcionalidades/interesse-matricula/interesse-matricula.module').then(m => m.InteresseMatriculaModule)
+  },
 ];
 
 @NgModule({

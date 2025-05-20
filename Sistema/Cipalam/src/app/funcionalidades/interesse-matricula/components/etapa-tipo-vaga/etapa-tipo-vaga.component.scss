@@ -1,0 +1,34 @@
+ion-item-divider ion-label {
+    font-weight: 500;
+}
+
+.radio-option {
+    --inner-padding-top: 8px;
+    --inner-padding-bottom: 8px;
+    border-bottom: 1px solid var(--ion-color-step-150, #f0f0f0);
+
+    &:last-child {
+        border-bottom: none;
+    }
+
+    ion-label h3 {
+        font-weight: 500;
+        font-size: 1em;
+        margin-bottom: 4px;
+    }
+}
+
+.explicacao-cota {
+    display: block;
+    font-size: 0.85em;
+    color: var(--ion-color-medium-text);
+    white-space: normal; // Permite quebra de linha
+    padding-top: 2px;
+}
+
+.error-message {
+    color: var(--ion-color-danger);
+    font-size: 0.8em;
+    padding-left: 16px;
+    padding-top: 2px;
+    min-height: 1.2em; }

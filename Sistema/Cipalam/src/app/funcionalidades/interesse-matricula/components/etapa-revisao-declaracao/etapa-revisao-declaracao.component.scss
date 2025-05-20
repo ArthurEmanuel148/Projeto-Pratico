@@ -1,0 +1,40 @@
+ion-item-divider ion-label {
+    font-weight: bold;
+    font-size: 1.1em;
+}
+
+ion-item-group {
+    margin-bottom: 16px;
+    border: 1px solid var(--ion-color-step-200);
+    border-radius: 8px;
+    overflow: hidden; // Para os cantos arredondados funcionarem com as dividers
+}
+
+ion-item ion-label:first-child {
+    // Label da esquerda (Nome:, CPF:)
+    color: var(--ion-color-medium-text);
+    font-weight: 500;
+    min-width: 150px; // Ajuda a alinhar os valores
+    margin-right: 8px;
+}
+
+ion-item ion-text[slot="end"] {
+    color: var(--ion-text-color);
+    font-weight: normal;
+}
+
+.integrante-revisao {
+    margin-left: 16px; // Indenta os dados dos integrantes
+    border-left: 2px solid var(--ion-color-primary-tint);
+    padding-left: 10px;
+    margin-bottom: 10px;
+}
+
+.integrante-revisao ion-item-divider.sub-divider {
+    --background: var(--ion-color-light-tint);
+    --min-height: 30px;
+    font-size: 0.9em;
+}
+
+.ion-text-end {
+    text-align: end; }

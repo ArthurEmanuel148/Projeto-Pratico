@@ -1,0 +1,59 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary"> <!-- Cor consistente com o que você tem usado -->
+    <ion-buttons slot="start" *ngIf="etapaAtual !== ETAPAS.DADOS_RESPONSAVEL && etapaAtual !== ETAPAS.CONCLUIDO">
+      <ion-button (click)="etapaAnterior()" fill="clear" color="light">
+        <ion-icon slot="icon-only" name="arrow-back-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Declaração de Interesse de Matrícula</ion-title>
+    <div class="progress-container" slot="end" *ngIf="etapaAtual !== ETAPAS.CONCLUIDO">
+      <span class="progress-text">{{ progresso.toFixed(0) }}%</span>
+    </div>
+  </ion-toolbar>
+  <ion-progress-bar [value]="progresso / 100" color="danger" *ngIf="etapaAtual !== ETAPAS.CONCLUIDO"></ion-progress-bar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding declaracao-interesse-force-light-theme"> <!-- Força o tema claro -->
+  <div class="form-container"> <!-- Centraliza o conteúdo do formulário -->
+    <div [ngSwitch]="etapaAtual">
+
+      <app-etapa-dados-responsavel *ngSwitchCase="ETAPAS.DADOS_RESPONSAVEL" [form]="dadosResponsavelForm"
+        (formSubmitted)="proximaEtapa()">
+      </app-etapa-dados-responsavel>
+
+      <app-etapa-tipo-vaga *ngSwitchCase="ETAPAS.TIPO_VAGA" [form]="tipoVagaForm" (formSubmitted)="proximaEtapa()">
+      </app-etapa-tipo-vaga>
+
+      <!-- etapa-info-renda é carregada condicionalmente no switchCase -->
+      <app-etapa-info-renda *ngSwitchCase="ETAPAS.INFO_RENDA" [form]="infoRendaForm!" 
+        (formSubmitted)="proximaEtapa()">
+      </app-etapa-info-renda>
+
+      <app-etapa-dados-aluno *ngSwitchCase="ETAPAS.DADOS_ALUNO" [form]="dadosAlunoForm"
+        (formSubmitted)="proximaEtapa()">
+      </app-etapa-dados-aluno>
+
+      <app-etapa-horarios-vaga *ngSwitchCase="ETAPAS.HORARIOS_VAGA" [formArray]="horariosSelecionadosFormArray" 
+        (formSubmitted)="proximaEtapa()">
+      </app-etapa-horarios-vaga>
+
+      <app-etapa-revisao-declaracao *ngSwitchCase="ETAPAS.REVISAO" [dadosRevisao]="dadosDeclaracaoCompleta"
+        (editStepRequest)="editarEtapa($event)" 
+        (formSubmitted)="proximaEtapa()"> <!-- Leva ao envio final -->
+      </app-etapa-revisao-declaracao>
+
+      <app-comprovante-declaracao *ngSwitchCase="ETAPAS.CONCLUIDO" [dadosComprovante]="dadosDeclaracaoCompleta"
+        (novaDeclaracao)="resetGeral()">
+      </app-comprovante-declaracao>
+
+      <div *ngSwitchDefault class="ion-text-center ion-padding">
+        <h2>Ocorreu um problema</h2>
+        <p>Etapa do formulário desconhecida. Por favor, tente reiniciar o processo.</p>
+        <ion-button (click)="resetGeral()" color="medium" fill="outline">
+          <ion-icon name="refresh-outline" slot="start"></ion-icon>
+          Reiniciar Declaração
+        </ion-button>
+      </div>
+    </div>
+  </div>
+</ion-content>

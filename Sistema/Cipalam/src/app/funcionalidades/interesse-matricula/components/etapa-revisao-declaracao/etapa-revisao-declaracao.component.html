@@ -1,0 +1,131 @@
+<div *ngIf="dadosRevisao">
+  <ion-list lines="none">
+    <ion-item-divider color="light">
+      <ion-label>Revisão da Declaração de Interesse</ion-label>
+    </ion-item-divider>
+    <p class="ion-padding-start ion-padding-bottom"><small>Por favor, confira todos os dados antes de enviar.</small>
+    </p>
+
+    <!-- Dados do Responsável -->
+    <ion-item-group>
+      <ion-item-divider color="medium">
+        <ion-label>Dados do Responsável</ion-label>
+        <ion-button fill="clear" size="small" slot="end" (click)="editar(ETAPAS_EDIT.DADOS_RESPONSAVEL)">
+          <ion-icon name="create-outline" slot="icon-only" aria-label="Editar Dados do Responsável"></ion-icon>
+        </ion-button>
+      </ion-item-divider>
+      <ion-item>
+        <ion-label>Nome:</ion-label>
+        <ion-text slot="end">{{ dadosRevisao.dadosResponsavel?.nomeResponsavel || 'Não informado' }}</ion-text>
+      </ion-item>
+      <ion-item>
+        <ion-label>CPF:</ion-label>
+        <ion-text slot="end">{{ dadosRevisao.dadosResponsavel?.cpfResponsavel || 'Não informado' }}</ion-text>
+      </ion-item>
+      <ion-item>
+        <ion-label>Data de Nascimento:</ion-label>
+        <ion-text slot="end">{{ dadosRevisao.dadosResponsavel?.dataNascimentoResponsavel | date:'dd/MM/yyyy'
+          }}</ion-text>
+      </ion-item>
+      <ion-item>
+        <ion-label>E-mail:</ion-label>
+        <ion-text slot="end">{{ dadosRevisao.dadosResponsavel?.emailResponsavel || 'Não informado' }}</ion-text>
+      </ion-item>
+      <ion-item>
+        <ion-label>Telefone:</ion-label>
+        <ion-text slot="end">{{ dadosRevisao.dadosResponsavel?.telefoneResponsavel || 'Não informado' }}</ion-text>
+      </ion-item>
+    </ion-item-group>
+
+    <!-- Tipo de Vaga -->
+    <ion-item-group>
+      <ion-item-divider color="medium">
+        <ion-label>Tipo de Vaga</ion-label>
+        <ion-button fill="clear" size="small" slot="end" (click)="editar(ETAPAS_EDIT.TIPO_VAGA)">
+          <ion-icon name="create-outline" slot="icon-only" aria-label="Editar Tipo de Vaga"></ion-icon>
+        </ion-button>
+      </ion-item-divider>
+      <ion-item>
+        <ion-label>Cota Selecionada:</ion-label>
+        <ion-text slot="end">{{ getValorCota(dadosRevisao.tipoVaga?.tipoCota) }}</ion-text>
+      </ion-item>
+    </ion-item-group>
+
+    <!-- Informações de Renda (Condicional) -->
+    <ion-item-group *ngIf="dadosRevisao.tipoVaga?.tipoCota === 'economica' && dadosRevisao.infoRenda">
+      <ion-item-divider color="medium">
+        <ion-label>Informações de Renda Familiar</ion-label>
+        <ion-button fill="clear" size="small" slot="end" (click)="editar(ETAPAS_EDIT.INFO_RENDA)">
+          <ion-icon name="create-outline" slot="icon-only" aria-label="Editar Informações de Renda"></ion-icon>
+        </ion-button>
+      </ion-item-divider>
+      <ion-item>
+        <ion-label class="ion-text-wrap">Endereço Completo:</ion-label>
+        <ion-text slot="end" class="ion-text-wrap ion-text-end">{{ dadosRevisao.infoRenda?.enderecoCompleto || 'Não
+          informado' }}</ion-text>
+      </ion-item>
+      <div *ngFor="let integrante of dadosRevisao.infoRenda?.integrantesRenda; let i = index"
+        class="integrante-revisao">
+        <ion-item-divider color="light" class="sub-divider">
+          <ion-label>Integrante {{ i + 1 }}</ion-label>
+        </ion-item-divider>
+        <ion-item><ion-label>Nome:</ion-label><ion-text slot="end">{{ integrante.nome }}</ion-text></ion-item>
+        <ion-item><ion-label>Parentesco:</ion-label><ion-text slot="end">{{ integrante.parentesco
+            }}</ion-text></ion-item>
+        <ion-item><ion-label>Renda Mensal:</ion-label><ion-text slot="end">{{ integrante.rendaMensal |
+            currency:'BRL':'symbol':'1.2-2' }}</ion-text></ion-item>
+      </div>
+    </ion-item-group>
+
+    <!-- Dados do Aluno -->
+    <ion-item-group>
+      <ion-item-divider color="medium">
+        <ion-label>Dados do Aluno(a)</ion-label>
+        <ion-button fill="clear" size="small" slot="end" (click)="editar(ETAPAS_EDIT.DADOS_ALUNO)">
+          <ion-icon name="create-outline" slot="icon-only" aria-label="Editar Dados do Aluno"></ion-icon>
+        </ion-button>
+      </ion-item-divider>
+      <ion-item><ion-label>Nome:</ion-label><ion-text slot="end">{{ dadosRevisao.dadosAluno?.nomeAluno || 'Não
+          informado' }}</ion-text></ion-item>
+      <ion-item><ion-label>Data de Nascimento:</ion-label><ion-text slot="end">{{
+          dadosRevisao.dadosAluno?.dataNascimentoAluno | date:'dd/MM/yyyy' }}</ion-text></ion-item>
+      <ion-item><ion-label>CPF:</ion-label><ion-text slot="end">{{ dadosRevisao.dadosAluno?.cpfAluno || 'Não informado'
+          }}</ion-text></ion-item>
+    </ion-item-group>
+
+    <!-- Horários da Vaga -->
+    <ion-item-group>
+      <ion-item-divider color="medium">
+        <ion-label>Horários de Interesse</ion-label>
+        <ion-button fill="clear" size="small" slot="end" (click)="editar(ETAPAS_EDIT.HORARIOS_VAGA)">
+          <ion-icon name="create-outline" slot="icon-only" aria-label="Editar Horários"></ion-icon>
+        </ion-button>
+      </ion-item-divider>
+      <ion-item>
+        <ion-label class="ion-text-wrap">Horários Selecionados:</ion-label>
+        <ion-text slot="end" class="ion-text-wrap ion-text-end">{{
+          getNomesHorarios(dadosRevisao.horariosVaga?.horariosSelecionados) }}</ion-text>
+      </ion-item>
+    </ion-item-group>
+
+    <!-- Mensagem Adicional -->
+    <ion-item-group *ngIf="dadosRevisao.mensagemAdicional">
+      <ion-item-divider color="medium">
+        <ion-label>Mensagem Adicional</ion-label>
+        <!-- Não tem botão de editar aqui, pois o campo é na última etapa de formulário ou direto no geral -->
+      </ion-item-divider>
+      <ion-item>
+        <ion-text class="ion-text-wrap">{{ dadosRevisao.mensagemAdicional }}</ion-text>
+      </ion-item>
+    </ion-item-group>
+  </ion-list>
+
+  <ion-button expand="block" (click)="enviarDeclaracao()" color="danger" class="ion-margin-top">
+    <ion-icon name="paper-plane-outline" slot="start"></ion-icon>
+    Enviar Declaração
+  </ion-button>
+</div>
+
+<div *ngIf="!dadosRevisao" class="ion-text-center ion-padding">
+  <p>Não há dados para revisar.</p>
+</div>

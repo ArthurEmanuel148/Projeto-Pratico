@@ -1,0 +1,47 @@
+.comprovante-container {
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+.success-icon {
+    font-size: 4em; // Ícone de sucesso maior
+    margin-bottom: 16px;
+}
+
+h2 {
+    font-weight: 600;
+    color: var(--ion-color-success-shade);
+}
+
+.summary-card {
+    margin-top: 16px;
+    margin-bottom: 16px;
+    --background: var(--ion-color-light-tint); // Um fundo leve para os cards de resumo
+
+    ion-card-header {
+        background-color: var(--ion-color-light-shade);
+        padding-top: 12px;
+        padding-bottom: 12px;
+    }
+
+    ion-card-title {
+        font-size: 1.1em;
+        font-weight: 500;
+        color: var(--ion-text-color);
+    }
+
+    ion-card-content p {
+        margin-bottom: 8px;
+        font-size: 0.95em;
+
+        strong {
+            color: var(--ion-color-medium-text);
+        }
+    }
+}
+
+hr {
+    border: 0;
+    height: 1px;
+    background-color: var(--ion-color-step-200);
+    margin: 24px 0; }

@@ -1,0 +1,25 @@
+// src/app/funcionalidades/interesse-matricula/components/etapa-horarios-vaga/etapa-horarios-vaga.component.scss
+ion-item-divider ion-label {
+    font-weight: 500;
+}
+
+.explicacao-texto {
+    color: var(--ion-color-medium-text);
+    font-size: 0.9em;
+}
+
+ion-item {
+    --inner-padding-end: 0; // Remove padding extra para alinhar checkbox e label
+}
+
+ion-label {
+    // Adiciona um pouco de margem para não colar no checkbox se o texto for longo
+    margin-left: 8px;
+}
+
+.error-message {
+    color: var(--ion-color-danger);
+    font-size: 0.85em;
+    padding-top: 4px;
+    min-height: 1.3em; // Evita pulo de layout 
+    }

@@ -1,0 +1,43 @@
+<!-- src/app/funcionalidades/interesse-matricula/components/etapa-horarios-vaga/etapa-horarios-vaga.component.html -->
+<!-- A tag <form> aqui é opcional se este componente lida apenas com um FormArray -->
+<!-- mas mantê-la pode ser útil se você tiver outros inputs ou um botão de submit específico para este formulário -->
+<!-- No entanto, como o FormArray é passado via @Input e validado no pai, pode não ser necessário. -->
+<!-- Se remover a tag form, remova o (ngSubmit) do botão também e só chame this.proximo() no (click) -->
+
+<div> <!-- Contêiner para o conteúdo da etapa -->
+  <ion-list lines="none">
+    <ion-item-divider color="light">
+      <ion-label>Seleção de Horários para Atividades</ion-label>
+    </ion-item-divider>
+    <p class="ion-padding-start ion-padding-bottom explicacao-texto">
+      <small>Selecione de 1 a {{maxSelecoes}} opções de horário para as atividades do aluno no instituto (estas
+        ocorrerão no contraturno escolar).</small>
+    </p>
+
+    <!-- O FormArray é 'horariosSelecionadosArray' diretamente se o @Input() formArray já é o FormArray correto -->
+    <!-- Não precisamos de formArrayName="horariosSelecionados" aqui porque o [formArray] já é o próprio FormArray -->
+    <ion-item *ngFor="let opcao of opcoesHorario; let i = index">
+      <ion-label>{{ opcao.label }}</ion-label>
+      <!-- Não usamos formControlName aqui, pois gerenciamos o array manualmente no .ts -->
+      <ion-checkbox slot="start" [value]="opcao.id" (ionChange)="onHorarioChange($event, opcao.id)"
+        [checked]="isHorarioSelected(opcao.id)">
+      </ion-checkbox>
+    </ion-item>
+
+    <!-- Exibição de erro para o FormArray (ligado ao FormArray passado via @Input) -->
+    <div *ngIf="formArray.invalid && (formArray.touched || formArray.dirty)"
+      class="error-message ion-padding-start ion-text-center">
+      <div *ngIf="formArray.errors?.['required'] || formArray.errors?.['minlength']">
+        <small>É necessário selecionar pelo menos 1 horário.</small>
+      </div>
+      <div *ngIf="formArray.errors?.['maxlength']">
+        <small>Você só pode selecionar no máximo {{ maxSelecoes }} horários.</small>
+      </div>
+    </div>
+  </ion-list>
+
+  <ion-button expand="block" (click)="proximo()" class="ion-margin-top"
+    [disabled]="formArray.invalid && formArray.touched">
+    Próximo <ion-icon slot="end" name="arrow-forward-outline"></ion-icon>
+  </ion-button>
+</div>

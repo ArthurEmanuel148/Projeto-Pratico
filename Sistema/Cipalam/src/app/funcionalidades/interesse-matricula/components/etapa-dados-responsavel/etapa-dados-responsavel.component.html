@@ -1,0 +1,57 @@
+<form [formGroup]="form" (ngSubmit)="proximo()">
+  <ion-list lines="full">
+    <ion-item-divider color="light">
+      <ion-label>Dados do Responsável</ion-label>
+    </ion-item-divider>
+
+    <ion-item>
+      <ion-label position="floating">Nome Completo <ion-text color="danger">*</ion-text></ion-label>
+      <ion-input type="text" formControlName="nomeResponsavel" required></ion-input>
+    </ion-item>
+    <div *ngIf="form.get('nomeResponsavel')?.invalid && form.get('nomeResponsavel')?.touched" class="error-message">
+      <small *ngIf="form.get('nomeResponsavel')?.errors?.['required']">Nome do responsável é obrigatório.</small>
+    </div>
+
+    <ion-item>
+      <ion-label position="floating">CPF <ion-text color="danger">*</ion-text></ion-label>
+      <ion-input type="text" formControlName="cpfResponsavel" required placeholder="000.000.000-00"></ion-input>
+      <!-- TODO: Adicionar máscara e validador de CPF -->
+    </ion-item>
+    <div *ngIf="form.get('cpfResponsavel')?.invalid && form.get('cpfResponsavel')?.touched" class="error-message">
+      <small *ngIf="form.get('cpfResponsavel')?.errors?.['required']">CPF é obrigatório.</small>
+      <!-- <small *ngIf="form.get('cpfResponsavel')?.errors?.['cpfInvalido']">CPF inválido.</small> -->
+    </div>
+
+    <ion-item>
+      <ion-label position="floating">Data de Nascimento <ion-text color="danger">*</ion-text></ion-label>
+      <ion-input type="date" formControlName="dataNascimentoResponsavel" required></ion-input>
+    </ion-item>
+    <div *ngIf="form.get('dataNascimentoResponsavel')?.invalid && form.get('dataNascimentoResponsavel')?.touched"
+      class="error-message">
+      <small>Data de nascimento é obrigatória.</small>
+    </div>
+
+    <ion-item>
+      <ion-label position="floating">E-mail <ion-text color="danger">*</ion-text></ion-label>
+      <ion-input type="email" formControlName="emailResponsavel" required email></ion-input>
+    </ion-item>
+    <div *ngIf="form.get('emailResponsavel')?.invalid && form.get('emailResponsavel')?.touched" class="error-message">
+      <small *ngIf="form.get('emailResponsavel')?.errors?.['required']">E-mail é obrigatório.</small>
+      <small *ngIf="form.get('emailResponsavel')?.errors?.['email']">Formato de e-mail inválido.</small>
+    </div>
+
+    <ion-item>
+      <ion-label position="floating">Telefone <ion-text color="danger">*</ion-text></ion-label>
+      <ion-input type="tel" formControlName="telefoneResponsavel" required placeholder="(XX) XXXXX-XXXX"></ion-input>
+      <!-- TODO: Adicionar máscara de telefone -->
+    </ion-item>
+    <div *ngIf="form.get('telefoneResponsavel')?.invalid && form.get('telefoneResponsavel')?.touched"
+      class="error-message">
+      <small>Telefone é obrigatório.</small>
+    </div>
+  </ion-list>
+
+  <ion-button expand="block" type="submit" class="ion-margin-top">
+    Próximo <ion-icon slot="end" name="arrow-forward-outline"></ion-icon>
+  </ion-button>
+</form>

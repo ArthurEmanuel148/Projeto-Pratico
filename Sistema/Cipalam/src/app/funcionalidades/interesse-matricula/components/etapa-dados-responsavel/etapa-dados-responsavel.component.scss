@@ -1,0 +1,10 @@
+.error-message {
+    color: var(--ion-color-danger);
+    font-size: 0.8em;
+    padding-left: 16px; // Alinha com o texto do input
+    padding-top: 2px;
+    min-height: 1.2em; // Para evitar que o layout pule muito
+}
+
+ion-item-divider ion-label {
+    font-weight: 500; }

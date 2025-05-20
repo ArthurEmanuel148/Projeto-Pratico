@@ -9,7 +9,7 @@ const routes: Routes = [
     children: [
       {
         path: '',
-        redirectTo: 'gerenciamento-funcionarios',
+        redirectTo: 'painel-funcionario',
         pathMatch: 'full'
 
       },

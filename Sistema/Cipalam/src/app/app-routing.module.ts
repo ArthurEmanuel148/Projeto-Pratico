@@ -16,10 +16,6 @@ const routes: Routes = [
     loadChildren: () => import('./funcionalidades/autenticacao/login/login.module').then(m => m.LoginPageModule)
   },
   {
-    path: 'dashboard',
-    loadChildren: () => import('./pages/portal-responsavel/dashboard/dashboard.module').then(m => m.DashboardPageModule)
-  },
-  {
     path: 'painel-advertencias',
     loadChildren: () => import('./funcionalidades/gerenciamento-advertencias/painel-advertencias/painel-advertencias.module').then(m => m.PainelAdvertenciasPageModule)
   },

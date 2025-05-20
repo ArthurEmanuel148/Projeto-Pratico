@@ -14,16 +14,16 @@
           <ion-label>Início</ion-label>
         </ion-item>
         <!-- Item com Subfunções (Exemplo) -->
-        <ion-item button (click)="toggleSubmenu('cadastros')" lines="none" detail="false">
+        <ion-item button (click)="toggleSubmenu('gerenciamento-funcionarios')" lines="none" detail="false">
           <ion-icon name="document-text-outline" slot="start"></ion-icon>
-          <ion-label>Cadastros</ion-label>
-          <ion-icon [name]="openSubmenus['cadastros'] ? 'chevron-down-outline' : 'chevron-forward-outline'"
+          <ion-label>Gerenciar Funcionarios</ion-label>
+          <ion-icon [name]="openSubmenus['gerenciamento-funcionarios'] ? 'chevron-down-outline' : 'chevron-forward-outline'"
             slot="end"></ion-icon>
         </ion-item>
-        <ion-list *ngIf="openSubmenus['cadastros']" class="submenu-list">
-          <ion-item button (click)="navigateTo('/paineis/cadastros/funcionarios')" class="submenu-item" detail="false">
+        <ion-list *ngIf="openSubmenus['gerenciamento-funcionarios']" class="submenu-list">
+          <ion-item button (click)="navigateTo('/paineis/gerenciamento-funcionarios')" class="submenu-item" detail="false">
             <ion-icon name="people-outline" slot="start"></ion-icon>
-            <ion-label>Funcionários</ion-label>
+            <ion-label>Cadastrar Funcionario</ion-label>
           </ion-item>
           <ion-item button (click)="navigateTo('/paineis/cadastros/produtos')" class="submenu-item" detail="false">
             <ion-icon name="cube-outline" slot="start"></ion-icon>

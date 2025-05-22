@@ -1,0 +1,159 @@
+// src/app/funcionalidades/gerenciamento-funcionarios/cadastro-funcionario/cadastro-funcionario.page.scss
+
+// Garante que o conteúdo da página comece abaixo do header global
+:host {
+    ion-content {
+        --background: var(--ion-background-color);
+        // O Ionic com [fullscreen]="true" tenta lidar com safe areas.
+        // Se o header global for opaco, isso pode não ser necessário.
+        // Se for translúcido e ainda cobrir, experimente:
+        // --padding-top: calc(var(--ion-safe-area-top, 0px) + 56px); // 56px é uma altura comum de toolbar
+    }
+}
+
+.cadastro-funcionario-content {
+    // O fundo já é var(--ion-background-color) do tema
+}
+
+.page-specific-header {
+    // Se quiser algum estilo específico para o header desta página
+    // ion-toolbar {
+    //   --background: var(--ion-color-secondary); // Exemplo, se quisesse cor diferente
+    // }
+}
+
+.condense-header {
+    ion-toolbar {
+        // O Ionic lida com a transição. Cor do título grande virá do tema.
+        --background: transparent; // Para o efeito de título grande sobre o conteúdo
+    }
+
+    ion-title[size="large"] {
+        color: var(--ion-text-color); // Título grande usa a cor de texto do tema
+    }
+}
+
+.form-introduction {
+    padding: 8px 0px 16px 0px; // Ajusta o padding para alinhamento com a lista
+
+    h2 {
+        font-size: 1.4em;
+        font-weight: 600;
+        color: var(--ion-text-color);
+        margin-bottom: 4px;
+    }
+
+    p {
+        font-size: 0.9em;
+        color: var(--ion-color-medium-text);
+    }
+}
+
+.form-list {
+    // Remove fundo padrão da lista para que o fundo do ion-content apareça,
+    // ou defina para var(--ion-item-background) se quiser cards.
+    --background: transparent;
+    // background: transparent; // Para versões mais antigas do Ionic se --background não funcionar
+}
+
+ion-item-group {
+    margin-bottom: 24px; // Espaço entre grupos de campos
+    // Para um visual mais card-like:
+    // background: var(--ion-item-background);
+    // border-radius: 8px;
+    // box-shadow: 0 2px 4px rgba(var(--ion-color-dark-rgb, 0,0,0), 0.05);
+    // padding: 0 8px; // Se usar o visual de card
+}
+
+.sticky-divider {
+    --background: var(--ion-color-light-background); // Um cinza claro do tema
+    --color: var(--ion-color-medium-text); // Cor do texto do label
+    font-size: 0.9em;
+    text-transform: uppercase; // Deixa o título do divisor mais destacado
+    letter-spacing: 0.5px;
+    font-weight: 500;
+
+    // Para fazer o "sticky" funcionar, o ion-item-divider precisa estar
+    // diretamente dentro de um contêiner com scroll (como ion-content ou uma lista longa).
+    // O Ionic geralmente já aplica o comportamento sticky.
+    // Se não, pode ser necessário inspecionar e ajustar z-index ou position.
+    ion-label {
+        padding-top: 8px;
+        padding-bottom: 8px;
+    }
+}
+
+.input-item {
+    --padding-start: 0; // Remove padding para o ícone ficar mais próximo da borda do item
+    --border-color: var(--ion-color-step-200, #e0e0e0); // Borda sutil para os itens
+    --highlight-color-focused: var(--ion-color-danger); // Cor da linha quando focado
+
+    ion-icon[slot="start"] {
+        margin-right: 12px; // Espaço entre ícone e label/input
+        font-size: 1.2em; // Tamanho do ícone
+    }
+}
+
+.error-message {
+    color: var(--ion-color-danger);
+    font-size: 0.75em;
+    // Mantenha o padding-left para alinhar com o texto do input
+    padding-left: 44px; // Ajuste este valor se o seu ícone/margem mudar
+    padding-right: 16px;
+    padding-top: 2px; // Pode reduzir este se quiser mais próximo
+    margin-bottom: 10px; // Aumenta o espaço ABAIXO da mensagem, antes do PRÓXIMO item
+    // Para reduzir o espaço entre o INPUT e a mensagem de erro DELE,
+    // a mensagem não deve ter muito margin-top ou padding-top, e o item
+    // acima não deve ter muito margin-bottom.
+
+    // Para o erro ficar logo abaixo do ion-item, sem muito espaço:
+    // Remova o padding-left da mensagem de erro e coloque um padding-left:16px no ion-item.
+    // E para o texto do erro, você pode usar um margin-left para alinhar com o input 
+    }
+
+// Estilo para o botão principal no final
+ion-content>ion-button {
+    // Seleciona o botão que é filho direto do ion-content
+    // Se você mover para o ion-footer, este seletor precisará mudar.
+    font-weight: 500;
+    letter-spacing: 0.5px;
+}
+
+// Se usar o footer para o botão:
+// ion-footer {
+//   // box-shadow: 0 -2px 5px rgba(var(--ion-color-dark-rgb,0,0,0), 0.08); // Sombra sutil no topo do footer
+//   ion-toolbar {
+//     --background: var(--ion-background-color); // Fundo do tema
+//     --padding-start: 16px;
+//     --padding-end: 16px;
+//     --padding-top: 8px;
+//     --padding-bottom: 8px;
+//   }
+// }
+
+// src/app/funcionalidades/gerenciamento-funcionarios/cadastro-funcionario/cadastro-funcionario.page.scss
+
+// ... seus estilos existentes ...
+
+.input-item {
+    --padding-start: 0;
+    --border-color: var(--ion-color-step-200, #e0e0e0);
+    --highlight-color-focused: var(--ion-color-danger);
+
+    // Flexbox para alinhar ícone e label/input
+    display: flex; // Adiciona display flex ao ion-item
+    align-items: center; // Alinha os itens verticalmente ao centro
+
+    ion-icon[slot="start"] {
+        margin-right: 12px;
+        font-size: 1.2em;
+        // O align-items: center no pai deve ajudar.
+        // Se ainda não alinhar perfeitamente, pode precisar de um ajuste fino
+        // com position relative e top, ou um margin-top negativo muito sutil,
+        // mas o ideal é que o flexbox resolva.
+    }
+
+    // O ion-label com o input dentro já deve se alinhar bem com o flex.
+    // Se o label flutuante estiver causando problemas de altura,
+    // pode ser necessário ajustar suas margens ou o line-height quando está flutuando.
+}

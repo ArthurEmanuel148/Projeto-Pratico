@@ -1,56 +1,101 @@
-// src/app/paineis/components/painel-layout/painel-layout.component.ts
-import { Component, Inject, OnInit, Renderer2, ViewChild } from '@angular/core'; // Removido OnDestroy se não usado
+import { Component, Inject, OnInit, Renderer2, ViewChild } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
-import { Router } from '@angular/router';
-import { MenuController, Platform, IonMenu } from '@ionic/angular'; // IonMenu importado aqui
+import { Router, NavigationEnd } from '@angular/router';
+import { MenuController, Platform, IonMenu, IonToggle, PopoverController } from '@ionic/angular'; // Adicionado PopoverController
+import { MenuItem } from '../../../core/models/menu-item.interface';
+import { filter } from 'rxjs/operators';
+import { TopMenuPopoverComponent } from '../top-menu-popover/top-menu-popover.component'; // Importe o componente Popover
 
 @Component({
-  selector: 'app-painel-layout', // Seletor correto
+  selector: 'app-painel-layout',
   templateUrl: './painel-layout.component.html',
   styleUrls: ['./painel-layout.component.scss'],
-  standalone: false, // Defina como 'true' se este for um componente standalone
-  // Adicione 'standalone: true' e o array 'imports' se este for um componente standalone
-  // Exemplo se standalone:
-  // standalone: true,
-  // imports: [CommonModule, FormsModule, IonicModule, RouterModule /* ou RouterLink */ ],
+  standalone: false
 })
 export class PainelLayoutComponent implements OnInit {
-  @ViewChild('appMenu') appMenu!: IonMenu; // Referência ao menu no template deste componente
-  public openSubmenus: { [key: string]: boolean } = {};
+  @ViewChild('appMenu') appMenu!: IonMenu;
+  @ViewChild('themeToggle') themeToggle!: IonToggle;
+
+  public openSideSubmenus: { [key: string]: boolean } = {};
   public isDarkMode: boolean = false;
+  readonly THEME_KEY = 'themePreference';
+
+  private allPossibleMenuItems: MenuItem[] = [
+    { id: 'home', label: 'Início', icon: 'home-outline', route: '/paineis/painel-funcionario', showInTopMenu: true, topMenuIcon: 'home' },
+    {
+      id: 'funcionarios', label: 'Funcionários', icon: 'document-text-outline', showInTopMenu: true, topMenuIcon: 'archive', children: [
+        { id: 'cadastro-funcionario', label: 'Cadastrar funcionário', icon: 'people-outline', route: '/paineis/gerenciamento-funcionarios/cadastro-funcionario' },
+        // { id: 'cad-alunos', label: 'Alunos', icon: 'school-outline', route: '/paineis/gerenciamento-alunos' },
+        // { id: 'cad-familiar', label: 'Familiares', icon: 'people-circle-outline', route: '/paineis/gerenciamento-familiar' },
+      ]
+    },
+    { id: 'advertencias', label: 'Advertências', icon: 'warning-outline', route: '/paineis/gerenciamento-advertencias', showInTopMenu: true, topMenuIcon: 'warning' },
+    // { id: 'relatorios', label: 'Relatórios', icon: 'stats-chart-outline', route: '/paineis/relatorios', showInTopMenu: false },
+    // { id: 'configuracoes', label: 'Configurações', icon: 'settings-outline', route: '/paineis/configuracoes', showInTopMenu: true, topMenuIcon: 'settings' },
+  ];
+
+  public sideMenuItems: MenuItem[] = [];
+  public topMenuItems: MenuItem[] = [];
+  public currentRoute: string = '';
 
   constructor(
     private router: Router,
     private menuCtrl: MenuController,
     private platform: Platform,
     private renderer: Renderer2,
-    @Inject(DOCUMENT) private document: Document
+    @Inject(DOCUMENT) private document: Document,
+    public popoverController: PopoverController // Injetar PopoverController
   ) { }
 
   ngOnInit() {
     this.initializeAppTheme();
+    this.prepareMenuItems();
+
+    this.router.events.pipe(
+      filter((event): event is NavigationEnd => event instanceof NavigationEnd)
+    ).subscribe((event: NavigationEnd) => {
+      this.currentRoute = event.urlAfterRedirects;
+      this.closeMenuIfOpen();
+    });
+  }
+
+  prepareMenuItems() {
+    // Futuramente, filtre com base nas permissões
+    this.sideMenuItems = JSON.parse(JSON.stringify(this.allPossibleMenuItems));
+    this.topMenuItems = JSON.parse(JSON.stringify(
+      this.allPossibleMenuItems.filter(item => item.showInTopMenu)
+    ));
+  }
+
+  isActive(route?: string): boolean {
+    return route ? this.router.url.startsWith(route) : false; // Usar this.router.url para refletir a rota atual antes de redirecionamentos
+  }
+
+  closeMenuIfOpen() {
+    this.menuCtrl.isOpen('appMenu').then(isOpen => {
+      if (isOpen) {
+        this.menuCtrl.close('appMenu');
+      }
+    });
   }
 
   initializeAppTheme() {
     this.platform.ready().then(() => {
-      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      const savedTheme = localStorage.getItem('themePreference');
-
-      if (savedTheme) {
-        this.isDarkMode = savedTheme === 'dark';
-      } else {
-        this.isDarkMode = prefersDark;
-      }
+      const savedTheme = localStorage.getItem(this.THEME_KEY);
+      this.isDarkMode = savedTheme ? savedTheme === 'dark' : window.matchMedia('(prefers-color-scheme: dark)').matches;
       this.applyTheme();
+      if (this.themeToggle) {
+        this.themeToggle.checked = this.isDarkMode;
+      }
     });
   }
 
   toggleTheme(event?: any) {
-    if (event && typeof event.detail !== 'undefined') { // Verifica se event.detail existe
+    if (event && typeof event.detail !== 'undefined') {
       this.isDarkMode = event.detail.checked;
     }
     this.applyTheme();
-    localStorage.setItem('themePreference', this.isDarkMode ? 'dark' : 'light');
+    localStorage.setItem(this.THEME_KEY, this.isDarkMode ? 'dark' : 'light');
   }
 
   private applyTheme() {
@@ -59,27 +104,38 @@ export class PainelLayoutComponent implements OnInit {
     this.document.body.setAttribute('color-theme', this.isDarkMode ? 'dark' : 'light');
   }
 
+  async handleTopMenuClick(item: MenuItem, event: Event) {
+    if (item.children && item.children.length > 0) {
+      event.stopPropagation(); // Previne que o popover feche imediatamente se o botão estiver dentro de outro elemento clicável
+      const popover = await this.popoverController.create({
+        component: TopMenuPopoverComponent,
+        componentProps: {
+          subMenuItems: item.children
+        },
+        event: event, // O evento que disparou o popover, para posicionamento
+        translucent: true,
+        showBackdrop: false, // Para um look mais de dropdown
+        cssClass: 'top-menu-popover-class' // Classe CSS para estilizar o popover
+      });
+      await popover.present();
+    } else if (item.route) {
+      this.navigateTo(item.route);
+    } else if (item.action) {
+      item.action(event);
+    }
+  }
+
   navigateTo(url: string) {
-    // Ajuste a URL se as rotas dentro do painel não começarem com '/paineis/' no routerLink
-    // Exemplo: se o routerLink for '/cadastros/funcionarios', e a rota no paineis-routing for 'cadastros/funcionarios'
-    // A URL completa seria '/paineis/cadastros/funcionarios'
-    // Se você sempre passa a URL completa (com /paineis/ prefixo) do template, está ok.
     this.router.navigateByUrl(url);
-    if (this.appMenu) {
-      this.menuCtrl.close('appMenu');
-    }
   }
 
-  toggleSubmenu(menuKey: string) {
-    this.openSubmenus[menuKey] = !this.openSubmenus[menuKey];
+  toggleSideSubmenu(menuId: string) { // Usar menuId
+    this.openSideSubmenus[menuId] = !this.openSideSubmenus[menuId];
   }
 
-  logout() {
+  logout = () => { // Definido como arrow function para manter o 'this' se passado como callback
     console.log('Logout acionado');
-    if (this.appMenu) {
-      this.menuCtrl.close('appMenu');
-    }
-    // Adicionar lógica de limpar sessão/token aqui no futuro
-    this.router.navigate(['/login']); // Assume uma rota de login
+    // Limpar dados de sessão/token aqui
+    this.navigateTo('/login');
   }
 }

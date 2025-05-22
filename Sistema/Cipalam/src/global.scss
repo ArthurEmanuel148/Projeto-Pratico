@@ -53,3 +53,18 @@
         flex-direction: column;
         height: 100%; // Faz o wrapper interno ocupar toda a altura do modal definida acima
     } }
+
+// NOVO (opcional, para destacar o item do topo quando o popover estiver ativo ou a rota for a dele)
+.global-top-header .top-menu-buttons .top-menu-button.active-top-menu {
+    background-color: rgba(255, 255, 255, 0.15); // Leve destaque 
+}
+.top-menu-popover-class {
+    --min-width: 200px;
+    --max-width: 280px;
+    --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); // Sombra padrão
+
+    // Para remover o padding interno padrão do ion-popover se o seu ion-list já tiver
+    .popover-content {
+        // padding: 0; // Descomente se não quiser o padding padrão do popover 
+        }
+    }

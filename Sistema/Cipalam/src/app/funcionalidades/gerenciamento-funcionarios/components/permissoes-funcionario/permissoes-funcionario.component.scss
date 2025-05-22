@@ -24,16 +24,13 @@
 
 // Estilos para o ion-content DENTRO do modal
 // Este é o contêiner principal para a lista rolável
+// Dentro de permissoes-funcionario.component.scss
 ion-content {
-    // --background: lightyellow; // Teste para ver a área
-    // O padding já está sendo aplicado via classe ion-padding-horizontal no HTML.
-    // Esta parte é crucial para permitir que a lista cresça e role
-    // O Ionic geralmente lida bem com o scroll do ion-content,
-    // desde que seus pais tenham um layout que o permita.
-    // Se o conteúdo for cortado, pode ser necessário algo como:
-    // position: relative; // Ou static, dependendo do contexto dos pais
-    // display: block;
-}
+    --background: var(--ion-background-color) !important; // Força com !important para teste
+    // Ou para um teste ainda mais direto:
+    // --background: white !important;
+    // color: black !important; // Para o texto dentro do conteúdo 
+    }
 
 // Estilos para o spinner e mensagem de lista vazia
 .loading-container,

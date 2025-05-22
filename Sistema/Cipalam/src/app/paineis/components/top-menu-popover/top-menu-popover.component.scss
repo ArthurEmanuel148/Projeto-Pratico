@@ -1,0 +1,38 @@
+// src/app/paineis/components/top-menu-popover/top-menu-popover.component.scss
+ion-list {
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+ion-item {
+    --padding-start: 16px;
+    --padding-end: 16px;
+    --min-height: 44px;
+    font-size: 0.95em;
+    --color: var(--ion-text-color); // Cor do texto do tema
+    --ripple-color: var(--ion-color-medium); // Efeito de clique
+
+    ion-icon[slot="start"] {
+        color: var(--ion-color-medium-text);
+        margin-right: 12px;
+        font-size: 1.1em;
+    }
+
+    &.selected-item,
+    // Reutilizando classe do menu lateral para consistência
+    &.activated {
+        background: rgba(var(--ion-color-danger-rgb), 0.08);
+
+        ion-label {
+            color: var(--ion-color-danger);
+            font-weight: 500;
+        }
+
+        ion-icon[slot="start"] {
+            color: var(--ion-color-danger);
+        }
+    }
+
+    &:hover:not(.selected-item):not(.activated) {
+        background: var(--ion-item-background-activated);
+    } }

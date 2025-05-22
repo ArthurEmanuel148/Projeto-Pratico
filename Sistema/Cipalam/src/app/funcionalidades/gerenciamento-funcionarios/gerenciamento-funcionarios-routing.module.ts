@@ -4,11 +4,11 @@ import { RouterModule, Routes } from '@angular/router';
 const routes: Routes = [
   {
     path: '',
-    redirectTo: 'cadastro',
+    redirectTo: 'cadastro-funcionario',
     pathMatch: 'full'
   },
   {
-    path: 'cadastro',
+    path: 'cadastro-funcionario',
     loadChildren: () => import('./cadastro-funcionario/cadastro-funcionario.module').then(m => m.CadastroFuncionarioPageModule)
   },
 ];

@@ -1,5 +1,23 @@
 // src/app/funcionalidades/painel-funcionario/pages/painel-funcionario/painel-funcionario.page.scss
 
+.logo-container {
+    display: flex;
+    align-items: center;
+    padding-left: 0px;
+
+    &:hover {
+        opacity: 0.8;
+    }
+
+    // ESTILO PARA A IMAGEM DA LOGO
+    .top-menu-logo-image {
+        height: 50px; // Defina a altura desejada para a logo
+        width: auto; // Mantém a proporção da imagem
+        margin-left: 10px;
+        margin-right: 10px; // Espaço entre a logo e o nome
+        // Adicione outros estilos se necessário (ex: vertical-align se não alinhar bem com o texto)
+    }
+}
 // Header e Toolbar (Parece OK, mas confirme se as cores do texto no tema escuro são legíveis)
 ion-header ion-toolbar {
     --background: var(--ion-color-danger);

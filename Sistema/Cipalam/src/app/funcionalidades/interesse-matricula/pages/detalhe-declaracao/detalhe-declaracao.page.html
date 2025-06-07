@@ -1,0 +1,76 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/paineis/interesse-matricula/lista-declaracoes"></ion-back-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<!-- Título da página logo abaixo do menu superior -->
+<div class="ion-padding">
+  <h2 class="ion-text-center">Detalhe da Declaração de Interesse</h2>
+</div>
+
+<!-- Adicione logo abaixo do título da página -->
+<div class="ion-padding ion-text-start">
+  <ion-button fill="clear" color="primary" routerLink="/paineis/interesse-matricula/lista-declaracoes">
+    <ion-icon name="arrow-back-outline" slot="start"></ion-icon>
+    Voltar para a listagem
+  </ion-button>
+</div>
+
+<ion-content *ngIf="!carregando && declaracao; else carregandoTpl" class="ion-padding">
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Dados do Aluno</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <p><strong>Nome:</strong> {{ declaracao.dadosAluno?.nomeAluno }}</p>
+      <p><strong>Data de Nascimento:</strong> {{ declaracao.dadosAluno?.dataNascimentoAluno | date:'dd/MM/yyyy' }}</p>
+      <p><strong>CPF:</strong> {{ declaracao.dadosAluno?.cpfAluno || 'Não informado' }}</p>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Dados do Responsável</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <p><strong>Nome:</strong> {{ declaracao.dadosResponsavel?.nomeResponsavel }}</p>
+      <p><strong>CPF:</strong> {{ declaracao.dadosResponsavel?.cpfResponsavel }}</p>
+      <p><strong>Email:</strong> {{ declaracao.dadosResponsavel?.emailResponsavel }}</p>
+      <p><strong>Telefone:</strong> {{ declaracao.dadosResponsavel?.telefoneResponsavel }}</p>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Vaga de Interesse</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <p><strong>Tipo de Cota:</strong> {{ declaracao.tipoVaga?.tipoCota }}</p>
+      <!-- Adicione outros campos relevantes -->
+    </ion-card-content>
+  </ion-card>
+
+  <ion-card *ngIf="declaracao.infoRenda">
+    <ion-card-header>
+      <ion-card-title>Informações de Renda</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <p><strong>Endereço:</strong> {{ declaracao.infoRenda?.enderecoCompleto }}</p>
+      <!-- Liste integrantes, se houver -->
+    </ion-card-content>
+  </ion-card>
+
+  <div class="ion-padding">
+    <ion-button expand="block" color="success" (click)="iniciarMatricula()">
+      <ion-icon name="document-attach-outline" slot="start"></ion-icon>
+      Iniciar Matrícula
+    </ion-button>
+  </div>
+</ion-content>
+
+<ng-template #carregandoTpl>
+  <ion-spinner class="ion-margin"></ion-spinner>
+</ng-template>

@@ -1,0 +1,37 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Declarações de Interesse</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <!-- Resumo de vagas -->
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Vagas Disponíveis</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <p><strong>Total:</strong> {{ vagasResumo.total }}</p>
+      <ion-list>
+        <ion-item *ngFor="let cota of vagasResumo.porCota">
+          <ion-label>
+            {{ cota.tipo }}: <strong>{{ cota.disponiveis }}</strong>
+          </ion-label>
+        </ion-item>
+      </ion-list>
+      </ion-card-content>
+  </ion-card>
+
+  <!-- Lista de declarações -->
+  <ion-list *ngIf="!carregando">
+    <ion-item *ngFor="let declaracao of declaracoes" (click)="abrirDetalhe(declaracao)">
+      <ion-label>
+        <h2>{{ declaracao.dadosAluno?.nomeAluno }}</h2>
+        <p>Responsável: {{ declaracao.dadosResponsavel?.nomeResponsavel }}</p>
+        <p>Cota: {{ declaracao.tipoVaga?.tipoCota }}</p>
+      </ion-label>
+      <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
+    </ion-item>
+  </ion-list>
+  <ion-spinner *ngIf="carregando" class="ion-margin"></ion-spinner>
+</ion-content>

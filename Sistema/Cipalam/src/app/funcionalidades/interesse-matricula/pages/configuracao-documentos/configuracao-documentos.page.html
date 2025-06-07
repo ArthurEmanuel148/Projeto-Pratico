@@ -1,0 +1,28 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Configuração de Documentos por Cota</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div class="cotas-container">
+    <ion-card *ngFor="let cota of tiposCota" class="cota-card" (click)="abrirSelecaoDocumentos(cota)">
+      <ion-card-header>
+        <ion-card-title>{{ cota.nome }}</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-icon name="document-outline" size="large" color="primary"></ion-icon>
+        <div class="doc-count">
+          {{ documentosPorCota[cota.chave]?.length || 0 }} documento(s) selecionado(s)
+        </div>
+        <ion-button expand="block" color="light" fill="solid" size="default">
+          Selecionar Documentos
+        </ion-button>
+      </ion-card-content>
+    </ion-card>
+  </div>
+
+  <ion-button expand="block" color="primary" (click)="salvarConfiguracao()" class="salvar-btn">
+    Salvar Configuração
+  </ion-button>
+</ion-content>

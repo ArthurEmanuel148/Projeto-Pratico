@@ -6,6 +6,7 @@ import { IonicModule } from '@ionic/angular'; // Componentes Ionic
 
 import { InteresseMatriculaRoutingModule } from './interesse-matricula-routing.module';
 import { InteresseMatriculaService } from './services/interesse-matricula.service';
+import { DocumentosCotaSelectorComponent } from './components/documentos-cota-selector/documentos-cota-selector.component';
 
 // Não precisa declarar ou importar os componentes de etapa ou a página principal aqui,
 // eles serão parte do DeclaracaoInteressePageModule que será lazy loaded.
@@ -14,6 +15,7 @@ import { InteresseMatriculaService } from './services/interesse-matricula.servic
   declarations: [
     // A página principal (DeclaracaoInteressePage) e seus componentes de etapa
     // serão declarados em seus próprios módulos de página ou no módulo da página principal.
+    DocumentosCotaSelectorComponent, // Exemplo de componente de etapa
   ],
   imports: [
     CommonModule,

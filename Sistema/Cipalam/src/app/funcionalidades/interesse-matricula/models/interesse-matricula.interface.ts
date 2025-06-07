@@ -1,6 +1,9 @@
 import { DadosIntegranteRenda } from './dados-integrante-renda.interface';
 
+export type TipoVaga = 'funcionario' | 'economica' | 'livre' | null;
+
 export interface InteresseMatricula {
+    protocolo?: string; // Protocolo gerado para a declaração
     dadosResponsavel?: {
         nomeResponsavel?: string;
         cpfResponsavel?: string;
@@ -9,7 +12,7 @@ export interface InteresseMatricula {
         telefoneResponsavel?: string;
     };
     tipoVaga?: {
-        tipoCota?: 'funcionario' | 'economica' | 'livre' | null;
+        tipoCota?: TipoVaga;
     };
     infoRenda?: {
         integrantesRenda?: DadosIntegranteRenda[];
@@ -25,3 +28,9 @@ export interface InteresseMatricula {
     };
     mensagemAdicional?: string;
 }
+
+export const TIPOS_VAGA = [
+  { chave: 'funcionario', nome: 'Cota de Funcionário' },
+  { chave: 'economica', nome: 'Cota Econômica (Renda)' },
+  { chave: 'livre', nome: 'Cota Livre (Ampla Concorrência)' }
+];

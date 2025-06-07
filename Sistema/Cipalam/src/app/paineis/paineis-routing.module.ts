@@ -21,6 +21,10 @@ const routes: Routes = [
         path: 'gerenciamento-funcionarios',
         loadChildren: () => import('../funcionalidades/gerenciamento-funcionarios/gerenciamento-funcionarios.module').then(m => m.GerenciamentoFuncionariosModule)
       },
+      {
+        path: 'interesse-matricula',
+        loadChildren: () => import('../funcionalidades/interesse-matricula/interesse-matricula.module').then(m => m.InteresseMatriculaModule)
+      }
       
       
     ]

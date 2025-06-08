@@ -38,6 +38,7 @@ export class PainelLayoutComponent implements OnInit {
         // { id: 'cad-familiar', label: 'Familiares', icon: 'people-circle-outline', route: '/paineis/gerenciamento-familiar' },
       ]
     },
+
     { id: 'advertencias', label: 'Advertências', icon: 'warning-outline', route: '/paineis/gerenciamento-advertencias', showInTopMenu: true, topMenuIcon: 'warning' },
     // { id: 'relatorios', label: 'Relatórios', icon: 'stats-chart-outline', route: '/paineis/relatorios', showInTopMenu: false },
     // { id: 'configuracoes', label: 'Configurações', icon: 'settings-outline', route: '/paineis/configuracoes', showInTopMenu: true, topMenuIcon: 'settings' },

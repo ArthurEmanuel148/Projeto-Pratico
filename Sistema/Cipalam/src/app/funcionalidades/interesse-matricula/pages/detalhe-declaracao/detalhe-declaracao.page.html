@@ -64,11 +64,28 @@
   </ion-card>
 
   <div class="ion-padding">
-    <ion-button expand="block" color="success" (click)="iniciarMatricula()">
+    <ion-button expand="block" color="success" (click)="iniciarMatricula()" *ngIf="!matriculaIniciada">
       <ion-icon name="document-attach-outline" slot="start"></ion-icon>
       Iniciar Matrícula
     </ion-button>
   </div>
+
+  <ion-card *ngIf="matriculaIniciada">
+    <ion-card-header>
+      <ion-card-title>Matrícula Iniciada!</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <p>O login do responsável foi gerado:</p>
+      <p><strong>Usuário:</strong> {{ loginGerado?.usuario }}</p>
+      <p><strong>Senha:</strong> {{ loginGerado?.senha }}</p>
+      <ion-note color="primary">
+        Oriente o responsável a acessar o sistema com esses dados para anexar ou assinar os documentos pendentes.
+      </ion-note>
+      <ion-button expand="block" color="primary" routerLink="/interesse-matricula/lista-declaracoes" class="ion-margin-top">
+        Voltar para a lista de declarações
+      </ion-button>
+    </ion-card-content>
+  </ion-card>
 </ion-content>
 
 <ng-template #carregandoTpl>

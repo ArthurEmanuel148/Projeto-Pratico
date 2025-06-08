@@ -23,6 +23,10 @@ const routes: Routes = [
     path: 'configuracao-documentos',
     loadChildren: () => import('./pages/configuracao-documentos/configuracao-documentos.module').then( m => m.ConfiguracaoDocumentosPageModule)
   },
+  {
+    path: 'inicio-matricula',
+    loadChildren: () => import('./pages/inicio-matricula/inicio-matricula.module').then( m => m.InicioMatriculaPageModule)
+  },
   
 
 

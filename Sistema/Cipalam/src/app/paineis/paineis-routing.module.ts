@@ -18,6 +18,10 @@ const routes: Routes = [
         loadChildren: () => import('../painel-funcionario/painel-funcionario.module').then(m => m.PainelFuncionarioPageModule)
       },
       {
+        path: 'dashboard-responsavel',
+        loadChildren: () => import('../dashboard-responsavel/dashboard-responsavel.module').then(m => m.DashboardResponsavelPageModule)
+      },
+      {
         path: 'gerenciamento-funcionarios',
         loadChildren: () => import('../funcionalidades/gerenciamento-funcionarios/gerenciamento-funcionarios.module').then(m => m.GerenciamentoFuncionariosModule)
       },

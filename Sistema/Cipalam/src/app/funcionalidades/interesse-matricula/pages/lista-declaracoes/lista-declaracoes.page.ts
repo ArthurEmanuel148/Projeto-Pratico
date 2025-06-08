@@ -31,6 +31,11 @@ vagasResumo = {
   constructor(private interesseService: InteresseMatriculaService, private router: Router) { }
 
   ngOnInit() {
+    this.carregarDeclaracoes();
+  }
+
+  carregarDeclaracoes() {
+    this.carregando = true;
     this.interesseService.getTodasDeclaracoes().subscribe({
       next: (dados) => {
         this.declaracoes = dados;
@@ -41,7 +46,6 @@ vagasResumo = {
   }
 
   abrirDetalhe(declaracao: InteresseMatricula) {
-    // Supondo que cada declaração tenha um id único
     this.router.navigate(['/paineis/interesse-matricula/detalhe-declaracao', declaracao.protocolo]);
   }
 }

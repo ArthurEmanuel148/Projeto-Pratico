@@ -4,50 +4,46 @@ import { Observable, of } from 'rxjs';
 import { delay, map } from 'rxjs/operators';
 import { InteresseMatricula } from '../models/interesse-matricula.interface';
 
-@Injectable() // Será fornecido no InteresseMatriculaModule
+@Injectable()
 export class InteresseMatriculaService {
   // private apiUrl = 'API_ENDPOINT/interesse-matricula';
+  private STORAGE_KEY = 'declaracoesInteresse';
 
   constructor(private http: HttpClient) { }
 
   enviarDeclaracao(dados: InteresseMatricula): Observable<any> {
-    console.log('MOCK SERVICE: Enviando declaração:', JSON.stringify(dados, null, 2));
+    // --- Quando for backend, use a linha abaixo:
     // return this.http.post<any>(this.apiUrl, dados);
-    return of({ success: true, message: 'Declaração de interesse enviada com sucesso! (Mock)', protocolo: `MOCK-${Date.now()}` }).pipe(
-      delay(1000)
+
+    // Salva no localStorage (mock)
+    const lista = this.getTodasDeclaracoesSync();
+    const protocolo = `INT-${Date.now()}`;
+    const declaracao = { ...dados, protocolo };
+    lista.push(declaracao);
+    localStorage.setItem(this.STORAGE_KEY, JSON.stringify(lista));
+    return of({ success: true, message: 'Declaração de interesse enviada com sucesso!', protocolo }).pipe(
+      delay(500)
     );
   }
 
   getTodasDeclaracoes(): Observable<InteresseMatricula[]> {
-    // Quando o backend estiver pronto, descomente a linha abaixo e ajuste o endpoint:
+    // --- Quando for backend, use a linha abaixo:
     // return this.http.get<InteresseMatricula[]>(this.apiUrl);
 
-    // MOCK: Retorna uma lista simulada de declarações
-    const mockDeclaracoes: InteresseMatricula[] = [
-      {
-        protocolo: '1',
-        dadosResponsavel: { nomeResponsavel: 'Maria Silva', cpfResponsavel: '123.456.789-00' },
-        dadosAluno: { nomeAluno: 'João Silva', dataNascimentoAluno: '2016-05-12' },
-        tipoVaga: { tipoCota: 'livre' },
-        // Adicione outros campos necessários conforme sua interface
-      },
-      {
-        protocolo: '2',
-        dadosResponsavel: { nomeResponsavel: 'Carlos Souza', cpfResponsavel: '987.654.321-00' },
-        dadosAluno: { nomeAluno: 'Ana Souza', dataNascimentoAluno: '2016-08-20' },
-        tipoVaga: { tipoCota: 'economica' },
-      }
-    ];
-    return of(mockDeclaracoes).pipe(delay(1000));
+    // Busca do localStorage (mock)
+    return of(this.getTodasDeclaracoesSync()).pipe(delay(300));
+  }
+
+  getTodasDeclaracoesSync(): InteresseMatricula[] {
+    const lista = localStorage.getItem(this.STORAGE_KEY);
+    return lista ? JSON.parse(lista) : [];
   }
 
   getDeclaracaoPorProtocolo(protocolo: string): Observable<InteresseMatricula | undefined> {
-    // Quando o backend estiver pronto, descomente a linha abaixo e ajuste o endpoint:
-    // return this.http.get<InteresseMatricula>(`${this.apiUrl}/${id}`);
+    // --- Quando for backend, use a linha abaixo:
+    // return this.http.get<InteresseMatricula>(`${this.apiUrl}/${protocolo}`);
 
-    // MOCK: Busca por protocolo no array mockado
-    return this.getTodasDeclaracoes().pipe(
-      map(declaracoes => declaracoes.find(d => d.protocolo === protocolo))
-    );
+    // Busca do localStorage (mock)
+    return of(this.getTodasDeclaracoesSync().find(d => d.protocolo === protocolo));
   }
 }

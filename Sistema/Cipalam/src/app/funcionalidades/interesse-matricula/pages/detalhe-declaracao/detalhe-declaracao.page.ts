@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { InteresseMatriculaService } from '../../services/interesse-matricula.service';
 import { InteresseMatricula } from '../../models/interesse-matricula.interface';
+import { MatriculaService } from '../../services/matricula.service';
 
 @Component({
   selector: 'app-detalhe-declaracao',
@@ -12,10 +13,13 @@ import { InteresseMatricula } from '../../models/interesse-matricula.interface';
 export class DetalheDeclaracaoPage implements OnInit {
   declaracao?: InteresseMatricula;
   carregando = true;
+  loginGerado?: { usuario: string, senha: string };
+  matriculaIniciada = false;
 
   constructor(
     private route: ActivatedRoute,
     private interesseService: InteresseMatriculaService,
+    private matriculaService: MatriculaService,
     private router: Router
   ) {}
 
@@ -32,8 +36,21 @@ export class DetalheDeclaracaoPage implements OnInit {
   }
 
   iniciarMatricula() {
-    if (this.declaracao?.protocolo) {
-      this.router.navigate(['/paineis/interesse-matricula/documentos-matricula', this.declaracao.protocolo]);
-    }
+    if (!this.declaracao) return;
+
+    // 1. Gerar login do responsável (simulado, pronto para backend)
+    const login = this.matriculaService.criarLoginResponsavel(this.declaracao.dadosResponsavel);
+
+    // 2. Buscar documentos da cota
+    const tipoCota = this.declaracao.tipoVaga?.tipoCota ?? 'livre';
+    const documentosPendentes = this.matriculaService.getDocumentosPorCota(tipoCota);
+
+    // 3. Salvar login e documentos no localStorage (futuro: backend)
+    localStorage.setItem('usuarioResponsavel', JSON.stringify(login));
+    localStorage.setItem('documentosPendentes', JSON.stringify(documentosPendentes));
+
+    // 4. Exibir dados na tela
+    this.loginGerado = login;
+    this.matriculaIniciada = true;
   }
 }

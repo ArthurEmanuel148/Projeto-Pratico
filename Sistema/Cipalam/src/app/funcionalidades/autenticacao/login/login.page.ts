@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 
 @Component({
@@ -8,15 +8,34 @@ import { Router } from '@angular/router';
   standalone: false,
 })
 export class LoginPage {
+  usuario = '';
+  senha = '';
+  erro = '';
 
-  constructor(private router: Router) { } // Injete o Router se necessário
+  constructor(private router: Router) { }
 
   onLogin() {
-    // Aqui você colocaria a lógica de login
-    // Por exemplo, pegar os valores dos inputs, chamar um serviço, etc.
-    console.log('Botão Entrar clicado');
-    // Exemplo de navegação após login (descomente e ajuste a rota)
-    //this.router.navigate(['/home']);
+    this.erro = '';
+
+    // 1. Verifica se é responsável (mock)
+    const responsavel = JSON.parse(localStorage.getItem('usuarioResponsavel') || '{}');
+    if (responsavel.usuario === this.usuario && responsavel.senha === this.senha) {
+      // Redireciona para o painel do responsável
+      this.router.navigate(['/paineis/dashboard-responsavel']);
+      return;
+    }
+
+    // 2. Verifica se é funcionário (mock)
+    // Exemplo: supondo que você tenha um array de funcionários no localStorage
+    const funcionarios = JSON.parse(localStorage.getItem('funcionarios') || '[]');
+    const funcionario = funcionarios.find((f: any) => f.usuario === this.usuario && f.senha === this.senha);
+    if (funcionario) {
+      this.router.navigate(['/painel-funcionario']);
+      return;
+    }
+
+    // 3. Se não encontrou, mostra erro
+    this.erro = 'Usuário ou senha inválidos.';
   }
 
   onForgotPassword() {

@@ -14,26 +14,20 @@
     </ion-header>
     <ion-content>
       <ion-list>
-        <ng-container *ngFor="let item of sideMenuItems">
-          <ion-item *ngIf="!item.children && (item.route || item.action)" button
-            (click)="item.route ? navigateTo(item.route) : (item.action ? item.action($event) : null)" detail="false"
-            [class.selected-item]="isActive(item.route)">
-            <ion-icon [name]="item.icon || 'ellipse-outline'" slot="start"></ion-icon>
-            <ion-label>{{ item.label }}</ion-label>
+        <ng-container *ngFor="let item of menu">
+          <ion-item *ngIf="!item.submenus" [routerLink]="item.rota">
+            <ion-icon [name]="item.icone" slot="start"></ion-icon>
+            <ion-label>{{ item.nomeAmigavel }}</ion-label>
           </ion-item>
-          <ion-item *ngIf="item.children && item.children.length > 0" button (click)="toggleSideSubmenu(item.id)"
-            lines="none" detail="false">
-            <ion-icon [name]="item.icon || 'ellipse-outline'" slot="start"></ion-icon>
-            <ion-label>{{ item.label }}</ion-label>
-            <ion-icon [name]="openSideSubmenus[item.id] ? 'chevron-down-outline' : 'chevron-forward-outline'"
-              slot="end"></ion-icon>
+          <ion-item *ngIf="item.submenus" (click)="item.open = !item.open">
+            <ion-icon [name]="item.icone" slot="start"></ion-icon>
+            <ion-label>{{ item.nomeAmigavel }}</ion-label>
+            <ion-icon [name]="item.open ? 'chevron-up-outline' : 'chevron-down-outline'" slot="end"></ion-icon>
           </ion-item>
-          <ion-list *ngIf="item.children && openSideSubmenus[item.id]" class="submenu-list">
-            <ion-item *ngFor="let subItem of item.children" button
-              (click)="subItem.route ? navigateTo(subItem.route) : (subItem.action ? subItem.action($event) : null)"
-              class="submenu-item" detail="false" [class.selected-item]="isActive(subItem.route)">
-              <ion-icon [name]="subItem.icon || 'ellipse-outline'" slot="start"></ion-icon>
-              <ion-label>{{ subItem.label }}</ion-label>
+          <ion-list *ngIf="item.submenus && item.open">
+            <ion-item *ngFor="let sub of item.submenus" [routerLink]="sub.rota">
+              <ion-icon [name]="sub.icone" slot="start"></ion-icon>
+              <ion-label>{{ sub.nomeAmigavel }}</ion-label>
             </ion-item>
           </ion-list>
         </ng-container>

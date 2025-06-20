@@ -28,11 +28,29 @@ export class InicioMatriculaPage {
     // 2. Buscar documentos da cota
     const documentosPendentes = this.matriculaService.getDocumentosPorCota(this.tipoCotaSelecionada);
 
-    // 3. Salvar dados em localStorage/sessionStorage ou serviço global (até ter backend)
-    localStorage.setItem('usuarioResponsavel', JSON.stringify(login));
+    // 3. Salvar responsável no vetor único de usuários (mock)
+    const usuarios = JSON.parse(localStorage.getItem('usuarios') || '[]');
+    // Verifica se já existe responsável com esse email (ou outro identificador único)
+    let responsavel = usuarios.find((u: any) => u.usuarioSistema === login.usuario && u.tipo === 'responsavel');
+    if (!responsavel) {
+      responsavel = {
+        nomeCompleto: this.dadosResponsavel.nome,
+        usuarioSistema: login.usuario,
+        senhaSistema: login.senha,
+        tipo: 'responsavel'
+        // Adicione outros campos necessários
+      };
+      usuarios.push(responsavel);
+      localStorage.setItem('usuarios', JSON.stringify(usuarios));
+    }
+
+    // 4. Salvar documentos pendentes (se necessário)
     localStorage.setItem('documentosPendentes', JSON.stringify(documentosPendentes));
 
-    // 4. Redirecionar para painel do responsável
+    // 5. Salvar usuário logado (opcional, se for logar automaticamente)
+    localStorage.setItem('usuarioLogado', JSON.stringify(responsavel));
+
+    // 6. Redirecionar para painel do responsável
     this.router.navigate(['/responsaveis/dashboard-responsavel']);
   }
 }

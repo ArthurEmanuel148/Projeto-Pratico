@@ -2,7 +2,8 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { PopoverController } from '@ionic/angular';
-import { MenuItem } from '../../../core/models/menu-item.interface'; // Ajuste o caminho se necessário
+import { FuncionalidadeSistema } from 'src/app/core/models/funcionalidade-sistema.interface';
+
 
 @Component({
   selector: 'app-top-menu-popover',
@@ -11,7 +12,7 @@ import { MenuItem } from '../../../core/models/menu-item.interface'; // Ajuste o
   standalone: false
 })
 export class TopMenuPopoverComponent implements OnInit {
-  @Input() subMenuItems: MenuItem[] = []; // Receberá os subitens do menu pai
+  @Input() subMenuItems: FuncionalidadeSistema[] = []; // Agora usa a interface centralizada
 
   constructor(
     private popoverController: PopoverController,
@@ -20,13 +21,11 @@ export class TopMenuPopoverComponent implements OnInit {
 
   ngOnInit() { }
 
-  handleSubMenuItemClick(subItem: MenuItem) {
-    if (subItem.route) {
-      this.router.navigateByUrl(subItem.route);
-    } else if (subItem.action) {
-      subItem.action();
+  handleSubMenuItemClick(subItem: FuncionalidadeSistema) {
+    if (subItem.rota) {
+      this.router.navigateByUrl(subItem.rota);
     }
-    this.popoverController.dismiss(); // Fecha o popover após o clique
+    this.popoverController.dismiss();
   }
 
   // Função para verificar se uma rota está ativa (para destacar no popover)

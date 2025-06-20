@@ -17,24 +17,23 @@ export class LoginPage {
   onLogin() {
     this.erro = '';
 
-    // 1. Verifica se é responsável (mock)
-    const responsavel = JSON.parse(localStorage.getItem('usuarioResponsavel') || '{}');
-    if (responsavel.usuario === this.usuario && responsavel.senha === this.senha) {
-      // Redireciona para o painel do responsável
-      this.router.navigate(['/paineis/dashboard-responsavel']);
+    // Busca no vetor único de usuários
+    const usuarios = JSON.parse(localStorage.getItem('usuarios') || '[]');
+    const usuarioLogado = usuarios.find((u: any) =>
+      u.usuarioSistema === this.usuario && u.senhaSistema === this.senha
+    );
+
+    if (usuarioLogado) {
+      localStorage.setItem('usuarioLogado', JSON.stringify(usuarioLogado));
+      if (usuarioLogado.tipo === 'responsavel') {
+        this.router.navigate(['/paineis/dashboard-responsavel']);
+      } else {
+        this.router.navigate(['/paineis/painel-funcionario']);
+      }
       return;
     }
 
-    // 2. Verifica se é funcionário (mock)
-    // Exemplo: supondo que você tenha um array de funcionários no localStorage
-    const funcionarios = JSON.parse(localStorage.getItem('funcionarios') || '[]');
-    const funcionario = funcionarios.find((f: any) => f.usuario === this.usuario && f.senha === this.senha);
-    if (funcionario) {
-      this.router.navigate(['/painel-funcionario']);
-      return;
-    }
-
-    // 3. Se não encontrou, mostra erro
+    // Se não encontrou, mostra erro
     this.erro = 'Usuário ou senha inválidos.';
   }
 

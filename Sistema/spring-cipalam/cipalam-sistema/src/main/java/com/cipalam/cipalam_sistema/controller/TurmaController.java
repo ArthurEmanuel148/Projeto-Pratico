@@ -87,24 +87,15 @@ public class TurmaController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Turma> delete(@PathVariable Long id) {
-        if (id == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Id do turma nao encontrado");
-        }
 
         Turma turmaAux = null;
 
-        boolean isFind = false;
         for (int i = 0; i < turmas.size(); i++) {
             turmaAux = turmas.get(i);
             if (turmaAux.getId().equals(id)) {
                 turmas.remove(i);
-                isFind = true;
                 break;
             }
-        }
-
-        if (!isFind) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "turma nao encontrado");
         }
 
         return ResponseEntity.ok().body(turmaAux);

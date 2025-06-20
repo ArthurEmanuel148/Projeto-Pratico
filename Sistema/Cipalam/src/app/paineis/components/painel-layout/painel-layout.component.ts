@@ -2,9 +2,10 @@ import { Component, Inject, OnInit, Renderer2, ViewChild } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import { Router, NavigationEnd } from '@angular/router';
 import { MenuController, Platform, IonMenu, IonToggle, PopoverController } from '@ionic/angular'; // Adicionado PopoverController
-import { MenuItem } from '../../../core/models/menu-item.interface';
 import { filter } from 'rxjs/operators';
 import { TopMenuPopoverComponent } from '../top-menu-popover/top-menu-popover.component'; // Importe o componente Popover
+
+import { FuncionalidadesSistemaService } from 'src/app/core/services/funcionalidades-sistema.service';
 
 @Component({
   selector: 'app-painel-layout',
@@ -20,32 +21,10 @@ export class PainelLayoutComponent implements OnInit {
   public isDarkMode: boolean = false;
   readonly THEME_KEY = 'themePreference';
 
-  private allPossibleMenuItems: MenuItem[] = [
-    { id: 'home', label: 'Início', icon: 'home-outline', route: '/paineis/painel-funcionario', showInTopMenu: true, topMenuIcon: 'home' },
-    {
-      id: 'funcionarios', label: 'Funcionários', icon: 'document-text-outline', showInTopMenu: true, topMenuIcon: 'archive', children: [
-        { id: 'cadastro-funcionario', label: 'Cadastrar funcionário', icon: 'people-outline', route: '/paineis/gerenciamento-funcionarios/cadastro-funcionario' },
-        // { id: 'cad-alunos', label: 'Alunos', icon: 'school-outline', route: '/paineis/gerenciamento-alunos' },
-        // { id: 'cad-familiar', label: 'Familiares', icon: 'people-circle-outline', route: '/paineis/gerenciamento-familiar' },
-      ]
-    },
-    {
-      id: 'matriculas', label: 'Matrículas', icon: 'document-text-outline', showInTopMenu: true, topMenuIcon: 'archive', children: [
-        { id: 'lista-declaracoes', label: 'Declarações de interesse', icon: 'people-outline', route: '/paineis/interesse-matricula/lista-declaracoes' },
-        { id: 'configuracao-documentos', label: 'Configuração de documentos', icon: 'document-outline', route: '/paineis/interesse-matricula/configuracao-documentos' },
-        
-        // { id: 'cad-alunos', label: 'Alunos', icon: 'school-outline', route: '/paineis/gerenciamento-alunos' },
-        // { id: 'cad-familiar', label: 'Familiares', icon: 'people-circle-outline', route: '/paineis/gerenciamento-familiar' },
-      ]
-    },
+  menu: any[] = [];
+  topMenuItems: any[] = [];
 
-    { id: 'advertencias', label: 'Advertências', icon: 'warning-outline', route: '/paineis/gerenciamento-advertencias', showInTopMenu: true, topMenuIcon: 'warning' },
-    // { id: 'relatorios', label: 'Relatórios', icon: 'stats-chart-outline', route: '/paineis/relatorios', showInTopMenu: false },
-    // { id: 'configuracoes', label: 'Configurações', icon: 'settings-outline', route: '/paineis/configuracoes', showInTopMenu: true, topMenuIcon: 'settings' },
-  ];
 
-  public sideMenuItems: MenuItem[] = [];
-  public topMenuItems: MenuItem[] = [];
   public currentRoute: string = '';
 
   constructor(
@@ -54,12 +33,13 @@ export class PainelLayoutComponent implements OnInit {
     private platform: Platform,
     private renderer: Renderer2,
     @Inject(DOCUMENT) private document: Document,
-    public popoverController: PopoverController // Injetar PopoverController
+    public popoverController: PopoverController, // Injetar PopoverController
+    private funcionalidadesService: FuncionalidadesSistemaService
   ) { }
 
   ngOnInit() {
     this.initializeAppTheme();
-    this.prepareMenuItems();
+    
 
     this.router.events.pipe(
       filter((event): event is NavigationEnd => event instanceof NavigationEnd)
@@ -67,14 +47,40 @@ export class PainelLayoutComponent implements OnInit {
       this.currentRoute = event.urlAfterRedirects;
       this.closeMenuIfOpen();
     });
+
+    this.funcionalidadesService.getTodasFuncionalidades().subscribe(funcs => {
+      // Menu lateral
+      const principais = funcs.filter(f => !f.pai);
+      this.menu = principais.map(principal => {
+        const submenus = funcs.filter(f => f.pai === principal.chave);
+        return {
+          ...principal,
+          submenus: submenus.length > 0 ? submenus : null
+        };
+      });
+
+      // Top menu (exemplo: só menus principais que não são painel)
+      this.topMenuItems = principais
+        .filter(f => f.chave !== 'painel')
+        .map(f => ({
+          ...f,
+          label: f.nomeAmigavel,
+          route: f.rota,
+          icon: f.icone,
+          children: funcs.filter(sub => sub.pai === f.chave)
+        }));
+    });
   }
 
-  prepareMenuItems() {
-    // Futuramente, filtre com base nas permissões
-    this.sideMenuItems = JSON.parse(JSON.stringify(this.allPossibleMenuItems));
-    this.topMenuItems = JSON.parse(JSON.stringify(
-      this.allPossibleMenuItems.filter(item => item.showInTopMenu)
-    ));
+  handleTopMenuClick(item: any, event: Event) {
+    event.stopPropagation();
+    if (item.children && item.children.length > 0) {
+      // Aqui você pode abrir um popover ou dropdown com os submenus
+      // Exemplo: abrir popover (adapte conforme seu projeto)
+      // this.openPopover(item.children, event);
+    } else if (item.route) {
+      this.router.navigateByUrl(item.route);
+    }
   }
 
   isActive(route?: string): boolean {
@@ -114,26 +120,7 @@ export class PainelLayoutComponent implements OnInit {
     this.document.body.setAttribute('color-theme', this.isDarkMode ? 'dark' : 'light');
   }
 
-  async handleTopMenuClick(item: MenuItem, event: Event) {
-    if (item.children && item.children.length > 0) {
-      event.stopPropagation(); // Previne que o popover feche imediatamente se o botão estiver dentro de outro elemento clicável
-      const popover = await this.popoverController.create({
-        component: TopMenuPopoverComponent,
-        componentProps: {
-          subMenuItems: item.children
-        },
-        event: event, // O evento que disparou o popover, para posicionamento
-        translucent: true,
-        showBackdrop: false, // Para um look mais de dropdown
-        cssClass: 'top-menu-popover-class' // Classe CSS para estilizar o popover
-      });
-      await popover.present();
-    } else if (item.route) {
-      this.navigateTo(item.route);
-    } else if (item.action) {
-      item.action(event);
-    }
-  }
+  
 
   navigateTo(url: string) {
     this.router.navigateByUrl(url);

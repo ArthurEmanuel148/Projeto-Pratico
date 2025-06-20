@@ -1,9 +1,9 @@
 <!-- src/app/paineis/components/top-menu-popover/top-menu-popover.component.html -->
 <ion-list lines="none">
   <ion-item *ngFor="let subItem of subMenuItems" button (click)="handleSubMenuItemClick(subItem)" detail="false"
-    [class.selected-item]="isActive(subItem.route)">
-    <ion-icon *ngIf="subItem.icon" [name]="subItem.icon" slot="start"></ion-icon>
-    <ion-label>{{ subItem.label }}</ion-label>
+    [class.selected-item]="isActive(subItem.rota)">
+    <ion-icon *ngIf="subItem.icone" [name]="subItem.icone" slot="start"></ion-icon>
+    <ion-label>{{ subItem.nomeAmigavel }}</ion-label>
   </ion-item>
   <ion-item *ngIf="!subMenuItems || subMenuItems.length === 0">
     <ion-label class="ion-text-center ion-padding-vertical">Nenhuma sub-opção</ion-label>

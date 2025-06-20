@@ -64,22 +64,12 @@ public class AlunoController {
 
     @PutMapping({ "", "/" })
     public ResponseEntity<Aluno> update(@RequestBody Aluno aluno) {
-        if (aluno.getId() == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "aluno not found");
-        }
-
-        boolean isFind = false;
         for (int i = 0; i < alunos.size(); i++) {
             Aluno petAux = alunos.get(i);
             if (petAux.getId().equals(aluno.getId())) {
                 alunos.remove(i);
                 alunos.add(i, aluno);
-                isFind = true;
             }
-        }
-
-        if (!isFind) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "aluno not found");
         }
 
         return ResponseEntity.ok().body(aluno);
@@ -87,9 +77,6 @@ public class AlunoController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Aluno> delete(@PathVariable Long id) {
-        if (id == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Id do aluno nao encontrado");
-        }
 
         Aluno alunoAux = null;
 

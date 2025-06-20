@@ -19,10 +19,10 @@
 </ion-header>
 
 <ion-content [fullscreen]="true" class="ion-padding home-content">
-  
+
 
   <div class="welcome-message">
-    <h3>Bem-vindo(a) de volta, Usuário!</h3>
+    <h3>Bem-vindo(a) de volta, {{ usuarioLogado?.nomeCompleto || 'Usuário' }}!</h3>
     <p>Aqui estão suas tarefas e atalhos rápidos.</p>
   </div>
 

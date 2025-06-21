@@ -4,9 +4,9 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 @Entity
-@Table(name = "tbAluno")
+@Table(name = "tbProfessor")
 @Data
-public class Aluno {
+public class Professor {
     @Id
     @Column(name = "tbPessoa_idPessoa")
     private Integer id;

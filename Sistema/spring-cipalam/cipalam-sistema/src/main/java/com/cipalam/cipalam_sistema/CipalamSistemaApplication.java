@@ -14,4 +14,5 @@ public class CipalamSistemaApplication {
 		SpringApplication.run(CipalamSistemaApplication.class, args);
 	}
 
+	
 }

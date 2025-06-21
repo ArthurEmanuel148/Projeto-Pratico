@@ -3,7 +3,7 @@ import { DOCUMENT } from '@angular/common';
 import { Router, NavigationEnd } from '@angular/router';
 import { MenuController, Platform, IonMenu, IonToggle, PopoverController } from '@ionic/angular'; // Adicionado PopoverController
 import { filter } from 'rxjs/operators';
-import { TopMenuPopoverComponent } from '../top-menu-popover/top-menu-popover.component'; // Importe o componente Popover
+import { TopMenuPopoverComponent } from './top-menu-popover/top-menu-popover.component'; // Importe o componente Popover
 
 import { FuncionalidadesSistemaService } from 'src/app/core/services/funcionalidades-sistema.service';
 
@@ -39,7 +39,7 @@ export class PainelLayoutComponent implements OnInit {
 
   ngOnInit() {
     this.initializeAppTheme();
-    
+
 
     this.router.events.pipe(
       filter((event): event is NavigationEnd => event instanceof NavigationEnd)
@@ -120,7 +120,7 @@ export class PainelLayoutComponent implements OnInit {
     this.document.body.setAttribute('color-theme', this.isDarkMode ? 'dark' : 'light');
   }
 
-  
+
 
   navigateTo(url: string) {
     this.router.navigateByUrl(url);

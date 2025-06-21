@@ -244,6 +244,7 @@ export class DeclaracaoInteressePage implements OnInit {
     this.cdRef.detectChanges();
   }
 
+  // ...existing code...
   async enviarDeclaracaoFinal() {
     if (this.declaracaoForm.invalid) {
       this.presentToast('Existem campos inválidos. Por favor, revise todas as etapas.', 'warning');
@@ -254,30 +255,20 @@ export class DeclaracaoInteressePage implements OnInit {
     const loading = await this.loadingCtrl.create({ message: 'Enviando sua declaração...' });
     await loading.present();
 
-    // getRawValue() retorna a estrutura aninhada do FormGroup
     const dadosParaEnvio: InteresseMatricula = this.declaracaoForm.getRawValue();
 
-    if (dadosParaEnvio.tipoVaga?.tipoCota !== 'economica') {
-      // A interface define infoRenda como opcional, então getRawValue pode ou não tê-lo.
-      // Se não for cota econômica, garantimos que ele não seja enviado.
-      if (dadosParaEnvio.hasOwnProperty('infoRenda')) {
-        delete dadosParaEnvio.infoRenda;
-      }
+    // Remove infoRenda se não for cota econômica
+    if (dadosParaEnvio.tipoVaga?.tipoCota !== 'economica' && dadosParaEnvio.hasOwnProperty('infoRenda')) {
+      delete dadosParaEnvio.infoRenda;
     }
-    // Ajuste para horariosVaga se a interface não espera o objeto aninhado, mas o form tem
-    // No nosso caso, a interface espera `horariosVaga: { horariosSelecionados: [] }`
-    // E o form tem `horariosVaga: fb.group({ horariosSelecionados: fb.array(...) })`
-    // Então `dadosParaEnvio.horariosVaga.horariosSelecionados` já deve ser o array.
-
-    console.log('DADOS FINAIS PARA ENVIO (estrutura do form):', JSON.stringify(dadosParaEnvio, null, 2));
 
     this.interesseService.enviarDeclaracao(dadosParaEnvio).subscribe({
       next: (response: any) => {
         loading.dismiss();
         this.isSubmitting = false;
-        this.dadosDeclaracaoCompleta = dadosParaEnvio;
+        this.dadosDeclaracaoCompleta = { ...dadosParaEnvio, protocolo: response.protocolo };
         this.etapaAtual = this.ETAPAS.CONCLUIDO;
-        this.atualizarProgresso(); // Deve ir para 100%
+        this.atualizarProgresso();
         this.presentToast(response.message || 'Declaração enviada com sucesso!', 'success');
       },
       error: (err: any) => {

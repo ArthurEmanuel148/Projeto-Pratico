@@ -1,0 +1,20 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>Painel do Responsável</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding">
+  <h2>Documentos Pendentes</h2>
+  <ion-list>
+    <ion-item *ngFor="let doc of documentosPendentes">
+      <ion-label>
+        <h2>{{ doc.nome }}</h2>
+        <p *ngIf="doc.descricao">{{ doc.descricao }}</p>
+      </ion-label>
+      <ion-button color="success" (click)="anexarDocumento(doc)">
+        Anexar/Assinar
+      </ion-button>
+    </ion-item>
+  </ion-list>
+</ion-content>

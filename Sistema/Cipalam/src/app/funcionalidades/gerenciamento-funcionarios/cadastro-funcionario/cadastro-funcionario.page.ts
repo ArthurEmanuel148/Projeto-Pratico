@@ -74,23 +74,33 @@ export class CadastroFuncionarioPage implements OnInit {
   async finalizarCadastroCompleto(dadosBasicos: any, permissoes: Record<string, boolean>) {
     const funcionarioParaSalvar: Funcionario = {
       ...dadosBasicos,
-      permissoes: permissoes
+      permissoes: permissoes,
+      tipo: 'funcionario' // importante para diferenciar no login
     };
 
     console.log('DADOS FINAIS DO FUNCIONÁRIO PARA SALVAR:', funcionarioParaSalvar);
-    // ** AQUI VOCÊ CHAMARIA O SERVIÇO PARA SALVAR NO BACKEND **
-    // Exemplo:
+
+    // --- INÍCIO: Chamada ao backend (deixe comentado até implementar) ---
     // try {
     //   await this.funcionarioService.createFuncionario(funcionarioParaSalvar).toPromise();
     //   this.presentToast('Funcionário cadastrado com sucesso!');
     //   this.cadastroForm.reset();
-    //   this.navCtrl.navigateBack('/paineis/gerenciamento-funcionarios'); // Ou para a lista de funcionários
+    //   this.navCtrl.navigateBack('/paineis/gerenciamento-funcionarios');
     // } catch (error) {
     //   console.error('Erro ao cadastrar funcionário:', error);
     //   this.presentToast('Erro ao cadastrar funcionário. Tente novamente.');
     // }
-    this.presentToast('Cadastro mock finalizado! Veja o console.');
-    this.cadastroForm.reset(); // Limpa o formulário
+    // --- FIM: Chamada ao backend ---
+
+    // --- INÍCIO: Salvamento mock no localStorage ---
+    const usuarios = JSON.parse(localStorage.getItem('usuarios') || '[]');
+    usuarios.push(funcionarioParaSalvar);
+    localStorage.setItem('usuarios', JSON.stringify(usuarios));
+    // --- FIM: Salvamento mock ---
+
+    this.presentToast('Cadastro finalizado! Funcionário salvo.');
+    this.cadastroForm.reset();
+    this.navCtrl.navigateBack('/paineis/gerenciamento-funcionarios');
   }
 
   async presentToast(message: string) {

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 
 @Component({
@@ -8,15 +8,33 @@ import { Router } from '@angular/router';
   standalone: false,
 })
 export class LoginPage {
+  usuario = '';
+  senha = '';
+  erro = '';
 
-  constructor(private router: Router) { } // Injete o Router se necessário
+  constructor(private router: Router) { }
 
   onLogin() {
-    // Aqui você colocaria a lógica de login
-    // Por exemplo, pegar os valores dos inputs, chamar um serviço, etc.
-    console.log('Botão Entrar clicado');
-    // Exemplo de navegação após login (descomente e ajuste a rota)
-    //this.router.navigate(['/home']);
+    this.erro = '';
+
+    // Busca no vetor único de usuários
+    const usuarios = JSON.parse(localStorage.getItem('usuarios') || '[]');
+    const usuarioLogado = usuarios.find((u: any) =>
+      u.usuarioSistema === this.usuario && u.senhaSistema === this.senha
+    );
+
+    if (usuarioLogado) {
+      localStorage.setItem('usuarioLogado', JSON.stringify(usuarioLogado));
+      if (usuarioLogado.tipo === 'responsavel') {
+        this.router.navigate(['/paineis/dashboard-responsavel']);
+      } else {
+        this.router.navigate(['/paineis/painel-funcionario']);
+      }
+      return;
+    }
+
+    // Se não encontrou, mostra erro
+    this.erro = 'Usuário ou senha inválidos.';
   }
 
   onForgotPassword() {

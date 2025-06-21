@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AlertController, ToastController } from '@ionic/angular';
+import { FuncionalidadesSistemaService } from '../core/services/funcionalidades-sistema.service';
 
 
 
@@ -21,56 +22,40 @@ interface Feature {
 })
 
 export class PainelFuncionarioPage implements OnInit {
-  mostUsedFeatures: Feature[] = [];
+  usuarioLogado: any = null;
+  mostUsedFeatures: any[] = [];
 
   constructor(
     private router: Router,
     private alertCtrl: AlertController,
-    private toastCtrl: ToastController
+    private toastCtrl: ToastController,
+    private funcionalidadesService: FuncionalidadesSistemaService
   ) { }
 
   ngOnInit() {
-    this.loadMostUsedFeatures();
-  }
-
-  loadMostUsedFeatures() {
-    // Simulação: Em um app real, isso viria de um serviço,
-    // preferências do usuário, ou análise de uso.
-    this.mostUsedFeatures = [
-      { id: 'new_order', name: 'Novo Pedido', icon: 'add-circle-outline', route: '/pedidos/novo', color: 'success' },
-      { id: 'clients', name: 'Clientes', icon: 'people-outline', route: '/cadastros/clientes' },
-      { id: 'inventory', name: 'Estoque', icon: 'cube-outline', route: '/estoque/consulta', color: 'secondary' },
-      { id: 'reports', name: 'Relatórios', icon: 'analytics-outline', action: () => this.showReportsInfo(), color: 'tertiary' },
-      // Adicione mais funcionalidades conforme necessário
-    ];
-  }
-
-  handleFeatureClick(feature: Feature) {
-    if (feature.route) {
-      this.router.navigate([feature.route]);
-    } else if (feature.action) {
-      feature.action();
-    } else {
-      console.warn('Funcionalidade sem rota ou ação definida:', feature.name);
-      this.presentToast(`Funcionalidade "${feature.name}" ainda não implementada.`);
+    // Carrega usuário logado
+    const usuario = localStorage.getItem('usuarioLogado');
+    if (usuario) {
+      this.usuarioLogado = JSON.parse(usuario);
     }
+
+    // Carrega funcionalidades permitidas
+    this.funcionalidadesService.getTodasFuncionalidades().subscribe(funcs => {
+      if (this.usuarioLogado && this.usuarioLogado.permissoes) {
+        this.mostUsedFeatures = funcs
+          .filter(f => this.usuarioLogado.permissoes[f.chave])
+          .map(f => ({
+            icon: f.icone,
+            name: f.nomeAmigavel,
+            route: f.rota // <-- padronize para 'route'
+          }));
+      }
+    });
   }
 
-  async showReportsInfo() {
-    const alert = await this.alertCtrl.create({
-      header: 'Relatórios',
-      message: 'A seção de relatórios permite visualizar dados consolidados do sistema.',
-      buttons: ['OK']
-    });
-    await alert.present();
-  }
-
-  async presentToast(message: string) {
-    const toast = await this.toastCtrl.create({
-      message: message,
-      duration: 2000,
-      position: 'bottom'
-    });
-    toast.present();
+  handleFeatureClick(feature: any) {
+    if (feature.route) {
+      this.router.navigateByUrl(feature.route);
+    }
   }
 }

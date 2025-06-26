@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AlertController, ToastController } from '@ionic/angular';
 import { FuncionalidadesSistemaService } from '../core/services/funcionalidades-sistema.service';
+import { FuncionalidadesUsosService } from '../core/services/funcionalidades-usos.service';
+import { AuthService } from '../core/services/auth.service';
 
 
 
@@ -24,36 +26,48 @@ interface Feature {
 export class PainelFuncionarioPage implements OnInit {
   usuarioLogado: any = null;
   mostUsedFeatures: any[] = [];
+  estatisticasUso: any = null;
 
   constructor(
     private router: Router,
     private alertCtrl: AlertController,
     private toastCtrl: ToastController,
-    private funcionalidadesService: FuncionalidadesSistemaService
+    private funcionalidadesService: FuncionalidadesSistemaService,
+    private funcionalidadesUsosService: FuncionalidadesUsosService,
+    private authService: AuthService
   ) { }
 
   ngOnInit() {
     // Carrega usuário logado
-    const usuario = localStorage.getItem('usuarioLogado');
-    if (usuario) {
-      this.usuarioLogado = JSON.parse(usuario);
-    }
+    this.usuarioLogado = this.authService.getFuncionarioLogado();
 
-    // Carrega funcionalidades permitidas
-    this.funcionalidadesService.getTodasFuncionalidades().subscribe(funcs => {
-      if (this.usuarioLogado && this.usuarioLogado.permissoes) {
-        this.mostUsedFeatures = funcs
-          .filter(f => this.usuarioLogado.permissoes[f.chave])
-          .map(f => ({
-            icon: f.icone,
-            name: f.nomeAmigavel,
-            route: f.rota // <-- padronize para 'route'
-          }));
-      }
+    // Carrega funcionalidades mais usadas para o dashboard
+    this.funcionalidadesUsosService.getDashboardItems().subscribe(dashboardItems => {
+      this.mostUsedFeatures = dashboardItems.map(item => ({
+        id: item.chave,
+        name: item.nomeAmigavel,
+        icon: item.icone,
+        route: item.rota,
+        color: 'primary',
+        usageCount: item.contador,
+        lastAccess: item.ultimoAcesso
+      }));
     });
+
+    // Carrega estatísticas de uso
+    this.estatisticasUso = this.funcionalidadesUsosService.getEstatisticas();
   }
 
   handleFeatureClick(feature: any) {
+    // Registrar o acesso
+    this.funcionalidadesUsosService.registrarAcesso({
+      chave: feature.id,
+      nomeAmigavel: feature.name,
+      icone: feature.icon,
+      rota: feature.route
+    });
+
+    // Navegar para a funcionalidade
     if (feature.route) {
       this.router.navigateByUrl(feature.route);
     }

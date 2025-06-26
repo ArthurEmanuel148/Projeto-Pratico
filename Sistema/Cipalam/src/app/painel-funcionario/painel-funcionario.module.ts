@@ -15,6 +15,8 @@ import { PainelFuncionarioPage } from './painel-funcionario.page';
     IonicModule,
     PainelFuncionarioPageRoutingModule
   ],
-  declarations: [PainelFuncionarioPage]
+  declarations: [
+    PainelFuncionarioPage
+  ]
 })
 export class PainelFuncionarioPageModule { }

@@ -181,3 +181,63 @@ ion-content.home-content {
         }
     }
 }
+
+// NOVOS ESTILOS PARA FUNCIONALIDADES MAIS USADAS
+
+// Badge de uso nos cards
+.usage-badge {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    background: var(--ion-color-light);
+    border-radius: 12px;
+    padding: 2px 6px;
+    font-size: 0.7em;
+    border: 1px solid var(--ion-color-medium);
+
+    ion-text {
+        font-weight: 600;
+    }
+}
+
+// Último acesso
+.last-access {
+    margin-top: 4px;
+    margin-bottom: 0;
+
+    small {
+        color: var(--ion-color-medium-text);
+        font-size: 0.7em;
+    }
+}
+
+// Cards de estatísticas
+.stat-card {
+    background: var(--ion-color-light);
+    border-radius: 8px;
+    padding: 16px;
+    text-align: center;
+    border: 1px solid var(--ion-color-border-color);
+    margin-bottom: 8px;
+
+    h2, h3 {
+        margin: 0 0 4px 0;
+        font-weight: 600;
+    }
+
+    p {
+        margin: 0;
+        font-size: 0.85em;
+        color: var(--ion-color-medium-text);
+    }
+}
+
+// Ajustar altura do card para acomodar badge
+.feature-card {
+    height: 140px; // Aumentado de 130px
+    position: relative;
+
+    ion-card-header {
+        position: relative;
+    }
+}

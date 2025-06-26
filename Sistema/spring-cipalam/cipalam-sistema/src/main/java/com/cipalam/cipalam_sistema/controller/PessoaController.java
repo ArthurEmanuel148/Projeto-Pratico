@@ -19,15 +19,30 @@ public class PessoaController {
     @Autowired
     private PessoaService pessoaService;
 
-    @PostMapping("/cadastro-completo")
-public ResponseEntity<?> cadastrarCompleto(@RequestBody PessoaCadastroDTO dto) {
-    try {
-        Pessoa pessoa = pessoaService.cadastrarPessoaComTipoELogin(dto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(pessoa);
-    } catch (Exception e) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+    @PostMapping("/cadastro-funcionario")
+    public ResponseEntity<?> cadastrarFuncionario(@RequestBody PessoaCadastroDTO dto) {
+        try {
+            // Garantir que o tipo seja funcionario ou professor
+            if (dto.getTipo() == null) {
+                dto.setTipo("funcionario");
+            }
+
+            Pessoa pessoa = pessoaService.cadastrarPessoaComTipoELogin(dto);
+            return ResponseEntity.status(HttpStatus.CREATED).body(pessoa);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
     }
-}
+
+    @PostMapping("/cadastro-completo")
+    public ResponseEntity<?> cadastrarCompleto(@RequestBody PessoaCadastroDTO dto) {
+        try {
+            Pessoa pessoa = pessoaService.cadastrarPessoaComTipoELogin(dto);
+            return ResponseEntity.status(HttpStatus.CREATED).body(pessoa);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
 
     @PostMapping
     public Pessoa cadastrar(@RequestBody Pessoa pessoa) {
@@ -63,7 +78,8 @@ public ResponseEntity<?> cadastrarCompleto(@RequestBody PessoaCadastroDTO dto) {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody Login loginRequest) {
-        Optional<Map<String, Object>> resultado = pessoaService.login(loginRequest.getUsuario(), loginRequest.getSenha());
+        Optional<Map<String, Object>> resultado = pessoaService.login(loginRequest.getUsuario(),
+                loginRequest.getSenha());
         if (resultado.isPresent()) {
             return ResponseEntity.ok(resultado.get());
         } else {

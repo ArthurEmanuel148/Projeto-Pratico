@@ -1,5 +1,6 @@
 // src/app/funcionalidades/painel-funcionario/pages/painel-funcionario/painel-funcionario.page.scss
 
+// LOGO CONTAINER NO HEADER
 .logo-container {
     display: flex;
     align-items: center;
@@ -9,16 +10,15 @@
         opacity: 0.8;
     }
 
-    // ESTILO PARA A IMAGEM DA LOGO
     .top-menu-logo-image {
-        height: 50px; // Defina a altura desejada para a logo
-        width: auto; // Mantém a proporção da imagem
+        height: 50px;
+        width: auto;
         margin-left: 10px;
-        margin-right: 10px; // Espaço entre a logo e o nome
-        // Adicione outros estilos se necessário (ex: vertical-align se não alinhar bem com o texto)
+        margin-right: 10px;
     }
 }
-// Header e Toolbar (Parece OK, mas confirme se as cores do texto no tema escuro são legíveis)
+
+// HEADER E TOOLBAR
 ion-header ion-toolbar {
     --background: var(--ion-color-danger);
     --color: var(--ion-color-danger-contrast);
@@ -32,49 +32,116 @@ ion-header ion-toolbar {
     }
 }
 
-// Fundo do conteúdo principal
+// GARANTIR QUE O HEADER FIXO NÃO SOBREPONHA O CONTEÚDO
+.global-top-header {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+// COMPENSAR A ALTURA DO HEADER FIXO NAS PÁGINAS
+.ion-page {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+.ion-page ion-router-outlet {
+    flex: 1;
+    overflow: hidden;
+}
+
+// TOP MENU BUTTONS
+.top-menu-buttons {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.top-menu-button {
+    --color: var(--ion-color-danger-contrast);
+    font-size: 0.9em;
+    min-height: 40px;
+
+    &.active-top-menu {
+        --background: rgba(255, 255, 255, 0.1);
+    }
+}
+
+.top-menu-label {
+    margin: 0 4px;
+}
+
+.top-menu-main-icon {
+    font-size: 1.1em;
+}
+
+.top-menu-chevron {
+    font-size: 0.9em;
+}
+
+.top-menu-spacer {
+    flex: 1;
+}
+
+// MENU LATERAL
+ion-menu {
+    ion-content {
+        --background: var(--ion-background-color);
+    }
+}
+
+.submenu-container {
+    background-color: var(--ion-color-light);
+    border-left: 3px solid var(--ion-color-danger);
+}
+
+.submenu-item {
+    --padding-start: 32px;
+    font-size: 0.9em;
+}
+
+.logout-item {
+    margin-top: 20px;
+    border-top: 1px solid var(--ion-color-light);
+    padding-top: 16px;
+}
+
+// FUNDO DO CONTEÚDO PRINCIPAL
 ion-content.home-content {
-    // Esta é uma mudança CRUCIAL. Use a variável global do Ionic para o fundo.
     --background: var(--ion-background-color);
     --padding-top: 16px;
 }
 
-// Mensagem de boas-vindas
+// MENSAGEM DE BOAS-VINDAS
 .welcome-message {
     margin-bottom: 24px;
     padding: 10px 16px;
 
     h3 {
         font-weight: 600;
-        // Use a variável global do Ionic para a cor principal do texto
         color: var(--ion-text-color);
     }
 
     p {
         font-size: 0.9em;
-        // Use uma variável de texto secundário (defina-a em variables.scss se não existir)
-        // ou a --ion-text-color com uma opacidade se preferir.
-        // Vamos assumir que --ion-color-medium-text é definida para ambos os temas.
         color: var(--ion-color-medium-text);
     }
 }
 
-// Contêineres de seção
+// CONTÊINERES DE SEÇÃO
 .section-container {
     margin-bottom: 20px;
-    // Para cards que devem parecer flutuar, use a cor de fundo do item ou uma cor de card específica do tema
-    background-color: var(--ion-item-background); // Ou defina --ion-card-background em variables.scss
+    background-color: var(--ion-item-background);
     padding: 16px;
     border-radius: 10px;
-    // A sombra pode precisar de ajuste para o tema escuro (sombras escuras em fundos escuros são menos visíveis)
-    // Você pode definir variáveis de sombra por tema ou usar uma cor de sombra com alfa.
-    box-shadow: 0 4px 12px rgba(var(--ion-text-color-rgb, 0, 0, 0), 0.07); // Sombra baseada na cor do texto do tema atual
+    box-shadow: 0 4px 12px rgba(var(--ion-text-color-rgb, 0, 0, 0), 0.07);
 
     ion-text h4 {
         font-size: 1.1em;
         font-weight: 600;
         margin-bottom: 16px;
-        color: var(--ion-color-danger); // Mantém o vermelho para destaque, ok
+        color: var(--ion-color-danger);
         display: flex;
         align-items: center;
     }
@@ -82,24 +149,17 @@ ion-content.home-content {
     .section-icon {
         margin-right: 8px;
         font-size: 1.3em;
-        color: var(--ion-color-danger); // Vermelho, ok
+        color: var(--ion-color-danger);
     }
 }
 
-// Cards de funcionalidades ("Mais Utilizados")
+// CARDS DE FUNCIONALIDADES
 .feature-card {
-    // Use uma variável para o fundo do card. --ion-color-light-background pode funcionar
-    // ou defina uma --custom-card-background em variables.scss.
-    --background: var(--ion-color-light-background); // Exemplo: cinza muito claro no tema claro, cinza escuro no tema escuro
-    // Ou para um card que se destaca mais (mais claro no tema escuro, ou branco no claro):
-    // --background: var(--ion-item-background);
-
-
+    --background: var(--ion-color-light-background);
     box-shadow: none;
-    // Use uma variável para a cor da borda
     border: 1px solid var(--ion-color-border-color);
     border-radius: 8px;
-    height: 130px; // Mantenha se for intencional
+    height: 130px;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -109,7 +169,6 @@ ion-content.home-content {
 
     &:hover {
         transform: translateY(-3px);
-        // A sombra no hover também deve usar variáveis se possível
         box-shadow: 0 3px 8px rgba(var(--ion-color-danger-rgb), 0.2);
     }
 
@@ -119,8 +178,7 @@ ion-content.home-content {
 
     .feature-icon {
         font-size: 2.8em;
-        // A cor é definida dinamicamente, mas o padrão também pode ser uma variável
-        color: var(--ion-color-danger); // Ícones vermelhos, ok
+        color: var(--ion-color-danger);
     }
 
     ion-card-content {
@@ -130,52 +188,51 @@ ion-content.home-content {
             font-size: 0.85em;
             font-weight: 500;
             white-space: normal;
-            // Cor do texto dentro do card
             color: var(--ion-text-color);
         }
     }
 }
 
-// Lista de Avisos
+// LISTA DE AVISOS
 .section-container ion-list {
     ion-item {
-        --background: transparent; // Ok, para herdar da .section-container
+        --background: transparent;
         --padding-start: 0;
         --inner-padding-end: 0;
 
         ion-icon[slot="start"] {
-            color: var(--ion-color-warning); // Mantém warning, ok
+            color: var(--ion-color-warning);
             margin-right: 12px;
         }
 
         ion-label h2 {
             font-size: 1em;
             font-weight: 500;
-            color: var(--ion-text-color); // Cor principal do texto
+            color: var(--ion-text-color);
         }
 
         ion-label p {
             font-size: 0.85em;
-            color: var(--ion-color-medium-text); // Cor secundária do texto
+            color: var(--ion-color-medium-text);
         }
     }
 }
 
-// Estilo para quando não há itens (empty-state)
+// ESTADO VAZIO
 .empty-state {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     padding: 20px;
-    color: var(--ion-color-medium-text); // Usa cor de texto secundário
+    color: var(--ion-color-medium-text);
     text-align: center;
     min-height: 100px;
 
     ion-icon {
         font-size: 2.5em;
         margin-bottom: 8px;
-        color: var(--ion-color-light-text); // Cor de texto menos importante
+        color: var(--ion-color-light-text);
     }
 
     p {
@@ -183,7 +240,7 @@ ion-content.home-content {
     }
 }
 
-// Ajustes para telas menores nos cards (mantenha se necessário)
+// RESPONSIVIDADE PARA TELAS MENORES
 @media (max-width: 380px) {
     .feature-card {
         height: 110px;
@@ -195,4 +252,5 @@ ion-content.home-content {
         ion-card-content ion-label {
             font-size: 0.8em;
         }
-    } }
+    }
+}

@@ -16,6 +16,23 @@ ion-content.login-content {
     z-index: 1;
   }
 
+  .login-logo {
+    width: 300px; // Ajuste conforme necessário
+    height: 150px; // Ajuste conforme necessário
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    //border-radius: 50%; // Para um logo circular
+    background-color: var(--ion-color-primary-custom); // Cor personalizada mais clara
+    //box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); // Sombra sutil para destaque
+
+    img {
+      width: 80%; // Ajuste para o tamanho do logo dentro do círculo
+      height: auto; // Mantém a proporção do logo
+    }
+  }
+
   .logo-title {
     font-size: 2.2em; // Ajuste conforme necessário
     font-weight: bold;

@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router'; // Removido ActivatedRoute se não usar para edição aqui
+import { Router } from '@angular/router';
 import { ToastController, NavController, ModalController } from '@ionic/angular';
 import { Funcionario } from '../models/funcionario.interface';
-import { PermissoesFuncionarioComponent } from '../components/permissoes-funcionario/permissoes-funcionario.component'; // Ajuste o caminho
-// import { FuncionarioService } from '../../services/funcionario.service';
+import { PermissoesFuncionarioComponent } from '../components/permissoes-funcionario/permissoes-funcionario.component';
+import { FuncionarioService } from '../../../core/services/funcionario.service';
 
 @Component({
   selector: 'app-cadastro-funcionario',
@@ -22,8 +22,8 @@ export class CadastroFuncionarioPage implements OnInit {
     private router: Router,
     private toastCtrl: ToastController,
     private navCtrl: NavController,
-    private modalController: ModalController
-    // private funcionarioService: FuncionarioService
+    private modalController: ModalController,
+    private funcionarioService: FuncionarioService
   ) {
     this.cadastroForm = this.fb.group({
       nomeCompleto: ['', Validators.required],
@@ -72,35 +72,23 @@ export class CadastroFuncionarioPage implements OnInit {
   }
 
   async finalizarCadastroCompleto(dadosBasicos: any, permissoes: Record<string, boolean>) {
-    const funcionarioParaSalvar: Funcionario = {
+    const funcionarioParaSalvar = {
       ...dadosBasicos,
       permissoes: permissoes,
-      tipo: 'funcionario' // importante para diferenciar no login
+      tipo: 'funcionario'
     };
 
     console.log('DADOS FINAIS DO FUNCIONÁRIO PARA SALVAR:', funcionarioParaSalvar);
 
-    // --- INÍCIO: Chamada ao backend (deixe comentado até implementar) ---
-    // try {
-    //   await this.funcionarioService.createFuncionario(funcionarioParaSalvar).toPromise();
-    //   this.presentToast('Funcionário cadastrado com sucesso!');
-    //   this.cadastroForm.reset();
-    //   this.navCtrl.navigateBack('/paineis/gerenciamento-funcionarios');
-    // } catch (error) {
-    //   console.error('Erro ao cadastrar funcionário:', error);
-    //   this.presentToast('Erro ao cadastrar funcionário. Tente novamente.');
-    // }
-    // --- FIM: Chamada ao backend ---
-
-    // --- INÍCIO: Salvamento mock no localStorage ---
-    const usuarios = JSON.parse(localStorage.getItem('usuarios') || '[]');
-    usuarios.push(funcionarioParaSalvar);
-    localStorage.setItem('usuarios', JSON.stringify(usuarios));
-    // --- FIM: Salvamento mock ---
-
-    this.presentToast('Cadastro finalizado! Funcionário salvo.');
-    this.cadastroForm.reset();
-    this.navCtrl.navigateBack('/paineis/gerenciamento-funcionarios');
+    try {
+      await this.funcionarioService.cadastrarFuncionario(funcionarioParaSalvar).toPromise();
+      this.presentToast('Funcionário cadastrado com sucesso!');
+      this.cadastroForm.reset();
+      this.navCtrl.navigateBack('/paineis/gerenciamento-funcionarios');
+    } catch (error) {
+      console.error('Erro ao cadastrar funcionário:', error);
+      this.presentToast('Erro ao cadastrar funcionário. Tente novamente.');
+    }
   }
 
   async presentToast(message: string) {

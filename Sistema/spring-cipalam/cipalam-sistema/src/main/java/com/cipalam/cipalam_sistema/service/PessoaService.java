@@ -23,7 +23,11 @@ public class PessoaService {
     @Autowired
     private AlunoRepository alunoRepo;
     @Autowired
-    private ProfessorRepository professorRepo; // Crie esse repository e a entidade Professor
+    private ProfessorRepository professorRepo;
+    @Autowired
+    private PermissaoService permissaoService;
+    @Autowired
+    private FuncionalidadeService funcionalidadeService;
 
     public Pessoa cadastrarPessoa(Pessoa pessoa) {
         return pessoaRepo.save(pessoa);
@@ -71,9 +75,15 @@ public class PessoaService {
                 alunoRepo.save(aluno);
                 break;
             case "professor":
+            case "funcionario":
                 Professor professor = new Professor();
                 professor.setPessoa(pessoa);
                 professorRepo.save(professor);
+
+                // Se houver permissões especificadas no DTO, criar as permissões
+                if (dto.getPermissoes() != null && !dto.getPermissoes().isEmpty()) {
+                    permissaoService.criarPermissoesPorChaves(pessoa.getIdPessoa(), dto.getPermissoes());
+                }
                 break;
             // outros tipos...
         }
@@ -85,16 +95,24 @@ public class PessoaService {
         Optional<Login> loginOpt = loginRepo.findByUsuarioAndSenha(usuario, senha);
         if (loginOpt.isPresent()) {
             Pessoa pessoa = loginOpt.get().getPessoa();
-            String tipo = "desconhecido";
-            if (alunoRepo.existsByPessoa_IdPessoa(pessoa.getIdPessoa())) {
-                tipo = "aluno";
+            String tipo = "funcionario"; // tipo padrão
+
+            // Verificar se é administrador
+            if (pessoa.getNmPessoa().equals("Administrador do Sistema") || usuario.equals("admin")) {
+                tipo = "admin";
             } else if (professorRepo.existsByPessoa_IdPessoa(pessoa.getIdPessoa())) {
                 tipo = "professor";
+            } else if (alunoRepo.existsByPessoa_IdPessoa(pessoa.getIdPessoa())) {
+                tipo = "aluno";
             }
-            // Aqui você pode adicionar outros tipos, como responsável, professor, etc.
+
+            // Buscar permissões do usuário
+            Map<String, Boolean> permissoes = permissaoService.buscarPermissoesPorPessoa(pessoa.getIdPessoa());
+
             Map<String, Object> info = new HashMap<>();
             info.put("pessoa", pessoa);
             info.put("tipo", tipo);
+            info.put("permissoes", permissoes);
             return Optional.of(info);
         }
         return Optional.empty();

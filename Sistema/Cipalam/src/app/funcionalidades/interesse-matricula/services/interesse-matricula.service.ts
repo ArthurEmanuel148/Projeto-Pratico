@@ -3,19 +3,23 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { delay, map } from 'rxjs/operators';
 import { InteresseMatricula } from '../models/interesse-matricula.interface';
+import { ApiConfigService } from '../../../core/services/api-config.service';
 
 @Injectable()
 export class InteresseMatriculaService {
-  // private apiUrl = 'API_ENDPOINT/interesse-matricula';
+  private apiUrl = 'http://localhost:8080/api/interesse-matricula'; // URL da API que será criada
   private STORAGE_KEY = 'declaracoesInteresse';
 
-  constructor(private http: HttpClient) { }
+  constructor(
+    private http: HttpClient,
+    private apiConfig: ApiConfigService
+  ) { }
 
   enviarDeclaracao(dados: InteresseMatricula): Observable<any> {
-    // --- Quando for backend, use a linha abaixo:
-    // return this.http.post<any>(this.apiUrl, dados);
+    // TODO: Implementar endpoint na API Spring Boot
+    // return this.http.post(this.apiUrl, dados);
 
-    // Salva no localStorage (mock)
+    // Por enquanto, continua salvando localmente
     const lista = this.getTodasDeclaracoesSync();
     const protocolo = `INT-${Date.now()}`;
     const declaracao = { ...dados, protocolo };
@@ -27,10 +31,10 @@ export class InteresseMatriculaService {
   }
 
   getTodasDeclaracoes(): Observable<InteresseMatricula[]> {
-    // --- Quando for backend, use a linha abaixo:
+    // TODO: Implementar endpoint na API Spring Boot
     // return this.http.get<InteresseMatricula[]>(this.apiUrl);
 
-    // Busca do localStorage (mock)
+    // Por enquanto, busca do localStorage
     return of(this.getTodasDeclaracoesSync()).pipe(delay(300));
   }
 
@@ -40,10 +44,10 @@ export class InteresseMatriculaService {
   }
 
   getDeclaracaoPorProtocolo(protocolo: string): Observable<InteresseMatricula | undefined> {
-    // --- Quando for backend, use a linha abaixo:
+    // TODO: Implementar endpoint na API Spring Boot
     // return this.http.get<InteresseMatricula>(`${this.apiUrl}/${protocolo}`);
 
-    // Busca do localStorage (mock)
+    // Por enquanto, busca do localStorage
     return of(this.getTodasDeclaracoesSync().find(d => d.protocolo === protocolo));
   }
 }

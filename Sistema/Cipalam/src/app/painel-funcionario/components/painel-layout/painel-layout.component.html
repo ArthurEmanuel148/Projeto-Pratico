@@ -1,10 +1,9 @@
 <ion-app>
-  <!-- 1. MENU LATERAL (SLIDE) - MUDANÇA AQUI -->
+  <!-- 1. MENU LATERAL (SLIDE) - DO LADO DIREITO -->
   <ion-menu side="end" contentId="global-main-content" #appMenu>
     <ion-header>
       <ion-toolbar color="danger">
         <ion-title>Menu Principal</ion-title>
-        <!-- OPCIONAL: Botão de fechar dentro do menu se ele abre da direita -->
         <ion-buttons slot="end">
           <ion-button (click)="appMenu.close()">
             <ion-icon slot="icon-only" name="close-outline"></ion-icon>
@@ -14,28 +13,43 @@
     </ion-header>
     <ion-content>
       <ion-list>
-        <ng-container *ngFor="let item of menu">
-          <ion-item *ngIf="!item.submenus" [routerLink]="item.rota">
+        <!-- Items do menu lateral baseados nas permissões -->
+        <ng-container *ngFor="let item of menu; trackBy: trackByMenuChave">
+          <!-- Item sem submenus -->
+          <ion-item *ngIf="!item.submenus" [routerLink]="item.rota" button detail="false"
+                    (click)="onFuncionalidadeClick(item)">
             <ion-icon [name]="item.icone" slot="start"></ion-icon>
             <ion-label>{{ item.nomeAmigavel }}</ion-label>
           </ion-item>
-          <ion-item *ngIf="item.submenus" (click)="item.open = !item.open">
-            <ion-icon [name]="item.icone" slot="start"></ion-icon>
-            <ion-label>{{ item.nomeAmigavel }}</ion-label>
-            <ion-icon [name]="item.open ? 'chevron-up-outline' : 'chevron-down-outline'" slot="end"></ion-icon>
-          </ion-item>
-          <ion-list *ngIf="item.submenus && item.open">
-            <ion-item *ngFor="let sub of item.submenus" [routerLink]="sub.rota">
-              <ion-icon [name]="sub.icone" slot="start"></ion-icon>
-              <ion-label>{{ sub.nomeAmigavel }}</ion-label>
+
+          <!-- Item com submenus -->
+          <div *ngIf="item.submenus && item.submenus.length > 0">
+            <ion-item button (click)="item.open = !item.open" detail="false">
+              <ion-icon [name]="item.icone" slot="start"></ion-icon>
+              <ion-label>{{ item.nomeAmigavel }}</ion-label>
+              <ion-icon [name]="item.open ? 'chevron-up-outline' : 'chevron-down-outline'" slot="end"></ion-icon>
             </ion-item>
-          </ion-list>
+
+            <!-- Submenus -->
+            <div *ngIf="item.open" class="submenu-container">
+              <ion-item *ngFor="let sub of item.submenus; trackBy: trackByMenuChave"
+                        [routerLink]="sub.rota" button detail="false" class="submenu-item"
+                        (click)="onFuncionalidadeClick(sub)">
+                <ion-icon [name]="sub.icone" slot="start"></ion-icon>
+                <ion-label>{{ sub.nomeAmigavel }}</ion-label>
+              </ion-item>
+            </div>
+          </div>
         </ng-container>
+
+        <!-- Configurações do tema -->
         <ion-item lines="none" style="margin-top: 20px;">
           <ion-icon name="contrast-outline" slot="start"></ion-icon>
           <ion-label>Modo Escuro</ion-label>
           <ion-toggle #themeToggle slot="end" (ionChange)="toggleTheme($event)" [checked]="isDarkMode"></ion-toggle>
         </ion-item>
+
+        <!-- Botão de logout -->
         <ion-item button (click)="logout()" detail="false" class="logout-item">
           <ion-icon name="log-out-outline" slot="start" color="danger"></ion-icon>
           <ion-label color="danger">Sair</ion-label>
@@ -49,23 +63,22 @@
     <!-- MENU SUPERIOR FIXO -->
     <ion-header class="global-top-header" translucent="true">
       <ion-toolbar color="danger">
-  
-        <!-- Logo do Instituto e Nome (continua no slot="start" ou no início) -->
+
+        <!-- Logo do Instituto Cipalam no canto esquerdo -->
         <div class="logo-container" slot="start" (click)="navigateTo('/paineis/painel-funcionario')"
           style="cursor: pointer;">
           <img src="assets/images/logo-instituto.png" alt="Logo Instituto Cipalam" class="top-menu-logo-image" />
-          <!-- <span class="top-menu-institute-name">Instituto Cipalam</span> AINDA NÃO CRIADO NO TS -->
         </div>
-  
-        <div class="top-menu-spacer"></div> <!-- Espaçador para empurrar para a direita -->
-  
-        <!-- Itens Dinâmicos do Menu Superior (ficam antes do botão do menu lateral) -->
+
+        <div class="top-menu-spacer"></div>
+
+        <!-- Menu Superior Dinâmico (baseado em permissões) -->
         <ion-buttons slot="end" class="top-menu-buttons">
           <ng-container *ngFor="let topItem of topMenuItems">
             <ion-button fill="clear" class="top-menu-button" (click)="handleTopMenuClick(topItem, $event)"
               [class.active-top-menu]="isActive(topItem.route)">
-              <ion-icon *ngIf="topItem.topMenuIcon || topItem.icon"
-                [name]="topItem.topMenuIcon || topItem.icon || 'ellipse-outline'" slot="start"
+              <ion-icon *ngIf="topItem.icon"
+                [name]="topItem.icon" slot="start"
                 class="top-menu-main-icon"></ion-icon>
               <span class="top-menu-label">{{ topItem.label }}</span>
               <ion-icon *ngIf="topItem.children && topItem.children.length > 0" name="chevron-down-outline" slot="end"
@@ -73,16 +86,16 @@
             </ion-button>
           </ng-container>
         </ion-buttons>
-  
-        <!-- Botão do Menu Lateral AGORA NO LADO DIREITO -->
+
+        <!-- Botão do Menu Lateral no canto direito -->
         <ion-buttons slot="end">
           <ion-menu-button autoHide="false"></ion-menu-button>
         </ion-buttons>
-  
+
       </ion-toolbar>
     </ion-header>
-  
+
     <!-- CONTEÚDO DA PÁGINA ATUAL -->
     <ion-router-outlet></ion-router-outlet>
   </div>
-  </ion-app>
+</ion-app>

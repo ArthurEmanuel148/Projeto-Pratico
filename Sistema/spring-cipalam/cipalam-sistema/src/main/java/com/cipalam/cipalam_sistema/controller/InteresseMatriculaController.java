@@ -72,6 +72,25 @@ public class InteresseMatriculaController {
         }
     }
 
+    @PostMapping("/{id}/iniciar-matricula")
+    public ResponseEntity<?> iniciarMatricula(@PathVariable Integer id, @RequestParam Integer funcionarioId) {
+        try {
+            Map<String, Object> resultado = interesseMatriculaService.iniciarMatricula(id, funcionarioId);
+            return ResponseEntity.ok(resultado);
+        } catch (Exception e) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("message", "Erro ao iniciar matrícula: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+        }
+    }
+
+    @GetMapping("/responsavel/{responsavelId}")
+    public ResponseEntity<List<InteresseMatricula>> buscarPorResponsavel(@PathVariable Integer responsavelId) {
+        List<InteresseMatricula> interesses = interesseMatriculaService.buscarPorResponsavel(responsavelId);
+        return ResponseEntity.ok(interesses);
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletar(@PathVariable Integer id) {
         try {

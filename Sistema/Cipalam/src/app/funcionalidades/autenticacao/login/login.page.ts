@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { LoadingController, AlertController } from '@ionic/angular';
 import { AuthService } from '../../../core/services/auth.service';
+import { NavigationService } from '../../../core/services/navigation.service';
 
 @Component({
   selector: 'app-login',
@@ -18,6 +19,7 @@ export class LoginPage {
   constructor(
     private router: Router,
     private authService: AuthService,
+    private navigationService: NavigationService,
     private loadingController: LoadingController,
     private alertController: AlertController
   ) { }
@@ -44,12 +46,8 @@ export class LoginPage {
       this.isLoading = false;
 
       if (response) {
-        // Redirecionar baseado no tipo de usuário
-        if (response.tipo === 'responsavel') {
-          this.router.navigate(['/paineis/dashboard-responsavel']);
-        } else {
-          this.router.navigate(['/paineis/painel-funcionario']);
-        }
+        // Usar o NavigationService para redirecionar baseado no tipo de usuário
+        this.navigationService.redirectToHomePage();
       }
     } catch (error: any) {
       await loading.dismiss();

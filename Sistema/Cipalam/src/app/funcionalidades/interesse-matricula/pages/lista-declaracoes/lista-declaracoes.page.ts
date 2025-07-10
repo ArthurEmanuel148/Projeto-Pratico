@@ -13,20 +13,12 @@ import { Router } from '@angular/router';
 export class ListaDeclaracoesPage implements OnInit {
   declaracoes: InteresseMatricula[] = [];
   carregando = true;
-
-  // Quando o backend estiver pronto, descomente e ajuste o endpoint:
-// this.http.get<VagasResumo>('/api/vagas-resumo').subscribe(resumo => this.vagasResumo = resumo);
-
-// MOCK:
-vagasResumo = {
-  total: 40,
-  porCota: [
-    { tipo: 'Ampla Concorrência', disponiveis: 20 },
-    { tipo: 'Cota Social', disponiveis: 15 },
-    { tipo: 'Cota PCD', disponiveis: 5 }
-  ]
-};
-
+  
+  // TODO: Implementar endpoint para buscar resumo de vagas do banco
+  vagasResumo = {
+    total: 0,
+    porCota: [] as Array<{tipo: string, disponiveis: number}>
+  };
 
   constructor(private interesseService: InteresseMatriculaService, private router: Router) { }
 
@@ -47,5 +39,24 @@ vagasResumo = {
 
   abrirDetalhe(declaracao: InteresseMatricula) {
     this.router.navigate(['/paineis/interesse-matricula/detalhe-declaracao', declaracao.protocolo]);
+  }
+
+  formatarTipoCota(tipoCota: string | null | undefined): string {
+    if (!tipoCota) return 'Não especificado';
+
+    const mapeamento: Record<string, string> = {
+      'funcionario': 'Funcionário',
+      'economica': 'Cota Econômica',
+      'livre': 'Ampla Concorrência',
+      'social': 'Cota Social',
+      'pcd': 'Pessoa com Deficiência'
+    };
+
+    return mapeamento[tipoCota] || tipoCota;
+  }
+
+  iniciarMatricula(declaracao: InteresseMatricula) {
+    // Implementar navegação para página de matrícula
+    this.router.navigate(['/paineis/interesse-matricula/iniciar-matricula', declaracao.id]);
   }
 }

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
-import { catchError } from 'rxjs/operators';
+import { catchError, map } from 'rxjs/operators';
 import { FuncionalidadeSistema } from '../models/funcionalidade-sistema.interface';
 import { ApiConfigService } from './api-config.service';
 
@@ -219,5 +219,41 @@ export class FuncionalidadesSistemaService {
           return of(this.mockFuncionalidades);
         })
       );
+  }
+
+  getFuncionalidadesPorUsuario(pessoaId: number): Observable<FuncionalidadeSistema[]> {
+    // Buscar funcionalidades específicas do usuário
+    return this.http.get<FuncionalidadeSistema[]>(`${this.apiConfig.getBaseUrl()}/auth/funcionalidades/${pessoaId}`)
+      .pipe(
+        catchError((error) => {
+          console.warn('Erro ao buscar funcionalidades do usuário, usando mock filtrado:', error);
+          return of(this.mockFuncionalidades);
+        })
+      );
+  }
+
+  getMenuHierarquico(pessoaId: number): Observable<any[]> {
+    // Buscar menu hierárquico do usuário
+    return this.http.get<{success: boolean, menu: any[]}>(`${this.apiConfig.getBaseUrl()}/auth/menu/${pessoaId}`)
+      .pipe(
+        map(response => response.menu),
+        catchError((error) => {
+          console.warn('Erro ao buscar menu hierárquico, usando fallback:', error);
+          return this.getFuncionalidadesPorUsuario(pessoaId).pipe(
+            map((funcionalidades: FuncionalidadeSistema[]) => this.buildMenuHierarquico(funcionalidades))
+          );
+        })
+      );
+  }
+
+  private buildMenuHierarquico(funcionalidades: FuncionalidadeSistema[]): any[] {
+    const principais = funcionalidades.filter(f => !f.pai);
+    return principais.map(principal => {
+      const filhos = funcionalidades.filter(f => f.pai === principal.chave);
+      return {
+        ...principal,
+        filhos: filhos.length > 0 ? filhos : null
+      };
+    });
   }
 }

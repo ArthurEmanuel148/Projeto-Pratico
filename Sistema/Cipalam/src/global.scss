@@ -32,9 +32,90 @@
  * https://ionicframework.com/docs/theming/dark-mode
  */
 
-/* @import "@ionic/angular/css/palettes/dark.always.css"; */
-/* @import "@ionic/angular/css/palettes/dark.class.css"; */
-@import "@ionic/angular/css/palettes/dark.system.css";
+/* Importa as paletas de cores para ambos os temas */
+@import "@ionic/angular/css/palettes/dark.class.css";
+
+/* Tema personalizado para garantir compatibilidade */
+.dark-theme {
+    /* Cores de background */
+    --ion-background-color: #121212;
+    --ion-background-color-rgb: 18, 18, 18;
+    --ion-text-color: #ffffff;
+    --ion-text-color-rgb: 255, 255, 255;
+
+    /* Cores de item/card */
+    --ion-item-background: #1e1e1e;
+    --ion-item-background-rgb: 30, 30, 30;
+
+    /* Cores de border/separador */
+    --ion-color-step-50: #1e1e1e;
+    --ion-color-step-100: #2a2a2a;
+    --ion-color-step-150: #363636;
+    --ion-color-step-200: #404040;
+    --ion-color-step-250: #4a4a4a;
+    --ion-color-step-300: #545454;
+    --ion-color-step-350: #5e5e5e;
+    --ion-color-step-400: #686868;
+    --ion-color-step-450: #727272;
+    --ion-color-step-500: #7c7c7c;
+    --ion-color-step-550: #868686;
+    --ion-color-step-600: #909090;
+    --ion-color-step-650: #9a9a9a;
+    --ion-color-step-700: #a4a4a4;
+    --ion-color-step-750: #aeaeae;
+    --ion-color-step-800: #b8b8b8;
+    --ion-color-step-850: #c2c2c2;
+    --ion-color-step-900: #cccccc;
+    --ion-color-step-950: #d6d6d6;
+
+    /* Cores específicas do sistema */
+    --ion-toolbar-background: var(--ion-color-danger);
+    --ion-tab-bar-background: #1f1f1f;
+}
+
+.light-theme {
+    /* Cores de background para tema claro */
+    --ion-background-color: #ffffff;
+    --ion-background-color-rgb: 255, 255, 255;
+    --ion-text-color: #000000;
+    --ion-text-color-rgb: 0, 0, 0;
+
+    /* Cores de item/card */
+    --ion-item-background: #ffffff;
+    --ion-item-background-rgb: 255, 255, 255;
+
+    /* Garantir que os steps estejam corretos para tema claro */
+    --ion-color-step-50: #f9f9f9;
+    --ion-color-step-100: #f5f5f5;
+    --ion-color-step-150: #eeeeee;
+    --ion-color-step-200: #e1e1e1;
+    --ion-color-step-250: #d6d6d6;
+    --ion-color-step-300: #cccccc;
+    --ion-color-step-350: #c2c2c2;
+    --ion-color-step-400: #b8b8b8;
+    --ion-color-step-450: #aeaeae;
+    --ion-color-step-500: #a4a4a4;
+    --ion-color-step-550: #9a9a9a;
+    --ion-color-step-600: #909090;
+    --ion-color-step-650: #868686;
+    --ion-color-step-700: #7c7c7c;
+    --ion-color-step-750: #727272;
+    --ion-color-step-800: #686868;
+    --ion-color-step-850: #5e5e5e;
+    --ion-color-step-900: #545454;
+    --ion-color-step-950: #4a4a4a;
+}
+
+// CORREÇÃO PARA EVITAR SOBREPOSIÇÃO DO HEADER
+ion-header {
+    position: relative !important; // Força o header a ficar no fluxo normal
+    z-index: auto !important; // Remove z-index alto que pode causar sobreposição
+}
+
+ion-content {
+    position: relative !important; // Garante que o conteúdo fique no fluxo normal
+    top: auto !important; // Remove qualquer posicionamento absoluto
+}
 
 // src/global.scss
 .permissoes-modal-css {
@@ -64,28 +145,230 @@
     --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); // Sombra padrão
 }
 
-// CORREÇÃO DE LAYOUT: Evitar que o header fixo corte o conteúdo
-// Garante que o conteúdo das páginas não fique por baixo do header
-.ion-page {
+// ================================
+// CLASSES GLOBAIS PARA BOTÕES
+// ================================
+
+// Botões de confirmação/ação principal - VERDE
+.btn-success,
+.primary-action-button,
+.confirm-button,
+.login-button {
+    --color: var(--ion-color-success-contrast) !important;
+    --background: var(--ion-color-success) !important;
+    --background-activated: var(--ion-color-success-shade) !important;
+    --background-hover: var(--ion-color-success-tint) !important;
+}
+
+// Botões de cancelamento/exclusão - VERMELHO
+.btn-danger,
+.cancel-button,
+.delete-button,
+.restart-button {
+    --color: var(--ion-color-danger-contrast) !important;
+    --background: var(--ion-color-danger) !important;
+    --background-activated: var(--ion-color-danger-shade) !important;
+    --background-hover: var(--ion-color-danger-tint) !important;
+}
+
+// Botões secundários/neutros - CINZA
+.btn-secondary,
+.secondary-button {
+    --color: var(--ion-color-medium-contrast) !important;
+    --background: var(--ion-color-medium) !important;
+    --background-activated: var(--ion-color-medium-shade) !important;
+    --background-hover: var(--ion-color-medium-tint) !important;
+}
+
+// Botões de informação - AZUL
+.btn-info,
+.info-button {
+    --color: var(--ion-color-primary-contrast) !important;
+    --background: var(--ion-color-primary) !important;
+    --background-activated: var(--ion-color-primary-shade) !important;
+    --background-hover: var(--ion-color-primary-tint) !important;
+}
+
+// Botões de aviso - LARANJA
+.btn-warning,
+.warning-button {
+    --color: var(--ion-color-warning-contrast) !important;
+    --background: var(--ion-color-warning) !important;
+    --background-activated: var(--ion-color-warning-shade) !important;
+    --background-hover: var(--ion-color-warning-tint) !important;
+}
+
+// ================================
+// APLICAÇÃO FORÇADA DO TEMA EM TODOS OS COMPONENTES
+// ================================
+
+// Força aplicação do tema em toda a aplicação
+html, body {
+    background-color: var(--ion-background-color) !important;
+    color: var(--ion-text-color) !important;
+}
+
+// Força aplicação do tema em todos os componentes Ionic
+ion-app,
+ion-content,
+ion-page,
+ion-modal,
+ion-popover,
+ion-toast,
+ion-action-sheet,
+ion-alert,
+ion-loading {
+    --background: var(--ion-background-color) !important;
+    --color: var(--ion-text-color) !important;
+    background-color: var(--ion-background-color) !important;
+    color: var(--ion-text-color) !important;
+}
+
+// Força aplicação em elementos de lista
+ion-list,
+ion-list-header,
+ion-item,
+ion-item-divider,
+ion-label {
+    --background: var(--ion-item-background) !important;
+    --color: var(--ion-text-color) !important;
+    background-color: var(--ion-item-background) !important;
+    color: var(--ion-text-color) !important;
+}
+
+// Força aplicação em cards
+ion-card {
+    --background: var(--ion-item-background) !important;
+    --color: var(--ion-text-color) !important;
+    background-color: var(--ion-item-background) !important;
+    color: var(--ion-text-color) !important;
+}
+
+ion-card-header,
+ion-card-content,
+ion-card-title,
+ion-card-subtitle {
+    --color: var(--ion-text-color) !important;
+    color: var(--ion-text-color) !important;
+}
+
+// Força aplicação em headers e toolbars
+ion-header,
+ion-toolbar,
+ion-title {
+    --background: var(--ion-item-background) !important;
+    --color: var(--ion-text-color) !important;
+    background-color: var(--ion-item-background) !important;
+    color: var(--ion-text-color) !important;
+}
+
+// Força aplicação em inputs e forms
+ion-input,
+ion-textarea,
+ion-select,
+ion-searchbar,
+ion-range,
+ion-datetime {
+    --background: var(--ion-item-background) !important;
+    --color: var(--ion-text-color) !important;
+    --placeholder-color: var(--ion-color-medium) !important;
+}
+
+// Força aplicação em textos gerais
+h1, h2, h3, h4, h5, h6,
+p, span, div, a {
+    color: var(--ion-text-color) !important;
+}
+
+// Força aplicação específica em popovers
+ion-popover {
+    .popover-content {
+        --background: var(--ion-background-color) !important;
+        --color: var(--ion-text-color) !important;
+        background-color: var(--ion-background-color) !important;
+        color: var(--ion-text-color) !important;
+    }
+
+    ion-list,
+    ion-item {
+        --background: var(--ion-item-background) !important;
+        --color: var(--ion-text-color) !important;
+        background-color: var(--ion-item-background) !important;
+        color: var(--ion-text-color) !important;
+    }
+}
+
+// Força aplicação específica em modais
+ion-modal {
+    .modal-wrapper {
+        --background: var(--ion-background-color) !important;
+        --color: var(--ion-text-color) !important;
+        background-color: var(--ion-background-color) !important;
+        color: var(--ion-text-color) !important;
+    }
+}
+
+// Força aplicação em elementos com overlay
+.overlay-background {
+    background-color: var(--ion-background-color) !important;
+    color: var(--ion-text-color) !important;
+}
+
+// ================================
+// CLASSES DE CONTAINERS/LAYOUT
+// ================================
+
+// Container para ações/botões
+.action-buttons {
+    display: flex;
+    gap: 12px;
+    padding: 16px;
+    justify-content: space-between;
+
+    &.center {
+        justify-content: center;
+    }
+
+    &.end {
+        justify-content: flex-end;
+    }
+}
+
+.footer-buttons {
+    display: flex;
+    gap: 12px;
+    padding: 12px 16px;
+    justify-content: space-between;
+    width: 100%;
+}
+
+// Estados de loading, empty e error
+.loading-container,
+.empty-state,
+.error-state {
     display: flex;
     flex-direction: column;
-    min-height: 100vh;
+    align-items: center;
+    justify-content: center;
+    padding: 32px 16px;
+    text-align: center;
+
+    ion-icon {
+        margin-bottom: 16px;
+    }
+
+    h2, h3 {
+        margin-bottom: 8px;
+        color: var(--ion-text-color);
+    }
+
+    p {
+        color: var(--ion-color-medium);
+        margin-bottom: 16px;
+    }
 }
 
-// Garante que o header fixo tenha o z-index adequado
-.global-top-header {
-    position: sticky;
-    top: 0;
-    z-index: 1000;
-}
-
-// Garante que o conteúdo das páginas tenha espaço adequado
-ion-content {
-    --padding-top: 0px;
-}
-
-// Para páginas dentro do layout, garantir que o conteúdo não seja cortado
-.ion-page ion-content {
-    flex: 1;
-    overflow-y: auto;
+.loading-text {
+    margin-top: 12px;
+    color: var(--ion-color-medium);
 }

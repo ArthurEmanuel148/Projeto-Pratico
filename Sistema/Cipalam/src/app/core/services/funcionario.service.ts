@@ -32,7 +32,7 @@ export class FuncionarioService {
     const dto: FuncionarioCadastroDTO = {
       pessoa: {
         nmPessoa: funcionarioData.nomeCompleto,
-        cpfPessoa: funcionarioData.cpf || this.generateTempCpf(),
+        cpfPessoa: funcionarioData.cpf,
         dtNascPessoa: funcionarioData.dataNascimento,
         caminhoImagem: undefined,
         caminhoIdentidadePessoa: undefined
@@ -52,8 +52,4 @@ export class FuncionarioService {
     return Object.keys(permissoes).filter(chave => permissoes[chave] === true);
   }
 
-  private generateTempCpf(): string {
-    // Gera um CPF temporário para teste (não validar)
-    return `${Math.floor(Math.random() * 900 + 100)}.${Math.floor(Math.random() * 900 + 100)}.${Math.floor(Math.random() * 900 + 100)}-${Math.floor(Math.random() * 90 + 10)}`;
-  }
 }

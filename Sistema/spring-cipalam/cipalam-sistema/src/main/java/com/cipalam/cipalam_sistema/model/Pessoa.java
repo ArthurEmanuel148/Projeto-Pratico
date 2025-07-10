@@ -3,6 +3,14 @@ package com.cipalam.cipalam_sistema.model;
 import jakarta.persistence.*;
 import lombok.Data;
 
+// A classe Pessoa é como um "formulário digital" que:
+
+// ✅Recebe dados pessoais do frontend
+// ✅Armazena no banco de dados MySQL
+// ✅Busca pessoas quando precisa
+// ✅Serve de base para funcionários, responsáveis e alunos
+// ✅Organiza todas as informações pessoais em um lugar só
+
 @Entity
 @Data
 @Table(name = "tbPessoa")
@@ -23,6 +31,12 @@ public class Pessoa {
 
     @Column(name = "dtNascPessoa")
     private java.sql.Date dtNascPessoa;
+
+    @Column(name = "email")
+    private String email;
+
+    @Column(name = "telefone")
+    private String telefone;
 
     @Column(name = "caminhoIdentidadePessoa")
     private String caminhoIdentidadePessoa;

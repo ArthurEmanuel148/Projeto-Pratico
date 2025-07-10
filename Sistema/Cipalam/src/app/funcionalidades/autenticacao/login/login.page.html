@@ -1,33 +1,72 @@
 <ion-content [fullscreen]="true" class="login-content">
-
   <div class="login-form-container ion-padding">
-
-    <div class="logo-title">
-    <ion-img src="assets/images/logo-instituto.png" alt="Logo Instituto Cipalam" class="login-logo"></ion-img>
+    <!-- Logo do Instituto -->
+    <div class="logo-container">
+      <ion-img
+        src="assets/images/logo-instituto.png"
+        alt="Logo Instituto Cipalam"
+        class="login-logo">
+      </ion-img>
     </div>
 
-    <div class="logo-title">
-      INSTITUTO CIPALAM
+    <!-- Título -->
+    <div class="title-container">
+      <h1>INSTITUTO CIPALAM</h1>
+      <p>Sistema de Gestão Educacional</p>
     </div>
 
-    <ion-list lines="none">
-      <ion-item class="input-item">
-        <ion-label position="floating">Usuário</ion-label>
-        <ion-input type="text" [(ngModel)]="usuario"></ion-input>
-      </ion-item>
-      <ion-item class="input-item">
-        <ion-label position="floating">Senha</ion-label>
-        <ion-input type="password" [(ngModel)]="senha"></ion-input>
-      </ion-item>
+    <!-- Formulário de Login -->
+    <form class="login-form" (ngSubmit)="onLogin()" #loginForm="ngForm">
+      <ion-list lines="none" class="form-list">
+        <ion-item class="input-item">
+          <ion-label position="floating">Usuário</ion-label>
+          <ion-input
+            type="text"
+            [(ngModel)]="usuario"
+            name="usuario"
+            required
+            autocomplete="username">
+          </ion-input>
+        </ion-item>
+
+        <ion-item class="input-item">
+          <ion-label position="floating">Senha</ion-label>
+          <ion-input
+            type="password"
+            [(ngModel)]="senha"
+            name="senha"
+            required
+            autocomplete="current-password">
+          </ion-input>
+        </ion-item>
       </ion-list>
 
-    <div class="forgot-password-link">
-      <a (click)="onForgotPassword()">Esqueci minha senha</a>
-    </div>
+      <!-- Link de recuperação de senha -->
+      <div class="forgot-password-link">
+        <ion-button
+          fill="clear"
+          size="small"
+          color="medium"
+          (click)="onForgotPassword()">
+          Esqueci minha senha
+        </ion-button>
+      </div>
 
-    <ion-text color="danger" *ngIf="erro">{{ erro }}</ion-text>
-    <ion-button expand="block" color="danger" class="login-button" (click)="onLogin()">
-      Entrar
-    </ion-button>
+      <!-- Mensagem de erro -->
+      <ion-text color="danger" *ngIf="erro" class="error-message">
+        <p>{{ erro }}</p>
+      </ion-text>
+
+      <!-- Botão de login - Verde para confirmação -->
+      <ion-button
+        expand="block"
+        color="success"
+        class="login-button"
+        type="submit"
+        [disabled]="!loginForm.valid">
+        <ion-icon name="log-in-outline" slot="start"></ion-icon>
+        Entrar
+      </ion-button>
+    </form>
   </div>
 </ion-content>

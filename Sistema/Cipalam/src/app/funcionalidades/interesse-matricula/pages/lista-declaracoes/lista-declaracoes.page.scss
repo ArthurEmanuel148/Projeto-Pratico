@@ -1,0 +1,179 @@
+// src/app/funcionalidades/interesse-matricula/pages/lista-declaracoes/lista-declaracoes.page.scss
+
+// Força aplicação do tema na página
+:host {
+    --background: var(--ion-background-color) !important;
+    --color: var(--ion-text-color) !important;
+    background-color: var(--ion-background-color) !important;
+    color: var(--ion-text-color) !important;
+}
+
+// Header
+ion-header {
+    --background: var(--ion-item-background) !important;
+    background-color: var(--ion-item-background) !important;
+
+    ion-toolbar {
+        --background: var(--ion-item-background) !important;
+        --color: var(--ion-text-color) !important;
+        background-color: var(--ion-item-background) !important;
+
+        ion-title {
+            color: var(--ion-text-color) !important;
+        }
+    }
+}
+
+// Conteúdo
+ion-content {
+    --background: var(--ion-background-color) !important;
+    --color: var(--ion-text-color) !important;
+    background-color: var(--ion-background-color) !important;
+}
+
+// Cards
+ion-card {
+    --background: var(--ion-item-background) !important;
+    --color: var(--ion-text-color) !important;
+    background-color: var(--ion-item-background) !important;
+    margin: 16px 16px 8px 16px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+ion-card-header {
+    --color: var(--ion-text-color) !important;
+    padding-bottom: 8px;
+
+    ion-card-title {
+        color: var(--ion-text-color) !important;
+        font-size: 1.2em;
+        font-weight: 600;
+    }
+}
+
+ion-card-content {
+    --color: var(--ion-text-color) !important;
+    padding-top: 0;
+
+    p {
+        color: var(--ion-text-color) !important;
+        margin-bottom: 4px;
+
+        strong {
+            color: var(--ion-color-primary) !important;
+        }
+    }
+}
+
+// Lista
+ion-list {
+    --background: var(--ion-background-color) !important;
+    background-color: var(--ion-background-color) !important;
+    padding: 0 16px;
+}
+
+ion-item {
+    --background: var(--ion-item-background) !important;
+    --color: var(--ion-text-color) !important;
+    background-color: var(--ion-item-background) !important;
+    border-radius: 8px;
+    margin-bottom: 8px;
+
+    ion-label {
+        color: var(--ion-text-color) !important;
+
+        h2 {
+            color: var(--ion-text-color) !important;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        p {
+            color: var(--ion-color-medium) !important;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 4px 0;
+
+            strong {
+                color: var(--ion-color-secondary) !important;
+            }
+        }
+    }
+
+    ion-icon {
+        color: var(--ion-color-medium) !important;
+    }
+}
+
+// Estilo específico para declarações
+.declaracao-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+
+  .status-chip {
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .action-buttons {
+    display: flex;
+    gap: 4px;
+  }
+}
+
+// Spinner de loading
+ion-spinner {
+    --color: var(--ion-color-primary) !important;
+}
+
+// Estado vazio
+.empty-state {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--ion-color-medium);
+
+  ion-icon {
+    margin-bottom: 16px;
+  }
+
+  h3 {
+    margin-bottom: 8px;
+    color: var(--ion-text-color);
+  }
+
+  p {
+    margin: 0;
+    opacity: 0.7;
+  }
+}
+
+// Loading styles para configuração
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+  color: var(--ion-color-medium);
+
+  ion-spinner {
+    margin-bottom: 16px;
+  }
+}
+
+// Responsividade
+@media (max-width: 768px) {
+    ion-card {
+        margin: 8px;
+    }
+
+    ion-list {
+        padding: 0 8px;
+    }
+}

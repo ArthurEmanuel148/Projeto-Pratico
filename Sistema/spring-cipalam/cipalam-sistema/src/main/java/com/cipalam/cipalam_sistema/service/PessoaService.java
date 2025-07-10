@@ -1,6 +1,7 @@
 package com.cipalam.cipalam_sistema.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,10 +25,18 @@ public class PessoaService {
     private AlunoRepository alunoRepo;
     @Autowired
     private ProfessorRepository professorRepo;
+
+    @Autowired
+    private ResponsavelRepository responsavelRepo;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     @Autowired
     private PermissaoService permissaoService;
-    @Autowired
-    private FuncionalidadeService funcionalidadeService;
+    // @Autowired
+    // private FuncionalidadeService funcionalidadeService; // Comentado pois não
+    // está sendo usado
 
     public Pessoa cadastrarPessoa(Pessoa pessoa) {
         return pessoaRepo.save(pessoa);
@@ -63,7 +72,8 @@ public class PessoaService {
         if (dto.getUsuario() != null && dto.getSenha() != null) {
             Login login = new Login();
             login.setUsuario(dto.getUsuario());
-            login.setSenha(dto.getSenha());
+            // Criptografar a senha antes de salvar
+            login.setSenha(passwordEncoder.encode(dto.getSenha()));
             login.setPessoa(pessoa);
             loginRepo.save(login);
         }
@@ -74,7 +84,6 @@ public class PessoaService {
                 aluno.setPessoa(pessoa);
                 alunoRepo.save(aluno);
                 break;
-            case "professor":
             case "funcionario":
                 Professor professor = new Professor();
                 professor.setPessoa(pessoa);
@@ -84,6 +93,11 @@ public class PessoaService {
                 if (dto.getPermissoes() != null && !dto.getPermissoes().isEmpty()) {
                     permissaoService.criarPermissoesPorChaves(pessoa.getIdPessoa(), dto.getPermissoes());
                 }
+                break;
+            case "responsavel":
+                // Responsavel responsavel = new Responsavel();
+                // responsavel.setPessoa(pessoa);
+                // responsavelRepo.save(responsavel);
                 break;
             // outros tipos...
         }
@@ -116,5 +130,11 @@ public class PessoaService {
             return Optional.of(info);
         }
         return Optional.empty();
+    }
+
+    public boolean isFuncionario(Integer pessoaId) {
+        // Verificar se a pessoa é professor (funcionário) ou se tem permissões
+        // especiais
+        return professorRepo.existsByPessoa_IdPessoa(pessoaId);
     }
 }

@@ -1,5 +1,12 @@
 // src/app/funcionalidades/painel-funcionario/pages/painel-funcionario/painel-funcionario.page.scss
 
+// CONTAINER PRINCIPAL
+#main-content {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
 // LOGO CONTAINER NO HEADER
 .logo-container {
     display: flex;
@@ -18,37 +25,36 @@
     }
 }
 
-// HEADER E TOOLBAR
-ion-header ion-toolbar {
-    --background: var(--ion-color-danger);
-    --color: var(--ion-color-danger-contrast);
+// HEADER E TOOLBAR - FLUXO NORMAL SEM SOBREPOSIÇÃO
+ion-header {
+    position: relative; // Garantir que não seja fixo
+    z-index: 10; // Z-index maior para ficar acima do conteúdo
+    display: block; // Forçar ocupar espaço no fluxo
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15); // Sombra consistente
 
-    ion-title {
-        color: var(--ion-color-danger-contrast);
-    }
-
-    ion-menu-button {
+    ion-toolbar {
+        --background: var(--ion-color-danger);
         --color: var(--ion-color-danger-contrast);
+        --min-height: 56px; // Altura mínima padrão
+
+        ion-title {
+            color: var(--ion-color-danger-contrast);
+        }
+
+        ion-menu-button {
+            --color: var(--ion-color-danger-contrast);
+        }
     }
 }
 
-// GARANTIR QUE O HEADER FIXO NÃO SOBREPONHA O CONTEÚDO
-.global-top-header {
-    position: sticky;
-    top: 0;
-    z-index: 1000;
-}
-
-// COMPENSAR A ALTURA DO HEADER FIXO NAS PÁGINAS
-.ion-page {
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
-}
-
-.ion-page ion-router-outlet {
+// ROUTER OUTLET - OCUPAR ESPAÇO RESTANTE SEM SOBREPOSIÇÃO
+ion-router-outlet {
     flex: 1;
-    overflow: hidden;
+    display: block;
+    position: relative; // Garantir que fique no fluxo normal
+    background: var(--ion-background-color); // Garantir cor de fundo consistente
+    margin: 0; // Remover margens
+    padding: 0; // Remover paddings
 }
 
 // TOP MENU BUTTONS
@@ -240,17 +246,133 @@ ion-content.home-content {
     }
 }
 
-// RESPONSIVIDADE PARA TELAS MENORES
-@media (max-width: 380px) {
-    .feature-card {
-        height: 110px;
+// =============================================================================
+// HEADER SIMPLES E LIMPO
+// =============================================================================
 
-        .feature-icon {
-            font-size: 2.2em;
-        }
-
-        ion-card-content ion-label {
-            font-size: 0.8em;
-        }
-    }
+.professional-header {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  
+  .main-toolbar {
+    --background: var(--ion-color-primary);
+    --color: white;
+    min-height: 56px;
+    padding: 0 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
 }
+
+// Logo simples
+.brand-section {
+  display: flex;
+  align-items: center;
+  min-width: 120px;
+
+  .brand-container {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    transition: opacity 0.2s;
+
+    &:hover {
+      opacity: 0.8;
+    }
+
+    .brand-logo {
+      height: 36px;
+      width: auto;
+      filter: brightness(0) invert(1);
+    }
+  }
+}
+
+// SEÇÃO DE NAVEGAÇÃO - ÚLTIMA FUNCIONALIDADE
+.nav-section {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  
+  .nav-buttons {
+    display: flex;
+    
+    .nav-button {
+      --color: rgba(255, 255, 255, 0.9);
+      --background: transparent;
+      --border-radius: 8px;
+      --padding-start: 1rem;
+      --padding-end: 1rem;
+      height: 40px;
+      transition: all 0.2s;
+
+      &:hover {
+        --background: rgba(255, 255, 255, 0.1);
+        --color: white;
+      }
+
+      ion-icon {
+        margin-right: 0.5rem;
+        font-size: 1.1rem;
+      }
+
+      .nav-label {
+        font-size: 0.9rem;
+        font-weight: 500;
+      }
+
+      @media (max-width: 768px) {
+        .nav-label {
+          display: none;
+        }
+      }
+    }
+  }
+  
+  .no-recent {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    .no-recent-text {
+      color: rgba(255, 255, 255, 0.6);
+      font-size: 0.85rem;
+      font-style: italic;
+    }
+  }
+}
+
+// SEÇÃO DO USUÁRIO SIMPLES
+.user-section {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  min-width: 120px;
+  justify-content: flex-end;
+
+  .user-info-simple {
+    display: flex;
+    align-items: center;
+
+    .user-name {
+      color: white;
+      font-size: 0.9rem;
+      font-weight: 500;
+      
+      @media (max-width: 576px) {
+        display: none;
+      }
+    }
+  }
+
+  ion-buttons ion-button {
+    --color: white;
+    
+    ion-icon {
+      font-size: 1.2rem;
+    }
+  }
+}
+
+// Fim do arquivo - layout limpo e responsivo
+

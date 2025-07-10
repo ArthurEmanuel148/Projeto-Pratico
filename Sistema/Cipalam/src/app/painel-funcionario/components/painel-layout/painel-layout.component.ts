@@ -8,6 +8,19 @@ import { TopMenuPopoverComponent } from './top-menu-popover/top-menu-popover.com
 import { FuncionalidadesSistemaService } from 'src/app/core/services/funcionalidades-sistema.service';
 import { AuthService } from 'src/app/core/services/auth.service';
 import { FuncionalidadesUsosService } from 'src/app/core/services/funcionalidades-usos.service';
+import { NavigationService } from 'src/app/core/services/navigation.service';
+import { HttpClient } from '@angular/common/http';
+import { ApiConfigService } from 'src/app/core/services/api-config.service';
+
+interface UserInfo {
+  pessoaId: number;
+  nomePessoa: string;
+  cpfPessoa: string;
+  usuario: string;
+  tipo: string;
+  dtNascPessoa?: string;
+  caminhoImagem?: string;
+}
 
 @Component({
   selector: 'app-painel-layout',
@@ -25,7 +38,12 @@ export class PainelLayoutComponent implements OnInit {
 
   menu: any[] = [];
   topMenuItems: any[] = [];
+  lastAccessedFeature: any = null; // Funcionalidade anterior (penúltima acessada)
+  featureHistory: any[] = []; // Histórico das funcionalidades acessadas
 
+  // Propriedades do usuário integradas
+  userInfo: UserInfo | null = null;
+  userInfoLoading = true;
 
   public currentRoute: string = '';
 
@@ -38,19 +56,37 @@ export class PainelLayoutComponent implements OnInit {
     public popoverController: PopoverController,
     private funcionalidadesService: FuncionalidadesSistemaService,
     private authService: AuthService,
-    private funcionalidadesUsosService: FuncionalidadesUsosService
+    private funcionalidadesUsosService: FuncionalidadesUsosService,
+    private navigationService: NavigationService,
+    private http: HttpClient,
+    private apiConfig: ApiConfigService
   ) { }  ngOnInit() {
     this.initializeAppTheme();
+
+    // Verificar se o usuário está na rota correta
+    this.checkAndRedirectToCorrectPanel();
 
     this.router.events.pipe(
       filter((event): event is NavigationEnd => event instanceof NavigationEnd)
     ).subscribe((event: NavigationEnd) => {
       this.currentRoute = event.urlAfterRedirects;
       this.closeMenuIfOpen();
+      
+      // Verificar a cada navegação se o usuário deveria estar onde está
+      this.validateCurrentRoute();
+      
+      // Atualizar a última funcionalidade acessada (se não for o painel principal)
+      this.updateLastAccessedFeature(event.urlAfterRedirects);
     });
 
     // Carregar menu baseado no usuário logado
     this.loadUserMenu();
+
+    // Carregar a última funcionalidade acessada
+    this.loadLastAccessedFeature();
+
+    // Carregar informações do usuário
+    this.loadUserInfo();
 
     // Escutar mudanças nas funcionalidades mais usadas para o menu superior
     this.funcionalidadesUsosService.getTopMenuItems().subscribe(topItems => {
@@ -61,6 +97,8 @@ export class PainelLayoutComponent implements OnInit {
     this.authService.usuarioLogado$.subscribe(usuario => {
       if (usuario) {
         this.loadUserMenu();
+        // Inicializar dados de funcionalidades mais usadas para o novo usuário
+        this.funcionalidadesUsosService.inicializarParaUsuario();
       } else {
         this.menu = [];
         this.topMenuItems = [];
@@ -77,38 +115,59 @@ export class PainelLayoutComponent implements OnInit {
       return;
     }
 
-    // OTIMIZAÇÃO: Verificar se já temos funcionalidades no localStorage
-    const funcionalidadesCached = localStorage.getItem('funcionalidades_sistema');
-    const cacheValido = this.isCacheValid();
+    // Se a resposta do login já trouxe as funcionalidades, usar elas diretamente
+    if (usuarioLogado.funcionalidades && usuarioLogado.funcionalidades.length > 0) {
+      this.buildMenuFromFuncionalidades(usuarioLogado.funcionalidades, usuarioLogado);
+      return;
+    }
 
-    if (funcionalidadesCached && cacheValido) {
-      // Usar cache para otimização
-      const funcionalidades = JSON.parse(funcionalidadesCached);
-      this.buildMenuFromFuncionalidades(funcionalidades, usuarioLogado);
-    } else {
-      // Buscar do servidor e salvar no cache
-      this.funcionalidadesService.getTodasFuncionalidades().subscribe(
-        funcs => {
-          // Salvar no localStorage para otimização com timestamp
-          const cacheData = {
-            funcionalidades: funcs,
-            timestamp: Date.now(),
-            version: '1.0'
-          };
-          localStorage.setItem('funcionalidades_sistema', JSON.stringify(cacheData.funcionalidades));
-          localStorage.setItem('funcionalidades_cache_info', JSON.stringify({
-            timestamp: cacheData.timestamp,
-            version: cacheData.version
-          }));
-
-          this.buildMenuFromFuncionalidades(funcs, usuarioLogado);
+    // Caso contrário, buscar do endpoint de menu hierárquico
+    if (usuarioLogado.pessoaId) {
+      this.funcionalidadesService.getMenuHierarquico(usuarioLogado.pessoaId).subscribe(
+        menu => {
+          this.menu = menu;
+          this.initializeTopMenuFromMenu(menu);
         },
         error => {
-          console.error('Erro ao carregar funcionalidades do servidor:', error);
-          // Em caso de erro, usar funcionalidades padrão
+          console.error('Erro ao carregar menu hierárquico:', error);
+          // Fallback para permissões padrão
           this.buildMenuFromPermissoes(usuarioLogado);
         }
       );
+    } else {
+      // OTIMIZAÇÃO: Verificar se já temos funcionalidades no localStorage
+      const funcionalidadesCached = localStorage.getItem('funcionalidades_sistema');
+      const cacheValido = this.isCacheValid();
+
+      if (funcionalidadesCached && cacheValido) {
+        // Usar cache para otimização
+        const funcionalidades = JSON.parse(funcionalidadesCached);
+        this.buildMenuFromFuncionalidades(funcionalidades, usuarioLogado);
+      } else {
+        // Buscar do servidor e salvar no cache
+        this.funcionalidadesService.getTodasFuncionalidades().subscribe(
+          funcs => {
+            // Salvar no localStorage para otimização com timestamp
+            const cacheData = {
+              funcionalidades: funcs,
+              timestamp: Date.now(),
+              version: '1.0'
+            };
+            localStorage.setItem('funcionalidades_sistema', JSON.stringify(cacheData.funcionalidades));
+            localStorage.setItem('funcionalidades_cache_info', JSON.stringify({
+              timestamp: cacheData.timestamp,
+              version: cacheData.version
+            }));
+
+            this.buildMenuFromFuncionalidades(funcs, usuarioLogado);
+          },
+          error => {
+            console.error('Erro ao carregar funcionalidades do servidor:', error);
+            // Em caso de erro, usar funcionalidades padrão
+            this.buildMenuFromPermissoes(usuarioLogado);
+          }
+        );
+      }
     }
   }
 
@@ -159,6 +218,7 @@ export class PainelLayoutComponent implements OnInit {
       return {
         ...principal,
         submenus: submenus.length > 0 ? submenus : null,
+        filhos: submenus.length > 0 ? submenus : null, // Compatibilidade com backend
         open: false
       };
     });
@@ -185,6 +245,24 @@ export class PainelLayoutComponent implements OnInit {
   }
 
   /**
+   * Inicializa o menu superior a partir do menu hierárquico
+   */
+  private initializeTopMenuFromMenu(menu: any[]): void {
+    if (menu && Array.isArray(menu)) {
+      // Pegar apenas os itens principais (máximo 4) que não sejam o painel
+      const principais = menu.filter(item => item.chave !== 'painel').slice(0, 4);
+
+      this.topMenuItems = principais.map(item => ({
+        ...item,
+        label: item.nomeAmigavel,
+        route: item.rota,
+        icon: item.icone,
+        children: item.filhos || []
+      }));
+    }
+  }
+
+  /**
    * Atualiza o menu superior com as funcionalidades mais usadas
    */
   private updateTopMenuWithMostUsed(topItems: any[]): void {
@@ -197,15 +275,33 @@ export class PainelLayoutComponent implements OnInit {
       // Filtrar apenas itens que o usuário tem permissão
       const itensPermitidos = topItems.filter(item => permissoes[item.chave] === true);
 
-      // Atualizar o menu superior com funcionalidades mais usadas
-      this.topMenuItems = itensPermitidos.map(item => ({
-        ...item,
-        label: item.nomeAmigavel,
-        route: item.rota,
-        icon: item.icone,
-        children: [] // Top menu não mostra submenus para manter simplicidade
-      }));
+      // Limitar a 4 itens únicos para evitar repetição
+      const itensUnicos = itensPermitidos.slice(0, 4);
+
+      // Atualizar o menu superior com funcionalidades mais usadas (somente se houver mudança)
+      if (this.shouldUpdateTopMenu(itensUnicos)) {
+        this.topMenuItems = itensUnicos.map(item => ({
+          ...item,
+          label: item.nomeAmigavel,
+          route: item.rota,
+          icon: item.icone,
+          children: [] // Top menu não mostra submenus para manter simplicidade
+        }));
+      }
     }
+  }
+
+  /**
+   * Verifica se o menu superior precisa ser atualizado
+   */
+  private shouldUpdateTopMenu(newItems: any[]): boolean {
+    if (this.topMenuItems.length !== newItems.length) {
+      return true;
+    }
+
+    return !this.topMenuItems.every((item, index) => 
+      item.chave === newItems[index]?.chave
+    );
   }
 
   private buildMenuFromPermissoes(usuarioLogado: any) {
@@ -422,8 +518,284 @@ export class PainelLayoutComponent implements OnInit {
     this.loadUserMenu();
   }
 
+  /**
+   * Verifica se o usuário está acessando o painel correto e redireciona se necessário
+   */
+  private checkAndRedirectToCorrectPanel(): void {
+    const usuario = this.authService.getFuncionarioLogado();
+    if (!usuario) {
+      this.router.navigate(['/login']);
+      return;
+    }
+
+    const currentUrl = this.router.url;
+    const userType = usuario.tipo;
+
+    // Se está apenas em /paineis (sem subrota), redirecionar para o painel correto
+    if (currentUrl === '/paineis' || currentUrl === '/paineis/') {
+      this.navigationService.redirectToHomePage();
+      return;
+    }
+
+    // Verificar se o usuário está no painel correto
+    this.validateCurrentRoute();
+  }
+
+  /**
+   * Valida se o usuário atual tem permissão para estar na rota atual
+   */
+  private validateCurrentRoute(): void {
+    const usuario = this.authService.getFuncionarioLogado();
+    if (!usuario) {
+      this.router.navigate(['/login']);
+      return;
+    }
+
+    const currentUrl = this.router.url;
+    const userType = usuario.tipo;
+
+    // Responsáveis só podem acessar dashboard-responsavel
+    if (userType === 'responsavel') {
+      if (!currentUrl.includes('dashboard-responsavel')) {
+        console.warn('Responsável tentando acessar painel não autorizado:', currentUrl);
+        this.router.navigate(['/paineis/dashboard-responsavel']);
+        return;
+      }
+    }
+
+    // Admin, professor e funcionário podem acessar painel-funcionario
+    if (userType === 'admin' || userType === 'professor' || userType === 'funcionario') {
+      if (currentUrl.includes('dashboard-responsavel')) {
+        console.warn('Funcionário/Professor/Admin tentando acessar dashboard de responsável:', currentUrl);
+        this.router.navigate(['/paineis/painel-funcionario']);
+        return;
+      }
+    }
+
+    // Verificar permissões específicas para funcionalidades
+    this.validateFunctionalityAccess(currentUrl);
+  }
+
+  /**
+   * Valida se o usuário tem permissão para acessar a funcionalidade específica
+   */
+  private validateFunctionalityAccess(currentUrl: string): void {
+    const permissions = this.authService.getPermissoesFuncionario();
+
+    // Mapear URLs para permissões
+    const urlPermissionMap: { [key: string]: string } = {
+      'gerenciamento-funcionarios': 'gerenciamentoFuncionarios',
+      'interesse-matricula': 'declaracoesInteresse',
+      // Adicionar mais mapeamentos conforme necessário
+    };
+
+    // Verificar se a URL atual requer uma permissão específica
+    for (const [urlPattern, permission] of Object.entries(urlPermissionMap)) {
+      if (currentUrl.includes(urlPattern)) {
+        if (!permissions[permission]) {
+          console.warn('Usuário sem permissão tentando acessar:', urlPattern);
+          // Redirecionar para o painel apropriado
+          this.navigationService.redirectToHomePage();
+          return;
+        }
+      }
+    }
+  }
+
+  /**
+   * Carrega informações detalhadas do usuário logado
+   */
+  private loadUserInfo() {
+    const usuario = this.authService.getFuncionarioLogado();
+    
+    if (!usuario || !usuario.pessoaId) {
+      this.userInfoLoading = false;
+      return;
+    }
+
+    // Buscar informações detalhadas do usuário
+    const url = `${this.apiConfig.getLoginUrl().replace('/login', '')}/user-info/${usuario.pessoaId}`;
+    
+    this.http.get<{ success: boolean; [key: string]: any }>(url).subscribe({
+      next: (response) => {
+        if (response.success) {
+          this.userInfo = {
+            pessoaId: response['pessoaId'],
+            nomePessoa: response['nomePessoa'],
+            cpfPessoa: response['cpfPessoa'],
+            usuario: response['usuario'],
+            tipo: response['tipo'],
+            dtNascPessoa: response['dtNascPessoa'],
+            caminhoImagem: response['caminhoImagem']
+          };
+        }
+        this.userInfoLoading = false;
+      },
+      error: (error) => {
+        console.error('Erro ao buscar informações do usuário:', error);
+        // Usar dados básicos do AuthService como fallback
+        this.userInfo = {
+          pessoaId: usuario.pessoaId,
+          nomePessoa: usuario.nomePessoa || usuario.pessoa?.nmPessoa || 'Usuário',
+          cpfPessoa: usuario.pessoa?.cpfPessoa || '',
+          usuario: usuario.usuario,
+          tipo: usuario.tipo || 'funcionario'
+        };
+        this.userInfoLoading = false;
+      }
+    });
+  }
+
+  /**
+   * Retorna as iniciais do usuário
+   */
+  getUserInitials(): string {
+    if (!this.userInfo) return 'U';
+    
+    const names = this.userInfo.nomePessoa.split(' ');
+    if (names.length >= 2) {
+      return names[0].charAt(0).toUpperCase() + names[1].charAt(0).toUpperCase();
+    }
+    return names[0].charAt(0).toUpperCase();
+  }
+
+  /**
+   * Retorna o tipo de usuário formatado
+   */
+  getUserTypeDisplay(): string {
+    if (!this.userInfo) return '';
+    
+    switch (this.userInfo.tipo) {
+      case 'admin':
+        return 'Administrador';
+      case 'professor':
+        return 'Professor';
+      case 'funcionario':
+        return 'Funcionário';
+      case 'responsavel':
+        return 'Responsável';
+      default:
+        return 'Usuário';
+    }
+  }
+
   // TrackBy functions para otimização de performance
   trackByMenuChave(index: number, item: any): string {
     return item.chave || index.toString();
+  }
+
+  async toggleMoreMenu(event: Event) {
+    event.stopPropagation();
+    
+    // Criar uma lista com os itens restantes (após os primeiros 3)
+    const remainingItems = this.topMenuItems.slice(3);
+    
+    if (remainingItems.length === 0) {
+      return;
+    }
+
+    const popover = await this.popoverController.create({
+      component: TopMenuPopoverComponent,
+      componentProps: {
+        menuItems: remainingItems
+      },
+      event: event,
+      translucent: true,
+      cssClass: 'top-menu-popover'
+    });
+
+    await popover.present();
+
+    const { data } = await popover.onDidDismiss();
+    if (data && data.selectedItem) {
+      this.handleTopMenuClick(data.selectedItem, event);
+    }
+  }
+
+  // Métodos para gerenciar o histórico de funcionalidades
+  private loadLastAccessedFeature() {
+    try {
+      const storedHistory = localStorage.getItem('featureHistory');
+      if (storedHistory) {
+        this.featureHistory = JSON.parse(storedHistory);
+        // A funcionalidade a ser exibida é a penúltima do histórico
+        if (this.featureHistory.length >= 2) {
+          this.lastAccessedFeature = this.featureHistory[this.featureHistory.length - 2];
+        } else if (this.featureHistory.length === 1) {
+          this.lastAccessedFeature = this.featureHistory[0];
+        }
+      }
+    } catch (error) {
+      console.warn('Erro ao carregar histórico de funcionalidades:', error);
+      this.lastAccessedFeature = null;
+      this.featureHistory = [];
+    }
+  }
+
+  private updateLastAccessedFeature(url: string) {
+    // Ignorar se for o painel principal
+    if (url === '/paineis/painel-funcionario' || url.endsWith('/painel-funcionario')) {
+      return;
+    }
+
+    // Encontrar a funcionalidade correspondente no menu
+    const foundFeature = this.findFeatureByUrl(url, this.menu);
+    
+    if (foundFeature) {
+      // Se já existe no histórico, remove para evitar duplicatas
+      const existingIndex = this.featureHistory.findIndex(f => 
+        f.route === foundFeature.route
+      );
+      
+      if (existingIndex !== -1) {
+        this.featureHistory.splice(existingIndex, 1);
+      }
+      
+      // Adiciona no final do histórico (mais recente)
+      this.featureHistory.push(foundFeature);
+      
+      // Manter apenas as últimas 5 funcionalidades
+      if (this.featureHistory.length > 5) {
+        this.featureHistory = this.featureHistory.slice(-5);
+      }
+      
+      // Atualizar a funcionalidade a ser exibida (penúltima)
+      if (this.featureHistory.length >= 2) {
+        this.lastAccessedFeature = this.featureHistory[this.featureHistory.length - 2];
+      } else if (this.featureHistory.length === 1) {
+        // Se só tem uma, não exibe nada (pois estamos nela)
+        this.lastAccessedFeature = null;
+      }
+      
+      // Salvar no localStorage
+      try {
+        localStorage.setItem('featureHistory', JSON.stringify(this.featureHistory));
+      } catch (error) {
+        console.warn('Erro ao salvar histórico de funcionalidades:', error);
+      }
+    }
+  }
+
+  private findFeatureByUrl(url: string, menuItems: any[]): any {
+    for (const item of menuItems) {
+      // Verificar se a URL corresponde à rota do item
+      if (item.rota && url.includes(item.rota)) {
+        return {
+          label: item.nomeAmigavel,
+          route: item.rota,
+          icon: item.icone || 'apps-outline'
+        };
+      }
+      
+      // Verificar submenus recursivamente
+      if (item.submenus && item.submenus.length > 0) {
+        const found = this.findFeatureByUrl(url, item.submenus);
+        if (found) {
+          return found;
+        }
+      }
+    }
+    
+    return null;
   }
 }

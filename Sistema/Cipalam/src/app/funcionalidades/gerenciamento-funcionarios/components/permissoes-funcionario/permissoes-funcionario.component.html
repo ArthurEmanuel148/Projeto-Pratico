@@ -1,59 +1,80 @@
-<!-- src/app/funcionalidades/gerenciamento-funcionarios/components/permissoes-funcionario/permissoes-funcionario.component.html -->
-
+<!-- Header do Modal -->
 <div class="modal-header ion-padding-horizontal ion-padding-top">
-  <ion-title class="modal-title-text" *ngIf="nomeFuncionario">Permissões para: <strong>{{ nomeFuncionario
-      }}</strong></ion-title>
-  <ion-title class="modal-title-text" *ngIf="!nomeFuncionario">Configurar Permissões do Novo Funcionário</ion-title>
+  <ion-title class="modal-title-text">
+    <span *ngIf="nomeFuncionario">Permissões para: <strong>{{ nomeFuncionario }}</strong></span>
+    <span *ngIf="!nomeFuncionario">Configurar Permissões do Novo Funcionário</span>
+  </ion-title>
   <p class="ion-no-margin ion-padding-bottom description-text">
     Selecione as funcionalidades que este usuário poderá acessar no sistema.
   </p>
 </div>
 
+<!-- Conteúdo do Modal -->
 <ion-content class="ion-padding-horizontal">
-  <!-- Spinner de Carregamento -->
-  <div *ngIf="isLoading" class="ion-text-center ion-padding loading-container">
-    <ion-spinner name="crescent"></ion-spinner>
-    <p>Carregando funcionalidades...</p>
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading-container ion-text-center ion-padding">
+    <ion-spinner name="crescent" color="danger"></ion-spinner>
+    <p class="loading-text">Carregando funcionalidades...</p>
   </div>
 
-  <!-- Conteúdo Principal: Formulário e Lista de Permissões -->
-  <!-- Garante que o formulário e a lista só são renderizados quando os dados estão prontos -->
-  <ng-container *ngIf="!isLoading && permissoesForm && todasAsFuncionalidades && todasAsFuncionalidades.length > 0">
+  <!-- Formulário de Permissões -->
+  <div *ngIf="!isLoading && permissoesForm && todasAsFuncionalidades && todasAsFuncionalidades.length > 0" class="permissions-container">
     <form [formGroup]="permissoesForm">
-      <ion-list lines="none">
-        <ion-item *ngFor="let func of todasAsFuncionalidades" class="permissao-item">
-          <ion-label>
+      <ion-list lines="none" class="permissions-list">
+        <ion-item
+          *ngFor="let func of todasAsFuncionalidades"
+          class="permission-item">
+          <ion-icon
+            [name]="func.icone || 'options-outline'"
+            slot="start"
+            color="medium">
+          </ion-icon>
+          <ion-label class="permission-label">
             <h3>{{ func.nomeAmigavel }}</h3>
-            <p *ngIf="func.descricao" class="item-description">{{ func.descricao }}</p>
+            <p *ngIf="func.descricao" class="permission-description">{{ func.descricao }}</p>
           </ion-label>
-          <ion-toggle slot="end" [formControlName]="func.chave" color="danger"></ion-toggle>
+          <ion-toggle
+            slot="end"
+            [formControlName]="func.chave"
+            color="success">
+          </ion-toggle>
         </ion-item>
       </ion-list>
     </form>
-  </ng-container>
+  </div>
 
-  <!-- Mensagem para quando não há funcionalidades (após o carregamento) -->
+  <!-- Empty State -->
   <div *ngIf="!isLoading && (!todasAsFuncionalidades || todasAsFuncionalidades.length === 0)"
-    class="ion-text-center ion-padding empty-list-container">
-    <ion-icon name="information-circle-outline" size="large" color="medium"></ion-icon>
-    <p>Nenhuma funcionalidade disponível para configuração no momento.</p>
+       class="empty-state ion-text-center ion-padding">
+    <ion-icon name="shield-outline" size="large" color="medium"></ion-icon>
+    <h3>Nenhuma funcionalidade disponível</h3>
+    <p>Não há funcionalidades disponíveis para configuração no momento.</p>
   </div>
 </ion-content>
 
-<ion-footer class="ion-padding modal-actions safe-area-bottom">
-  <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-button fill="clear" color="medium" (click)="cancelar()">
-        <ion-icon slot="start" name="close-circle-outline"></ion-icon>
+<!-- Footer com ações -->
+<ion-footer class="ion-no-border">
+  <ion-toolbar class="modal-footer">
+    <div class="footer-buttons">
+      <!-- Botão Cancelar - Vermelho para cancelamento -->
+      <ion-button
+        fill="outline"
+        color="danger"
+        (click)="cancelar()"
+        class="cancel-button">
+        <ion-icon name="close-outline" slot="start"></ion-icon>
         Cancelar
       </ion-button>
-    </ion-buttons>
-    <ion-buttons slot="end">
-      <!-- Desabilita o botão se o form não estiver pronto ou for inválido -->
-      <ion-button color="danger" (click)="confirmarPermissoes()" [disabled]="!permissoesForm || permissoesForm.invalid">
-        <ion-icon slot="start" name="checkmark-done-outline"></ion-icon>
+
+      <!-- Botão Confirmar - Verde para confirmação -->
+      <ion-button
+        color="success"
+        (click)="confirmarPermissoes()"
+        [disabled]="!permissoesForm || permissoesForm.invalid"
+        class="confirm-button">
+        <ion-icon name="checkmark-done-outline" slot="start"></ion-icon>
         Confirmar Permissões
       </ion-button>
-    </ion-buttons>
+    </div>
   </ion-toolbar>
 </ion-footer>

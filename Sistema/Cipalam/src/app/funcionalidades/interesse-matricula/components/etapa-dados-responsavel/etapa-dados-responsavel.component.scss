@@ -1,10 +1,59 @@
+// src/app/funcionalidades/interesse-matricula/components/etapa-dados-responsavel/etapa-dados-responsavel.component.scss
+
+// Força aplicação do tema no componente
+:host {
+    --background: var(--ion-background-color) !important;
+    --color: var(--ion-text-color) !important;
+    background-color: var(--ion-background-color) !important;
+    color: var(--ion-text-color) !important;
+}
+
+// Aplica tema na lista e itens
+ion-list {
+    --background: var(--ion-background-color) !important;
+    background-color: var(--ion-background-color) !important;
+}
+
+ion-item {
+    --background: var(--ion-item-background) !important;
+    --color: var(--ion-text-color) !important;
+    background-color: var(--ion-item-background) !important;
+    color: var(--ion-text-color) !important;
+}
+
+ion-item-divider {
+    --background: var(--ion-item-background) !important;
+    --color: var(--ion-text-color) !important;
+    background-color: var(--ion-item-background) !important;
+
+    ion-label {
+        font-weight: 500;
+        color: var(--ion-text-color) !important;
+    }
+}
+
+// Força aplicação do tema em labels e inputs
+ion-label {
+    color: var(--ion-text-color) !important;
+}
+
+ion-input,
+ion-select {
+    --background: var(--ion-item-background) !important;
+    --color: var(--ion-text-color) !important;
+    --placeholder-color: var(--ion-color-medium) !important;
+}
+
+// Textos de erro
 .error-message {
-    color: var(--ion-color-danger);
+    color: var(--ion-color-danger) !important;
     font-size: 0.8em;
     padding-left: 16px; // Alinha com o texto do input
     padding-top: 2px;
     min-height: 1.2em; // Para evitar que o layout pule muito
 }
 
-ion-item-divider ion-label {
-    font-weight: 500; }
+// Botões aplicando classes globais
+ion-button {
+    margin-top: 16px;
+}

@@ -244,6 +244,94 @@ export class DeclaracaoInteressePage implements OnInit {
     this.cdRef.detectChanges();
   }
 
+  // Métodos auxiliares para o template melhorado
+  getTituloEtapa(): string {
+    switch (this.etapaAtual) {
+      case this.ETAPAS.DADOS_RESPONSAVEL:
+        return 'Dados do Responsável';
+      case this.ETAPAS.TIPO_VAGA:
+        return 'Tipo de Vaga';
+      case this.ETAPAS.INFO_RENDA:
+        return 'Informações de Renda';
+      case this.ETAPAS.DADOS_ALUNO:
+        return 'Dados do Aluno';
+      case this.ETAPAS.HORARIOS_VAGA:
+        return 'Horários da Vaga';
+      case this.ETAPAS.REVISAO:
+        return 'Revisão dos Dados';
+      case this.ETAPAS.CONCLUIDO:
+        return 'Declaração Enviada';
+      default:
+        return 'Declaração de Interesse';
+    }
+  }
+
+  getEtapaAtual(): number {
+    const cotaEconomicaSelecionada = this.tipoVagaForm.get('tipoCota')?.value === 'economica';
+    const sequenciaFluxo: EtapaFormulario[] = [
+      this.ETAPAS.DADOS_RESPONSAVEL,
+      this.ETAPAS.TIPO_VAGA,
+      ...(cotaEconomicaSelecionada ? [this.ETAPAS.INFO_RENDA] : []),
+      this.ETAPAS.DADOS_ALUNO,
+      this.ETAPAS.HORARIOS_VAGA,
+      this.ETAPAS.REVISAO
+    ];
+    return sequenciaFluxo.indexOf(this.etapaAtual) + 1;
+  }
+
+  getTotalEtapas(): number {
+    const cotaEconomicaSelecionada = this.tipoVagaForm.get('tipoCota')?.value === 'economica';
+    return cotaEconomicaSelecionada ? 6 : 5;
+  }
+
+  getDescricaoProgresso(): string {
+    switch (this.etapaAtual) {
+      case this.ETAPAS.DADOS_RESPONSAVEL:
+        return 'Iniciando declaração';
+      case this.ETAPAS.TIPO_VAGA:
+        return 'Selecionando modalidade';
+      case this.ETAPAS.INFO_RENDA:
+        return 'Informações socioeconômicas';
+      case this.ETAPAS.DADOS_ALUNO:
+        return 'Dados do estudante';
+      case this.ETAPAS.HORARIOS_VAGA:
+        return 'Escolhendo horários';
+      case this.ETAPAS.REVISAO:
+        return 'Finalizando declaração';
+      default:
+        return 'Processando';
+    }
+  }
+
+  getStepIndicators(): Array<{icon: string, active: boolean, completed: boolean}> {
+    const cotaEconomicaSelecionada = this.tipoVagaForm.get('tipoCota')?.value === 'economica';
+    const sequenciaFluxo: EtapaFormulario[] = [
+      this.ETAPAS.DADOS_RESPONSAVEL,
+      this.ETAPAS.TIPO_VAGA,
+      ...(cotaEconomicaSelecionada ? [this.ETAPAS.INFO_RENDA] : []),
+      this.ETAPAS.DADOS_ALUNO,
+      this.ETAPAS.HORARIOS_VAGA,
+      this.ETAPAS.REVISAO
+    ];
+
+    const icones = [
+      'person-outline',
+      'ribbon-outline',
+      'wallet-outline',
+      'school-outline',
+      'time-outline',
+      'checkmark-circle-outline'
+    ];
+
+    const etapaAtualIndex = sequenciaFluxo.indexOf(this.etapaAtual);
+
+    return sequenciaFluxo.map((etapa, index) => ({
+      icon: icones[index] || 'ellipse-outline',
+      active: index === etapaAtualIndex,
+      completed: index < etapaAtualIndex
+    }));
+  }
+
   // ...existing code...
   async enviarDeclaracaoFinal() {
     if (this.declaracaoForm.invalid) {

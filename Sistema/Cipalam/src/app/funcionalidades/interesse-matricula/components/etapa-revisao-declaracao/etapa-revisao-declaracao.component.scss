@@ -1,6 +1,36 @@
-ion-item-divider ion-label {
-    font-weight: bold;
-    font-size: 1.1em;
+// src/app/funcionalidades/interesse-matricula/components/etapa-revisao-declaracao/etapa-revisao-declaracao.component.scss
+
+// Força aplicação do tema no componente
+:host {
+    --background: var(--ion-background-color) !important;
+    --color: var(--ion-text-color) !important;
+    background-color: var(--ion-background-color) !important;
+    color: var(--ion-text-color) !important;
+}
+
+// Aplica tema na lista e itens
+ion-list {
+    --background: var(--ion-background-color) !important;
+    background-color: var(--ion-background-color) !important;
+}
+
+ion-item {
+    --background: var(--ion-item-background) !important;
+    --color: var(--ion-text-color) !important;
+    background-color: var(--ion-item-background) !important;
+    color: var(--ion-text-color) !important;
+}
+
+ion-item-divider {
+    --background: var(--ion-item-background) !important;
+    --color: var(--ion-text-color) !important;
+    background-color: var(--ion-item-background) !important;
+
+    ion-label {
+        font-weight: bold;
+        font-size: 1.1em;
+        color: var(--ion-text-color) !important;
+    }
 }
 
 ion-item-group {
@@ -8,18 +38,20 @@ ion-item-group {
     border: 1px solid var(--ion-color-step-200);
     border-radius: 8px;
     overflow: hidden; // Para os cantos arredondados funcionarem com as dividers
+    --background: var(--ion-item-background) !important;
+    background-color: var(--ion-item-background) !important;
 }
 
 ion-item ion-label:first-child {
     // Label da esquerda (Nome:, CPF:)
-    color: var(--ion-color-medium-text);
+    color: var(--ion-color-medium) !important;
     font-weight: 500;
     min-width: 150px; // Ajuda a alinhar os valores
     margin-right: 8px;
 }
 
 ion-item ion-text[slot="end"] {
-    color: var(--ion-text-color);
+    color: var(--ion-text-color) !important;
     font-weight: normal;
 }
 
@@ -28,13 +60,30 @@ ion-item ion-text[slot="end"] {
     border-left: 2px solid var(--ion-color-primary-tint);
     padding-left: 10px;
     margin-bottom: 10px;
+
+    ion-item {
+        --background: var(--ion-item-background) !important;
+        background-color: var(--ion-item-background) !important;
+    }
 }
 
 .integrante-revisao ion-item-divider.sub-divider {
-    --background: var(--ion-color-light-tint);
+    --background: var(--ion-color-light-tint) !important;
     --min-height: 30px;
     font-size: 0.9em;
+    background-color: var(--ion-color-light-tint) !important;
+
+    ion-label {
+        color: var(--ion-text-color) !important;
+    }
 }
 
 .ion-text-end {
-    text-align: end; }
+    text-align: end;
+    color: var(--ion-text-color) !important;
+}
+
+// Botões aplicando classes globais
+ion-button {
+    margin-top: 16px;
+}

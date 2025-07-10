@@ -17,4 +17,8 @@ public class Login {
     @ManyToOne
     @JoinColumn(name = "tbPessoa_idPessoa")
     private Pessoa pessoa;
+
+    public Long getId() {
+        return idtblogin != null ? idtblogin.longValue() : null;
+    }
 }

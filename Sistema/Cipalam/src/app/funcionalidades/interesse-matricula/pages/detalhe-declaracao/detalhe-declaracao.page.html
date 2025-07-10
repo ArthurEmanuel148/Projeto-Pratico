@@ -20,36 +20,42 @@
 </div>
 
 <ion-content *ngIf="!carregando && declaracao; else carregandoTpl" class="ion-padding">
-  <ion-card>
+  <ion-card *ngIf="declaracao">
     <ion-card-header>
       <ion-card-title>Dados do Aluno</ion-card-title>
     </ion-card-header>
     <ion-card-content>
-      <p><strong>Nome:</strong> {{ declaracao.dadosAluno?.nomeAluno }}</p>
-      <p><strong>Data de Nascimento:</strong> {{ declaracao.dadosAluno?.dataNascimentoAluno | date:'dd/MM/yyyy' }}</p>
-      <p><strong>CPF:</strong> {{ declaracao.dadosAluno?.cpfAluno || 'Não informado' }}</p>
+      <p><strong>Nome:</strong> {{ declaracao.nomeCompleto || (declaracao.dadosAluno && declaracao.dadosAluno.nomeAluno) }}</p>
+      <p><strong>Data de Nascimento:</strong> {{ declaracao.dadosAluno && declaracao.dadosAluno.dataNascimentoAluno | date:'dd/MM/yyyy' }}</p>
+      <p><strong>CPF:</strong> {{ declaracao.cpf || (declaracao.dadosAluno && declaracao.dadosAluno.cpfAluno) || 'Não informado' }}</p>
+      <p><strong>Protocolo:</strong> {{ declaracao.protocolo }}</p>
+      <p><strong>Status:</strong>
+        <ion-badge color="primary">{{ declaracao.status || 'interesse_declarado' }}</ion-badge>
+      </p>
     </ion-card-content>
   </ion-card>
 
-  <ion-card>
+  <ion-card *ngIf="declaracao && declaracao.dadosResponsavel">
     <ion-card-header>
       <ion-card-title>Dados do Responsável</ion-card-title>
     </ion-card-header>
     <ion-card-content>
-      <p><strong>Nome:</strong> {{ declaracao.dadosResponsavel?.nomeResponsavel }}</p>
-      <p><strong>CPF:</strong> {{ declaracao.dadosResponsavel?.cpfResponsavel }}</p>
-      <p><strong>Email:</strong> {{ declaracao.dadosResponsavel?.emailResponsavel }}</p>
-      <p><strong>Telefone:</strong> {{ declaracao.dadosResponsavel?.telefoneResponsavel }}</p>
+      <p><strong>Nome:</strong> {{ declaracao.dadosResponsavel.nomeResponsavel || 'Não informado' }}</p>
+      <p><strong>CPF:</strong> {{ declaracao.dadosResponsavel.cpfResponsavel || 'Não informado' }}</p>
+      <p><strong>Email:</strong> {{ declaracao.email || declaracao.dadosResponsavel.emailResponsavel }}</p>
+      <p><strong>Telefone:</strong> {{ declaracao.telefone || declaracao.dadosResponsavel.telefoneResponsavel }}</p>
     </ion-card-content>
   </ion-card>
 
-  <ion-card>
+  <ion-card *ngIf="declaracao">
     <ion-card-header>
       <ion-card-title>Vaga de Interesse</ion-card-title>
     </ion-card-header>
     <ion-card-content>
-      <p><strong>Tipo de Cota:</strong> {{ declaracao.tipoVaga?.tipoCota }}</p>
-      <!-- Adicione outros campos relevantes -->
+      <p><strong>Tipo de Cota:</strong> {{ declaracao.tipoCota || (declaracao.tipoVaga && declaracao.tipoVaga.tipoCota) }}</p>
+      <p><strong>Série Desejada:</strong> {{ declaracao.serieDesejada || 'Não informado' }}</p>
+      <p><strong>Ano Letivo:</strong> {{ declaracao.anoLetivo || 'Não informado' }}</p>
+      <p><strong>Tipo de Escola Anterior:</strong> {{ declaracao.tipoEscola || 'Não informado' }}</p>
     </ion-card-content>
   </ion-card>
 
@@ -58,32 +64,77 @@
       <ion-card-title>Informações de Renda</ion-card-title>
     </ion-card-header>
     <ion-card-content>
-      <p><strong>Endereço:</strong> {{ declaracao.infoRenda?.enderecoCompleto }}</p>
+      <p><strong>Endereço:</strong> {{ declaracao.infoRenda.enderecoCompleto }}</p>
       <!-- Liste integrantes, se houver -->
     </ion-card-content>
   </ion-card>
 
   <div class="ion-padding">
-    <ion-button expand="block" color="success" (click)="iniciarMatricula()" *ngIf="!matriculaIniciada">
+    <ion-button
+      expand="block"
+      color="success"
+      (click)="iniciarMatricula()"
+      *ngIf="!matriculaIniciada"
+      [disabled]="processandoMatricula">
       <ion-icon name="document-attach-outline" slot="start"></ion-icon>
-      Iniciar Matrícula
+      {{ processandoMatricula ? 'Processando...' : 'Iniciar Matrícula' }}
     </ion-button>
   </div>
 
   <ion-card *ngIf="matriculaIniciada">
     <ion-card-header>
-      <ion-card-title>Matrícula Iniciada!</ion-card-title>
+      <ion-card-title color="success">
+        <ion-icon name="checkmark-circle-outline" slot="start"></ion-icon>
+        Matrícula Iniciada com Sucesso!
+      </ion-card-title>
     </ion-card-header>
     <ion-card-content>
-      <p>O login do responsável foi gerado:</p>
-      <p><strong>Usuário:</strong> {{ loginGerado?.usuario }}</p>
-      <p><strong>Senha:</strong> {{ loginGerado?.senha }}</p>
-      <ion-note color="primary">
-        Oriente o responsável a acessar o sistema com esses dados para anexar ou assinar os documentos pendentes.
+      <div class="credentials-section">
+        <h3>Credenciais do Responsável</h3>
+        <ion-item lines="none">
+          <ion-label>
+            <h4><strong>Usuário:</strong></h4>
+            <p>{{ loginGerado?.usuario }}</p>
+          </ion-label>
+        </ion-item>
+        <ion-item lines="none">
+          <ion-label>
+            <h4><strong>Senha:</strong></h4>
+            <p>{{ loginGerado?.senha }}</p>
+          </ion-label>
+        </ion-item>
+        <ion-button expand="block" fill="outline" color="primary" (click)="copiarCredenciais()">
+          <ion-icon name="copy-outline" slot="start"></ion-icon>
+          Copiar Credenciais
+        </ion-button>
+      </div>
+
+      <div class="documents-section" *ngIf="documentosNecessarios.length > 0">
+        <h3>Documentos Necessários</h3>
+        <ion-list>
+          <ion-item *ngFor="let doc of documentosNecessarios">
+            <ion-icon name="document-outline" slot="start"></ion-icon>
+            <ion-label>
+              <h4>{{ doc.nome }}</h4>
+              <p *ngIf="doc.obrigatorio">
+                <ion-badge color="danger">Obrigatório</ion-badge>
+              </p>
+            </ion-label>
+          </ion-item>
+        </ion-list>
+      </div>
+
+      <ion-note color="primary" class="ion-margin-top">
+        <ion-icon name="information-circle-outline" slot="start"></ion-icon>
+        Oriente o responsável a acessar o sistema com essas credenciais para anexar ou assinar os documentos pendentes.
       </ion-note>
-      <ion-button expand="block" color="primary" routerLink="/interesse-matricula/lista-declaracoes" class="ion-margin-top">
-        Voltar para a lista de declarações
-      </ion-button>
+
+      <div class="ion-margin-top">
+        <ion-button expand="block" color="primary" (click)="voltarLista()">
+          <ion-icon name="arrow-back-outline" slot="start"></ion-icon>
+          Voltar para a Lista de Declarações
+        </ion-button>
+      </div>
     </ion-card-content>
   </ion-card>
 </ion-content>

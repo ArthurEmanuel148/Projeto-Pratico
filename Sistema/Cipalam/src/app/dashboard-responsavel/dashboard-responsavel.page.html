@@ -1,3 +1,6 @@
+<!-- HEADER COM INFORMAÇÕES DO RESPONSÁVEL -->
+<app-responsavel-info-header></app-responsavel-info-header>
+
 <ion-header [translucent]="true">
   <ion-toolbar>
     <ion-title>Painel do Responsável</ion-title>
@@ -5,16 +8,203 @@
 </ion-header>
 
 <ion-content [fullscreen]="true" class="ion-padding">
-  <h2>Documentos Pendentes</h2>
-  <ion-list>
-    <ion-item *ngFor="let doc of documentosPendentes">
-      <ion-label>
-        <h2>{{ doc.nome }}</h2>
-        <p *ngIf="doc.descricao">{{ doc.descricao }}</p>
-      </ion-label>
-      <ion-button color="success" (click)="anexarDocumento(doc)">
-        Anexar/Assinar
+  <!-- Loading State -->
+  <div *ngIf="carregando" class="loading-container">
+    <ion-spinner name="dots"></ion-spinner>
+    <p class="loading-text">Carregando informações...</p>
+  </div>
+
+  <!-- Content -->
+  <div *ngIf="!carregando">
+    <!-- Status da Matrícula -->
+    <ion-card *ngIf="statusMatricula" class="status-card">
+      <ion-card-header>
+        <ion-card-title>Status da Matrícula</ion-card-title>
+        <ion-card-subtitle>{{ statusMatricula.nomeCompleto }}</ion-card-subtitle>
+      </ion-card-header>
+
+      <ion-card-content>
+        <ion-list lines="none">
+          <ion-item>
+            <ion-label>
+              <strong>Protocolo:</strong>
+              <p>{{ statusMatricula.protocolo }}</p>
+            </ion-label>
+          </ion-item>
+
+          <ion-item>
+            <ion-label>
+              <strong>Status Atual:</strong>
+              <ion-chip [color]="matriculaService.corStatus(statusMatricula.status)">
+                {{ matriculaService.formatarStatus(statusMatricula.status) }}
+              </ion-chip>
+            </ion-label>
+          </ion-item>
+
+          <ion-item *ngIf="statusMatricula.dataInicioMatricula">
+            <ion-label>
+              <strong>Matrícula Iniciada em:</strong>
+              <p>{{ statusMatricula.dataInicioMatricula | date:'dd/MM/yyyy HH:mm' }}</p>
+            </ion-label>
+          </ion-item>
+        </ion-list>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Progresso dos Documentos -->
+    <ion-card *ngIf="documentosPendentes" class="progress-card">
+      <ion-card-header>
+        <ion-card-title>Progresso dos Documentos</ion-card-title>
+        <ion-card-subtitle>
+          {{ documentosPendentes.totalCompletos }} de {{ documentosPendentes.totalCompletos + documentosPendentes.totalPendentes }} documentos enviados
+        </ion-card-subtitle>
+      </ion-card-header>
+
+      <ion-card-content>
+        <div class="progress-info">
+          <ion-progress-bar
+            [value]="documentosPendentes.percentualConclusao / 100"
+            color="success">
+          </ion-progress-bar>
+          <span class="progress-text">{{ documentosPendentes.percentualConclusao }}% concluído</span>
+        </div>
+
+        <div class="progress-stats">
+          <div class="stat">
+            <ion-icon name="checkmark-circle-outline" color="success"></ion-icon>
+            <span>{{ documentosPendentes.totalCompletos }} Completos</span>
+          </div>
+          <div class="stat">
+            <ion-icon name="time-outline" color="warning"></ion-icon>
+            <span>{{ documentosPendentes.totalPendentes }} Pendentes</span>
+          </div>
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Lista de Documentos Pendentes -->
+    <h2 class="section-title">Documentos Pendentes</h2>
+
+    <div *ngIf="!documentosPendentes || documentosPendentes.documentos.length === 0" class="empty-state">
+      <ion-icon name="document-outline" size="large"></ion-icon>
+      <h3>Nenhum documento pendente</h3>
+      <p>Todos os documentos foram enviados ou ainda não há documentos disponíveis.</p>
+    </div>
+
+    <ion-list *ngIf="documentosPendentes && documentosPendentes.documentos.length > 0" class="documentos-list">
+      <ion-item-sliding *ngFor="let documento of documentosPendentes.documentos; trackBy: trackByDocumento">
+        <ion-item
+          [class.documento-completo]="documento.status === 'aprovado' || documento.status === 'assinado'"
+          [class.documento-pendente]="documento.status === 'pendente'"
+          [class.documento-anexado]="documento.status === 'anexado'"
+          button
+          (click)="abrirDocumento(documento)">
+
+          <ion-icon
+            [name]="getIconeDocumento(documento)"
+            [color]="getCorDocumento(documento)"
+            slot="start">
+          </ion-icon>
+
+          <ion-label>
+            <h3>{{ documento.tipoDocumento.nome }}</h3>
+            <p>{{ documento.tipoDocumento.descricao }}</p>
+
+            <div class="documento-info">
+              <ion-chip
+                [color]="getCorStatus(documento.status)"
+                size="small">
+                {{ getTextoStatus(documento.status) }}
+              </ion-chip>
+
+              <ion-chip
+                color="danger"
+                size="small"
+                *ngIf="documento.tipoDocumento.obrigatorio">
+                Obrigatório
+              </ion-chip>
+
+              <ion-chip
+                color="primary"
+                size="small"
+                outline
+                *ngIf="documento.tipoDocumento.requerAssinatura">
+                Requer Assinatura
+              </ion-chip>
+            </div>
+
+            <p *ngIf="documento.dataEnvio" class="data-envio">
+              Enviado em: {{ documento.dataEnvio | date:'dd/MM/yyyy HH:mm' }}
+            </p>
+          </ion-label>
+
+          <ion-button
+            fill="clear"
+            slot="end"
+            [color]="getCorAcao(documento)"
+            (click)="$event.stopPropagation(); abrirDocumento(documento)">
+            <ion-icon [name]="getIconeAcao(documento)"></ion-icon>
+          </ion-button>
+        </ion-item>
+
+        <ion-item-options side="end" *ngIf="podeEditarDocumento(documento)">
+          <ion-item-option color="primary" (click)="abrirDocumento(documento)">
+            <ion-icon name="create-outline"></ion-icon>
+            Editar
+          </ion-item-option>
+
+          <ion-item-option
+            color="danger"
+            (click)="removerAnexo(documento)"
+            *ngIf="documento.status === 'anexado' && documento.caminhoArquivo">
+            <ion-icon name="trash-outline"></ion-icon>
+            Remover
+          </ion-item-option>
+        </ion-item-options>
+      </ion-item-sliding>
+    </ion-list>
+
+    <!-- Botão de Atualizar -->
+    <div class="action-section">
+      <ion-button
+        expand="block"
+        fill="outline"
+        color="primary"
+        (click)="atualizarDados()">
+        <ion-icon name="refresh-outline" slot="start"></ion-icon>
+        Atualizar Informações
       </ion-button>
-    </ion-item>
-  </ion-list>
+    </div>
+
+    <!-- Informações de Ajuda -->
+    <ion-card class="help-card">
+      <ion-card-header>
+        <ion-card-title>
+          <ion-icon name="help-circle-outline"></ion-icon>
+          Precisa de Ajuda?
+        </ion-card-title>
+      </ion-card-header>
+
+      <ion-card-content>
+        <p><strong>Como enviar documentos:</strong></p>
+        <ul>
+          <li>Toque no documento desejado na lista</li>
+          <li>Para documentos que requerem anexo: faça upload de uma foto ou PDF</li>
+          <li>Para documentos que requerem assinatura: preencha e assine digitalmente</li>
+          <li>Verifique se todos os dados estão corretos antes de enviar</li>
+        </ul>
+
+        <p><strong>Tipos de arquivo aceitos:</strong> JPG, PNG, PDF (máximo 10MB)</p>
+
+        <ion-button
+          expand="block"
+          fill="outline"
+          color="medium"
+          href="tel:+551234567890">
+          <ion-icon name="call-outline" slot="start"></ion-icon>
+          Entrar em Contato
+        </ion-button>
+      </ion-card-content>
+    </ion-card>
+  </div>
 </ion-content>

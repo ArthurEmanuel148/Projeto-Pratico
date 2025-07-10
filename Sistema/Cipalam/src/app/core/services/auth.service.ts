@@ -10,7 +10,14 @@ export interface LoginRequest {
 }
 
 export interface LoginResponse {
-  pessoa: {
+  success: boolean;
+  message: string;
+  usuario: string;
+  pessoaId: number;
+  nomePessoa: string;
+  token: string;
+  funcionalidades: any[];
+  pessoa?: {
     idPessoa: number;
     nmPessoa: string;
     cpfPessoa: string;
@@ -18,7 +25,7 @@ export interface LoginResponse {
     dtNascPessoa?: string;
     caminhoIdentidadePessoa?: string;
   };
-  tipo: string;
+  tipo?: string;
   permissoes?: Record<string, boolean>;
 }
 
@@ -44,11 +51,78 @@ export class AuthService {
     return this.http.post<LoginResponse>(this.apiConfig.getLoginUrl(), loginRequest)
       .pipe(
         tap(response => {
+          // Converter resposta do backend para formato esperado pelo front-end
+          const normalizedResponse: LoginResponse = {
+            ...response,
+            pessoa: {
+              idPessoa: response.pessoaId,
+              nmPessoa: response.nomePessoa,
+              cpfPessoa: '',
+            },
+            tipo: this.determineTipoUsuario(response),
+            permissoes: this.buildPermissionsFromFuncionalidades(response.funcionalidades)
+          };
+
           // Salvar usuário logado
-          localStorage.setItem('usuarioLogado', JSON.stringify(response));
-          this.usuarioLogadoSubject.next(response);
+          console.log('Login realizado. Tipo de usuário determinado:', normalizedResponse.tipo);
+          console.log('Permissões do usuário:', normalizedResponse.permissoes);
+          localStorage.setItem('usuarioLogado', JSON.stringify(normalizedResponse));
+          this.usuarioLogadoSubject.next(normalizedResponse);
         })
       );
+  }
+
+  private determineTipoUsuario(response: any): string {
+    // Primeiro: verificar se o backend já retorna o tipo diretamente
+    if (response.tipo) {
+      return response.tipo;
+    }
+
+    // Segundo: verificar pelas funcionalidades retornadas
+    if (response.funcionalidades && Array.isArray(response.funcionalidades)) {
+      const funcionalidades = response.funcionalidades.map((f: any) => f.chave || f.nome || f);
+      
+      // Se tem funcionalidades administrativas, é admin
+      if (funcionalidades.some((f: string) => f.includes('administracao') || f.includes('usuarios') || f.includes('backup'))) {
+        return 'admin';
+      }
+      
+      // Se tem funcionalidades de funcionário/professor mas não admin
+      if (funcionalidades.some((f: string) => f.includes('funcionarios') || f.includes('matriculas') || f.includes('alunos'))) {
+        return 'funcionario';
+      }
+      
+      // Se só tem funcionalidades específicas de responsável
+      if (funcionalidades.some((f: string) => f.includes('responsavel') || f.includes('dashboard-responsavel'))) {
+        return 'responsavel';
+      }
+    }
+
+    // Terceiro: verificar pelo nome da pessoa (fallback)
+    const nomeNormalizado = response.nomePessoa ? response.nomePessoa.toLowerCase() : '';
+    
+    if (nomeNormalizado.includes('administrador')) {
+      return 'admin';
+    } else if (nomeNormalizado.includes('professor')) {
+      return 'professor';
+    } else if (nomeNormalizado.includes('funcionario')) {
+      return 'funcionario';
+    } else {
+      // Por padrão, usuários que não são identificados são responsáveis
+      return 'responsavel';
+    }
+  }
+
+  private buildPermissionsFromFuncionalidades(funcionalidades: any[]): Record<string, boolean> {
+    const permissoes: Record<string, boolean> = {};
+
+    if (funcionalidades && Array.isArray(funcionalidades)) {
+      funcionalidades.forEach(func => {
+        permissoes[func.chave] = true;
+      });
+    }
+
+    return permissoes;
   }
 
   getFuncionarioLogado(): LoginResponse | null {
@@ -59,7 +133,7 @@ export class AuthService {
     const funcionario = this.getFuncionarioLogado();
     if (funcionario) {
       // Se for admin, tem acesso a tudo
-      if (funcionario.pessoa.nmPessoa === 'Administrador do Sistema' ||
+      if (funcionario.pessoa && funcionario.pessoa.nmPessoa === 'Administrador do Sistema' ||
           funcionario.tipo === 'admin') {
         return {
           'painel': true,
@@ -117,7 +191,71 @@ export class AuthService {
         };
       }
 
-      // Permissões para outros tipos
+      // Permissões para funcionários específicos (não professor)
+      if (funcionario.tipo === 'funcionario') {
+        return {
+          'painel': true,
+          'funcionarios': true,
+          'cadastroFuncionario': true,
+          'gerenciamentoFuncionarios': true,
+          'matriculas': true,
+          'declaracoesInteresse': true,
+          'configurarDocumentosCota': true,
+          'alunos': true,
+          'cadastroAluno': true,
+          'listaAlunos': true,
+          'advertencias': true,
+          'advertenciasGerais': true,
+          'advertenciasRodaLeitura': true,
+          'biblioteca': true,
+          'emprestimoLivros': true,
+          'catalogoLivros': true,
+          'uniformes': true,
+          'emprestimoUniformes': true,
+          'estoqueUniformes': true,
+          'relatorios': false,
+          'configuracoes': false,
+          'usuarios': false,
+          'backup': false,
+          'logs': false
+        };
+      }
+
+      // Permissões para responsáveis (apenas funcionalidades específicas)
+      if (funcionario.tipo === 'responsavel') {
+        return {
+          'dashboard-responsavel': true, // Acesso ao próprio dashboard
+          'interesse-matricula-publico': true, // Pode acessar declarações via URL pública
+          // Todas as outras funcionalidades explicitamente negadas
+          'painel': false,
+          'funcionarios': false,
+          'cadastroFuncionario': false,
+          'gerenciamentoFuncionarios': false,
+          'matriculas': false,
+          'declaracoesInteresse': false,
+          'configurarDocumentosCota': false,
+          'alunos': false,
+          'cadastroAluno': false,
+          'listaAlunos': false,
+          'advertencias': false,
+          'advertenciasGerais': false,
+          'advertenciasRodaLeitura': false,
+          'biblioteca': false,
+          'emprestimoLivros': false,
+          'catalogoLivros': false,
+          'uniformes': false,
+          'emprestimoUniformes': false,
+          'estoqueUniformes': false,
+          'administracao': false,
+          'usuarios': false,
+          'relatorios': false,
+          'configuracoes': false,
+          'backup': false,
+          'logs': false
+        };
+      }
+
+      // Permissões padrão para outros tipos
       return {
         'painel': true,
         'funcionarios': false,
@@ -145,7 +283,7 @@ export class AuthService {
 
   getUserType(): string | null {
     const usuario = this.getFuncionarioLogado();
-    return usuario ? usuario.tipo : null;
+    return usuario && usuario.tipo ? usuario.tipo : null;
   }
 
   logout(): void {
@@ -153,6 +291,7 @@ export class AuthService {
     localStorage.removeItem('usuarioLogado');
     localStorage.removeItem('funcionalidades_sistema');
     localStorage.removeItem('funcionalidades_cache_info');
+    localStorage.removeItem('funcionalidades_uso'); // Remover dados de uso das funcionalidades
 
     // Notificar que o usuário foi deslogado
     this.usuarioLogadoSubject.next(null);

@@ -1,10 +1,51 @@
 // src/app/funcionalidades/interesse-matricula/components/etapa-dados-aluno/etapa-dados-aluno.component.scss
-ion-item-divider ion-label {
-    font-weight: 500;
+
+// Força aplicação do tema no componente
+:host {
+    --background: var(--ion-background-color) !important;
+    --color: var(--ion-text-color) !important;
+    background-color: var(--ion-background-color) !important;
+    color: var(--ion-text-color) !important;
 }
 
+// Aplica tema na lista e itens
+ion-list {
+    --background: var(--ion-background-color) !important;
+    background-color: var(--ion-background-color) !important;
+}
+
+ion-item {
+    --background: var(--ion-item-background) !important;
+    --color: var(--ion-text-color) !important;
+    background-color: var(--ion-item-background) !important;
+    color: var(--ion-text-color) !important;
+}
+
+ion-item-divider {
+    --background: var(--ion-item-background) !important;
+    --color: var(--ion-text-color) !important;
+    background-color: var(--ion-item-background) !important;
+
+    ion-label {
+        font-weight: 500;
+        color: var(--ion-text-color) !important;
+    }
+}
+
+// Força aplicação do tema em labels e inputs
+ion-label {
+    color: var(--ion-text-color) !important;
+}
+
+ion-input {
+    --background: var(--ion-item-background) !important;
+    --color: var(--ion-text-color) !important;
+    --placeholder-color: var(--ion-color-medium) !important;
+}
+
+// Textos de erro
 .error-message {
-    color: var(--ion-color-danger);
+    color: var(--ion-color-danger) !important;
     font-size: 0.8em;
     padding-left: 16px;
     padding-top: 2px;
@@ -13,4 +54,10 @@ ion-item-divider ion-label {
 
 .error-message-placeholder {
     // Garante espaço mesmo sem erro, para evitar pulos
-    min-height: 1.2em; }
+    min-height: 1.2em;
+}
+
+// Botão aplicando classe global
+ion-button {
+    margin-top: 16px;
+}

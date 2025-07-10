@@ -85,9 +85,23 @@ export class CadastroFuncionarioPage implements OnInit {
       this.presentToast('Funcionário cadastrado com sucesso!');
       this.cadastroForm.reset();
       this.navCtrl.navigateBack('/paineis/gerenciamento-funcionarios');
-    } catch (error) {
+    } catch (error: any) {
       console.error('Erro ao cadastrar funcionário:', error);
-      this.presentToast('Erro ao cadastrar funcionário. Tente novamente.');
+      
+      let mensagemErro = 'Erro ao cadastrar funcionário. Tente novamente.';
+      
+      // Verificar se é erro de usuário duplicado
+      if (error?.error && typeof error.error === 'string' && error.error.includes('Duplicate entry')) {
+        if (error.error.includes('for key \'usuario\'')) {
+          mensagemErro = 'Este nome de usuário já existe. Escolha outro nome de usuário.';
+        } else if (error.error.includes('for key \'email\'')) {
+          mensagemErro = 'Este e-mail já está cadastrado no sistema.';
+        } else {
+          mensagemErro = 'Já existe um funcionário com essas informações.';
+        }
+      }
+      
+      this.presentToast(mensagemErro);
     }
   }
 

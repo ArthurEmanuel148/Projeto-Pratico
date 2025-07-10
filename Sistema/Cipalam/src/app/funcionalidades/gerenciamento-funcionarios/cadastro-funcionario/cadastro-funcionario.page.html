@@ -1,146 +1,167 @@
-<ion-header class="page-specific-header" [translucent]="true">
-  <ion-toolbar color="danger">
-    <ion-buttons slot="start">
-      <ion-back-button defaultHref="/paineis/gerenciamento-funcionarios/lista"></ion-back-button>
-    </ion-buttons>
-    <ion-title>Novo Funcionário</ion-title>
-    <!-- O botão de salvar/próximo foi para o final da página -->
-  </ion-toolbar>
-</ion-header>
+<ion-content [fullscreen]="true" class="cadastro-content">
+  <div class="form-container">
+    <!-- Header da página -->
+    <div class="page-header">
+      <div class="header-content">
+        <div class="header-info">
+          <h1>Novo Colaborador</h1>
+          <p>Preencha as informações principais do funcionário</p>
+        </div>
+        <div class="header-illustration">
+          <ion-icon name="people-outline"></ion-icon>
+        </div>
+      </div>
+    </div>
 
-<ion-content [fullscreen]="true" class="ion-padding cadastro-funcionario-content">
-  <!-- Título Grande Opcional (Condense Header) -->
-  <ion-header collapse="condense" class="condense-header">
-    <ion-toolbar>
-      <ion-title size="large">Cadastrar Funcionário</ion-title>
-    </ion-toolbar>
-  </ion-header>
+    <!-- Formulário -->
+    <form [formGroup]="cadastroForm" class="form-wrapper">
+      
+      <!-- Seção: Dados Pessoais -->
+      <div class="form-section">
+        <div class="section-header">
+          <div class="section-icon">
+            <ion-icon name="person-outline"></ion-icon>
+          </div>
+          <div class="section-title">
+            <h2>Dados Pessoais</h2>
+            <p>Informações básicas do funcionário</p>
+          </div>
+        </div>
 
-  <!-- Introdução ou Subtítulo da Seção -->
-  <div class="form-introduction ion-margin-bottom">
-    <h2>Informações Básicas</h2>
-    <p>Preencha os dados principais do novo colaborador.</p>
+        <div class="form-group">
+          <ion-item fill="outline">
+            <ion-label position="floating">Nome Completo *</ion-label>
+            <ion-input 
+              type="text" 
+              formControlName="nomeCompleto" 
+              placeholder="Digite o nome completo"
+              clearInput="true">
+            </ion-input>
+          </ion-item>
+          
+          <ion-item fill="outline">
+            <ion-label position="floating">E-mail *</ion-label>
+            <ion-input 
+              type="email" 
+              formControlName="email" 
+              placeholder="Digite o e-mail"
+              clearInput="true">
+            </ion-input>
+          </ion-item>
+          
+          <ion-item fill="outline">
+            <ion-label position="floating">Telefone *</ion-label>
+            <ion-input 
+              type="tel" 
+              formControlName="telefone" 
+              placeholder="(00) 00000-0000"
+              clearInput="true">
+            </ion-input>
+          </ion-item>
+        </div>
+      </div>
+
+      <!-- Seção: Datas Importantes -->
+      <div class="form-section">
+        <div class="section-header">
+          <div class="section-icon">
+            <ion-icon name="calendar-outline"></ion-icon>
+          </div>
+          <div class="section-title">
+            <h2>Datas Importantes</h2>
+            <p>Datas de nascimento e entrada no Instituto</p>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <ion-item fill="outline">
+            <ion-label position="floating">Data de Nascimento *</ion-label>
+            <ion-datetime
+              formControlName="dataNascimento"
+              presentation="date"
+              displayFormat="DD/MM/YYYY"
+              placeholder="Selecione a data">
+            </ion-datetime>
+          </ion-item>
+
+          <ion-item fill="outline">
+            <ion-label position="floating">Data de Entrada *</ion-label>
+            <ion-datetime
+              formControlName="dataEntradaInstituto"
+              presentation="date"
+              displayFormat="DD/MM/YYYY"
+              placeholder="Selecione a data">
+            </ion-datetime>
+          </ion-item>
+        </div>
+      </div>
+
+      <!-- Seção: Dados do Sistema -->
+      <div class="form-section">
+        <div class="section-header">
+          <div class="section-icon">
+            <ion-icon name="key-outline"></ion-icon>
+          </div>
+          <div class="section-title">
+            <h2>Dados do Sistema</h2>
+            <p>Credenciais de acesso ao sistema</p>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <ion-item fill="outline">
+            <ion-label position="floating">Usuário do Sistema *</ion-label>
+            <ion-input 
+              type="text" 
+              formControlName="usuarioSistema" 
+              placeholder="Digite o nome de usuário"
+              clearInput="true">
+            </ion-input>
+          </ion-item>
+          <div class="validation-message" *ngIf="cadastroForm.get('usuarioSistema')?.invalid && cadastroForm.get('usuarioSistema')?.touched">
+            <ion-text color="danger">
+              <small>Nome de usuário é obrigatório e deve ser único</small>
+            </ion-text>
+          </div>
+          
+          <ion-item fill="outline">
+            <ion-label position="floating">Senha do Sistema *</ion-label>
+            <ion-input 
+              type="password" 
+              formControlName="senhaSistema" 
+              placeholder="Digite a senha"
+              clearInput="true">
+            </ion-input>
+          </ion-item>
+          <div class="validation-message" *ngIf="cadastroForm.get('senhaSistema')?.invalid && cadastroForm.get('senhaSistema')?.touched">
+            <ion-text color="danger">
+              <small>Senha é obrigatória</small>
+            </ion-text>
+          </div>
+        </div>
+      </div>
+
+      <!-- Botões de Ação -->
+      <div class="form-actions">
+        <ion-button 
+          fill="clear" 
+          color="medium" 
+          size="large"
+          routerLink="/paineis/painel-funcionario">
+          <ion-icon name="close-outline" slot="start"></ion-icon>
+          Cancelar
+        </ion-button>
+
+        <ion-button 
+          type="button" 
+          color="primary" 
+          size="large"
+          [disabled]="cadastroForm.invalid"
+          (click)="prosseguirParaPermissoes()">
+          <ion-icon name="checkmark-outline" slot="start"></ion-icon>
+          Prosseguir
+        </ion-button>
+      </div>
+    </form>
   </div>
-
-  <form [formGroup]="cadastroForm">
-    <ion-list lines="none" class="form-list">
-
-      <ion-item-group>
-        <ion-item-divider class="sticky-divider">
-          <ion-label>Identificação</ion-label>
-        </ion-item-divider>
-
-        <ion-item class="input-item">
-          <ion-icon name="person-circle-outline" slot="start" color="medium"></ion-icon>
-          <ion-label position="floating">Nome Completo <ion-text color="danger">*</ion-text></ion-label>
-          <ion-input type="text" formControlName="nomeCompleto" required autocapitalize="words"></ion-input>
-        </ion-item>
-        <div *ngIf="cadastroForm.get('nomeCompleto')?.invalid && cadastroForm.get('nomeCompleto')?.touched"
-          class="error-message">
-          <small *ngIf="cadastroForm.get('nomeCompleto')?.errors?.['required']">Nome completo é obrigatório.</small>
-        </div>
-
-        <ion-item class="input-item">
-          <ion-icon name="mail-outline" slot="start" color="medium"></ion-icon>
-          <ion-label position="floating">E-mail <ion-text color="danger">*</ion-text></ion-label>
-          <ion-input type="email" formControlName="email" required email></ion-input>
-        </ion-item>
-        <div *ngIf="cadastroForm.get('email')?.invalid && cadastroForm.get('email')?.touched" class="error-message">
-          <small *ngIf="cadastroForm.get('email')?.errors?.['required']">E-mail é obrigatório.</small>
-          <small *ngIf="cadastroForm.get('email')?.errors?.['email']">Formato de e-mail inválido.</small>
-        </div>
-      </ion-item-group>
-
-      <ion-item-group>
-        <ion-item-divider class="sticky-divider">
-          <ion-label>Datas Importantes</ion-label>
-        </ion-item-divider>
-      
-        <ion-item class="input-item">
-          <ion-icon name="calendar-outline" slot="start" color="medium"></ion-icon>
-          <!-- MUDANÇA AQUI: position="stacked" -->
-          <ion-label position="stacked">Data de Nascimento <ion-text color="danger">*</ion-text></ion-label>
-          <ion-input type="date" formControlName="dataNascimento" required placeholder="DD/MM/AAAA"></ion-input>
-        </ion-item>
-        <div *ngIf="cadastroForm.get('dataNascimento')?.invalid && cadastroForm.get('dataNascimento')?.touched"
-          class="error-message">
-          <small *ngIf="cadastroForm.get('dataNascimento')?.errors?.['required']">Data de nascimento é obrigatória.</small>
-        </div>
-      
-        <ion-item class="input-item">
-          <ion-icon name="business-outline" slot="start" color="medium"></ion-icon>
-          <!-- MUDANÇA AQUI: position="stacked" -->
-          <ion-label position="stacked">Data de Entrada no Instituto <ion-text color="danger">*</ion-text></ion-label>
-          <ion-input type="date" formControlName="dataEntradaInstituto" required placeholder="DD/MM/AAAA"></ion-input>
-        </ion-item>
-        <div *ngIf="cadastroForm.get('dataEntradaInstituto')?.invalid && cadastroForm.get('dataEntradaInstituto')?.touched"
-          class="error-message">
-          <small *ngIf="cadastroForm.get('dataEntradaInstituto')?.errors?.['required']">Data de entrada é obrigatória.</small>
-        </div>
-        </ion-item-group>
-
-      <ion-item-group>
-        <ion-item-divider class="sticky-divider">
-          <ion-label>Contato</ion-label>
-        </ion-item-divider>
-        <ion-item class="input-item">
-          <ion-icon name="call-outline" slot="start" color="medium"></ion-icon>
-          <ion-label position="stacked">Telefone <ion-text color="danger">*</ion-text></ion-label>
-          <ion-input type="tel" formControlName="telefone" required placeholder="(XX) XXXXX-XXXX"></ion-input>
-        </ion-item>
-        <div *ngIf="cadastroForm.get('telefone')?.invalid && cadastroForm.get('telefone')?.touched"
-          class="error-message">
-          <small *ngIf="cadastroForm.get('telefone')?.errors?.['required']">Telefone é obrigatório.</small>
-        </div>
-      </ion-item-group>
-
-
-      <ion-item-group>
-        <ion-item-divider class="sticky-divider">
-          <ion-label>Acesso ao Sistema</ion-label>
-        </ion-item-divider>
-
-        <ion-item class="input-item">
-          <ion-icon name="person-outline" slot="start" color="medium"></ion-icon>
-          <ion-label position="floating">Usuário <ion-text color="danger">*</ion-text></ion-label>
-          <ion-input type="text" formControlName="usuarioSistema" required></ion-input>
-        </ion-item>
-        <div *ngIf="cadastroForm.get('usuarioSistema')?.invalid && cadastroForm.get('usuarioSistema')?.touched"
-          class="error-message">
-          <small *ngIf="cadastroForm.get('usuarioSistema')?.errors?.['required']">Usuário é obrigatório.</small>
-        </div>
-
-        <ion-item class="input-item">
-          <ion-icon name="lock-closed-outline" slot="start" color="medium"></ion-icon>
-          <ion-label position="floating">Senha <ion-text color="danger">*</ion-text></ion-label>
-          <ion-input type="password" formControlName="senhaSistema" required></ion-input>
-        </ion-item>
-        <div *ngIf="cadastroForm.get('senhaSistema')?.invalid && cadastroForm.get('senhaSistema')?.touched"
-          class="error-message">
-          <small *ngIf="cadastroForm.get('senhaSistema')?.errors?.['required']">Senha é obrigatória.</small>
-        </div>
-      </ion-item-group>
-
-    </ion-list>
-  </form>
-
-  <!-- Botão "Permissões" movido para o final do conteúdo, antes de um possível footer da página -->
-  <ion-button expand="block" color="danger" (click)="prosseguirParaPermissoes()" [disabled]="!cadastroForm.valid"
-    class="ion-margin-top ion-margin-horizontal">
-    Próximo: Permissões
-    <ion-icon slot="end" name="arrow-forward-outline"></ion-icon>
-  </ion-button>
-
 </ion-content>
-
-<!-- Footer opcional da página, se você quiser que o botão fique fixo no final -->
-<!--
-<ion-footer class="ion-no-border safe-area-bottom">
-  <ion-toolbar>
-    <ion-button expand="block" color="danger" (click)="prosseguirParaPermissoes()" [disabled]="!cadastroForm.valid">
-      Próximo: Permissões
-      <ion-icon slot="end" name="arrow-forward-outline"></ion-icon>
-    </ion-button>
-  </ion-toolbar>
-</ion-footer>
--->

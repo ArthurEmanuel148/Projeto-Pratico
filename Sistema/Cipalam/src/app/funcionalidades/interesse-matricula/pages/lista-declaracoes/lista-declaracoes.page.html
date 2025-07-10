@@ -23,15 +23,66 @@
   </ion-card>
 
   <!-- Lista de declarações -->
-  <ion-list *ngIf="!carregando">
-    <ion-item *ngFor="let declaracao of declaracoes" (click)="abrirDetalhe(declaracao)">
-      <ion-label>
-        <h2>{{ declaracao.dadosAluno?.nomeAluno }}</h2>
-        <p>Responsável: {{ declaracao.dadosResponsavel?.nomeResponsavel }}</p>
-        <p>Cota: {{ declaracao.tipoVaga?.tipoCota }}</p>
+  <ion-list *ngIf="!carregando && declaracoes.length > 0">
+    <ion-item *ngFor="let declaracao of declaracoes">
+      <ion-label (click)="abrirDetalhe(declaracao)">
+        <h2>
+          <ion-icon name="person-outline" color="primary"></ion-icon>
+          {{ declaracao.dadosAluno?.nomeAluno || 'Nome não informado' }}
+        </h2>
+        <p>
+          <ion-icon name="people-outline" color="medium"></ion-icon>
+          Responsável: {{ declaracao.dadosResponsavel?.nomeResponsavel || 'Não informado' }}
+        </p>
+        <p>
+          <ion-icon name="school-outline" color="secondary"></ion-icon>
+          <strong>Cota: {{ formatarTipoCota(declaracao.tipoVaga?.tipoCota) }}</strong>
+        </p>
+        <p>
+          <ion-icon name="calendar-outline" color="medium"></ion-icon>
+          <small>Protocolo: {{ declaracao.protocolo }}</small>
+        </p>
       </ion-label>
-      <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
+      <div slot="end" class="declaracao-actions">
+        <div class="status-chip">
+          <ion-chip color="success" *ngIf="declaracao.status === 'aprovado'">
+            <ion-icon name="checkmark-circle"></ion-icon>
+            <ion-label>Aprovado</ion-label>
+          </ion-chip>
+          <ion-chip color="warning" *ngIf="declaracao.status === 'pendente'">
+            <ion-icon name="time"></ion-icon>
+            <ion-label>Pendente</ion-label>
+          </ion-chip>
+          <ion-chip color="primary" *ngIf="!declaracao.status">
+            <ion-icon name="document-text"></ion-icon>
+            <ion-label>Nova</ion-label>
+          </ion-chip>
+        </div>
+        <div class="action-buttons">
+          <ion-button fill="clear" size="small" (click)="iniciarMatricula(declaracao)" color="success">
+            <ion-icon name="school" slot="icon-only"></ion-icon>
+          </ion-button>
+          <ion-button fill="clear" size="small" (click)="abrirDetalhe(declaracao)" color="primary">
+            <ion-icon name="eye" slot="icon-only"></ion-icon>
+          </ion-button>
+        </div>
+      </div>
     </ion-item>
   </ion-list>
+
+  <!-- Estado vazio -->
+  <div *ngIf="!carregando && declaracoes.length === 0" class="empty-state">
+    <ion-icon name="school-outline" size="large" color="medium"></ion-icon>
+    <h3>Nenhuma declaração encontrada</h3>
+    <p>Não há declarações de interesse cadastradas ainda.</p>
+  </div>
+
   <ion-spinner *ngIf="carregando" class="ion-margin"></ion-spinner>
+
+  <!-- Botão flutuante para iniciar matrícula -->
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button color="success" routerLink="/paineis/interesse-matricula/inicio-matricula">
+      <ion-icon name="school"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
 </ion-content>

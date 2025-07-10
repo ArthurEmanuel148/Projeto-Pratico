@@ -1,0 +1,307 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/dashboard-responsavel"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Gerenciar Documentos</ion-title>
+    <ion-buttons slot="end">
+      <ion-button fill="clear" (click)="atualizarDocumentos()">
+        <ion-icon name="refresh-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding">
+  <!-- Loading State -->
+  <div *ngIf="carregando" class="loading-container">
+    <ion-spinner name="dots" color="primary"></ion-spinner>
+    <p class="loading-text">Carregando documentos...</p>
+  </div>
+
+  <!-- Content -->
+  <div *ngIf="!carregando">
+
+    <!-- Header Info -->
+    <ion-card class="header-card">
+      <ion-card-content>
+        <div class="header-info">
+          <div class="student-info">
+            <h2>{{ dadosMatricula?.nomeCompleto }}</h2>
+            <p>Protocolo: {{ dadosMatricula?.protocolo }}</p>
+          </div>
+          <div class="progress-info">
+            <ion-progress-bar
+              [value]="progressoDocumentos / 100"
+              color="success"
+              class="progress-bar-large">
+            </ion-progress-bar>
+            <span class="progress-text">{{ progressoDocumentos }}% Concluído</span>
+          </div>
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Status Summary -->
+    <div class="status-summary">
+      <div class="status-item status-completo">
+        <ion-icon name="checkmark-circle"></ion-icon>
+        <span class="count">{{ contadorDocumentos.aprovados }}</span>
+        <span class="label">Aprovados</span>
+      </div>
+      <div class="status-item status-pendente">
+        <ion-icon name="time"></ion-icon>
+        <span class="count">{{ contadorDocumentos.pendentes }}</span>
+        <span class="label">Pendentes</span>
+      </div>
+      <div class="status-item status-rejeitado" *ngIf="contadorDocumentos.rejeitados > 0">
+        <ion-icon name="close-circle"></ion-icon>
+        <span class="count">{{ contadorDocumentos.rejeitados }}</span>
+        <span class="label">Rejeitados</span>
+      </div>
+    </div>
+
+    <!-- Documents List -->
+    <div class="documents-section">
+
+      <!-- Documentos Pendentes -->
+      <div *ngIf="documentosPendentes.length > 0" class="document-group">
+        <h3 class="group-title">
+          <ion-icon name="time-outline" color="warning"></ion-icon>
+          Documentos Pendentes ({{ documentosPendentes.length }})
+        </h3>
+
+        <ion-list class="documents-list">
+          <ion-item
+            *ngFor="let documento of documentosPendentes; trackBy: trackByDocumento"
+            class="document-item pendente"
+            button
+            (click)="abrirDocumento(documento)">
+
+            <ion-icon
+              name="document-outline"
+              color="warning"
+              slot="start">
+            </ion-icon>
+
+            <ion-label>
+              <h3 class="document-title">{{ documento.tipoDocumento.nome }}</h3>
+              <p class="document-description">{{ documento.tipoDocumento.descricao }}</p>
+
+              <div class="document-badges">
+                <ion-badge color="danger" *ngIf="documento.tipoDocumento.obrigatorio">
+                  Obrigatório
+                </ion-badge>
+                <ion-badge color="primary" *ngIf="documento.tipoDocumento.requerAssinatura">
+                  Assinatura Digital
+                </ion-badge>
+                <ion-badge color="secondary" *ngIf="documento.tipoDocumento.requerAnexo">
+                  Upload de Arquivo
+                </ion-badge>
+              </div>
+            </ion-label>
+
+            <ion-button
+              fill="solid"
+              color="success"
+              size="small"
+              (click)="$event.stopPropagation(); abrirDocumento(documento)">
+              <ion-icon name="add-outline" slot="start"></ion-icon>
+              {{ documento.tipoDocumento.requerAssinatura ? 'Assinar' : 'Anexar' }}
+            </ion-button>
+          </ion-item>
+        </ion-list>
+      </div>
+
+      <!-- Documentos Anexados (Aguardando Aprovação) -->
+      <div *ngIf="documentosAnexados.length > 0" class="document-group">
+        <h3 class="group-title">
+          <ion-icon name="cloud-upload-outline" color="primary"></ion-icon>
+          Enviados - Aguardando Aprovação ({{ documentosAnexados.length }})
+        </h3>
+
+        <ion-list class="documents-list">
+          <ion-item
+            *ngFor="let documento of documentosAnexados; trackBy: trackByDocumento"
+            class="document-item anexado">
+
+            <ion-icon
+              name="cloud-done-outline"
+              color="primary"
+              slot="start">
+            </ion-icon>
+
+            <ion-label>
+              <h3 class="document-title">{{ documento.tipoDocumento.nome }}</h3>
+              <p class="document-info">
+                <span *ngIf="documento.dataEnvio">
+                  Enviado em {{ documento.dataEnvio | date:'dd/MM/yyyy HH:mm' }}
+                </span>
+                <span *ngIf="documento.nomeArquivoOriginal" class="file-name">
+                  • {{ documento.nomeArquivoOriginal }}
+                </span>
+              </p>
+
+              <ion-badge color="primary">Em Análise</ion-badge>
+            </ion-label>
+
+            <ion-button
+              fill="outline"
+              color="primary"
+              size="small"
+              (click)="visualizarDocumento(documento)">
+              <ion-icon name="eye-outline" slot="start"></ion-icon>
+              Visualizar
+            </ion-button>
+          </ion-item>
+        </ion-list>
+      </div>
+
+      <!-- Documentos Aprovados -->
+      <div *ngIf="documentosAprovados.length > 0" class="document-group">
+        <h3 class="group-title">
+          <ion-icon name="checkmark-circle-outline" color="success"></ion-icon>
+          Documentos Aprovados ({{ documentosAprovados.length }})
+        </h3>
+
+        <ion-list class="documents-list">
+          <ion-item
+            *ngFor="let documento of documentosAprovados; trackBy: trackByDocumento"
+            class="document-item aprovado">
+
+            <ion-icon
+              name="checkmark-circle"
+              color="success"
+              slot="start">
+            </ion-icon>
+
+            <ion-label>
+              <h3 class="document-title">{{ documento.tipoDocumento.nome }}</h3>
+              <p class="document-info">
+                <span *ngIf="documento.dataAprovacao">
+                  Aprovado em {{ documento.dataAprovacao | date:'dd/MM/yyyy HH:mm' }}
+                </span>
+                <span *ngIf="documento.funcionarioAprovador" class="approver">
+                  • Por {{ documento.funcionarioAprovador.nmPessoa }}
+                </span>
+              </p>
+
+              <ion-badge color="success">Aprovado</ion-badge>
+            </ion-label>
+
+            <ion-button
+              fill="clear"
+              color="success"
+              size="small"
+              (click)="visualizarDocumento(documento)">
+              <ion-icon name="eye-outline"></ion-icon>
+            </ion-button>
+          </ion-item>
+        </ion-list>
+      </div>
+
+      <!-- Documentos Rejeitados -->
+      <div *ngIf="documentosRejeitados.length > 0" class="document-group">
+        <h3 class="group-title">
+          <ion-icon name="close-circle-outline" color="danger"></ion-icon>
+          Documentos Rejeitados ({{ documentosRejeitados.length }})
+        </h3>
+
+        <ion-list class="documents-list">
+          <ion-item
+            *ngFor="let documento of documentosRejeitados; trackBy: trackByDocumento"
+            class="document-item rejeitado"
+            button
+            (click)="abrirDocumento(documento)">
+
+            <ion-icon
+              name="close-circle"
+              color="danger"
+              slot="start">
+            </ion-icon>
+
+            <ion-label>
+              <h3 class="document-title">{{ documento.tipoDocumento.nome }}</h3>
+              <p class="document-info rejection-reason">
+                {{ documento.observacoes || 'Documento rejeitado pelo funcionário' }}
+              </p>
+
+              <ion-badge color="danger">Rejeitado</ion-badge>
+            </ion-label>
+
+            <ion-button
+              fill="solid"
+              color="warning"
+              size="small"
+              (click)="$event.stopPropagation(); abrirDocumento(documento)">
+              <ion-icon name="refresh-outline" slot="start"></ion-icon>
+              Reenviar
+            </ion-button>
+          </ion-item>
+        </ion-list>
+      </div>
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="!documentosPendentes.length && !documentosAnexados.length && !documentosAprovados.length"
+         class="empty-state">
+      <ion-icon name="document-text-outline" size="large" color="medium"></ion-icon>
+      <h3>Nenhum documento encontrado</h3>
+      <p>Não há documentos disponíveis para esta matrícula no momento.</p>
+
+      <ion-button fill="outline" color="primary" (click)="atualizarDocumentos()">
+        <ion-icon name="refresh-outline" slot="start"></ion-icon>
+        Atualizar Lista
+      </ion-button>
+    </div>
+
+    <!-- Help Section -->
+    <ion-card class="help-card" *ngIf="documentosPendentes.length > 0">
+      <ion-card-header>
+        <ion-card-title>
+          <ion-icon name="help-circle-outline" color="primary"></ion-icon>
+          Como enviar documentos
+        </ion-card-title>
+      </ion-card-header>
+
+      <ion-card-content>
+        <div class="help-steps">
+          <div class="help-step">
+            <ion-icon name="document-outline" color="primary"></ion-icon>
+            <span><strong>1.</strong> Clique no documento pendente</span>
+          </div>
+          <div class="help-step">
+            <ion-icon name="camera-outline" color="primary"></ion-icon>
+            <span><strong>2.</strong> Fotografe ou selecione o arquivo</span>
+          </div>
+          <div class="help-step">
+            <ion-icon name="create-outline" color="primary"></ion-icon>
+            <span><strong>3.</strong> Assine digitalmente (se necessário)</span>
+          </div>
+          <div class="help-step">
+            <ion-icon name="send-outline" color="primary"></ion-icon>
+            <span><strong>4.</strong> Confirme e envie</span>
+          </div>
+        </div>
+
+        <ion-note color="medium">
+          <ion-icon name="information-circle-outline"></ion-icon>
+          Formatos aceitos: JPG, PNG, PDF (máximo 10MB)
+        </ion-note>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Action Buttons -->
+    <div class="action-buttons" *ngIf="documentosPendentes.length > 0">
+      <ion-button
+        expand="block"
+        color="success"
+        size="large"
+        (click)="enviarTodosDocumentos()"
+        [disabled]="!temDocumentosParaEnviar">
+        <ion-icon name="send-outline" slot="start"></ion-icon>
+        Enviar Todos os Documentos Prontos
+      </ion-button>
+    </div>
+  </div>
+</ion-content>

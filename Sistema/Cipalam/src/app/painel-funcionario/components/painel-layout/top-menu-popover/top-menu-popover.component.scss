@@ -1,7 +1,20 @@
 // src/app/paineis/components/top-menu-popover/top-menu-popover.component.scss
+
+// Força aplicação do tema no popover
+:host {
+    --background: var(--ion-background-color) !important;
+    --color: var(--ion-text-color) !important;
+    background-color: var(--ion-background-color) !important;
+    color: var(--ion-text-color) !important;
+}
+
 ion-list {
     padding-top: 0;
     padding-bottom: 0;
+    --background: var(--ion-background-color) !important;
+    --color: var(--ion-text-color) !important;
+    background-color: var(--ion-background-color) !important;
+    color: var(--ion-text-color) !important;
 }
 
 ion-item {
@@ -9,11 +22,18 @@ ion-item {
     --padding-end: 16px;
     --min-height: 44px;
     font-size: 0.95em;
-    --color: var(--ion-text-color); // Cor do texto do tema
+    --color: var(--ion-text-color) !important; // Cor do texto do tema
+    --background: var(--ion-item-background) !important;
     --ripple-color: var(--ion-color-medium); // Efeito de clique
+    background-color: var(--ion-item-background) !important;
+    color: var(--ion-text-color) !important;
+
+    ion-label {
+        color: var(--ion-text-color) !important;
+    }
 
     ion-icon[slot="start"] {
-        color: var(--ion-color-medium-text);
+        color: var(--ion-color-medium) !important;
         margin-right: 12px;
         font-size: 1.1em;
     }
@@ -21,18 +41,19 @@ ion-item {
     &.selected-item,
     // Reutilizando classe do menu lateral para consistência
     &.activated {
-        background: rgba(var(--ion-color-danger-rgb), 0.08);
+        background: rgba(var(--ion-color-danger-rgb), 0.08) !important;
 
         ion-label {
-            color: var(--ion-color-danger);
+            color: var(--ion-color-danger) !important;
             font-weight: 500;
         }
 
         ion-icon[slot="start"] {
-            color: var(--ion-color-danger);
+            color: var(--ion-color-danger) !important;
         }
     }
 
     &:hover:not(.selected-item):not(.activated) {
-        background: var(--ion-item-background-activated);
-    } }
+        background: var(--ion-item-background-activated) !important;
+    }
+}

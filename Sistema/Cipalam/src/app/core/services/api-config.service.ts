@@ -17,7 +17,11 @@ export class ApiConfigService {
   }
 
   getLoginUrl(): string {
-    return `${this.baseUrl}/pessoa/login`;
+    return `${this.baseUrl}/auth/login`;
+  }
+
+  getLoginResponsavelUrl(): string {
+    return `${this.baseUrl}/auth/login-responsavel`;
   }
 
   getCadastroCompletoUrl(): string {

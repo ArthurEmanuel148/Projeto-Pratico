@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
+import { AuthService } from './auth.service';
 
 interface FuncionalidadeUso {
   chave: string;
@@ -8,6 +9,7 @@ interface FuncionalidadeUso {
   rota: string;
   contador: number;
   ultimoAcesso: Date;
+  usuarioId: number; // Novo campo para associar ao usuário
 }
 
 @Injectable({
@@ -22,7 +24,7 @@ export class FuncionalidadesUsosService {
   private topMenuItems$ = new BehaviorSubject<FuncionalidadeUso[]>([]);
   private dashboardItems$ = new BehaviorSubject<FuncionalidadeUso[]>([]);
 
-  constructor() {
+  constructor(private authService: AuthService) {
     this.carregarDados();
   }
 
@@ -30,11 +32,17 @@ export class FuncionalidadesUsosService {
    * Registra o acesso a uma funcionalidade
    */
   registrarAcesso(funcionalidade: any): void {
-    const chave = funcionalidade.chave;
+    const usuarioLogado = this.authService.getFuncionarioLogado();
+    if (!usuarioLogado?.pessoa?.idPessoa) {
+      console.warn('Usuário não logado, não é possível registrar uso da funcionalidade');
+      return;
+    }
 
-    if (this.funcionalidadesUso.has(chave)) {
+    const chaveUnica = `${usuarioLogado.pessoa.idPessoa}_${funcionalidade.chave}`;
+
+    if (this.funcionalidadesUso.has(chaveUnica)) {
       // Atualizar existente
-      const item = this.funcionalidadesUso.get(chave)!;
+      const item = this.funcionalidadesUso.get(chaveUnica)!;
       item.contador++;
       item.ultimoAcesso = new Date();
     } else {
@@ -45,9 +53,10 @@ export class FuncionalidadesUsosService {
         icone: funcionalidade.icone,
         rota: funcionalidade.rota,
         contador: 1,
-        ultimoAcesso: new Date()
+        ultimoAcesso: new Date(),
+        usuarioId: usuarioLogado.pessoa.idPessoa
       };
-      this.funcionalidadesUso.set(chave, novoItem);
+      this.funcionalidadesUso.set(chaveUnica, novoItem);
     }
 
     this.salvarDados();
@@ -72,10 +81,21 @@ export class FuncionalidadesUsosService {
    * Atualiza as listas ordenadas por uso
    */
   private atualizarListasOrdenadas(): void {
-    const todasFuncionalidades = Array.from(this.funcionalidadesUso.values());
+    const usuarioLogado = this.authService.getFuncionarioLogado();
+    if (!usuarioLogado?.pessoa?.idPessoa) {
+      this.topMenuItems$.next([]);
+      this.dashboardItems$.next([]);
+      return;
+    }
+
+    const usuarioId = usuarioLogado.pessoa.idPessoa;
+
+    // Filtrar apenas funcionalidades do usuário atual
+    const funcionalidadesUsuario = Array.from(this.funcionalidadesUso.values())
+      .filter(f => f.usuarioId === usuarioId);
 
     // Ordenar por: contador (desc) > último acesso (desc)
-    const funcionaldadesOrdenadas = todasFuncionalidades.sort((a, b) => {
+    const funcionaldadesOrdenadas = funcionalidadesUsuario.sort((a, b) => {
       if (b.contador !== a.contador) {
         return b.contador - a.contador; // Por contador (mais usado primeiro)
       }
@@ -137,18 +157,51 @@ export class FuncionalidadesUsosService {
   }
 
   /**
-   * Obtém estatísticas de uso
+   * Inicializa os dados para o usuário logado (chamado após login)
+   */
+  inicializarParaUsuario(): void {
+    this.carregarDados();
+    this.atualizarListasOrdenadas();
+  }
+
+  /**
+   * Limpa dados do usuário ao fazer logout e carrega dados do novo usuário ao fazer login
+   */
+  trocarUsuario(): void {
+    this.atualizarListasOrdenadas();
+  }
+
+  /**
+   * Obtém estatísticas de uso do usuário atual
    */
   getEstatisticas() {
-    const funcionalidades = Array.from(this.funcionalidadesUso.values());
-    const totalAcessos = funcionalidades.reduce((sum, f) => sum + f.contador, 0);
+    const usuarioLogado = this.authService.getFuncionarioLogado();
+    if (!usuarioLogado?.pessoa?.idPessoa) {
+      return {
+        totalFuncionalidades: 0,
+        totalAcessos: 0,
+        funcionalidadeMaisUsada: null,
+        ultimoAcesso: null
+      };
+    }
+
+    const usuarioId = usuarioLogado.pessoa.idPessoa;
+
+    // Filtrar apenas funcionalidades do usuário atual
+    const funcionalidadesUsuario = Array.from(this.funcionalidadesUso.values())
+      .filter(f => f.usuarioId === usuarioId);
+
+    const totalAcessos = funcionalidadesUsuario.reduce((sum, f) => sum + f.contador, 0);
+
+    // Ordenar para encontrar a mais usada
+    const funcionaldadesOrdenadas = funcionalidadesUsuario.sort((a, b) => b.contador - a.contador);
 
     return {
-      totalFuncionalidades: funcionalidades.length,
+      totalFuncionalidades: funcionalidadesUsuario.length,
       totalAcessos,
-      funcionalidadeMaisUsada: funcionalidades.length > 0 ? funcionalidades[0] : null,
-      ultimoAcesso: funcionalidades.length > 0
-        ? new Date(Math.max(...funcionalidades.map(f => f.ultimoAcesso.getTime())))
+      funcionalidadeMaisUsada: funcionaldadesOrdenadas.length > 0 ? funcionaldadesOrdenadas[0] : null,
+      ultimoAcesso: funcionalidadesUsuario.length > 0
+        ? new Date(Math.max(...funcionalidadesUsuario.map(f => f.ultimoAcesso.getTime())))
         : null
     };
   }

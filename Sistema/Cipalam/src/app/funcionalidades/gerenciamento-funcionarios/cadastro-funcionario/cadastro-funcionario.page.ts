@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router'; // Removido ActivatedRoute se não usar para edição aqui
+import { Router } from '@angular/router';
 import { ToastController, NavController, ModalController } from '@ionic/angular';
 import { Funcionario } from '../models/funcionario.interface';
-import { PermissoesFuncionarioComponent } from '../components/permissoes-funcionario/permissoes-funcionario.component'; // Ajuste o caminho
-// import { FuncionarioService } from '../../services/funcionario.service';
+import { PermissoesFuncionarioComponent } from '../components/permissoes-funcionario/permissoes-funcionario.component';
+import { FuncionarioService } from '../../../core/services/funcionario.service';
 
 @Component({
   selector: 'app-cadastro-funcionario',
@@ -22,8 +22,8 @@ export class CadastroFuncionarioPage implements OnInit {
     private router: Router,
     private toastCtrl: ToastController,
     private navCtrl: NavController,
-    private modalController: ModalController
-    // private funcionarioService: FuncionarioService
+    private modalController: ModalController,
+    private funcionarioService: FuncionarioService
   ) {
     this.cadastroForm = this.fb.group({
       nomeCompleto: ['', Validators.required],
@@ -72,25 +72,37 @@ export class CadastroFuncionarioPage implements OnInit {
   }
 
   async finalizarCadastroCompleto(dadosBasicos: any, permissoes: Record<string, boolean>) {
-    const funcionarioParaSalvar: Funcionario = {
+    const funcionarioParaSalvar = {
       ...dadosBasicos,
-      permissoes: permissoes
+      permissoes: permissoes,
+      tipo: 'funcionario'
     };
 
     console.log('DADOS FINAIS DO FUNCIONÁRIO PARA SALVAR:', funcionarioParaSalvar);
-    // ** AQUI VOCÊ CHAMARIA O SERVIÇO PARA SALVAR NO BACKEND **
-    // Exemplo:
-    // try {
-    //   await this.funcionarioService.createFuncionario(funcionarioParaSalvar).toPromise();
-    //   this.presentToast('Funcionário cadastrado com sucesso!');
-    //   this.cadastroForm.reset();
-    //   this.navCtrl.navigateBack('/paineis/gerenciamento-funcionarios'); // Ou para a lista de funcionários
-    // } catch (error) {
-    //   console.error('Erro ao cadastrar funcionário:', error);
-    //   this.presentToast('Erro ao cadastrar funcionário. Tente novamente.');
-    // }
-    this.presentToast('Cadastro mock finalizado! Veja o console.');
-    this.cadastroForm.reset(); // Limpa o formulário
+
+    try {
+      await this.funcionarioService.cadastrarFuncionario(funcionarioParaSalvar).toPromise();
+      this.presentToast('Funcionário cadastrado com sucesso!');
+      this.cadastroForm.reset();
+      this.navCtrl.navigateBack('/paineis/gerenciamento-funcionarios');
+    } catch (error: any) {
+      console.error('Erro ao cadastrar funcionário:', error);
+      
+      let mensagemErro = 'Erro ao cadastrar funcionário. Tente novamente.';
+      
+      // Verificar se é erro de usuário duplicado
+      if (error?.error && typeof error.error === 'string' && error.error.includes('Duplicate entry')) {
+        if (error.error.includes('for key \'usuario\'')) {
+          mensagemErro = 'Este nome de usuário já existe. Escolha outro nome de usuário.';
+        } else if (error.error.includes('for key \'email\'')) {
+          mensagemErro = 'Este e-mail já está cadastrado no sistema.';
+        } else {
+          mensagemErro = 'Já existe um funcionário com essas informações.';
+        }
+      }
+      
+      this.presentToast(mensagemErro);
+    }
   }
 
   async presentToast(message: string) {

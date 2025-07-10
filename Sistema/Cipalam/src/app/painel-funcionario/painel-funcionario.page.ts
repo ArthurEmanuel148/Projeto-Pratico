@@ -1,6 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AlertController, ToastController } from '@ionic/angular';
+import { FuncionalidadesSistemaService } from '../core/services/funcionalidades-sistema.service';
+import { FuncionalidadesUsosService } from '../core/services/funcionalidades-usos.service';
+import { AuthService } from '../core/services/auth.service';
 
 
 
@@ -21,56 +24,52 @@ interface Feature {
 })
 
 export class PainelFuncionarioPage implements OnInit {
-  mostUsedFeatures: Feature[] = [];
+  usuarioLogado: any = null;
+  mostUsedFeatures: any[] = [];
+  estatisticasUso: any = null;
 
   constructor(
     private router: Router,
     private alertCtrl: AlertController,
-    private toastCtrl: ToastController
+    private toastCtrl: ToastController,
+    private funcionalidadesService: FuncionalidadesSistemaService,
+    private funcionalidadesUsosService: FuncionalidadesUsosService,
+    private authService: AuthService
   ) { }
 
   ngOnInit() {
-    this.loadMostUsedFeatures();
+    // Carrega usuário logado
+    this.usuarioLogado = this.authService.getFuncionarioLogado();
+
+    // Carrega funcionalidades mais usadas para o dashboard
+    this.funcionalidadesUsosService.getDashboardItems().subscribe(dashboardItems => {
+      this.mostUsedFeatures = dashboardItems.map(item => ({
+        id: item.chave,
+        name: item.nomeAmigavel,
+        icon: item.icone,
+        route: item.rota,
+        color: 'primary',
+        usageCount: item.contador,
+        lastAccess: item.ultimoAcesso
+      }));
+    });
+
+    // Carrega estatísticas de uso
+    this.estatisticasUso = this.funcionalidadesUsosService.getEstatisticas();
   }
 
-  loadMostUsedFeatures() {
-    // Simulação: Em um app real, isso viria de um serviço,
-    // preferências do usuário, ou análise de uso.
-    this.mostUsedFeatures = [
-      { id: 'new_order', name: 'Novo Pedido', icon: 'add-circle-outline', route: '/pedidos/novo', color: 'success' },
-      { id: 'clients', name: 'Clientes', icon: 'people-outline', route: '/cadastros/clientes' },
-      { id: 'inventory', name: 'Estoque', icon: 'cube-outline', route: '/estoque/consulta', color: 'secondary' },
-      { id: 'reports', name: 'Relatórios', icon: 'analytics-outline', action: () => this.showReportsInfo(), color: 'tertiary' },
-      // Adicione mais funcionalidades conforme necessário
-    ];
-  }
+  handleFeatureClick(feature: any) {
+    // Registrar o acesso
+    this.funcionalidadesUsosService.registrarAcesso({
+      chave: feature.id,
+      nomeAmigavel: feature.name,
+      icone: feature.icon,
+      rota: feature.route
+    });
 
-  handleFeatureClick(feature: Feature) {
+    // Navegar para a funcionalidade
     if (feature.route) {
-      this.router.navigate([feature.route]);
-    } else if (feature.action) {
-      feature.action();
-    } else {
-      console.warn('Funcionalidade sem rota ou ação definida:', feature.name);
-      this.presentToast(`Funcionalidade "${feature.name}" ainda não implementada.`);
+      this.router.navigateByUrl(feature.route);
     }
-  }
-
-  async showReportsInfo() {
-    const alert = await this.alertCtrl.create({
-      header: 'Relatórios',
-      message: 'A seção de relatórios permite visualizar dados consolidados do sistema.',
-      buttons: ['OK']
-    });
-    await alert.present();
-  }
-
-  async presentToast(message: string) {
-    const toast = await this.toastCtrl.create({
-      message: message,
-      duration: 2000,
-      position: 'bottom'
-    });
-    toast.present();
   }
 }

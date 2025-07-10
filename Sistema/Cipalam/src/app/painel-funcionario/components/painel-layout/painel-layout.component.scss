@@ -1,0 +1,378 @@
+// src/app/funcionalidades/painel-funcionario/pages/painel-funcionario/painel-funcionario.page.scss
+
+// CONTAINER PRINCIPAL
+#main-content {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+// LOGO CONTAINER NO HEADER
+.logo-container {
+    display: flex;
+    align-items: center;
+    padding-left: 0px;
+
+    &:hover {
+        opacity: 0.8;
+    }
+
+    .top-menu-logo-image {
+        height: 50px;
+        width: auto;
+        margin-left: 10px;
+        margin-right: 10px;
+    }
+}
+
+// HEADER E TOOLBAR - FLUXO NORMAL SEM SOBREPOSIÇÃO
+ion-header {
+    position: relative; // Garantir que não seja fixo
+    z-index: 10; // Z-index maior para ficar acima do conteúdo
+    display: block; // Forçar ocupar espaço no fluxo
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15); // Sombra consistente
+
+    ion-toolbar {
+        --background: var(--ion-color-danger);
+        --color: var(--ion-color-danger-contrast);
+        --min-height: 56px; // Altura mínima padrão
+
+        ion-title {
+            color: var(--ion-color-danger-contrast);
+        }
+
+        ion-menu-button {
+            --color: var(--ion-color-danger-contrast);
+        }
+    }
+}
+
+// ROUTER OUTLET - OCUPAR ESPAÇO RESTANTE SEM SOBREPOSIÇÃO
+ion-router-outlet {
+    flex: 1;
+    display: block;
+    position: relative; // Garantir que fique no fluxo normal
+    background: var(--ion-background-color); // Garantir cor de fundo consistente
+    margin: 0; // Remover margens
+    padding: 0; // Remover paddings
+}
+
+// TOP MENU BUTTONS
+.top-menu-buttons {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.top-menu-button {
+    --color: var(--ion-color-danger-contrast);
+    font-size: 0.9em;
+    min-height: 40px;
+
+    &.active-top-menu {
+        --background: rgba(255, 255, 255, 0.1);
+    }
+}
+
+.top-menu-label {
+    margin: 0 4px;
+}
+
+.top-menu-main-icon {
+    font-size: 1.1em;
+}
+
+.top-menu-chevron {
+    font-size: 0.9em;
+}
+
+.top-menu-spacer {
+    flex: 1;
+}
+
+// MENU LATERAL
+ion-menu {
+    ion-content {
+        --background: var(--ion-background-color);
+    }
+}
+
+.submenu-container {
+    background-color: var(--ion-color-light);
+    border-left: 3px solid var(--ion-color-danger);
+}
+
+.submenu-item {
+    --padding-start: 32px;
+    font-size: 0.9em;
+}
+
+.logout-item {
+    margin-top: 20px;
+    border-top: 1px solid var(--ion-color-light);
+    padding-top: 16px;
+}
+
+// FUNDO DO CONTEÚDO PRINCIPAL
+ion-content.home-content {
+    --background: var(--ion-background-color);
+    --padding-top: 16px;
+}
+
+// MENSAGEM DE BOAS-VINDAS
+.welcome-message {
+    margin-bottom: 24px;
+    padding: 10px 16px;
+
+    h3 {
+        font-weight: 600;
+        color: var(--ion-text-color);
+    }
+
+    p {
+        font-size: 0.9em;
+        color: var(--ion-color-medium-text);
+    }
+}
+
+// CONTÊINERES DE SEÇÃO
+.section-container {
+    margin-bottom: 20px;
+    background-color: var(--ion-item-background);
+    padding: 16px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(var(--ion-text-color-rgb, 0, 0, 0), 0.07);
+
+    ion-text h4 {
+        font-size: 1.1em;
+        font-weight: 600;
+        margin-bottom: 16px;
+        color: var(--ion-color-danger);
+        display: flex;
+        align-items: center;
+    }
+
+    .section-icon {
+        margin-right: 8px;
+        font-size: 1.3em;
+        color: var(--ion-color-danger);
+    }
+}
+
+// CARDS DE FUNCIONALIDADES
+.feature-card {
+    --background: var(--ion-color-light-background);
+    box-shadow: none;
+    border: 1px solid var(--ion-color-border-color);
+    border-radius: 8px;
+    height: 130px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+
+    &:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 3px 8px rgba(var(--ion-color-danger-rgb), 0.2);
+    }
+
+    ion-card-header {
+        padding: 8px 0 0 0;
+    }
+
+    .feature-icon {
+        font-size: 2.8em;
+        color: var(--ion-color-danger);
+    }
+
+    ion-card-content {
+        padding-top: 8px;
+
+        ion-label {
+            font-size: 0.85em;
+            font-weight: 500;
+            white-space: normal;
+            color: var(--ion-text-color);
+        }
+    }
+}
+
+// LISTA DE AVISOS
+.section-container ion-list {
+    ion-item {
+        --background: transparent;
+        --padding-start: 0;
+        --inner-padding-end: 0;
+
+        ion-icon[slot="start"] {
+            color: var(--ion-color-warning);
+            margin-right: 12px;
+        }
+
+        ion-label h2 {
+            font-size: 1em;
+            font-weight: 500;
+            color: var(--ion-text-color);
+        }
+
+        ion-label p {
+            font-size: 0.85em;
+            color: var(--ion-color-medium-text);
+        }
+    }
+}
+
+// ESTADO VAZIO
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    color: var(--ion-color-medium-text);
+    text-align: center;
+    min-height: 100px;
+
+    ion-icon {
+        font-size: 2.5em;
+        margin-bottom: 8px;
+        color: var(--ion-color-light-text);
+    }
+
+    p {
+        font-size: 0.95em;
+    }
+}
+
+// =============================================================================
+// HEADER SIMPLES E LIMPO
+// =============================================================================
+
+.professional-header {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  
+  .main-toolbar {
+    --background: var(--ion-color-primary);
+    --color: white;
+    min-height: 56px;
+    padding: 0 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+// Logo simples
+.brand-section {
+  display: flex;
+  align-items: center;
+  min-width: 120px;
+
+  .brand-container {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    transition: opacity 0.2s;
+
+    &:hover {
+      opacity: 0.8;
+    }
+
+    .brand-logo {
+      height: 36px;
+      width: auto;
+      filter: brightness(0) invert(1);
+    }
+  }
+}
+
+// SEÇÃO DE NAVEGAÇÃO - ÚLTIMA FUNCIONALIDADE
+.nav-section {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  
+  .nav-buttons {
+    display: flex;
+    
+    .nav-button {
+      --color: rgba(255, 255, 255, 0.9);
+      --background: transparent;
+      --border-radius: 8px;
+      --padding-start: 1rem;
+      --padding-end: 1rem;
+      height: 40px;
+      transition: all 0.2s;
+
+      &:hover {
+        --background: rgba(255, 255, 255, 0.1);
+        --color: white;
+      }
+
+      ion-icon {
+        margin-right: 0.5rem;
+        font-size: 1.1rem;
+      }
+
+      .nav-label {
+        font-size: 0.9rem;
+        font-weight: 500;
+      }
+
+      @media (max-width: 768px) {
+        .nav-label {
+          display: none;
+        }
+      }
+    }
+  }
+  
+  .no-recent {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    .no-recent-text {
+      color: rgba(255, 255, 255, 0.6);
+      font-size: 0.85rem;
+      font-style: italic;
+    }
+  }
+}
+
+// SEÇÃO DO USUÁRIO SIMPLES
+.user-section {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  min-width: 120px;
+  justify-content: flex-end;
+
+  .user-info-simple {
+    display: flex;
+    align-items: center;
+
+    .user-name {
+      color: white;
+      font-size: 0.9rem;
+      font-weight: 500;
+      
+      @media (max-width: 576px) {
+        display: none;
+      }
+    }
+  }
+
+  ion-buttons ion-button {
+    --color: white;
+    
+    ion-icon {
+      font-size: 1.2rem;
+    }
+  }
+}
+
+// Fim do arquivo - layout limpo e responsivo
+

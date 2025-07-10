@@ -1,0 +1,180 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button routerLink="/paineis/interesse-matricula/lista-declaracoes">
+        <ion-icon name="arrow-back"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Iniciar Matrícula</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <!-- Loading -->
+  <div *ngIf="carregando" class="loading-container">
+    <ion-spinner></ion-spinner>
+    <p>Iniciando matrícula...</p>
+  </div>
+
+  <!-- Conteúdo principal -->
+  <div *ngIf="!carregando && !matriculaIniciada" class="container">
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Iniciar Processo de Matrícula</ion-card-title>
+        <ion-card-subtitle>Selecione a declaração de interesse para iniciar o processo de matrícula</ion-card-subtitle>
+      </ion-card-header>
+
+      <ion-card-content>
+        <ion-item>
+          <ion-label position="stacked">Declaração de Interesse</ion-label>
+          <ion-select [(ngModel)]="interesseSelecionado" placeholder="Selecione uma declaração">
+            <ion-select-option *ngFor="let interesse of interesses" [value]="interesse">
+              {{interesse.protocolo}} - {{interesse.nomeCompleto}} ({{interesse.tipoCota}})
+            </ion-select-option>
+          </ion-select>
+        </ion-item>
+
+        <ion-item>
+          <ion-label position="stacked">Funcionário Responsável</ion-label>
+          <ion-select [(ngModel)]="funcionarioSelecionado" placeholder="Selecione o funcionário">
+            <ion-select-option *ngFor="let funcionario of funcionarios" [value]="funcionario.idPessoa">
+              {{funcionario.nmPessoa}}
+            </ion-select-option>
+          </ion-select>
+        </ion-item>
+
+        <ion-item>
+          <ion-label position="stacked">Observações (opcional)</ion-label>
+          <ion-textarea [(ngModel)]="observacoes" placeholder="Digite observações sobre o início da matrícula"></ion-textarea>
+        </ion-item>
+
+        <ion-button
+          expand="block"
+          color="primary"
+          [disabled]="!interesseSelecionado || !funcionarioSelecionado"
+          (click)="iniciarMatricula()">
+          <ion-icon name="school" slot="start"></ion-icon>
+          Iniciar Matrícula
+        </ion-button>
+      </ion-card-content>
+    </ion-card>
+  </div>
+
+  <!-- Resultado do início da matrícula -->
+  <div *ngIf="matriculaIniciada && resultadoMatricula" class="container">
+    <ion-card color="success">
+      <ion-card-header>
+        <ion-card-title>
+          <ion-icon name="checkmark-circle" color="light"></ion-icon>
+          Matrícula Iniciada com Sucesso!
+        </ion-card-title>
+      </ion-card-header>
+
+      <ion-card-content>
+        <p><strong>Declaração Selecionada:</strong> {{interesseSelecionado?.protocolo}}</p>
+        <p><strong>Aluno:</strong> {{interesseSelecionado?.nomeCompleto}}</p>
+        <p><strong>Status:</strong> Matrícula Iniciada</p>
+        <p><strong>Cota:</strong> {{interesseSelecionado?.tipoCota}}</p>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Credenciais do Responsável -->
+    <ion-card color="warning">
+      <ion-card-header>
+        <ion-card-title>
+          <ion-icon name="key" color="light"></ion-icon>
+          Credenciais do Responsável
+        </ion-card-title>
+        <ion-card-subtitle color="light">
+          Anote estas informações! O responsável precisará delas para acessar o painel.
+        </ion-card-subtitle>
+      </ion-card-header>
+
+      <ion-card-content>
+        <ion-item>
+          <ion-label>
+            <h3>Email/Usuário:</h3>
+            <p>{{resultadoMatricula.credenciaisResponsavel?.usuario}}</p>
+          </ion-label>
+          <ion-button fill="clear" slot="end" (click)="copiarTexto(resultadoMatricula.credenciaisResponsavel?.usuario)">
+            <ion-icon name="copy"></ion-icon>
+          </ion-button>
+        </ion-item>
+
+        <ion-item>
+          <ion-label>
+            <h3>Senha Temporária:</h3>
+            <p>{{resultadoMatricula.credenciaisResponsavel?.senha}}</p>
+          </ion-label>
+          <ion-button fill="clear" slot="end" (click)="copiarTexto(resultadoMatricula.credenciaisResponsavel?.senha)">
+            <ion-icon name="copy"></ion-icon>
+          </ion-button>
+        </ion-item>
+
+        <ion-button
+          expand="block"
+          color="primary"
+          (click)="testarLoginResponsavel()">
+          <ion-icon name="log-in" slot="start"></ion-icon>
+          Testar Login do Responsável
+        </ion-button>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Documentos Necessários -->
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Documentos Necessários</ion-card-title>
+        <ion-card-subtitle>Documentos que o responsável precisará enviar</ion-card-subtitle>
+      </ion-card-header>
+
+      <ion-card-content>
+        <ion-list>
+          <ion-item *ngFor="let doc of documentosNecessarios">
+            <ion-icon
+              [name]="doc.requerAssinatura ? 'document-text' : 'attach'"
+              slot="start"
+              [color]="doc.obrigatorio ? 'danger' : 'medium'">
+            </ion-icon>
+            <ion-label>
+              <h3>{{doc.nome}}</h3>
+              <p>{{doc.descricao}}</p>
+              <ion-note *ngIf="doc.obrigatorio" color="danger">Obrigatório</ion-note>
+              <ion-note *ngIf="doc.requerAssinatura" color="primary">Assinatura Digital</ion-note>
+            </ion-label>
+          </ion-item>
+        </ion-list>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Ações -->
+    <ion-button expand="block" color="secondary" (click)="voltarParaLista()">
+      <ion-icon name="list" slot="start"></ion-icon>
+      Voltar para Lista de Declarações
+    </ion-button>
+
+    <ion-button expand="block" fill="outline" (click)="iniciarNova()">
+      <ion-icon name="add" slot="start"></ion-icon>
+      Iniciar Nova Matrícula
+    </ion-button>
+  </div>
+
+  <!-- Erro -->
+  <div *ngIf="erro" class="container">
+    <ion-card color="danger">
+      <ion-card-header>
+        <ion-card-title>
+          <ion-icon name="alert-circle" color="light"></ion-icon>
+          Erro ao Iniciar Matrícula
+        </ion-card-title>
+      </ion-card-header>
+
+      <ion-card-content>
+        <p>{{erro}}</p>
+        <ion-button color="light" (click)="tentarNovamente()">
+          Tentar Novamente
+        </ion-button>
+      </ion-card-content>
+    </ion-card>
+  </div>
+</ion-content>

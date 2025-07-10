@@ -1,0 +1,30 @@
+<div class="user-info-header">
+  <div class="user-info-container" *ngIf="!loading; else loadingTemplate">
+    <div class="user-avatar" *ngIf="userInfo">
+      <img *ngIf="userInfo.caminhoImagem" [src]="userInfo.caminhoImagem" [alt]="userInfo.nomePessoa" class="avatar-image">
+      <div *ngIf="!userInfo.caminhoImagem" class="avatar-initials">
+        {{ getInitials() }}
+      </div>
+    </div>
+    
+    <div class="user-details" *ngIf="userInfo">
+      <h3 class="user-name">{{ userInfo.nomePessoa }}</h3>
+      <span class="user-type">{{ getTipoUsuarioDisplay() }}</span>
+      <span class="user-login">&#64;{{ userInfo.usuario }}</span>
+    </div>
+
+    <div class="user-actions">
+      <ion-button fill="clear" size="small" (click)="onLogout()" color="danger">
+        <ion-icon name="log-out-outline" slot="start"></ion-icon>
+        Sair
+      </ion-button>
+    </div>
+  </div>
+
+  <ng-template #loadingTemplate>
+    <div class="loading-container">
+      <ion-spinner name="dots"></ion-spinner>
+      <span>Carregando informações do usuário...</span>
+    </div>
+  </ng-template>
+</div>

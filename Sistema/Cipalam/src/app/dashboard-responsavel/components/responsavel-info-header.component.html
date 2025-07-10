@@ -1,0 +1,30 @@
+<div class="responsavel-info-header">
+  <div class="responsavel-info-container" *ngIf="!loading; else loadingTemplate">
+    <div class="responsavel-avatar" *ngIf="responsavelInfo">
+      <img *ngIf="responsavelInfo.caminhoImagem" [src]="responsavelInfo.caminhoImagem" [alt]="responsavelInfo.nomePessoa" class="avatar-image">
+      <div *ngIf="!responsavelInfo.caminhoImagem" class="avatar-initials">
+        {{ getInitials() }}
+      </div>
+    </div>
+    
+    <div class="responsavel-details" *ngIf="responsavelInfo">
+      <h3 class="responsavel-name">{{ responsavelInfo.nomePessoa }}</h3>
+      <span class="responsavel-type">Responsável</span>
+      <span class="responsavel-login">&#64;{{ responsavelInfo.usuario }}</span>
+    </div>
+
+    <div class="responsavel-actions">
+      <ion-button fill="clear" size="small" (click)="onLogout()" color="danger">
+        <ion-icon name="log-out-outline" slot="start"></ion-icon>
+        Sair
+      </ion-button>
+    </div>
+  </div>
+
+  <ng-template #loadingTemplate>
+    <div class="loading-container">
+      <ion-spinner name="dots"></ion-spinner>
+      <span>Carregando informações do responsável...</span>
+    </div>
+  </ng-template>
+</div>

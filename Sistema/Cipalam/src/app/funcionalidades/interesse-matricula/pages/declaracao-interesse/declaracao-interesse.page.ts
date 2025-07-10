@@ -244,6 +244,95 @@ export class DeclaracaoInteressePage implements OnInit {
     this.cdRef.detectChanges();
   }
 
+  // Métodos auxiliares para o template melhorado
+  getTituloEtapa(): string {
+    switch (this.etapaAtual) {
+      case this.ETAPAS.DADOS_RESPONSAVEL:
+        return 'Dados do Responsável';
+      case this.ETAPAS.TIPO_VAGA:
+        return 'Tipo de Vaga';
+      case this.ETAPAS.INFO_RENDA:
+        return 'Informações de Renda';
+      case this.ETAPAS.DADOS_ALUNO:
+        return 'Dados do Aluno';
+      case this.ETAPAS.HORARIOS_VAGA:
+        return 'Horários da Vaga';
+      case this.ETAPAS.REVISAO:
+        return 'Revisão dos Dados';
+      case this.ETAPAS.CONCLUIDO:
+        return 'Declaração Enviada';
+      default:
+        return 'Declaração de Interesse';
+    }
+  }
+
+  getEtapaAtual(): number {
+    const cotaEconomicaSelecionada = this.tipoVagaForm.get('tipoCota')?.value === 'economica';
+    const sequenciaFluxo: EtapaFormulario[] = [
+      this.ETAPAS.DADOS_RESPONSAVEL,
+      this.ETAPAS.TIPO_VAGA,
+      ...(cotaEconomicaSelecionada ? [this.ETAPAS.INFO_RENDA] : []),
+      this.ETAPAS.DADOS_ALUNO,
+      this.ETAPAS.HORARIOS_VAGA,
+      this.ETAPAS.REVISAO
+    ];
+    return sequenciaFluxo.indexOf(this.etapaAtual) + 1;
+  }
+
+  getTotalEtapas(): number {
+    const cotaEconomicaSelecionada = this.tipoVagaForm.get('tipoCota')?.value === 'economica';
+    return cotaEconomicaSelecionada ? 6 : 5;
+  }
+
+  getDescricaoProgresso(): string {
+    switch (this.etapaAtual) {
+      case this.ETAPAS.DADOS_RESPONSAVEL:
+        return 'Iniciando declaração';
+      case this.ETAPAS.TIPO_VAGA:
+        return 'Selecionando modalidade';
+      case this.ETAPAS.INFO_RENDA:
+        return 'Informações socioeconômicas';
+      case this.ETAPAS.DADOS_ALUNO:
+        return 'Dados do estudante';
+      case this.ETAPAS.HORARIOS_VAGA:
+        return 'Escolhendo horários';
+      case this.ETAPAS.REVISAO:
+        return 'Finalizando declaração';
+      default:
+        return 'Processando';
+    }
+  }
+
+  getStepIndicators(): Array<{icon: string, active: boolean, completed: boolean}> {
+    const cotaEconomicaSelecionada = this.tipoVagaForm.get('tipoCota')?.value === 'economica';
+    const sequenciaFluxo: EtapaFormulario[] = [
+      this.ETAPAS.DADOS_RESPONSAVEL,
+      this.ETAPAS.TIPO_VAGA,
+      ...(cotaEconomicaSelecionada ? [this.ETAPAS.INFO_RENDA] : []),
+      this.ETAPAS.DADOS_ALUNO,
+      this.ETAPAS.HORARIOS_VAGA,
+      this.ETAPAS.REVISAO
+    ];
+
+    const icones = [
+      'person-outline',
+      'ribbon-outline',
+      'wallet-outline',
+      'school-outline',
+      'time-outline',
+      'checkmark-circle-outline'
+    ];
+
+    const etapaAtualIndex = sequenciaFluxo.indexOf(this.etapaAtual);
+
+    return sequenciaFluxo.map((etapa, index) => ({
+      icon: icones[index] || 'ellipse-outline',
+      active: index === etapaAtualIndex,
+      completed: index < etapaAtualIndex
+    }));
+  }
+
+  // ...existing code...
   async enviarDeclaracaoFinal() {
     if (this.declaracaoForm.invalid) {
       this.presentToast('Existem campos inválidos. Por favor, revise todas as etapas.', 'warning');
@@ -254,30 +343,20 @@ export class DeclaracaoInteressePage implements OnInit {
     const loading = await this.loadingCtrl.create({ message: 'Enviando sua declaração...' });
     await loading.present();
 
-    // getRawValue() retorna a estrutura aninhada do FormGroup
     const dadosParaEnvio: InteresseMatricula = this.declaracaoForm.getRawValue();
 
-    if (dadosParaEnvio.tipoVaga?.tipoCota !== 'economica') {
-      // A interface define infoRenda como opcional, então getRawValue pode ou não tê-lo.
-      // Se não for cota econômica, garantimos que ele não seja enviado.
-      if (dadosParaEnvio.hasOwnProperty('infoRenda')) {
-        delete dadosParaEnvio.infoRenda;
-      }
+    // Remove infoRenda se não for cota econômica
+    if (dadosParaEnvio.tipoVaga?.tipoCota !== 'economica' && dadosParaEnvio.hasOwnProperty('infoRenda')) {
+      delete dadosParaEnvio.infoRenda;
     }
-    // Ajuste para horariosVaga se a interface não espera o objeto aninhado, mas o form tem
-    // No nosso caso, a interface espera `horariosVaga: { horariosSelecionados: [] }`
-    // E o form tem `horariosVaga: fb.group({ horariosSelecionados: fb.array(...) })`
-    // Então `dadosParaEnvio.horariosVaga.horariosSelecionados` já deve ser o array.
-
-    console.log('DADOS FINAIS PARA ENVIO (estrutura do form):', JSON.stringify(dadosParaEnvio, null, 2));
 
     this.interesseService.enviarDeclaracao(dadosParaEnvio).subscribe({
       next: (response: any) => {
         loading.dismiss();
         this.isSubmitting = false;
-        this.dadosDeclaracaoCompleta = dadosParaEnvio;
+        this.dadosDeclaracaoCompleta = { ...dadosParaEnvio, protocolo: response.protocolo };
         this.etapaAtual = this.ETAPAS.CONCLUIDO;
-        this.atualizarProgresso(); // Deve ir para 100%
+        this.atualizarProgresso();
         this.presentToast(response.message || 'Declaração enviada com sucesso!', 'success');
       },
       error: (err: any) => {

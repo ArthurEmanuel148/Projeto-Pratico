@@ -1,34 +1,88 @@
-ion-item-divider ion-label {
-    font-weight: 500;
+// src/app/funcionalidades/interesse-matricula/components/etapa-tipo-vaga/etapa-tipo-vaga.component.scss
+
+// Força aplicação do tema no componente
+:host {
+    --background: var(--ion-background-color) !important;
+    --color: var(--ion-text-color) !important;
+    background-color: var(--ion-background-color) !important;
+    color: var(--ion-text-color) !important;
+}
+
+// Aplica tema na lista e itens
+ion-list {
+    --background: var(--ion-background-color) !important;
+    background-color: var(--ion-background-color) !important;
+}
+
+ion-item {
+    --background: var(--ion-item-background) !important;
+    --color: var(--ion-text-color) !important;
+    background-color: var(--ion-item-background) !important;
+    color: var(--ion-text-color) !important;
+}
+
+ion-item-divider {
+    --background: var(--ion-item-background) !important;
+    --color: var(--ion-text-color) !important;
+    background-color: var(--ion-item-background) !important;
+
+    ion-label {
+        font-weight: 500;
+        color: var(--ion-text-color) !important;
+    }
+}
+
+// Radio group
+ion-radio-group {
+    --background: var(--ion-background-color) !important;
 }
 
 .radio-option {
     --inner-padding-top: 8px;
     --inner-padding-bottom: 8px;
     border-bottom: 1px solid var(--ion-color-step-150, #f0f0f0);
+    --background: var(--ion-item-background) !important;
+    --color: var(--ion-text-color) !important;
+    background-color: var(--ion-item-background) !important;
 
     &:last-child {
         border-bottom: none;
     }
 
-    ion-label h3 {
-        font-weight: 500;
-        font-size: 1em;
-        margin-bottom: 4px;
+    ion-label {
+        color: var(--ion-text-color) !important;
+
+        h3 {
+            font-weight: 500;
+            font-size: 1em;
+            margin-bottom: 4px;
+            color: var(--ion-text-color) !important;
+        }
+    }
+
+    ion-radio {
+        --color: var(--ion-color-primary) !important;
+        --color-checked: var(--ion-color-primary) !important;
     }
 }
 
 .explicacao-cota {
     display: block;
     font-size: 0.85em;
-    color: var(--ion-color-medium-text);
+    color: var(--ion-color-medium) !important;
     white-space: normal; // Permite quebra de linha
     padding-top: 2px;
 }
 
 .error-message {
-    color: var(--ion-color-danger);
+    color: var(--ion-color-danger) !important;
     font-size: 0.8em;
     padding-left: 16px;
     padding-top: 2px;
-    min-height: 1.2em; }
+    min-height: 1.2em;
+}
+
+// Botões aplicando classes globais
+ion-button {
+    margin-top: 16px;
+}

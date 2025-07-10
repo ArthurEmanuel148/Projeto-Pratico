@@ -7,7 +7,7 @@
     </p>
 
     <!-- Dados do Responsável -->
-    <ion-item-group>
+    <ion-item-group *ngIf="dadosRevisao && dadosRevisao.dadosResponsavel">
       <ion-item-divider color="medium">
         <ion-label>Dados do Responsável</ion-label>
         <ion-button fill="clear" size="small" slot="end" (click)="editar(ETAPAS_EDIT.DADOS_RESPONSAVEL)">
@@ -16,29 +16,28 @@
       </ion-item-divider>
       <ion-item>
         <ion-label>Nome:</ion-label>
-        <ion-text slot="end">{{ dadosRevisao.dadosResponsavel?.nomeResponsavel || 'Não informado' }}</ion-text>
+        <ion-text slot="end">{{ dadosRevisao.dadosResponsavel.nomeResponsavel || 'Não informado' }}</ion-text>
       </ion-item>
       <ion-item>
         <ion-label>CPF:</ion-label>
-        <ion-text slot="end">{{ dadosRevisao.dadosResponsavel?.cpfResponsavel || 'Não informado' }}</ion-text>
+        <ion-text slot="end">{{ dadosRevisao.dadosResponsavel.cpfResponsavel || 'Não informado' }}</ion-text>
       </ion-item>
       <ion-item>
         <ion-label>Data de Nascimento:</ion-label>
-        <ion-text slot="end">{{ dadosRevisao.dadosResponsavel?.dataNascimentoResponsavel | date:'dd/MM/yyyy'
-          }}</ion-text>
+        <ion-text slot="end">{{ dadosRevisao.dadosResponsavel.dataNascimentoResponsavel | date:'dd/MM/yyyy' }}</ion-text>
       </ion-item>
       <ion-item>
         <ion-label>E-mail:</ion-label>
-        <ion-text slot="end">{{ dadosRevisao.dadosResponsavel?.emailResponsavel || 'Não informado' }}</ion-text>
+        <ion-text slot="end">{{ dadosRevisao.dadosResponsavel.emailResponsavel || 'Não informado' }}</ion-text>
       </ion-item>
       <ion-item>
         <ion-label>Telefone:</ion-label>
-        <ion-text slot="end">{{ dadosRevisao.dadosResponsavel?.telefoneResponsavel || 'Não informado' }}</ion-text>
+        <ion-text slot="end">{{ dadosRevisao.dadosResponsavel.telefoneResponsavel || 'Não informado' }}</ion-text>
       </ion-item>
     </ion-item-group>
 
     <!-- Tipo de Vaga -->
-    <ion-item-group>
+    <ion-item-group *ngIf="dadosRevisao && dadosRevisao.tipoVaga">
       <ion-item-divider color="medium">
         <ion-label>Tipo de Vaga</ion-label>
         <ion-button fill="clear" size="small" slot="end" (click)="editar(ETAPAS_EDIT.TIPO_VAGA)">
@@ -47,7 +46,7 @@
       </ion-item-divider>
       <ion-item>
         <ion-label>Cota Selecionada:</ion-label>
-        <ion-text slot="end">{{ getValorCota(dadosRevisao.tipoVaga?.tipoCota) }}</ion-text>
+        <ion-text slot="end">{{ getValorCota(dadosRevisao.tipoVaga.tipoCota) }}</ion-text>
       </ion-item>
     </ion-item-group>
 
@@ -61,8 +60,7 @@
       </ion-item-divider>
       <ion-item>
         <ion-label class="ion-text-wrap">Endereço Completo:</ion-label>
-        <ion-text slot="end" class="ion-text-wrap ion-text-end">{{ dadosRevisao.infoRenda?.enderecoCompleto || 'Não
-          informado' }}</ion-text>
+        <ion-text slot="end" class="ion-text-wrap ion-text-end">{{ dadosRevisao.infoRenda.enderecoCompleto || 'Não informado' }}</ion-text>
       </ion-item>
       <div *ngFor="let integrante of dadosRevisao.infoRenda?.integrantesRenda; let i = index"
         class="integrante-revisao">
@@ -70,10 +68,8 @@
           <ion-label>Integrante {{ i + 1 }}</ion-label>
         </ion-item-divider>
         <ion-item><ion-label>Nome:</ion-label><ion-text slot="end">{{ integrante.nome }}</ion-text></ion-item>
-        <ion-item><ion-label>Parentesco:</ion-label><ion-text slot="end">{{ integrante.parentesco
-            }}</ion-text></ion-item>
-        <ion-item><ion-label>Renda Mensal:</ion-label><ion-text slot="end">{{ integrante.rendaMensal |
-            currency:'BRL':'symbol':'1.2-2' }}</ion-text></ion-item>
+        <ion-item><ion-label>Parentesco:</ion-label><ion-text slot="end">{{ integrante.parentesco }}</ion-text></ion-item>
+        <ion-item><ion-label>Renda Mensal:</ion-label><ion-text slot="end">{{ integrante.rendaMensal | currency:'BRL':'symbol':'1.2-2' }}</ion-text></ion-item>
       </div>
     </ion-item-group>
 
@@ -85,12 +81,9 @@
           <ion-icon name="create-outline" slot="icon-only" aria-label="Editar Dados do Aluno"></ion-icon>
         </ion-button>
       </ion-item-divider>
-      <ion-item><ion-label>Nome:</ion-label><ion-text slot="end">{{ dadosRevisao.dadosAluno?.nomeAluno || 'Não
-          informado' }}</ion-text></ion-item>
-      <ion-item><ion-label>Data de Nascimento:</ion-label><ion-text slot="end">{{
-          dadosRevisao.dadosAluno?.dataNascimentoAluno | date:'dd/MM/yyyy' }}</ion-text></ion-item>
-      <ion-item><ion-label>CPF:</ion-label><ion-text slot="end">{{ dadosRevisao.dadosAluno?.cpfAluno || 'Não informado'
-          }}</ion-text></ion-item>
+      <ion-item><ion-label>Nome:</ion-label><ion-text slot="end">{{ dadosRevisao.dadosAluno?.nomeAluno || 'Não informado' }}</ion-text></ion-item>
+      <ion-item><ion-label>Data de Nascimento:</ion-label><ion-text slot="end">{{ dadosRevisao.dadosAluno?.dataNascimentoAluno | date:'dd/MM/yyyy' }}</ion-text></ion-item>
+      <ion-item><ion-label>CPF:</ion-label><ion-text slot="end">{{ dadosRevisao.dadosAluno?.cpfAluno || 'Não informado' }}</ion-text></ion-item>
     </ion-item-group>
 
     <!-- Horários da Vaga -->
@@ -103,8 +96,7 @@
       </ion-item-divider>
       <ion-item>
         <ion-label class="ion-text-wrap">Horários Selecionados:</ion-label>
-        <ion-text slot="end" class="ion-text-wrap ion-text-end">{{
-          getNomesHorarios(dadosRevisao.horariosVaga?.horariosSelecionados) }}</ion-text>
+        <ion-text slot="end" class="ion-text-wrap ion-text-end">{{ getNomesHorarios(dadosRevisao.horariosVaga?.horariosSelecionados) }}</ion-text>
       </ion-item>
     </ion-item-group>
 

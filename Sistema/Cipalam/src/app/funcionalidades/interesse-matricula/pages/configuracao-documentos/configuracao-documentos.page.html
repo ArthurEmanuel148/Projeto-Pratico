@@ -1,0 +1,45 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Configuração de Documentos por Cota</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <!-- Loading State -->
+  <div *ngIf="carregando" class="loading-container">
+    <ion-spinner name="dots"></ion-spinner>
+    <p>Carregando configurações...</p>
+  </div>
+
+  <!-- Content -->
+  <div *ngIf="!carregando" class="cotas-container">
+    <ion-card *ngFor="let cota of tiposCota" class="cota-card" (click)="abrirSelecaoDocumentos(cota)">
+      <ion-card-header>
+        <ion-card-title>{{ cota.nome }}</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-icon name="document-outline" size="large" color="primary"></ion-icon>
+        <div class="doc-count">
+          {{ (documentosPorCota[cota.chave] || []).length }} documento(s) selecionado(s)
+        </div>
+        <div class="doc-preview" *ngIf="(documentosPorCota[cota.chave] || []).length > 0">
+          <small>{{ getDocumentosNomes(cota.chave) }}</small>
+        </div>
+        <ion-button expand="block" color="light" fill="solid" size="default">
+          Selecionar Documentos
+        </ion-button>
+      </ion-card-content>
+    </ion-card>
+  </div>
+
+  <ion-button
+    *ngIf="!carregando"
+    expand="block"
+    color="primary"
+    (click)="salvarConfiguracao()"
+    class="salvar-btn"
+    [disabled]="salvando">
+    <ion-spinner *ngIf="salvando" name="dots" slot="start"></ion-spinner>
+    {{ salvando ? 'Salvando...' : 'Salvar Configuração' }}
+  </ion-button>
+</ion-content>

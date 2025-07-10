@@ -1,0 +1,113 @@
+// src/app/dashboard-responsavel/dashboard-responsavel.page.scss
+
+// Força aplicação do tema na página
+:host {
+    --background: var(--ion-background-color) !important;
+    --color: var(--ion-text-color) !important;
+    background-color: var(--ion-background-color) !important;
+    color: var(--ion-text-color) !important;
+}
+
+// Header
+ion-header {
+    --background: var(--ion-item-background) !important;
+    background-color: var(--ion-item-background) !important;
+
+    ion-toolbar {
+        --background: var(--ion-item-background) !important;
+        --color: var(--ion-text-color) !important;
+        background-color: var(--ion-item-background) !important;
+
+        ion-title {
+            color: var(--ion-text-color) !important;
+        }
+    }
+}
+
+// Conteúdo
+ion-content {
+    --background: var(--ion-background-color) !important;
+    --color: var(--ion-text-color) !important;
+    background-color: var(--ion-background-color) !important;
+}
+
+// Título da seção
+h2 {
+    color: var(--ion-text-color) !important;
+    font-size: 1.4em;
+    font-weight: 600;
+    margin: 16px 0 12px 0;
+}
+
+// Lista de documentos
+ion-list {
+    --background: var(--ion-background-color) !important;
+    background-color: var(--ion-background-color) !important;
+    margin: 0;
+}
+
+ion-item {
+    --background: var(--ion-item-background) !important;
+    --color: var(--ion-text-color) !important;
+    background-color: var(--ion-item-background) !important;
+    border-radius: 8px;
+    margin-bottom: 8px;
+
+    ion-label {
+        color: var(--ion-text-color) !important;
+
+        h2 {
+            color: var(--ion-text-color) !important;
+            font-weight: 500;
+            margin-bottom: 4px;
+            font-size: 1.1em;
+        }
+
+        p {
+            color: var(--ion-color-medium) !important;
+            font-size: 0.9em;
+            margin: 4px 0 0 0;
+            line-height: 1.4;
+        }
+    }
+
+    // Botão de ação
+    ion-button {
+        margin-left: 12px;
+    }
+}
+
+// Estado vazio
+.empty-state {
+    padding: 48px 24px;
+    text-align: center;
+
+    ion-icon {
+        font-size: 64px;
+        color: var(--ion-color-medium) !important;
+        margin-bottom: 16px;
+    }
+
+    h2 {
+        color: var(--ion-text-color) !important;
+        margin-bottom: 8px;
+    }
+
+    p {
+        color: var(--ion-color-medium) !important;
+    }
+}
+
+// Responsividade
+@media (max-width: 768px) {
+    ion-item {
+        --padding-start: 12px;
+        --padding-end: 12px;
+
+        ion-button {
+            --padding-start: 8px;
+            --padding-end: 8px;
+            font-size: 0.9em;
+        }
+    }
+}

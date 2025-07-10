@@ -1,159 +1,670 @@
-// src/app/funcionalidades/gerenciamento-funcionarios/cadastro-funcionario/cadastro-funcionario.page.scss
+// =============================================================================
+// CADASTRO DE FUNCIONÁRIO - DESIGN RESPONSIVO E PROFISSIONAL
+// =============================================================================
 
-// Garante que o conteúdo da página comece abaixo do header global
 :host {
-    ion-content {
-        --background: var(--ion-background-color);
-        // O Ionic com [fullscreen]="true" tenta lidar com safe areas.
-        // Se o header global for opaco, isso pode não ser necessário.
-        // Se for translúcido e ainda cobrir, experimente:
-        // --padding-top: calc(var(--ion-safe-area-top, 0px) + 56px); // 56px é uma altura comum de toolbar
-    }
+  --form-max-width: 900px;
+  --section-spacing: 2.25rem; // Aumentado de 2rem para melhor espaçamento
+  --input-spacing: 1.5rem; // Aumentado de 1.25rem
+  --border-radius: 12px;
+  --animation-duration: 0.3s;
+  
+  // Cores dinâmicas que funcionam em ambos os temas
+  --custom-primary: var(--ion-color-primary);
+  --custom-success: var(--ion-color-success);
+  --custom-danger: var(--ion-color-danger);
+  --custom-warning: var(--ion-color-warning);
+  
+  // Backgrounds e superfícies - CORRIGIDO PARA TEMA CLARO
+  --custom-background: var(--ion-background-color, #ffffff);
+  --custom-surface: var(--ion-item-background, #ffffff);
+  --custom-surface-variant: var(--ion-color-light, #f8f9fa);
+  
+  // Textos
+  --custom-text: var(--ion-text-color, #000000);
+  --custom-text-secondary: var(--ion-color-medium, #6c757d);
+  --custom-text-muted: var(--ion-color-medium-shade, #9e9e9e);
+  
+  // Bordas
+  --custom-border: var(--ion-color-light-shade, #e0e0e0);
+  --custom-border-focus: var(--ion-color-primary);
+  
+  // Sombras (adaptadas para tema escuro)
+  --custom-shadow-light: 0 2px 8px rgba(0, 0, 0, 0.08);
+  --custom-shadow-medium: 0 4px 16px rgba(0, 0, 0, 0.12);
+  --custom-shadow-heavy: 0 8px 32px rgba(0, 0, 0, 0.16);
 }
 
-.cadastro-funcionario-content {
-    // O fundo já é var(--ion-background-color) do tema
+// Ajustes para tema escuro
+@media (prefers-color-scheme: dark) {
+  :host {
+    --custom-background: var(--ion-background-color, #121212);
+    --custom-surface: var(--ion-item-background, #1e1e1e);
+    --custom-surface-variant: var(--ion-color-dark, #2d2d2d);
+    --custom-text: var(--ion-text-color, #ffffff);
+    --custom-text-secondary: var(--ion-color-medium, #a0a0a0);
+    --custom-border: var(--ion-color-dark-shade, #404040);
+    
+    // Sombras mais suaves para tema escuro
+    --custom-shadow-light: 0 2px 8px rgba(0, 0, 0, 0.3);
+    --custom-shadow-medium: 0 4px 16px rgba(0, 0, 0, 0.4);
+    --custom-shadow-heavy: 0 8px 32px rgba(0, 0, 0, 0.5);
+  }
 }
 
-.page-specific-header {
-    // Se quiser algum estilo específico para o header desta página
-    // ion-toolbar {
-    //   --background: var(--ion-color-secondary); // Exemplo, se quisesse cor diferente
-    // }
+// Classe para forçar tema escuro
+.dark-theme {
+  --custom-background: #121212;
+  --custom-surface: #1e1e1e;
+  --custom-surface-variant: #2d2d2d;
+  --custom-text: #ffffff;
+  --custom-text-secondary: #a0a0a0;
+  --custom-border: #404040;
+  --custom-shadow-light: 0 2px 8px rgba(0, 0, 0, 0.3);
+  --custom-shadow-medium: 0 4px 16px rgba(0, 0, 0, 0.4);
+  --custom-shadow-heavy: 0 8px 32px rgba(0, 0, 0, 0.5);
 }
 
-.condense-header {
-    ion-toolbar {
-        // O Ionic lida com a transição. Cor do título grande virá do tema.
-        --background: transparent; // Para o efeito de título grande sobre o conteúdo
-    }
+// =============================================================================
+// HEADER CUSTOMIZADO
+// =============================================================================
 
-    ion-title[size="large"] {
-        color: var(--ion-text-color); // Título grande usa a cor de texto do tema
+// =============================================================================
+// BOTÃO VOLTAR INTEGRADO
+// =============================================================================
+
+.back-section {
+  margin-bottom: 1rem;
+  
+  ion-button {
+    --color: var(--custom-primary);
+    font-weight: 500;
+    
+    ion-icon {
+      font-size: 1.1rem;
     }
+  }
 }
 
-.form-introduction {
-    padding: 8px 0px 16px 0px; // Ajusta o padding para alinhamento com a lista
+// =============================================================================
+// CONTAINER PRINCIPAL
+// =============================================================================
 
-    h2 {
-        font-size: 1.4em;
-        font-weight: 600;
-        color: var(--ion-text-color);
-        margin-bottom: 4px;
+.cadastro-content {
+  --background: var(--custom-background);
+  
+  .form-container {
+    max-width: var(--form-max-width);
+    margin: 0 auto;
+    padding: 1.5rem 1rem 2rem 1rem; // Aumentado padding superior e inferior
+    
+    @media (min-width: 768px) {
+      padding: 2.5rem 2rem 3rem 2rem; // Mais espaçamento em telas maiores
     }
+    
+    @media (min-width: 1024px) {
+      padding: 3rem 2rem 3.5rem 2rem; // Ainda mais elegante em desktop
+    }
+  }
+}
 
+// =============================================================================
+// HEADER DA PÁGINA
+// =============================================================================
+
+.page-header {
+  margin-bottom: calc(var(--section-spacing) + 0.5rem); // Espaçamento extra após header
+  
+  .header-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 2rem 0 1.75rem 0; // Padding mais generoso
+    border-bottom: 2px solid var(--custom-border);
+    position: relative;
+    
+    // Efeito gradiente sutil na borda inferior
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--custom-primary), transparent);
+      border-radius: 1px;
+    }
+    
+    @media (max-width: 767px) {
+      flex-direction: column;
+      text-align: center;
+      gap: 1.25rem;
+      padding: 1.5rem 0;
+    }
+  }
+  
+  .header-info {
+    flex: 1;
+    
+    h1 {
+      font-size: clamp(1.75rem, 4vw, 2.25rem);
+      font-weight: 700;
+      color: var(--custom-text);
+      margin: 0 0 0.75rem 0; // Margem ligeiramente maior
+      line-height: 1.2;
+      letter-spacing: -0.02em; // Tipografia mais refinada
+    }
+    
     p {
-        font-size: 0.9em;
-        color: var(--ion-color-medium-text);
+      font-size: 1rem;
+      color: var(--custom-text-secondary);
+      margin: 0;
+      line-height: 1.5; // Altura de linha mais generosa
+      font-weight: 400;
     }
+  }
+  
+  .header-illustration {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, var(--custom-primary), var(--custom-success));
+    border-radius: 50%;
+    box-shadow: 0 8px 32px rgba(var(--ion-color-primary-rgb), 0.3);
+    transition: all 0.3s ease;
+    
+    &:hover {
+      transform: scale(1.05) rotate(5deg);
+      box-shadow: 0 12px 40px rgba(var(--ion-color-primary-rgb), 0.4);
+    }
+    
+    ion-icon {
+      font-size: 2.5rem;
+      color: white;
+    }
+    
+    @media (max-width: 767px) {
+      width: 60px;
+      height: 60px;
+      
+      ion-icon {
+        font-size: 2rem;
+      }
+    }
+  }
 }
 
-.form-list {
-    // Remove fundo padrão da lista para que o fundo do ion-content apareça,
-    // ou defina para var(--ion-item-background) se quiser cards.
-    --background: transparent;
-    // background: transparent; // Para versões mais antigas do Ionic se --background não funcionar
+// =============================================================================
+// FORMULÁRIO
+// =============================================================================
+
+.form-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--section-spacing) - 0.25rem); // Espaçamento ligeiramente reduzido entre seções
 }
 
-ion-item-group {
-    margin-bottom: 24px; // Espaço entre grupos de campos
-    // Para um visual mais card-like:
-    // background: var(--ion-item-background);
-    // border-radius: 8px;
-    // box-shadow: 0 2px 4px rgba(var(--ion-color-dark-rgb, 0,0,0), 0.05);
-    // padding: 0 8px; // Se usar o visual de card
+// =============================================================================
+// SEÇÕES DO FORMULÁRIO
+// =============================================================================
+
+.form-section {
+  background: #ffffff !important; // Forçar branco no tema claro
+  border-radius: var(--border-radius);
+  padding: 2rem 1.75rem; // Padding mais generoso e equilibrado
+  box-shadow: var(--custom-shadow-light);
+  border: 1px solid var(--custom-border);
+  transition: all var(--animation-duration) ease;
+  position: relative;
+  overflow: hidden;
+  
+  // Efeito sutil de gradiente no topo
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--custom-primary), var(--custom-success));
+    opacity: 0.8;
+  }
+  
+  &:hover {
+    box-shadow: var(--custom-shadow-medium);
+    transform: translateY(-2px);
+    border-color: rgba(var(--ion-color-primary-rgb), 0.3);
+  }
+  
+  @media (max-width: 767px) {
+    padding: 1.5rem 1.25rem;
+  }
+  
+  @media (min-width: 1024px) {
+    padding: 2.25rem 2rem; // Ainda mais espaçoso em desktop
+  }
 }
 
-.sticky-divider {
-    --background: var(--ion-color-light-background); // Um cinza claro do tema
-    --color: var(--ion-color-medium-text); // Cor do texto do label
-    font-size: 0.9em;
-    text-transform: uppercase; // Deixa o título do divisor mais destacado
-    letter-spacing: 0.5px;
+// Ajuste específico para tema escuro
+@media (prefers-color-scheme: dark) {
+  .form-section {
+    background: var(--ion-item-background, #1e1e1e) !important;
+  }
+}
+
+// Classe para forçar tema escuro
+.dark-theme .form-section {
+  background: #1e1e1e !important;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 2rem; // Aumentado de 1.5rem para 2rem
+  
+  .section-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    background: var(--custom-primary);
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(var(--ion-color-primary-rgb), 0.2);
+    transition: all 0.3s ease;
+    
+    &:hover {
+      transform: scale(1.05);
+      box-shadow: 0 6px 20px rgba(var(--ion-color-primary-rgb), 0.3);
+    }
+    
+    ion-icon {
+      font-size: 1.5rem;
+      color: white;
+    }
+  }
+  
+  .section-title {
+    flex: 1;
+    
+    h2 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--custom-text);
+      margin: 0 0 0.25rem 0;
+    }
+    
+    p {
+      font-size: 0.875rem;
+      color: var(--custom-text-secondary);
+      margin: 0;
+    }
+  }
+}
+
+// =============================================================================
+// GRUPOS DE INPUTS
+// =============================================================================
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--input-spacing);
+}
+
+.input-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  
+  @media (max-width: 767px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+// =============================================================================
+// WRAPPERS DE INPUT - MELHORADOS  
+// =============================================================================
+
+.input-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: var(--input-spacing);
+  
+  // Garantir espaçamento adequado entre campos
+  &:not(:last-child) {
+    margin-bottom: calc(var(--input-spacing) + 0.5rem);
+  }
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--input-spacing);
+  
+  // Layout responsivo para campos em linha
+  @media (min-width: 768px) {
+    &.form-row {
+      flex-direction: row;
+      gap: 1.5rem;
+      
+      .input-wrapper {
+        flex: 1;
+        margin-bottom: 0;
+      }
+    }
+  }
+}
+
+// =============================================================================
+// INPUTS SIMPLES E FUNCIONAIS
+// =============================================================================
+
+.custom-input {
+  --background: var(--custom-surface);
+  --border-color: var(--custom-border);
+  --border-radius: 8px;
+  --color: var(--custom-text);
+  --min-height: 56px;
+  
+  margin-bottom: 1rem;
+  
+  &.ion-focused {
+    --border-color: var(--custom-primary);
+  }
+  
+  &.ion-invalid {
+    --border-color: var(--custom-danger);
+  }
+}
+
+.input-icon {
+  color: var(--custom-text-secondary);
+}
+
+.validation-message {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+  color: var(--custom-danger);
+  font-size: 0.85rem;
+}
+
+// =============================================================================
+// MENSAGENS DE VALIDAÇÃO MELHORADAS
+// =============================================================================
+
+.validation-message {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  background: rgba(var(--ion-color-danger-rgb), 0.1);
+  border: 1px solid rgba(var(--ion-color-danger-rgb), 0.3);
+  border-radius: 6px;
+  color: var(--custom-danger);
+  font-size: 0.875rem;
+  animation: slideIn var(--animation-duration) ease;
+  
+  ion-icon {
+    font-size: 1rem;
+    flex-shrink: 0;
+  }
+  
+  span {
+    flex: 1;
     font-weight: 500;
-
-    // Para fazer o "sticky" funcionar, o ion-item-divider precisa estar
-    // diretamente dentro de um contêiner com scroll (como ion-content ou uma lista longa).
-    // O Ionic geralmente já aplica o comportamento sticky.
-    // Se não, pode ser necessário inspecionar e ajustar z-index ou position.
-    ion-label {
-        padding-top: 8px;
-        padding-bottom: 8px;
-    }
+  }
 }
 
-.input-item {
-    --padding-start: 0; // Remove padding para o ícone ficar mais próximo da borda do item
-    --border-color: var(--ion-color-step-200, #e0e0e0); // Borda sutil para os itens
-    --highlight-color-focused: var(--ion-color-danger); // Cor da linha quando focado
-
-    ion-icon[slot="start"] {
-        margin-right: 12px; // Espaço entre ícone e label/input
-        font-size: 1.2em; // Tamanho do ícone
-    }
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-.error-message {
-    color: var(--ion-color-danger);
-    font-size: 0.75em;
-    // Mantenha o padding-left para alinhar com o texto do input
-    padding-left: 44px; // Ajuste este valor se o seu ícone/margem mudar
-    padding-right: 16px;
-    padding-top: 2px; // Pode reduzir este se quiser mais próximo
-    margin-bottom: 10px; // Aumenta o espaço ABAIXO da mensagem, antes do PRÓXIMO item
-    // Para reduzir o espaço entre o INPUT e a mensagem de erro DELE,
-    // a mensagem não deve ter muito margin-top ou padding-top, e o item
-    // acima não deve ter muito margin-bottom.
+// =============================================================================
+// ÁREA DE AÇÕES
+// =============================================================================
 
-    // Para o erro ficar logo abaixo do ion-item, sem muito espaço:
-    // Remova o padding-left da mensagem de erro e coloque um padding-left:16px no ion-item.
-    // E para o texto do erro, você pode usar um margin-left para alinhar com o input 
+.form-actions {
+  margin-top: var(--section-spacing);
+  padding: 1.5rem 0;
+  border-top: 2px solid var(--custom-border);
+  
+  .actions-container {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+    align-items: center;
+    
+    @media (max-width: 767px) {
+      flex-direction: column-reverse;
+      gap: 0.75rem;
     }
+  }
+}
 
-// Estilo para o botão principal no final
-ion-content>ion-button {
-    // Seleciona o botão que é filho direto do ion-content
-    // Se você mover para o ion-footer, este seletor precisará mudar.
+.cancel-button {
+  --color: var(--custom-text-secondary);
+  --background: transparent;
+  font-weight: 500;
+  
+  &:hover {
+    --background: rgba(var(--ion-color-medium-rgb), 0.1);
+  }
+}
+
+.submit-button {
+  --background: var(--custom-success);
+  --color: white;
+  --border-radius: 8px;
+  --padding-start: 2rem;
+  --padding-end: 2rem;
+  height: 48px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  box-shadow: 0 4px 16px rgba(var(--ion-color-success-rgb), 0.3);
+  transition: all var(--animation-duration) ease;
+  
+  &:not([disabled]):hover {
+    --background: var(--ion-color-success-shade);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(var(--ion-color-success-rgb), 0.4);
+  }
+  
+  &[disabled] {
+    --background: var(--custom-text-secondary);
+    --color: rgba(255, 255, 255, 0.7);
+    box-shadow: none;
+    cursor: not-allowed;
+  }
+  
+  @media (max-width: 767px) {
+    width: 100%;
+  }
+}
+
+// =============================================================================
+// SUPORTE A TEMA ESCURO
+// =============================================================================
+
+@media (prefers-color-scheme: dark) {
+  :host {
+    --custom-surface: var(--ion-color-dark-tint);
+    --custom-border: var(--ion-color-dark-shade);
+  }
+  
+  .form-section {
+    background: var(--ion-color-dark-tint);
+    border-color: var(--ion-color-dark-shade);
+    
+    &:hover {
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
+    }
+  }
+  
+  .page-header {
+    .header-content {
+      border-bottom-color: var(--ion-color-dark-shade);
+    }
+  }
+  
+  .validation-message {
+    background: rgba(var(--ion-color-danger-rgb), 0.2);
+    border-color: rgba(var(--ion-color-danger-rgb), 0.4);
+  }
+}
+
+// =============================================================================
+// RESPONSIVIDADE AVANÇADA
+// =============================================================================
+
+@media (max-width: 480px) {
+  .form-container {
+    padding: 0.75rem;
+  }
+  
+  .page-header {
+    .header-content {
+      padding: 1rem 0;
+    }
+  }
+  
+  .form-section {
+    padding: 1rem 0.75rem;
+  }
+  
+  .section-header {
+    .section-icon {
+      width: 40px;
+      height: 40px;
+      
+      ion-icon {
+        font-size: 1.25rem;
+      }
+    }
+  }
+}
+
+@media (min-width: 1024px) {
+  .form-container {
+    padding: 3rem;
+  }
+  
+  .input-row {
+    gap: 1.5rem;
+  }
+  
+  .form-section {
+    padding: 2rem;
+  }
+}
+
+// =============================================================================
+// ACESSIBILIDADE
+// =============================================================================
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+// Focus visible para navegação por teclado
+.custom-input:focus-within {
+  outline: 2px solid var(--custom-primary);
+  outline-offset: 2px;
+}
+
+// =============================================================================
+// LOADING E ESTADOS
+// =============================================================================
+
+.form-section.loading {
+  opacity: 0.6;
+  pointer-events: none;
+  
+  &::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 24px;
+    height: 24px;
+    border: 2px solid var(--custom-border);
+    border-top: 2px solid var(--custom-primary);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    transform: translate(-50%, -50%);
+  }
+}
+
+@keyframes spin {
+  0% { transform: translate(-50%, -50%) rotate(0deg); }
+  100% { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+// =============================================================================
+// GRUPOS DE FORMULÁRIO - SIMPLES E FUNCIONAL
+// =============================================================================
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+
+  ion-item {
+    --background: var(--custom-surface);
+    --border-color: var(--custom-border);
+    --color: var(--custom-text);
+    margin-bottom: 1rem;
+    
+    &.item-has-focus {
+      --border-color: var(--custom-border-focus);
+    }
+  }
+
+  ion-label {
     font-weight: 500;
-    letter-spacing: 0.5px;
+    color: var(--custom-text-secondary);
+  }
+
+  ion-input, ion-select, ion-datetime {
+    font-size: 1rem;
+    color: var(--custom-text);
+  }
 }
 
-// Se usar o footer para o botão:
-// ion-footer {
-//   // box-shadow: 0 -2px 5px rgba(var(--ion-color-dark-rgb,0,0,0), 0.08); // Sombra sutil no topo do footer
-//   ion-toolbar {
-//     --background: var(--ion-background-color); // Fundo do tema
-//     --padding-start: 16px;
-//     --padding-end: 16px;
-//     --padding-top: 8px;
-//     --padding-bottom: 8px;
-//   }
-// }
+// =============================================================================
+// BOTÕES DE AÇÃO
+// =============================================================================
 
-// src/app/funcionalidades/gerenciamento-funcionarios/cadastro-funcionario/cadastro-funcionario.page.scss
+.form-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  padding-top: 2rem;
+  margin-top: 2rem;
+  border-top: 1px solid var(--custom-border);
 
-// ... seus estilos existentes ...
-
-.input-item {
-    --padding-start: 0;
-    --border-color: var(--ion-color-step-200, #e0e0e0);
-    --highlight-color-focused: var(--ion-color-danger);
-
-    // Flexbox para alinhar ícone e label/input
-    display: flex; // Adiciona display flex ao ion-item
-    align-items: center; // Alinha os itens verticalmente ao centro
-
-    ion-icon[slot="start"] {
-        margin-right: 12px;
-        font-size: 1.2em;
-        // O align-items: center no pai deve ajudar.
-        // Se ainda não alinhar perfeitamente, pode precisar de um ajuste fino
-        // com position relative e top, ou um margin-top negativo muito sutil,
-        // mas o ideal é que o flexbox resolva.
+  @media (max-width: 768px) {
+    flex-direction: column;
+    
+    ion-button {
+      width: 100%;
     }
-
-    // O ion-label com o input dentro já deve se alinhar bem com o flex.
-    // Se o label flutuante estiver causando problemas de altura,
-    // pode ser necessário ajustar suas margens ou o line-height quando está flutuando.
+  }
 }

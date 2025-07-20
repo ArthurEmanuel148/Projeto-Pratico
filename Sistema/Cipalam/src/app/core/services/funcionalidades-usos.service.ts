@@ -1,30 +1,37 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { AuthService } from './auth.service';
+import { FuncionalidadeSistema } from '../models/funcionalidade-sistema.interface';
+import { RotasConfigService } from './rotas-config.service';
 
-interface FuncionalidadeUso {
+export interface FuncionalidadeUso {
   chave: string;
   nomeAmigavel: string;
   icone: string;
   rota: string;
   contador: number;
   ultimoAcesso: Date;
-  usuarioId: number; // Novo campo para associar ao usuário
+  usuarioId: number;
 }
 
 @Injectable({
   providedIn: 'root'
 })
-export class FuncionalidadesUsosService {
-  private readonly STORAGE_KEY = 'funcionalidades_uso';
-  private readonly MAX_TOP_MENU = 4; // Máximo de 4 itens no menu superior
-  private readonly MAX_DASHBOARD = 6; // Máximo de 6 itens no dashboard
+export class FuncionalidadesUsoService {
 
-  private funcionalidadesUso: Map<string, FuncionalidadeUso> = new Map();
+  private readonly STORAGE_KEY = 'funcionalidades_uso';
+  private readonly MAX_TOP_MENU = 4;
+  private readonly MAX_DASHBOARD = 6;
+  private funcionalidadesUso = new Map<string, FuncionalidadeUso>();
+
+  // Observables para os itens mais usados
   private topMenuItems$ = new BehaviorSubject<FuncionalidadeUso[]>([]);
   private dashboardItems$ = new BehaviorSubject<FuncionalidadeUso[]>([]);
 
-  constructor(private authService: AuthService) {
+  constructor(
+    private authService: AuthService,
+    private rotasConfig: RotasConfigService
+  ) {
     this.carregarDados();
   }
 
@@ -51,7 +58,7 @@ export class FuncionalidadesUsosService {
         chave: funcionalidade.chave,
         nomeAmigavel: funcionalidade.nomeAmigavel,
         icone: funcionalidade.icone,
-        rota: funcionalidade.rota,
+        rota: this.rotasConfig.getRota(funcionalidade.chave), // Busca rota do serviço
         contador: 1,
         ultimoAcesso: new Date(),
         usuarioId: usuarioLogado.pessoa.idPessoa
@@ -123,7 +130,9 @@ export class FuncionalidadesUsosService {
         dadosArray.forEach(item => {
           // Converter string de data de volta para Date
           item.ultimoAcesso = new Date(item.ultimoAcesso);
-          this.funcionalidadesUso.set(item.chave, item);
+          // Usar chave única baseada no usuário + funcionalidade
+          const chaveUnica = `${item.usuarioId}_${item.chave}`;
+          this.funcionalidadesUso.set(chaveUnica, item);
         });
 
         this.atualizarListasOrdenadas();
@@ -164,12 +173,6 @@ export class FuncionalidadesUsosService {
     this.atualizarListasOrdenadas();
   }
 
-  /**
-   * Limpa dados do usuário ao fazer logout e carrega dados do novo usuário ao fazer login
-   */
-  trocarUsuario(): void {
-    this.atualizarListasOrdenadas();
-  }
 
   /**
    * Obtém estatísticas de uso do usuário atual

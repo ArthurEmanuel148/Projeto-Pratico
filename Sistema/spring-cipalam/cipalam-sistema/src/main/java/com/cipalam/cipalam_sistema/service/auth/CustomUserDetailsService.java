@@ -2,10 +2,8 @@ package com.cipalam.cipalam_sistema.service.auth;
 
 import com.cipalam.cipalam_sistema.model.Login;
 import com.cipalam.cipalam_sistema.model.Pessoa;
-import com.cipalam.cipalam_sistema.model.Professor;
 import com.cipalam.cipalam_sistema.model.Responsavel;
 import com.cipalam.cipalam_sistema.repository.LoginRepository;
-import com.cipalam.cipalam_sistema.repository.ProfessorRepository;
 import com.cipalam.cipalam_sistema.repository.ResponsavelRepository;
 import com.cipalam.cipalam_sistema.enums.TipoUsuario;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +21,6 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     private final LoginRepository loginRepository;
     private final ResponsavelRepository responsavelRepository;
-    private final ProfessorRepository professorRepository;
 
     @Override
     @Transactional(readOnly = true)
@@ -56,12 +53,6 @@ public class CustomUserDetailsService implements UserDetailsService {
         Optional<Responsavel> responsavel = responsavelRepository.findByPessoaId(pessoa.getIdPessoa());
         if (responsavel.isPresent()) {
             return TipoUsuario.RESPONSAVEL;
-        }
-
-        // Verifica se é professor
-        Optional<Professor> professor = professorRepository.findByPessoa(pessoa);
-        if (professor.isPresent()) {
-            return TipoUsuario.PROFESSOR;
         }
 
         // Por padrão, considera como funcionário

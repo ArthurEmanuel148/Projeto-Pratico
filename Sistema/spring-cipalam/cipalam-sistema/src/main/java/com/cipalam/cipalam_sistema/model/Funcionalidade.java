@@ -21,15 +21,23 @@ public class Funcionalidade {
     @Column(name = "descricao")
     private String descricao;
 
-    @Column(name = "rota")
-    private String rota;
-
     @Column(name = "icone")
     private String icone;
 
     @Column(name = "pai")
     private String pai;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "categoria")
+    private CategoriaFuncionalidade categoria;
+
     @Column(name = "ativo")
     private Boolean ativo = true;
+
+    @Column(name = "ordemExibicao")
+    private Integer ordemExibicao = 0;
+
+    public enum CategoriaFuncionalidade {
+        menu, acao, configuracao
+    }
 }

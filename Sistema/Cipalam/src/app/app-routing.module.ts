@@ -19,6 +19,10 @@ const routes: Routes = [
     path: 'interesse-matricula', // URL pública: seudominio.com/interesse-matricula
     loadChildren: () => import('./funcionalidades/interesse-matricula/interesse-matricula.module').then(m => m.InteresseMatriculaModule)
   },
+  {
+    path: 'dashboard-responsavel',
+    loadChildren: () => import('./dashboard-responsavel/dashboard-responsavel.module').then(m => m.DashboardResponsavelPageModule)
+  },
 ];
 
 @NgModule({

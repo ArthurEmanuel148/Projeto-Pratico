@@ -4,13 +4,16 @@ import com.cipalam.cipalam_sistema.DTO.auth.AuthLoginRequestDTO;
 import com.cipalam.cipalam_sistema.DTO.auth.AuthLoginResponseDTO;
 import com.cipalam.cipalam_sistema.DTO.auth.RegisterRequestDTO;
 import com.cipalam.cipalam_sistema.DTO.auth.RegisterResponseDTO;
+import com.cipalam.cipalam_sistema.DTO.auth.FuncionalidadeDTO;
 import com.cipalam.cipalam_sistema.enums.TipoUsuario;
 import com.cipalam.cipalam_sistema.model.Login;
 import com.cipalam.cipalam_sistema.model.Pessoa;
 import com.cipalam.cipalam_sistema.model.Responsavel;
+import com.cipalam.cipalam_sistema.model.Permissao;
 import com.cipalam.cipalam_sistema.repository.LoginRepository;
 import com.cipalam.cipalam_sistema.repository.PessoaRepository;
 import com.cipalam.cipalam_sistema.repository.ResponsavelRepository;
+import com.cipalam.cipalam_sistema.service.PermissaoService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -23,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Date;
 import java.util.Optional;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -35,6 +39,7 @@ public class AuthService {
     private final LoginRepository loginRepository;
     private final PessoaRepository pessoaRepository;
     private final ResponsavelRepository responsavelRepository;
+    private final PermissaoService permissaoService;
 
     @Transactional
     public AuthLoginResponseDTO authenticate(AuthLoginRequestDTO request) {
@@ -50,13 +55,28 @@ public class AuthService {
             // Obter detalhes do usuário
             UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
 
+            // Buscar funcionalidades/permissões do usuário
+            List<Permissao> permissoes = permissaoService
+                    .getPermissoesAtivasPorPessoa(userPrincipal.getPessoa().getIdPessoa());
+            List<FuncionalidadeDTO> funcionalidades = permissoes.stream()
+                    .map(permissao -> new FuncionalidadeDTO(permissao.getFuncionalidade()))
+                    .toList();
+
+            // Determinar tipo de usuário e converter para String
+            TipoUsuario tipoUsuario = determineTipoUsuario(userPrincipal.getPessoa());
+            String tipoString = tipoUsuario.name().toLowerCase(); // Converte FUNCIONARIO para "funcionario"
+
             return AuthLoginResponseDTO.builder()
                     .accessToken(accessToken)
                     .refreshToken(refreshToken)
                     .expiresIn(24 * 60 * 60L) // 24 horas em segundos
                     .usuarioId(userPrincipal.getId())
+                    .pessoaId(userPrincipal.getPessoa().getIdPessoa())
+                    .usuario(userPrincipal.getUsername())
                     .nomePessoa(userPrincipal.getPessoa().getNmPessoa())
                     .email(userPrincipal.getPessoa().getEmail())
+                    .tipo(tipoString) // Adicionar tipo de usuário
+                    .funcionalidades(funcionalidades)
                     .success(true)
                     .message("Login realizado com sucesso")
                     .build();
@@ -171,13 +191,20 @@ public class AuthService {
             String newAccessToken = jwtTokenService.generateToken(authentication);
             String newRefreshToken = jwtTokenService.generateRefreshToken(authentication);
 
+            // Determinar tipo de usuário e converter para String
+            TipoUsuario tipoUsuario = determineTipoUsuario(login.getPessoa());
+            String tipoString = tipoUsuario.name().toLowerCase();
+
             return AuthLoginResponseDTO.builder()
                     .accessToken(newAccessToken)
                     .refreshToken(newRefreshToken)
                     .expiresIn(24 * 60 * 60L)
                     .usuarioId(userPrincipal.getId())
+                    .pessoaId(userPrincipal.getPessoa().getIdPessoa())
+                    .usuario(userPrincipal.getUsername())
                     .nomePessoa(userPrincipal.getPessoa().getNmPessoa())
                     .email(userPrincipal.getPessoa().getEmail())
+                    .tipo(tipoString) // Adicionar tipo de usuário
                     .success(true)
                     .message("Token renovado com sucesso")
                     .build();

@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AlertController, ToastController } from '@ionic/angular';
 import { FuncionalidadesSistemaService } from '../core/services/funcionalidades-sistema.service';
-import { FuncionalidadesUsosService } from '../core/services/funcionalidades-usos.service';
+import { FuncionalidadesUsoService, FuncionalidadeUso } from '../core/services/funcionalidades-usos.service';
 import { AuthService } from '../core/services/auth.service';
 
 
@@ -30,11 +30,11 @@ export class PainelFuncionarioPage implements OnInit {
 
   constructor(
     private router: Router,
-    private alertCtrl: AlertController,
-    private toastCtrl: ToastController,
+    private alertController: AlertController,
+    private toastController: ToastController,
+    private authService: AuthService,
     private funcionalidadesService: FuncionalidadesSistemaService,
-    private funcionalidadesUsosService: FuncionalidadesUsosService,
-    private authService: AuthService
+    private funcionalidadesUsosService: FuncionalidadesUsoService
   ) { }
 
   ngOnInit() {
@@ -42,8 +42,8 @@ export class PainelFuncionarioPage implements OnInit {
     this.usuarioLogado = this.authService.getFuncionarioLogado();
 
     // Carrega funcionalidades mais usadas para o dashboard
-    this.funcionalidadesUsosService.getDashboardItems().subscribe(dashboardItems => {
-      this.mostUsedFeatures = dashboardItems.map(item => ({
+    this.funcionalidadesUsosService.getDashboardItems().subscribe((dashboardItems: FuncionalidadeUso[]) => {
+      this.mostUsedFeatures = dashboardItems.map((item: FuncionalidadeUso) => ({
         id: item.chave,
         name: item.nomeAmigavel,
         icon: item.icone,

@@ -13,7 +13,8 @@ export interface LoginResponse {
   success: boolean;
   message: string;
   usuario: string;
-  pessoaId: number;
+  pessoaId?: number;
+  usuarioId?: number;
   nomePessoa: string;
   token: string;
   funcionalidades: any[];
@@ -55,8 +56,8 @@ export class AuthService {
           const normalizedResponse: LoginResponse = {
             ...response,
             pessoa: {
-              idPessoa: response.pessoaId,
-              nmPessoa: response.nomePessoa,
+              idPessoa: response.pessoaId || response.usuarioId || 0,
+              nmPessoa: response.nomePessoa || '',
               cpfPessoa: '',
             },
             tipo: this.determineTipoUsuario(response),
@@ -81,17 +82,17 @@ export class AuthService {
     // Segundo: verificar pelas funcionalidades retornadas
     if (response.funcionalidades && Array.isArray(response.funcionalidades)) {
       const funcionalidades = response.funcionalidades.map((f: any) => f.chave || f.nome || f);
-      
+
       // Se tem funcionalidades administrativas, é admin
       if (funcionalidades.some((f: string) => f.includes('administracao') || f.includes('usuarios') || f.includes('backup'))) {
         return 'admin';
       }
-      
+
       // Se tem funcionalidades de funcionário/professor mas não admin
       if (funcionalidades.some((f: string) => f.includes('funcionarios') || f.includes('matriculas') || f.includes('alunos'))) {
         return 'funcionario';
       }
-      
+
       // Se só tem funcionalidades específicas de responsável
       if (funcionalidades.some((f: string) => f.includes('responsavel') || f.includes('dashboard-responsavel'))) {
         return 'responsavel';
@@ -100,7 +101,7 @@ export class AuthService {
 
     // Terceiro: verificar pelo nome da pessoa (fallback)
     const nomeNormalizado = response.nomePessoa ? response.nomePessoa.toLowerCase() : '';
-    
+
     if (nomeNormalizado.includes('administrador')) {
       return 'admin';
     } else if (nomeNormalizado.includes('professor')) {
@@ -134,7 +135,7 @@ export class AuthService {
     if (funcionario) {
       // Se for admin, tem acesso a tudo
       if (funcionario.pessoa && funcionario.pessoa.nmPessoa === 'Administrador do Sistema' ||
-          funcionario.tipo === 'admin') {
+        funcionario.tipo === 'admin') {
         return {
           'painel': true,
           'funcionarios': true,

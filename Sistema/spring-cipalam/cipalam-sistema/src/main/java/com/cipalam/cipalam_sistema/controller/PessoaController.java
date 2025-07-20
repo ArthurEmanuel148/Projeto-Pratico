@@ -86,4 +86,24 @@ public class PessoaController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Usuário ou senha inválidos");
         }
     }
+
+    @GetMapping("/funcionarios")
+    public ResponseEntity<?> listarFuncionarios() {
+        try {
+            List<Map<String, Object>> funcionarios = pessoaService.listarFuncionarios();
+            return ResponseEntity.ok(funcionarios);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
+    @PostMapping("/corrigir-funcionarios")
+    public ResponseEntity<?> corrigirFuncionarios() {
+        try {
+            Map<String, Object> resultado = pessoaService.corrigirFuncionarios();
+            return ResponseEntity.ok(resultado);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
 }

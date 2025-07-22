@@ -25,8 +25,11 @@ public class PessoaService {
     @Autowired
     private AlunoRepository alunoRepo;
 
+<<<<<<< Updated upstream
     @Autowired
     private FuncionarioRepository funcionarioRepo;
+=======
+>>>>>>> Stashed changes
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -111,7 +114,11 @@ public class PessoaService {
         Optional<Login> loginOpt = loginRepo.findByUsuario(usuario);
         if (loginOpt.isPresent()) {
             Login login = loginOpt.get();
+<<<<<<< Updated upstream
             // Verificar se a senha está correta usando BCrypt
+=======
+            // Verifica a senha usando o PasswordEncoder
+>>>>>>> Stashed changes
             if (passwordEncoder.matches(senha, login.getSenha())) {
                 Pessoa pessoa = login.getPessoa();
                 String tipo = "funcionario"; // tipo padrão
@@ -119,6 +126,11 @@ public class PessoaService {
                 // Verificar se é administrador
                 if (pessoa.getNmPessoa().equals("Administrador do Sistema") || usuario.equals("admin")) {
                     tipo = "admin";
+<<<<<<< Updated upstream
+=======
+                } else if (professorRepo.existsByPessoa_IdPessoa(pessoa.getIdPessoa())) {
+                    tipo = "professor";
+>>>>>>> Stashed changes
                 } else if (alunoRepo.existsByPessoa_IdPessoa(pessoa.getIdPessoa())) {
                     tipo = "aluno";
                 }

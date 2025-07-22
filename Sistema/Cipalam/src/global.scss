@@ -252,14 +252,33 @@ ion-card-subtitle {
     color: var(--ion-text-color) !important;
 }
 
-// Força aplicação em headers e toolbars
-ion-header,
-ion-toolbar,
-ion-title {
+// Força aplicação em headers e toolbars - EXCETO os que devem ter cor vermelha
+ion-header:not(.professional-header):not([color="danger"]):not([color="primary"]),
+ion-toolbar:not([color="danger"]):not([color="primary"]),
+ion-title:not(.keep-danger-color) {
     --background: var(--ion-item-background) !important;
     --color: var(--ion-text-color) !important;
     background-color: var(--ion-item-background) !important;
     color: var(--ion-text-color) !important;
+}
+
+// Headers e toolbars com cor danger/primary devem manter suas cores
+ion-header[color="danger"],
+ion-header[color="primary"],
+ion-toolbar[color="danger"],
+ion-toolbar[color="primary"] {
+    --background: var(--ion-color-danger) !important;
+    --color: white !important;
+    background-color: var(--ion-color-danger) !important;
+    color: white !important;
+}
+
+ion-toolbar[color="danger"] ion-title,
+ion-toolbar[color="primary"] ion-title,
+ion-header[color="danger"] ion-title,
+ion-header[color="primary"] ion-title {
+    color: white !important;
+    --color: white !important;
 }
 
 // Força aplicação em inputs e forms
@@ -371,4 +390,54 @@ ion-modal {
 .loading-text {
     margin-top: 12px;
     color: var(--ion-color-medium);
+}
+
+// ================================
+// CORREÇÃO ESPECÍFICA PARA MENU LATERAL
+// ================================
+
+// Força o estilo correto para o menu lateral - DEVE SER A ÚLTIMA REGRA
+ion-menu[side="end"] ion-header ion-toolbar[color="danger"],
+ion-menu[side="end"] ion-header ion-toolbar[color="danger"] ion-title,
+ion-menu ion-header ion-toolbar[color="danger"],
+ion-menu ion-header ion-toolbar[color="danger"] ion-title {
+    background-color: var(--ion-color-danger) !important;
+    --background: var(--ion-color-danger) !important;
+    color: white !important;
+    --color: white !important;
+}
+
+// Força para todos os elementos filhos do toolbar do menu
+ion-menu ion-header ion-toolbar[color="danger"] * {
+    color: white !important;
+}
+
+// REGRA SUPER ESPECÍFICA PARA O MENU LATERAL
+ion-menu[side="end"][contentid="main-content"] ion-header ion-toolbar[color="danger"] ion-title {
+    color: white !important;
+    --color: white !important;
+    background: transparent !important;
+    --background: transparent !important;
+}
+
+// Última tentativa - força por posição exata no DOM
+ion-app ion-menu[side="end"] ion-header ion-toolbar[color="danger"] ion-title {
+    color: white !important;
+    --color: white !important;
+}
+
+// FORÇA ESPECÍFICA PARA PÁGINAS DE DECLARAÇÃO DE INTERESSE
+.custom-header .custom-toolbar ion-title,
+.custom-header .custom-toolbar .page-title,
+ion-header.custom-header ion-toolbar.custom-toolbar ion-title,
+ion-header.custom-header ion-toolbar.custom-toolbar .page-title {
+    color: white !important;
+    --color: white !important;
+}
+
+// FORÇA GLOBAL PARA QUALQUER TÍTULO EM TOOLBAR COM COLOR PRIMARY
+ion-toolbar[color="primary"] ion-title,
+ion-toolbar[color="primary"] .page-title {
+    color: white !important;
+    --color: white !important;
 }

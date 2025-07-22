@@ -90,11 +90,70 @@ ion-router-outlet {
     flex: 1;
 }
 
-// MENU LATERAL
+// MENU LATERAL - ESTILO MAIS ESPECÍFICO E FORTE
 ion-menu {
+    ion-header {
+        ion-toolbar {
+            --background: var(--ion-color-danger) !important;
+            --color: white !important;
+            background-color: var(--ion-color-danger) !important;
+            
+            ion-title {
+                color: white !important;
+                font-weight: 600;
+                --color: white !important;
+            }
+            
+            ion-buttons ion-button {
+                --color: white !important;
+                color: white !important;
+                
+                ion-icon {
+                    color: white !important;
+                }
+            }
+        }
+    }
+    
     ion-content {
         --background: var(--ion-background-color);
     }
+}
+
+// FORÇA MAIS ESPECÍFICA PARA O TÍTULO DO MENU LATERAL
+ion-menu[side="end"] ion-header ion-toolbar[color="danger"] ion-title {
+    color: white !important;
+    --color: white !important;
+    background-color: transparent !important;
+    --background: transparent !important;
+}
+
+// FORÇA PARA TODOS OS ELEMENTOS DO HEADER DO MENU LATERAL
+ion-menu[side="end"] ion-header ion-toolbar[color="danger"] {
+    background-color: var(--ion-color-danger) !important;
+    --background: var(--ion-color-danger) !important;
+    color: white !important;
+    --color: white !important;
+}
+
+ion-menu[side="end"] ion-header ion-toolbar[color="danger"] * {
+    color: white !important;
+}
+
+// Sobrescreve QUALQUER regra global para o menu lateral especificamente
+ion-app ion-menu[side="end"] ion-header ion-toolbar ion-title {
+    color: white !important;
+    --color: white !important;
+}
+
+// Força a cor dos botões do header do menu
+ion-menu ion-header ion-toolbar ion-buttons ion-button {
+    color: white !important;
+    --color: white !important;
+}
+
+ion-menu ion-header ion-toolbar ion-buttons ion-button ion-icon {
+    color: white !important;
 }
 
 .submenu-container {

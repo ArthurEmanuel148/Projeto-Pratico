@@ -20,14 +20,48 @@
 }
 
 .custom-toolbar {
-  --background: linear-gradient(135deg, var(--ion-color-primary) 0%, var(--ion-color-primary-shade) 100%);
-  --color: var(--ion-color-primary-contrast);
+  --background: linear-gradient(135deg, var(--ion-color-primary) 0%, var(--ion-color-primary-shade) 100%) !important;
+  --color: white !important;
   min-height: 64px;
+  background: linear-gradient(135deg, var(--ion-color-primary) 0%, var(--ion-color-primary-shade) 100%) !important;
+  color: white !important;
+  
+  ion-title {
+    color: white !important;
+    --color: white !important;
+  }
+  
+  .page-title {
+    color: white !important;
+    --color: white !important;
+  }
+  
+  ion-buttons ion-button {
+    --color: white !important;
+    color: white !important;
+    
+    ion-icon {
+      color: white !important;
+    }
+  }
 }
 
 .page-title {
   font-weight: 600;
   font-size: 1.2rem;
+  color: white !important;
+  --color: white !important;
+}
+
+// FORÇA MAIS ESPECÍFICA PARA TÍTULOS NO HEADER
+ion-header.custom-header ion-toolbar.custom-toolbar ion-title {
+  color: white !important;
+  --color: white !important;
+}
+
+ion-header.custom-header ion-toolbar.custom-toolbar .page-title {
+  color: white !important;
+  --color: white !important;
 }
 
 .nav-button {

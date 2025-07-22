@@ -3,21 +3,9 @@
     <ion-buttons slot="start">
       <ion-back-button defaultHref="/paineis/interesse-matricula/lista-declaracoes"></ion-back-button>
     </ion-buttons>
+    <ion-title>Detalhe da Declaração de Interesse</ion-title>
   </ion-toolbar>
 </ion-header>
-
-<!-- Título da página logo abaixo do menu superior -->
-<div class="ion-padding">
-  <h2 class="ion-text-center">Detalhe da Declaração de Interesse</h2>
-</div>
-
-<!-- Adicione logo abaixo do título da página -->
-<div class="ion-padding ion-text-start">
-  <ion-button fill="clear" color="primary" routerLink="/paineis/interesse-matricula/lista-declaracoes">
-    <ion-icon name="arrow-back-outline" slot="start"></ion-icon>
-    Voltar para a listagem
-  </ion-button>
-</div>
 
 <ion-content *ngIf="!carregando && declaracao; else carregandoTpl" class="ion-padding">
   <ion-card *ngIf="declaracao">

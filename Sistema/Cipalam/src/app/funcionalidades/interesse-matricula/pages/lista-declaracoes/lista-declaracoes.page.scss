@@ -10,16 +10,26 @@
 
 // Header
 ion-header {
-    --background: var(--ion-item-background) !important;
-    background-color: var(--ion-item-background) !important;
+    --background: var(--ion-color-danger) !important;
+    background-color: var(--ion-color-danger) !important;
 
     ion-toolbar {
-        --background: var(--ion-item-background) !important;
-        --color: var(--ion-text-color) !important;
-        background-color: var(--ion-item-background) !important;
+        --background: var(--ion-color-danger) !important;
+        --color: white !important;
+        background-color: var(--ion-color-danger) !important;
 
         ion-title {
-            color: var(--ion-text-color) !important;
+            color: white !important;
+            --color: white !important;
+        }
+        
+        ion-buttons ion-button {
+            --color: white !important;
+            color: white !important;
+            
+            ion-icon {
+                color: white !important;
+            }
         }
     }
 }

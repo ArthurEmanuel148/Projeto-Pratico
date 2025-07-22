@@ -9,6 +9,7 @@ import com.cipalam.cipalam_sistema.DTO.PessoaCadastroDTO;
 import com.cipalam.cipalam_sistema.model.*;
 import com.cipalam.cipalam_sistema.repository.*;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,11 +24,9 @@ public class PessoaService {
     private LoginRepository loginRepo;
     @Autowired
     private AlunoRepository alunoRepo;
-    @Autowired
-    private ProfessorRepository professorRepo;
 
     @Autowired
-    private ResponsavelRepository responsavelRepo;
+    private FuncionarioRepository funcionarioRepo;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -85,9 +84,12 @@ public class PessoaService {
                 alunoRepo.save(aluno);
                 break;
             case "funcionario":
-                Professor professor = new Professor();
-                professor.setPessoa(pessoa);
-                professorRepo.save(professor);
+                // Criar funcionário na nova tabela tbFuncionario
+                Funcionario funcionario = new Funcionario();
+                funcionario.setTbPessoaIdPessoa(pessoa.getIdPessoa());
+                funcionario.setDataInicio(java.time.LocalDate.now());
+                funcionario.setAtivo(true);
+                funcionarioRepo.save(funcionario);
 
                 // Se houver permissões especificadas no DTO, criar as permissões
                 if (dto.getPermissoes() != null && !dto.getPermissoes().isEmpty()) {
@@ -106,35 +108,102 @@ public class PessoaService {
     }
 
     public Optional<Map<String, Object>> login(String usuario, String senha) {
-        Optional<Login> loginOpt = loginRepo.findByUsuarioAndSenha(usuario, senha);
+        Optional<Login> loginOpt = loginRepo.findByUsuario(usuario);
         if (loginOpt.isPresent()) {
-            Pessoa pessoa = loginOpt.get().getPessoa();
-            String tipo = "funcionario"; // tipo padrão
+            Login login = loginOpt.get();
+            // Verificar se a senha está correta usando BCrypt
+            if (passwordEncoder.matches(senha, login.getSenha())) {
+                Pessoa pessoa = login.getPessoa();
+                String tipo = "funcionario"; // tipo padrão
 
-            // Verificar se é administrador
-            if (pessoa.getNmPessoa().equals("Administrador do Sistema") || usuario.equals("admin")) {
-                tipo = "admin";
-            } else if (professorRepo.existsByPessoa_IdPessoa(pessoa.getIdPessoa())) {
-                tipo = "professor";
-            } else if (alunoRepo.existsByPessoa_IdPessoa(pessoa.getIdPessoa())) {
-                tipo = "aluno";
+                // Verificar se é administrador
+                if (pessoa.getNmPessoa().equals("Administrador do Sistema") || usuario.equals("admin")) {
+                    tipo = "admin";
+                } else if (alunoRepo.existsByPessoa_IdPessoa(pessoa.getIdPessoa())) {
+                    tipo = "aluno";
+                }
+
+                // Buscar permissões do usuário
+                Map<String, Boolean> permissoes = permissaoService.buscarPermissoesPorPessoa(pessoa.getIdPessoa());
+
+                Map<String, Object> info = new HashMap<>();
+                info.put("pessoa", pessoa);
+                info.put("tipo", tipo);
+                info.put("permissoes", permissoes);
+                return Optional.of(info);
             }
-
-            // Buscar permissões do usuário
-            Map<String, Boolean> permissoes = permissaoService.buscarPermissoesPorPessoa(pessoa.getIdPessoa());
-
-            Map<String, Object> info = new HashMap<>();
-            info.put("pessoa", pessoa);
-            info.put("tipo", tipo);
-            info.put("permissoes", permissoes);
-            return Optional.of(info);
         }
         return Optional.empty();
     }
 
-    public boolean isFuncionario(Integer pessoaId) {
-        // Verificar se a pessoa é professor (funcionário) ou se tem permissões
-        // especiais
-        return professorRepo.existsByPessoa_IdPessoa(pessoaId);
+    // public boolean isFuncionario(Integer pessoaId) {
+    // // Verificar se a pessoa é professor (funcionário) ou se tem permissões
+    // // especiais
+    // return professorRepo.existsByPessoa_IdPessoa(pessoaId);
+    // }
+
+    public List<Map<String, Object>> listarFuncionarios() {
+        List<Map<String, Object>> funcionarios = new java.util.ArrayList<>();
+
+        // Buscar todas as pessoas que têm login
+        List<Login> logins = loginRepo.findAll();
+
+        for (Login login : logins) {
+            Pessoa pessoa = login.getPessoa();
+            Map<String, Object> funcionarioInfo = new HashMap<>();
+
+            funcionarioInfo.put("idPessoa", pessoa.getIdPessoa());
+            funcionarioInfo.put("nome", pessoa.getNmPessoa());
+            funcionarioInfo.put("cpf", pessoa.getCpfPessoa());
+            funcionarioInfo.put("email", pessoa.getEmail());
+            funcionarioInfo.put("telefone", pessoa.getTelefone());
+            funcionarioInfo.put("usuario", login.getUsuario());
+
+            // Verificar se está na tabela tbFuncionario
+            boolean isFuncionario = funcionarioRepo.existsByTbPessoaIdPessoa(pessoa.getIdPessoa());
+            funcionarioInfo.put("isFuncionario", isFuncionario);
+
+            // Buscar permissões
+            Map<String, Boolean> permissoes = permissaoService.buscarPermissoesPorPessoa(pessoa.getIdPessoa());
+            funcionarioInfo.put("permissoes", permissoes);
+
+            funcionarios.add(funcionarioInfo);
+        }
+
+        return funcionarios;
+    }
+
+    @Transactional
+    public Map<String, Object> corrigirFuncionarios() {
+        int funcionariosCriados = 0;
+        List<String> pessoasCorrigidas = new ArrayList<>();
+
+        // Buscar todas as pessoas que têm login mas não estão na tabela tbFuncionario
+        List<Login> logins = loginRepo.findAll();
+
+        for (Login login : logins) {
+            Pessoa pessoa = login.getPessoa();
+            boolean isFuncionario = funcionarioRepo.existsByTbPessoaIdPessoa(pessoa.getIdPessoa());
+
+            if (!isFuncionario) {
+                // Criar registro de funcionário
+                Funcionario funcionario = new Funcionario();
+                funcionario.setTbPessoaIdPessoa(pessoa.getIdPessoa());
+                funcionario.setDataInicio(java.time.LocalDate.now());
+                funcionario.setAtivo(true);
+                funcionario.setObservacoes("Funcionário criado automaticamente durante correção do sistema");
+                funcionarioRepo.save(funcionario);
+
+                funcionariosCriados++;
+                pessoasCorrigidas.add(pessoa.getNmPessoa() + " (ID: " + pessoa.getIdPessoa() + ")");
+            }
+        }
+
+        Map<String, Object> resultado = new HashMap<>();
+        resultado.put("funcionariosCriados", funcionariosCriados);
+        resultado.put("pessoasCorrigidas", pessoasCorrigidas);
+        resultado.put("message", "Correção concluída: " + funcionariosCriados + " funcionários criados");
+
+        return resultado;
     }
 }

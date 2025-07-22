@@ -1,7 +1,7 @@
 <!-- src/app/paineis/components/top-menu-popover/top-menu-popover.component.html -->
 <ion-list lines="none">
   <ion-item *ngFor="let subItem of subMenuItems" button (click)="handleSubMenuItemClick(subItem)" detail="false"
-    [class.selected-item]="isActive(subItem.rota)">
+    [class.selected-item]="isActive(subItem.chave)">
     <ion-icon *ngIf="subItem.icone" [name]="subItem.icone" slot="start"></ion-icon>
     <ion-label>{{ subItem.nomeAmigavel }}</ion-label>
   </ion-item>

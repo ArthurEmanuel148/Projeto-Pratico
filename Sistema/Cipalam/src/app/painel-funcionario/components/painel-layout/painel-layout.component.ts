@@ -7,10 +7,9 @@ import { TopMenuPopoverComponent } from './top-menu-popover/top-menu-popover.com
 
 import { FuncionalidadesSistemaService } from 'src/app/core/services/funcionalidades-sistema.service';
 import { AuthService } from 'src/app/core/services/auth.service';
-import { FuncionalidadesUsosService } from 'src/app/core/services/funcionalidades-usos.service';
+import { FuncionalidadesUsoService, FuncionalidadeUso } from 'src/app/core/services/funcionalidades-usos.service';
 import { NavigationService } from 'src/app/core/services/navigation.service';
-import { HttpClient } from '@angular/common/http';
-import { ApiConfigService } from 'src/app/core/services/api-config.service';
+import { MenuNavigationService } from 'src/app/core/services/menu-navigation.service';
 
 interface UserInfo {
   pessoaId: number;
@@ -56,11 +55,10 @@ export class PainelLayoutComponent implements OnInit {
     public popoverController: PopoverController,
     private funcionalidadesService: FuncionalidadesSistemaService,
     private authService: AuthService,
-    private funcionalidadesUsosService: FuncionalidadesUsosService,
+    private funcionalidadesUsosService: FuncionalidadesUsoService,
     private navigationService: NavigationService,
-    private http: HttpClient,
-    private apiConfig: ApiConfigService
-  ) { }  ngOnInit() {
+    private menuNavigationService: MenuNavigationService
+  ) { } ngOnInit() {
     this.initializeAppTheme();
 
     // Verificar se o usuário está na rota correta
@@ -71,10 +69,10 @@ export class PainelLayoutComponent implements OnInit {
     ).subscribe((event: NavigationEnd) => {
       this.currentRoute = event.urlAfterRedirects;
       this.closeMenuIfOpen();
-      
+
       // Verificar a cada navegação se o usuário deveria estar onde está
       this.validateCurrentRoute();
-      
+
       // Atualizar a última funcionalidade acessada (se não for o painel principal)
       this.updateLastAccessedFeature(event.urlAfterRedirects);
     });
@@ -89,7 +87,7 @@ export class PainelLayoutComponent implements OnInit {
     this.loadUserInfo();
 
     // Escutar mudanças nas funcionalidades mais usadas para o menu superior
-    this.funcionalidadesUsosService.getTopMenuItems().subscribe(topItems => {
+    this.funcionalidadesUsosService.getTopMenuItems().subscribe((topItems: FuncionalidadeUso[]) => {
       this.updateTopMenuWithMostUsed(topItems);
     });
 
@@ -187,6 +185,9 @@ export class PainelLayoutComponent implements OnInit {
   }
 
   private buildMenuFromFuncionalidades(funcionalidades: any[], usuarioLogado: any) {
+    // Debug: Verificar funcionalidades recebidas
+    console.log('🔍 [DEBUG] Funcionalidades recebidas:', funcionalidades);
+
     // Obter permissões do usuário (prioridade: backend > authService)
     let permissoes = usuarioLogado.permissoes || this.authService.getPermissoesFuncionario();
 
@@ -194,6 +195,8 @@ export class PainelLayoutComponent implements OnInit {
     if (!permissoes || Object.keys(permissoes).length === 0) {
       permissoes = this.authService.getPermissoesFuncionario();
     }
+
+    console.log('🔍 [DEBUG] Permissões do usuário:', permissoes);
 
     if (!Array.isArray(funcionalidades) || funcionalidades.length === 0) {
       this.buildMenuFromPermissoes(usuarioLogado);
@@ -205,6 +208,8 @@ export class PainelLayoutComponent implements OnInit {
       return permissoes[f.chave] === true;
     });
 
+    console.log('🔍 [DEBUG] Funcionalidades permitidas:', funcionaldadesPermitidas);
+
     if (funcionaldadesPermitidas.length === 0) {
       this.menu = [];
       this.topMenuItems = [];
@@ -215,13 +220,27 @@ export class PainelLayoutComponent implements OnInit {
     const principais = funcionaldadesPermitidas.filter(f => !f.pai);
     this.menu = principais.map(principal => {
       const submenus = funcionaldadesPermitidas.filter(f => f.pai === principal.chave);
+
+      // Debug: Verificar se a rota está sendo criada corretamente
+      const rota = this.menuNavigationService.getRota(principal.chave);
+      console.log(`🔍 [DEBUG] Funcionalidade ${principal.chave} -> rota: ${rota}`);
+
       return {
         ...principal,
-        submenus: submenus.length > 0 ? submenus : null,
-        filhos: submenus.length > 0 ? submenus : null, // Compatibilidade com backend
+        rota: rota, // Garantir que a rota seja obtida do serviço
+        submenus: submenus.length > 0 ? submenus.map(sub => ({
+          ...sub,
+          rota: this.menuNavigationService.getRota(sub.chave)
+        })) : null,
+        filhos: submenus.length > 0 ? submenus.map(sub => ({
+          ...sub,
+          rota: this.menuNavigationService.getRota(sub.chave)
+        })) : null, // Compatibilidade com backend
         open: false
       };
     });
+
+    console.log('🔍 [DEBUG] Menu final construído:', this.menu);
 
     // Construir top menu (usar funcionalidades mais usadas, máximo 4 itens)
     // Este será atualizado dinamicamente pelo serviço de uso
@@ -299,7 +318,7 @@ export class PainelLayoutComponent implements OnInit {
       return true;
     }
 
-    return !this.topMenuItems.every((item, index) => 
+    return !this.topMenuItems.every((item, index) =>
       item.chave === newItems[index]?.chave
     );
   }
@@ -503,7 +522,18 @@ export class PainelLayoutComponent implements OnInit {
    * Registra o acesso a uma funcionalidade (para uso no template)
    */
   onFuncionalidadeClick(funcionalidade: any): void {
+    console.log('🚀 [DEBUG] Clique na funcionalidade:', funcionalidade);
+    console.log('🚀 [DEBUG] Rota da funcionalidade:', funcionalidade.rota);
+
     this.funcionalidadesUsosService.registrarAcesso(funcionalidade);
+
+    // Se a funcionalidade tem rota, navegar para ela
+    if (funcionalidade.rota) {
+      console.log('🚀 [DEBUG] Navegando para:', funcionalidade.rota);
+      this.router.navigateByUrl(funcionalidade.rota);
+    } else {
+      console.warn('⚠️ [DEBUG] Funcionalidade sem rota definida:', funcionalidade.chave);
+    }
   }
 
   // OTIMIZAÇÃO: Métodos para gerenciar cache
@@ -607,43 +637,24 @@ export class PainelLayoutComponent implements OnInit {
    */
   private loadUserInfo() {
     const usuario = this.authService.getFuncionarioLogado();
-    
-    if (!usuario || !usuario.pessoaId) {
+
+    if (!usuario) {
       this.userInfoLoading = false;
       return;
     }
 
-    // Buscar informações detalhadas do usuário
-    const url = `${this.apiConfig.getLoginUrl().replace('/login', '')}/user-info/${usuario.pessoaId}`;
-    
-    this.http.get<{ success: boolean; [key: string]: any }>(url).subscribe({
-      next: (response) => {
-        if (response.success) {
-          this.userInfo = {
-            pessoaId: response['pessoaId'],
-            nomePessoa: response['nomePessoa'],
-            cpfPessoa: response['cpfPessoa'],
-            usuario: response['usuario'],
-            tipo: response['tipo'],
-            dtNascPessoa: response['dtNascPessoa'],
-            caminhoImagem: response['caminhoImagem']
-          };
-        }
-        this.userInfoLoading = false;
-      },
-      error: (error) => {
-        console.error('Erro ao buscar informações do usuário:', error);
-        // Usar dados básicos do AuthService como fallback
-        this.userInfo = {
-          pessoaId: usuario.pessoaId,
-          nomePessoa: usuario.nomePessoa || usuario.pessoa?.nmPessoa || 'Usuário',
-          cpfPessoa: usuario.pessoa?.cpfPessoa || '',
-          usuario: usuario.usuario,
-          tipo: usuario.tipo || 'funcionario'
-        };
-        this.userInfoLoading = false;
-      }
-    });
+    // Usar dados do AuthService diretamente (já temos todas as informações necessárias)
+    this.userInfo = {
+      pessoaId: usuario.pessoaId || usuario.pessoa?.idPessoa || 0,
+      nomePessoa: usuario.nomePessoa || usuario.pessoa?.nmPessoa || 'Usuário',
+      cpfPessoa: usuario.pessoa?.cpfPessoa || '',
+      usuario: usuario.usuario,
+      tipo: usuario.tipo || 'funcionario',
+      dtNascPessoa: usuario.pessoa?.dtNascPessoa,
+      caminhoImagem: usuario.pessoa?.caminhoImagem
+    };
+
+    this.userInfoLoading = false;
   }
 
   /**
@@ -651,7 +662,7 @@ export class PainelLayoutComponent implements OnInit {
    */
   getUserInitials(): string {
     if (!this.userInfo) return 'U';
-    
+
     const names = this.userInfo.nomePessoa.split(' ');
     if (names.length >= 2) {
       return names[0].charAt(0).toUpperCase() + names[1].charAt(0).toUpperCase();
@@ -664,7 +675,7 @@ export class PainelLayoutComponent implements OnInit {
    */
   getUserTypeDisplay(): string {
     if (!this.userInfo) return '';
-    
+
     switch (this.userInfo.tipo) {
       case 'admin':
         return 'Administrador';
@@ -686,10 +697,10 @@ export class PainelLayoutComponent implements OnInit {
 
   async toggleMoreMenu(event: Event) {
     event.stopPropagation();
-    
+
     // Criar uma lista com os itens restantes (após os primeiros 3)
     const remainingItems = this.topMenuItems.slice(3);
-    
+
     if (remainingItems.length === 0) {
       return;
     }
@@ -740,25 +751,25 @@ export class PainelLayoutComponent implements OnInit {
 
     // Encontrar a funcionalidade correspondente no menu
     const foundFeature = this.findFeatureByUrl(url, this.menu);
-    
+
     if (foundFeature) {
       // Se já existe no histórico, remove para evitar duplicatas
-      const existingIndex = this.featureHistory.findIndex(f => 
+      const existingIndex = this.featureHistory.findIndex(f =>
         f.route === foundFeature.route
       );
-      
+
       if (existingIndex !== -1) {
         this.featureHistory.splice(existingIndex, 1);
       }
-      
+
       // Adiciona no final do histórico (mais recente)
       this.featureHistory.push(foundFeature);
-      
+
       // Manter apenas as últimas 5 funcionalidades
       if (this.featureHistory.length > 5) {
         this.featureHistory = this.featureHistory.slice(-5);
       }
-      
+
       // Atualizar a funcionalidade a ser exibida (penúltima)
       if (this.featureHistory.length >= 2) {
         this.lastAccessedFeature = this.featureHistory[this.featureHistory.length - 2];
@@ -766,7 +777,7 @@ export class PainelLayoutComponent implements OnInit {
         // Se só tem uma, não exibe nada (pois estamos nela)
         this.lastAccessedFeature = null;
       }
-      
+
       // Salvar no localStorage
       try {
         localStorage.setItem('featureHistory', JSON.stringify(this.featureHistory));
@@ -786,7 +797,7 @@ export class PainelLayoutComponent implements OnInit {
           icon: item.icone || 'apps-outline'
         };
       }
-      
+
       // Verificar submenus recursivamente
       if (item.submenus && item.submenus.length > 0) {
         const found = this.findFeatureByUrl(url, item.submenus);
@@ -795,7 +806,7 @@ export class PainelLayoutComponent implements OnInit {
         }
       }
     }
-    
+
     return null;
   }
 }

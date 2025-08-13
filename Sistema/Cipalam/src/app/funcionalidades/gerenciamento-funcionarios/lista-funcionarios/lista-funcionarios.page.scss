@@ -1,0 +1,80 @@
+.loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 200px;
+    padding: 20px;
+}
+
+.loading-container ion-spinner {
+    margin-bottom: 16px;
+}
+
+.loading-container p {
+    color: var(--ion-color-medium);
+    margin: 0;
+}
+
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+    text-align: center;
+    min-height: 300px;
+}
+
+.empty-state ion-icon {
+    color: var(--ion-color-medium);
+    margin-bottom: 16px;
+}
+
+.empty-state h2 {
+    color: var(--ion-color-dark);
+    margin: 16px 0 8px 0;
+    font-size: 1.5em;
+}
+
+.empty-state p {
+    color: var(--ion-color-medium);
+    margin: 0 0 24px 0;
+    line-height: 1.5;
+}
+
+.empty-state ion-button {
+    margin-top: 16px;
+    max-width: 300px;
+}
+
+// Estilo para os itens da lista
+ion-item {
+    --border-color: var(--ion-color-light);
+}
+
+ion-item ion-label h2 {
+    font-weight: 600;
+    color: var(--ion-color-dark);
+}
+
+ion-item ion-label p {
+    color: var(--ion-color-medium);
+    margin: 2px 0;
+}
+
+// Header personalizado
+ion-header ion-toolbar {
+    --background: var(--ion-color-primary);
+    --color: white;
+}
+
+ion-header ion-title {
+    font-weight: 600;
+}
+
+// Botão flutuante
+ion-fab-button {
+    --background: var(--ion-color-primary);
+    --color: white;
+}

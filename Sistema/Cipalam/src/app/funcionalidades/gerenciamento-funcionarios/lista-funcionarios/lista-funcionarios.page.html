@@ -1,0 +1,55 @@
+<ion-header>
+    <ion-toolbar>
+        <ion-buttons slot="start">
+            <ion-back-button defaultHref="/sistema/dashboard"></ion-back-button>
+        </ion-buttons>
+        <ion-title>Lista de Funcionários</ion-title>
+        <ion-buttons slot="end">
+            <ion-button fill="clear" (click)="navegarParaCadastro()" *ngIf="podeGerenciarFuncionarios">
+                <ion-icon name="add" slot="start"></ion-icon>
+                Novo
+            </ion-button>
+        </ion-buttons>
+    </ion-toolbar>
+</ion-header>
+
+<ion-content>
+    <!-- Loading -->
+    <div *ngIf="loading" class="loading-container">
+        <ion-spinner name="crescent"></ion-spinner>
+        <p>Carregando funcionários...</p>
+    </div>
+
+    <!-- Lista de funcionários -->
+    <div *ngIf="!loading && funcionarios.length > 0">
+        <ion-list>
+            <ion-item *ngFor="let funcionario of funcionarios" button (click)="editarFuncionario(funcionario.id)">
+                <ion-label>
+                    <h2>{{ funcionario.nome }}</h2>
+                    <p>CPF: {{ funcionario.cpf }}</p>
+                    <p>Tipo: {{ funcionario.tipo }}</p>
+                </ion-label>
+                <ion-icon name="chevron-forward" slot="end"></ion-icon>
+            </ion-item>
+        </ion-list>
+    </div>
+
+    <!-- Mensagem quando não há funcionários -->
+    <div *ngIf="!loading && funcionarios.length === 0" class="empty-state">
+        <ion-icon name="people" size="large"></ion-icon>
+        <h2>Nenhum funcionário encontrado</h2>
+        <p>Ainda não há funcionários cadastrados no sistema.</p>
+        <ion-button expand="block" fill="outline" (click)="navegarParaCadastro()" *ngIf="podeGerenciarFuncionarios">
+            <ion-icon name="add" slot="start"></ion-icon>
+            Cadastrar Primeiro Funcionário
+        </ion-button>
+    </div>
+
+    <!-- Botão flutuante para adicionar -->
+    <ion-fab vertical="bottom" horizontal="end" slot="fixed"
+        *ngIf="podeGerenciarFuncionarios && funcionarios.length > 0">
+        <ion-fab-button (click)="navegarParaCadastro()">
+            <ion-icon name="add"></ion-icon>
+        </ion-fab-button>
+    </ion-fab>
+</ion-content>

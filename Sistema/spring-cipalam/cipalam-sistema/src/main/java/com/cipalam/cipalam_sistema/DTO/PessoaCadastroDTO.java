@@ -9,6 +9,8 @@ import java.util.List;
 public class PessoaCadastroDTO {
     private Pessoa pessoa;
     private String tipo; // "aluno", "professor", "funcionario", etc.
+    private String email;
+    private String telefone;
     private String usuario; // só para não-aluno
     private String senha; // só para não-aluno
     private List<String> permissoes; // chaves das funcionalidades que o usuário terá acesso

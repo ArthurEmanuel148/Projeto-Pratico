@@ -11,39 +11,27 @@ const routes: Routes = [
     canActivate: [AuthGuard],
     children: [
       {
-        path: 'painel-funcionario',
-        loadChildren: () => import('../painel-funcionario/painel-funcionario.module').then(m => m.PainelFuncionarioPageModule),
-        canActivate: [RoleGuard],
-        data: { requiredRole: ['admin', 'professor', 'funcionario'] }
+        path: '',
+        redirectTo: 'dashboard',
+        pathMatch: 'full'
       },
       {
-        path: 'painel',
+        path: 'dashboard',
         loadChildren: () => import('../painel-funcionario/painel-funcionario.module').then(m => m.PainelFuncionarioPageModule),
         canActivate: [RoleGuard],
-        data: { requiredRole: ['admin', 'professor', 'funcionario'] }
+        data: { requiredRole: ['admin', 'professor', 'funcionario', 'responsavel'] }
       },
       {
-        path: 'gerenciamento-funcionarios',
+        path: 'funcionarios',
         loadChildren: () => import('../funcionalidades/gerenciamento-funcionarios/gerenciamento-funcionarios.module').then(m => m.GerenciamentoFuncionariosModule),
         canActivate: [RoleGuard],
         data: { requiredPermission: 'gerenciamentoFuncionarios' }
       },
       {
-        path: 'interesse-matricula',
+        path: 'matriculas',
         loadChildren: () => import('../funcionalidades/interesse-matricula/interesse-matricula.module').then(m => m.InteresseMatriculaModule),
         canActivate: [RoleGuard],
         data: { requiredPermission: 'declaracoesInteresse' }
-      },
-      {
-        path: 'dashboard-responsavel',
-        loadChildren: () => import('../dashboard-responsavel/dashboard-responsavel.module').then(m => m.DashboardResponsavelPageModule),
-        canActivate: [RoleGuard],
-        data: { requiredRole: 'responsavel' }
-      },
-      {
-        path: '',
-        component: PainelLayoutComponent,
-        canActivate: [AuthGuard]
       }
     ]
   }

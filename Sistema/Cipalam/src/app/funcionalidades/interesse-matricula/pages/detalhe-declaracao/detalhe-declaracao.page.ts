@@ -27,7 +27,7 @@ export class DetalheDeclaracaoPage implements OnInit {
     private alertController: AlertController,
     private loadingController: LoadingController,
     private toastController: ToastController
-  ) {}
+  ) { }
 
   ngOnInit() {
     const protocolo = this.route.snapshot.paramMap.get('protocolo');
@@ -176,7 +176,7 @@ export class DetalheDeclaracaoPage implements OnInit {
   }
 
   voltarLista() {
-    this.router.navigate(['/paineis/interesse-matricula/lista-declaracoes']);
+    this.router.navigate(['/sistema/matriculas/declaracoes-interesse']);
   }
 
   private async mostrarSucesso(mensagem: string) {

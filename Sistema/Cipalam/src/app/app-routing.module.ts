@@ -12,17 +12,13 @@ const routes: Routes = [
     loadChildren: () => import('./funcionalidades/autenticacao/login/login.module').then(m => m.LoginPageModule)
   },
   {
-    path: 'paineis',
+    path: 'sistema',
     loadChildren: () => import('./paineis/paineis.module').then(m => m.PaineisModule)
   },
   {
-    path: 'interesse-matricula', // URL pública: seudominio.com/interesse-matricula
+    path: 'interesse-matricula', // URL pública
     loadChildren: () => import('./funcionalidades/interesse-matricula/interesse-matricula.module').then(m => m.InteresseMatriculaModule)
-  },
-  {
-    path: 'dashboard-responsavel',
-    loadChildren: () => import('./dashboard-responsavel/dashboard-responsavel.module').then(m => m.DashboardResponsavelPageModule)
-  },
+  }
 ];
 
 @NgModule({

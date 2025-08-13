@@ -7,6 +7,8 @@ export interface FuncionarioCadastroDTO {
   pessoa: {
     nmPessoa: string;
     cpfPessoa: string;
+    email: string;
+    telefone: string;
     dtNascPessoa: string;
     caminhoImagem?: string;
     caminhoIdentidadePessoa?: string;
@@ -32,6 +34,8 @@ export class FuncionarioService {
     const dto: FuncionarioCadastroDTO = {
       pessoa: {
         nmPessoa: funcionarioData.nomeCompleto,
+        email: funcionarioData.email,
+        telefone: funcionarioData.telefone,
         cpfPessoa: funcionarioData.cpf,
         dtNascPessoa: funcionarioData.dataNascimento,
         caminhoImagem: undefined,

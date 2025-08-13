@@ -1,4 +1,4 @@
-// src/app/paineis/components/top-menu-popover/top-menu-popover.component.ts
+// src/app/painel-funcionario/components/painel-layout/top-menu-popover/top-menu-popover.component.ts
 import { Component, Input, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { PopoverController } from '@ionic/angular';

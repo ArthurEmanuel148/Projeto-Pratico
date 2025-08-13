@@ -4,17 +4,22 @@ import { RouterModule, Routes } from '@angular/router';
 const routes: Routes = [
   {
     path: '',
-    redirectTo: 'cadastro-funcionario',
+    redirectTo: 'cadastro',
     pathMatch: 'full'
   },
   {
-    path: 'cadastro-funcionario',
-    loadChildren: () => import('./cadastro-funcionario/cadastro-funcionario.module').then(m => m.CadastroFuncionarioPageModule)
+    path: 'lista',
+    redirectTo: 'cadastro',
+    pathMatch: 'full'
   },
+  {
+    path: 'cadastro',
+    loadChildren: () => import('./cadastro-funcionario/cadastro-funcionario.module').then(m => m.CadastroFuncionarioPageModule)
+  }
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
 export class GerenciamentoFuncionariosRoutingModule { }

@@ -10,14 +10,14 @@ export class NavigationService {
   constructor(
     private authService: AuthService,
     private router: Router
-  ) {}
+  ) { }
 
   /**
    * Redireciona o usuário para a página inicial apropriada baseada em seu tipo
    */
   redirectToHomePage(): void {
     const usuario = this.authService.getFuncionarioLogado();
-    
+
     if (!usuario) {
       this.router.navigate(['/login']);
       return;
@@ -28,28 +28,28 @@ export class NavigationService {
 
     switch (userType) {
       case 'admin':
-        // Administrador vai para o painel completo de funcionário
-        console.log('Redirecionando administrador para painel de funcionário');
-        this.router.navigate(['/paineis/painel-funcionario']);
+        // Administrador vai para o dashboard do sistema
+        console.log('Redirecionando administrador para dashboard');
+        this.router.navigate(['/sistema/dashboard']);
         break;
-        
+
       case 'professor':
       case 'funcionario':
-        // Professores/funcionários vão para o painel de funcionário (com suas permissões)
-        console.log('Redirecionando professor/funcionário para painel de funcionário');
-        this.router.navigate(['/paineis/painel-funcionario']);
+        // Professores/funcionários vão para o dashboard (com suas permissões)
+        console.log('Redirecionando professor/funcionário para dashboard');
+        this.router.navigate(['/sistema/dashboard']);
         break;
-        
+
       case 'responsavel':
-        // Responsáveis vão para o dashboard específico deles
-        console.log('Redirecionando responsável para dashboard específico');
-        this.router.navigate(['/paineis/dashboard-responsavel']);
+        // Responsáveis também vão para o dashboard (com permissões limitadas)
+        console.log('Redirecionando responsável para dashboard');
+        this.router.navigate(['/sistema/dashboard']);
         break;
-        
+
       default:
-        // Se não identificar o tipo, redireciona para login
-        console.warn('Tipo de usuário não identificado:', userType, 'Redirecionando para login');
-        this.router.navigate(['/login']);
+        // Se não identificar o tipo, redireciona para dashboard padrão
+        console.warn('Tipo de usuário não identificado:', userType, 'Redirecionando para dashboard padrão');
+        this.router.navigate(['/sistema/dashboard']);
         break;
     }
   }
@@ -68,15 +68,15 @@ export class NavigationService {
   isUserType(type: string | string[]): boolean {
     const usuario = this.authService.getFuncionarioLogado();
     if (!usuario) return false;
-    
+
     const userType = usuario.tipo;
     const types = Array.isArray(type) ? type : [type];
-    
+
     // Admin tem acesso como qualquer tipo EXCETO responsável
     if (userType === 'admin') {
       return !types.includes('responsavel');
     }
-    
+
     return types.includes(userType || '');
   }
 
@@ -91,15 +91,12 @@ export class NavigationService {
 
     switch (userType) {
       case 'responsavel':
-        // Responsáveis só podem estar no dashboard-responsavel
-        return currentUrl.includes('dashboard-responsavel');
-        
       case 'admin':
       case 'professor':
       case 'funcionario':
-        // Estes tipos não podem estar no dashboard-responsavel
-        return !currentUrl.includes('dashboard-responsavel');
-        
+        // Todos os usuários autenticados podem acessar o sistema
+        return currentUrl.includes('/sistema/');
+
       default:
         return false;
     }
@@ -110,7 +107,7 @@ export class NavigationService {
    */
   enforceCorrectPanel(): void {
     const currentUrl = this.router.url;
-    
+
     if (!this.isUserInCorrectPanel(currentUrl)) {
       console.warn('Usuário em painel incorreto. URL atual:', currentUrl);
       this.redirectToHomePage();

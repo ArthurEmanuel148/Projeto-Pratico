@@ -10,7 +10,7 @@ export class RoleGuard implements CanActivate {
   constructor(
     private authService: AuthService,
     private router: Router
-  ) {}
+  ) { }
 
   canActivate(route: ActivatedRouteSnapshot): boolean {
     // Verificar se está logado
@@ -22,9 +22,9 @@ export class RoleGuard implements CanActivate {
     // Obter funcionalidade requerida da rota
     const requiredRole = route.data['requiredRole'];
     const requiredPermission = route.data['requiredPermission'];
-    
+
     const usuario = this.authService.getFuncionarioLogado();
-    
+
     if (!usuario) {
       this.router.navigate(['/login']);
       return false;
@@ -56,17 +56,17 @@ export class RoleGuard implements CanActivate {
 
   private hasRequiredRole(userType: string, requiredRole: string | string[]): boolean {
     const roles = Array.isArray(requiredRole) ? requiredRole : [requiredRole];
-    
+
     // Responsáveis só podem acessar funcionalidades de responsável
     if (userType === 'responsavel') {
       return roles.includes('responsavel');
     }
-    
+
     // Admin tem acesso a qualquer funcionalidade EXCETO dashboard-responsavel
     if (userType === 'admin') {
       return !roles.includes('responsavel');
     }
-    
+
     // Professor e funcionário seguem as regras normais
     return roles.includes(userType);
   }
@@ -74,14 +74,14 @@ export class RoleGuard implements CanActivate {
   private redirectToAuthorizedPage(userType: string): void {
     switch (userType) {
       case 'admin':
-        this.router.navigate(['/paineis/painel-funcionario']);
+        this.router.navigate(['/sistema/dashboard']);
         break;
       case 'professor':
       case 'funcionario':
-        this.router.navigate(['/paineis/painel-funcionario']);
+        this.router.navigate(['/sistema/dashboard']);
         break;
       case 'responsavel':
-        this.router.navigate(['/paineis/dashboard-responsavel']);
+        this.router.navigate(['/sistema/dashboard']);
         break;
       default:
         this.router.navigate(['/login']);

@@ -13,11 +13,11 @@ import { Router } from '@angular/router';
 export class ListaDeclaracoesPage implements OnInit {
   declaracoes: InteresseMatricula[] = [];
   carregando = true;
-  
+
   // TODO: Implementar endpoint para buscar resumo de vagas do banco
   vagasResumo = {
     total: 0,
-    porCota: [] as Array<{tipo: string, disponiveis: number}>
+    porCota: [] as Array<{ tipo: string, disponiveis: number }>
   };
 
   constructor(private interesseService: InteresseMatriculaService, private router: Router) { }
@@ -38,7 +38,7 @@ export class ListaDeclaracoesPage implements OnInit {
   }
 
   abrirDetalhe(declaracao: InteresseMatricula) {
-    this.router.navigate(['/paineis/interesse-matricula/detalhe-declaracao', declaracao.protocolo]);
+    this.router.navigate(['/sistema/matriculas/detalhe-declaracao', declaracao.protocolo]);
   }
 
   formatarTipoCota(tipoCota: string | null | undefined): string {
@@ -57,6 +57,6 @@ export class ListaDeclaracoesPage implements OnInit {
 
   iniciarMatricula(declaracao: InteresseMatricula) {
     // Implementar navegação para página de matrícula
-    this.router.navigate(['/paineis/interesse-matricula/iniciar-matricula', declaracao.id]);
+    this.router.navigate(['/sistema/matriculas/iniciar-matricula', declaracao.id]);
   }
 }

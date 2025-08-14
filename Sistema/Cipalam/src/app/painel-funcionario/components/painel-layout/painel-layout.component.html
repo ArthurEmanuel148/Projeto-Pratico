@@ -16,7 +16,7 @@
       <ng-container *ngFor="let item of menu; trackBy: trackByMenuChave">
         <!-- Item sem submenus -->
         <ion-item *ngIf="!item.submenus" [routerLink]="item.rota" button detail="false"
-                  (click)="onFuncionalidadeClick(item)">
+          (click)="onFuncionalidadeClick(item)">
           <ion-icon [name]="item.icone" slot="start"></ion-icon>
           <ion-label>{{ item.nomeAmigavel }}</ion-label>
         </ion-item>
@@ -31,9 +31,8 @@
 
           <!-- Submenus -->
           <div *ngIf="item.open" class="submenu-container">
-            <ion-item *ngFor="let sub of item.submenus; trackBy: trackByMenuChave"
-                      [routerLink]="sub.rota" button detail="false" class="submenu-item"
-                      (click)="onFuncionalidadeClick(sub)">
+            <ion-item *ngFor="let sub of item.submenus; trackBy: trackByMenuChave" [routerLink]="sub.rota" button
+              detail="false" class="submenu-item" (click)="onFuncionalidadeClick(sub)">
               <ion-icon [name]="sub.icone" slot="start"></ion-icon>
               <ion-label>{{ sub.nomeAmigavel }}</ion-label>
             </ion-item>
@@ -64,7 +63,7 @@
     <ion-toolbar color="primary" class="main-toolbar">
       <!-- Logo -->
       <div class="brand-section" slot="start">
-        <div class="brand-container" (click)="navigateTo('/paineis/painel-funcionario')">
+        <div class="brand-container" (click)="navigateTo('/sistema/dashboard')">>
           <img src="assets/images/logo-instituto.png" alt="Cipalam" class="brand-logo" />
         </div>
       </div>
@@ -72,15 +71,12 @@
       <!-- Menu Superior - Apenas a última funcionalidade acessada -->
       <div class="nav-section">
         <ion-buttons class="nav-buttons" *ngIf="lastAccessedFeature">
-          <ion-button 
-            fill="clear" 
-            class="nav-button" 
-            [routerLink]="lastAccessedFeature.route">
+          <ion-button fill="clear" class="nav-button" [routerLink]="lastAccessedFeature.route">
             <ion-icon [name]="lastAccessedFeature.icon"></ion-icon>
             <span class="nav-label">{{ lastAccessedFeature.label }}</span>
           </ion-button>
         </ion-buttons>
-        
+
         <!-- Mensagem quando não há funcionalidade recente -->
         <div class="no-recent" *ngIf="!lastAccessedFeature">
           <span class="no-recent-text">Acesse uma funcionalidade</span>

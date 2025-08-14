@@ -37,7 +37,7 @@ export class InicioMatriculaPage implements OnInit {
     private loadingController: LoadingController,
     private alertController: AlertController,
     private toastController: ToastController
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.carregarDados();
@@ -161,7 +161,7 @@ export class InicioMatriculaPage implements OnInit {
   }
 
   voltarParaLista() {
-    this.router.navigate(['/paineis/interesse-matricula/lista-declaracoes']);
+    this.router.navigate(['/sistema/matriculas/declaracoes-interesse']);
   }
 
   iniciarNova() {

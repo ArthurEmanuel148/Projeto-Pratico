@@ -84,12 +84,12 @@ export class CadastroFuncionarioPage implements OnInit {
       await this.funcionarioService.cadastrarFuncionario(funcionarioParaSalvar).toPromise();
       this.presentToast('Funcionário cadastrado com sucesso!');
       this.cadastroForm.reset();
-      this.navCtrl.navigateBack('/paineis/gerenciamento-funcionarios');
+      this.navCtrl.navigateBack('/sistema/funcionarios/lista');
     } catch (error: any) {
       console.error('Erro ao cadastrar funcionário:', error);
-      
+
       let mensagemErro = 'Erro ao cadastrar funcionário. Tente novamente.';
-      
+
       // Verificar se é erro de usuário duplicado
       if (error?.error && typeof error.error === 'string' && error.error.includes('Duplicate entry')) {
         if (error.error.includes('for key \'usuario\'')) {
@@ -100,7 +100,7 @@ export class CadastroFuncionarioPage implements OnInit {
           mensagemErro = 'Já existe um funcionário com essas informações.';
         }
       }
-      
+
       this.presentToast(mensagemErro);
     }
   }

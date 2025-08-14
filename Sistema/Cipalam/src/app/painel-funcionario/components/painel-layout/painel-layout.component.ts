@@ -333,7 +333,7 @@ export class PainelLayoutComponent implements OnInit {
       menuItems.push({
         chave: 'painel',
         nomeAmigavel: 'Painel',
-        rota: '/paineis/painel',
+        rota: '/sistema/dashboard',
         icone: 'home-outline',
         submenus: null,
         open: false
@@ -346,7 +346,7 @@ export class PainelLayoutComponent implements OnInit {
         funcionariosSubmenus.push({
           chave: 'cadastroFuncionario',
           nomeAmigavel: 'Cadastro de Funcionário',
-          rota: '/paineis/gerenciamento-funcionarios/cadastro-funcionario',
+          rota: '/sistema/funcionarios/cadastro',
           icone: 'person-add-outline'
         });
       }
@@ -354,7 +354,7 @@ export class PainelLayoutComponent implements OnInit {
         funcionariosSubmenus.push({
           chave: 'gerenciamentoFuncionarios',
           nomeAmigavel: 'Lista de Funcionários',
-          rota: '/paineis/gerenciamento-funcionarios',
+          rota: '/sistema/funcionarios/lista',
           icone: 'list-outline'
         });
       }
@@ -375,7 +375,7 @@ export class PainelLayoutComponent implements OnInit {
         matriculasSubmenus.push({
           chave: 'declaracoesInteresse',
           nomeAmigavel: 'Declarações de Interesse',
-          rota: '/paineis/interesse-matricula/lista-declaracoes',
+          rota: '/sistema/matriculas/declaracoes-interesse',
           icone: 'document-text-outline'
         });
       }
@@ -383,7 +383,7 @@ export class PainelLayoutComponent implements OnInit {
         matriculasSubmenus.push({
           chave: 'configurarDocumentosCota',
           nomeAmigavel: 'Configurar Documentos por Cota',
-          rota: '/paineis/interesse-matricula/configuracao-documentos',
+          rota: '/sistema/matriculas/configuracao-documentos',
           icone: 'settings-outline'
         });
       }
@@ -405,7 +405,7 @@ export class PainelLayoutComponent implements OnInit {
         adminSubmenus.push({
           chave: 'usuarios',
           nomeAmigavel: 'Gerenciar Usuários',
-          rota: '/paineis/administracao/usuarios',
+          rota: '/sistema/administracao/usuarios',
           icone: 'people-outline'
         });
       }
@@ -413,7 +413,7 @@ export class PainelLayoutComponent implements OnInit {
         adminSubmenus.push({
           chave: 'relatorios',
           nomeAmigavel: 'Relatórios',
-          rota: '/paineis/administracao/relatorios',
+          rota: '/sistema/administracao/relatorios',
           icone: 'bar-chart-outline'
         });
       }
@@ -421,7 +421,7 @@ export class PainelLayoutComponent implements OnInit {
         adminSubmenus.push({
           chave: 'configuracoes',
           nomeAmigavel: 'Configurações',
-          rota: '/paineis/administracao/configuracoes',
+          rota: '/sistema/administracao/configuracoes',
           icone: 'settings-outline'
         });
       }
@@ -429,7 +429,7 @@ export class PainelLayoutComponent implements OnInit {
         adminSubmenus.push({
           chave: 'backup',
           nomeAmigavel: 'Backup',
-          rota: '/paineis/administracao/backup',
+          rota: '/sistema/administracao/backup',
           icone: 'cloud-upload-outline'
         });
       }
@@ -561,8 +561,8 @@ export class PainelLayoutComponent implements OnInit {
     const currentUrl = this.router.url;
     const userType = usuario.tipo;
 
-    // Se está apenas em /paineis (sem subrota), redirecionar para o painel correto
-    if (currentUrl === '/paineis' || currentUrl === '/paineis/') {
+    // Se está apenas em /sistema (sem subrota), redirecionar para o painel correto
+    if (currentUrl === '/sistema' || currentUrl === '/sistema/') {
       this.navigationService.redirectToHomePage();
       return;
     }
@@ -584,20 +584,20 @@ export class PainelLayoutComponent implements OnInit {
     const currentUrl = this.router.url;
     const userType = usuario.tipo;
 
-    // Responsáveis só podem acessar dashboard-responsavel
+    // Responsáveis podem acessar o sistema com permissões limitadas
     if (userType === 'responsavel') {
-      if (!currentUrl.includes('dashboard-responsavel')) {
-        console.warn('Responsável tentando acessar painel não autorizado:', currentUrl);
-        this.router.navigate(['/paineis/dashboard-responsavel']);
+      if (!currentUrl.includes('/sistema/')) {
+        console.warn('Responsável tentando acessar área não autorizada:', currentUrl);
+        this.router.navigate(['/sistema/dashboard']);
         return;
       }
     }
 
-    // Admin, professor e funcionário podem acessar painel-funcionario
+    // Admin, professor e funcionário podem acessar dashboard
     if (userType === 'admin' || userType === 'professor' || userType === 'funcionario') {
-      if (currentUrl.includes('dashboard-responsavel')) {
-        console.warn('Funcionário/Professor/Admin tentando acessar dashboard de responsável:', currentUrl);
-        this.router.navigate(['/paineis/painel-funcionario']);
+      if (!currentUrl.includes('/sistema/')) {
+        console.warn('Funcionário/Professor/Admin tentando acessar área não autorizada:', currentUrl);
+        this.router.navigate(['/sistema/dashboard']);
         return;
       }
     }
@@ -744,8 +744,8 @@ export class PainelLayoutComponent implements OnInit {
   }
 
   private updateLastAccessedFeature(url: string) {
-    // Ignorar se for o painel principal
-    if (url === '/paineis/painel-funcionario' || url.endsWith('/painel-funcionario')) {
+    // Ignorar se for o dashboard principal
+    if (url === '/sistema/dashboard' || url.endsWith('/dashboard')) {
       return;
     }
 

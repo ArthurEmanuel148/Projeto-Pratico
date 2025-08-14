@@ -11,26 +11,30 @@ export interface RotaFuncionalidade {
 export class RotasConfigService {
 
     private readonly rotasMap: Map<string, string> = new Map([
-        // Painéis principais
-        ['painel', '/paineis/painel'],
+        // Dashboard principal
+        ['painel', '/sistema/dashboard'],
 
         // Funcionários
-        ['cadastroFuncionario', '/paineis/gerenciamento-funcionarios'],
-        ['gerenciamentoFuncionarios', '/paineis/gerenciamento-funcionarios'],
+        ['cadastroFuncionario', '/sistema/funcionarios/cadastro'],
+        ['gerenciamentoFuncionarios', '/sistema/funcionarios/lista'],
+        ['funcionarios', '/sistema/funcionarios'],
 
         // Matrículas
-        ['declaracoesInteresse', '/paineis/interesse-matricula/lista-declaracoes'],
-        ['configurarDocumentosCota', '/paineis/interesse-matricula/configuracao-documentos'],
-        ['declaracaoInteresse', '/paineis/interesse-matricula/declaracao-interesse'],
+        ['declaracoesInteresse', '/sistema/matriculas/declaracoes-interesse'],
+        ['configurarDocumentosCota', '/sistema/matriculas/configuracao-documentos'],
+        ['declaracaoInteresse', '/sistema/matriculas/declaracoes-interesse'],
+        ['matriculas', '/sistema/matriculas'],
 
         // Alunos (futuras implementações)
-        ['listaAlunos', '/paineis/alunos/lista'],
-        ['cadastroAluno', '/paineis/alunos/cadastro'],
+        ['listaAlunos', '/sistema/alunos/lista'],
+        ['cadastroAluno', '/sistema/alunos/cadastro'],
+        ['alunos', '/sistema/alunos'],
 
         // Administração
-        ['configuracaoSistema', '/paineis/administracao/configuracao'],
-        ['relatorios', '/paineis/administracao/relatorios'],
-        ['auditoria', '/paineis/administracao/auditoria']
+        ['configuracaoSistema', '/sistema/administracao/configuracao'],
+        ['relatorios', '/sistema/administracao/relatorios'],
+        ['auditoria', '/sistema/administracao/auditoria'],
+        ['administracao', '/sistema/administracao']
     ]);
 
     constructor() { }

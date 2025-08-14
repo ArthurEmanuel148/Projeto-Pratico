@@ -15,7 +15,7 @@
 
     <!-- Formulário -->
     <form [formGroup]="cadastroForm" class="form-wrapper">
-      
+
       <!-- Seção: Dados Pessoais -->
       <div class="form-section">
         <div class="section-header">
@@ -31,31 +31,20 @@
         <div class="form-group">
           <ion-item fill="outline">
             <ion-label position="floating">Nome Completo *</ion-label>
-            <ion-input 
-              type="text" 
-              formControlName="nomeCompleto" 
-              placeholder="Digite o nome completo"
+            <ion-input type="text" formControlName="nomeCompleto" placeholder="Digite o nome completo"
               clearInput="true">
             </ion-input>
           </ion-item>
-          
+
           <ion-item fill="outline">
             <ion-label position="floating">E-mail *</ion-label>
-            <ion-input 
-              type="email" 
-              formControlName="email" 
-              placeholder="Digite o e-mail"
-              clearInput="true">
+            <ion-input type="email" formControlName="email" placeholder="Digite o e-mail" clearInput="true">
             </ion-input>
           </ion-item>
-          
+
           <ion-item fill="outline">
             <ion-label position="floating">Telefone *</ion-label>
-            <ion-input 
-              type="tel" 
-              formControlName="telefone" 
-              placeholder="(00) 00000-0000"
-              clearInput="true">
+            <ion-input type="tel" formControlName="telefone" placeholder="(00) 00000-0000" clearInput="true">
             </ion-input>
           </ion-item>
         </div>
@@ -74,25 +63,18 @@
         </div>
 
         <div class="form-group">
-          <ion-item fill="outline">
+            <div>
             <ion-label position="floating">Data de Nascimento *</ion-label>
-            <ion-datetime
-              formControlName="dataNascimento"
-              presentation="date"
-              displayFormat="DD/MM/YYYY"
+            <ion-datetime formControlName="dataNascimento" presentation="date" displayFormat="DD/MM/YYYY"
               placeholder="Selecione a data">
             </ion-datetime>
-          </ion-item>
-
-          <ion-item fill="outline">
+          </div>
+          <div>
             <ion-label position="floating">Data de Entrada *</ion-label>
-            <ion-datetime
-              formControlName="dataEntradaInstituto"
-              presentation="date"
-              displayFormat="DD/MM/YYYY"
+            <ion-datetime formControlName="dataEntradaInstituto" presentation="date" displayFormat="DD/MM/YYYY"
               placeholder="Selecione a data">
             </ion-datetime>
-          </ion-item>
+          </div>
         </div>
       </div>
 
@@ -111,29 +93,24 @@
         <div class="form-group">
           <ion-item fill="outline">
             <ion-label position="floating">Usuário do Sistema *</ion-label>
-            <ion-input 
-              type="text" 
-              formControlName="usuarioSistema" 
-              placeholder="Digite o nome de usuário"
+            <ion-input type="text" formControlName="usuarioSistema" placeholder="Digite o nome de usuário"
               clearInput="true">
             </ion-input>
           </ion-item>
-          <div class="validation-message" *ngIf="cadastroForm.get('usuarioSistema')?.invalid && cadastroForm.get('usuarioSistema')?.touched">
+          <div class="validation-message"
+            *ngIf="cadastroForm.get('usuarioSistema')?.invalid && cadastroForm.get('usuarioSistema')?.touched">
             <ion-text color="danger">
               <small>Nome de usuário é obrigatório e deve ser único</small>
             </ion-text>
           </div>
-          
+
           <ion-item fill="outline">
             <ion-label position="floating">Senha do Sistema *</ion-label>
-            <ion-input 
-              type="password" 
-              formControlName="senhaSistema" 
-              placeholder="Digite a senha"
-              clearInput="true">
+            <ion-input type="password" formControlName="senhaSistema" placeholder="Digite a senha" clearInput="true">
             </ion-input>
           </ion-item>
-          <div class="validation-message" *ngIf="cadastroForm.get('senhaSistema')?.invalid && cadastroForm.get('senhaSistema')?.touched">
+          <div class="validation-message"
+            *ngIf="cadastroForm.get('senhaSistema')?.invalid && cadastroForm.get('senhaSistema')?.touched">
             <ion-text color="danger">
               <small>Senha é obrigatória</small>
             </ion-text>
@@ -143,20 +120,12 @@
 
       <!-- Botões de Ação -->
       <div class="form-actions">
-        <ion-button 
-          fill="clear" 
-          color="medium" 
-          size="large"
-          routerLink="/paineis/painel-funcionario">
+        <ion-button fill="clear" color="medium" size="large" routerLink="/sistema/funcionarios">
           <ion-icon name="close-outline" slot="start"></ion-icon>
           Cancelar
         </ion-button>
 
-        <ion-button 
-          type="button" 
-          color="primary" 
-          size="large"
-          [disabled]="cadastroForm.invalid"
+        <ion-button type="button" color="primary" size="large" [disabled]="cadastroForm.invalid"
           (click)="prosseguirParaPermissoes()">
           <ion-icon name="checkmark-outline" slot="start"></ion-icon>
           Prosseguir

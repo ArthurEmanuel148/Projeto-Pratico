@@ -1,7 +1,7 @@
 <ion-header>
   <ion-toolbar color="primary">
     <ion-buttons slot="start">
-      <ion-back-button defaultHref="/paineis/interesse-matricula/lista-declaracoes"></ion-back-button>
+      <ion-back-button defaultHref="/sistema/matriculas/declaracoes"></ion-back-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
@@ -13,7 +13,7 @@
 
 <!-- Adicione logo abaixo do título da página -->
 <div class="ion-padding ion-text-start">
-  <ion-button fill="clear" color="primary" routerLink="/paineis/interesse-matricula/lista-declaracoes">
+  <ion-button fill="clear" color="primary" routerLink="/sistema/matriculas/declaracoes">
     <ion-icon name="arrow-back-outline" slot="start"></ion-icon>
     Voltar para a listagem
   </ion-button>
@@ -25,9 +25,12 @@
       <ion-card-title>Dados do Aluno</ion-card-title>
     </ion-card-header>
     <ion-card-content>
-      <p><strong>Nome:</strong> {{ declaracao.nomeCompleto || (declaracao.dadosAluno && declaracao.dadosAluno.nomeAluno) }}</p>
-      <p><strong>Data de Nascimento:</strong> {{ declaracao.dadosAluno && declaracao.dadosAluno.dataNascimentoAluno | date:'dd/MM/yyyy' }}</p>
-      <p><strong>CPF:</strong> {{ declaracao.cpf || (declaracao.dadosAluno && declaracao.dadosAluno.cpfAluno) || 'Não informado' }}</p>
+      <p><strong>Nome:</strong> {{ declaracao.nomeCompleto || (declaracao.dadosAluno && declaracao.dadosAluno.nomeAluno)
+        }}</p>
+      <p><strong>Data de Nascimento:</strong> {{ declaracao.dadosAluno && declaracao.dadosAluno.dataNascimentoAluno |
+        date:'dd/MM/yyyy' }}</p>
+      <p><strong>CPF:</strong> {{ declaracao.cpf || (declaracao.dadosAluno && declaracao.dadosAluno.cpfAluno) || 'Não
+        informado' }}</p>
       <p><strong>Protocolo:</strong> {{ declaracao.protocolo }}</p>
       <p><strong>Status:</strong>
         <ion-badge color="primary">{{ declaracao.status || 'interesse_declarado' }}</ion-badge>
@@ -52,29 +55,133 @@
       <ion-card-title>Vaga de Interesse</ion-card-title>
     </ion-card-header>
     <ion-card-content>
-      <p><strong>Tipo de Cota:</strong> {{ declaracao.tipoCota || (declaracao.tipoVaga && declaracao.tipoVaga.tipoCota) }}</p>
+      <p><strong>Tipo de Cota:</strong> {{ declaracao.tipoCota || (declaracao.tipoVaga && declaracao.tipoVaga.tipoCota)
+        }}</p>
       <p><strong>Série Desejada:</strong> {{ declaracao.serieDesejada || 'Não informado' }}</p>
       <p><strong>Ano Letivo:</strong> {{ declaracao.anoLetivo || 'Não informado' }}</p>
       <p><strong>Tipo de Escola Anterior:</strong> {{ declaracao.tipoEscola || 'Não informado' }}</p>
     </ion-card-content>
   </ion-card>
 
-  <ion-card *ngIf="declaracao.infoRenda">
+  <ion-card *ngIf="declaracao">
     <ion-card-header>
-      <ion-card-title>Informações de Renda</ion-card-title>
+      <ion-card-title>Dados da Escola</ion-card-title>
     </ion-card-header>
     <ion-card-content>
-      <p><strong>Endereço:</strong> {{ declaracao.infoRenda.enderecoCompleto }}</p>
-      <!-- Liste integrantes, se houver -->
+      <p><strong>Escola do Aluno:</strong> {{ declaracao.escolaAluno || 'Não informado' }}</p>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-card *ngIf="declaracao">
+    <ion-card-header>
+      <ion-card-title>Endereço da Família</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <p><strong>CEP:</strong> {{ declaracao.cep || 'Não informado' }}</p>
+      <p><strong>Logradouro:</strong> {{ declaracao.logradouro || 'Não informado' }}</p>
+      <p><strong>Número:</strong> {{ declaracao.numero || 'Não informado' }}</p>
+      <p><strong>Complemento:</strong> {{ declaracao.complemento || 'Não informado' }}</p>
+      <p><strong>Bairro:</strong> {{ declaracao.bairro || 'Não informado' }}</p>
+      <p><strong>Cidade:</strong> {{ declaracao.cidade || 'Não informado' }}</p>
+      <p><strong>UF:</strong> {{ declaracao.uf || 'Não informado' }}</p>
+      <p *ngIf="declaracao.pontoReferencia"><strong>Ponto de Referência:</strong> {{ declaracao.pontoReferencia }}</p>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-card *ngIf="declaracao && declaracao.tipoCota === 'economica'">
+    <ion-card-header>
+      <ion-card-title>💰 Informações de Renda</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <div class="info-row">
+        <strong>Número de Integrantes da Família:</strong>
+        <span>{{ declaracao.numeroIntegrantes || 'Não informado' }}</span>
+      </div>
+
+      <div *ngIf="integrantesRenda && integrantesRenda.length > 0" class="renda-section">
+        <h4>👥 Composição Familiar e Renda:</h4>
+
+        <div class="tabela-container">
+          <table class="tabela-integrantes">
+            <thead>
+              <tr>
+                <th>Nome</th>
+                <th>Parentesco</th>
+                <th>Idade</th>
+                <th>Renda</th>
+                <th>Tipo Renda</th>
+                <th>Ocupação/Obs</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let integrante of integrantesRenda; let i = index">
+                <td class="nome-integrante">
+                  <strong>{{ integrante.nome || 'Nome não informado' }}</strong>
+                  <small *ngIf="integrante.cpf" class="cpf-integrante">CPF: {{ integrante.cpf }}</small>
+                </td>
+                <td>{{ integrante.parentesco || 'Não informado' }}</td>
+                <td>{{ integrante.idade || '-' }} anos</td>
+                <td class="valor-renda">{{ integrante.renda ? (integrante.renda | currency:'BRL':'symbol':'1.2-2') : 'R$
+                  0,00' }}</td>
+                <td>{{ integrante.tipoRenda || '-' }}</td>
+                <td class="observacoes-col">
+                  <span *ngIf="integrante.ocupacao">{{ integrante.ocupacao }}</span>
+                  <span *ngIf="integrante.observacoes" class="obs-extra">{{ integrante.observacoes }}</span>
+                  <span *ngIf="!integrante.ocupacao && !integrante.observacoes">-</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="renda-total" *ngIf="rendaFamiliarCalculada > 0">
+          <p><strong>Renda Familiar Total:</strong> {{ rendaFamiliarCalculada | currency:'BRL':'symbol':'1.2-2' }}</p>
+          <p><strong>Renda Per Capita:</strong> {{ rendaPerCapitaCalculada | currency:'BRL':'symbol':'1.2-2' }}</p>
+        </div>
+      </div>
+
+      <div *ngIf="!integrantesRenda || integrantesRenda.length === 0">
+        <p style="color: #888; font-style: italic;">Dados de renda não informados</p>
+      </div>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-card *ngIf="declaracao && declaracao.horariosSelecionados">
+    <ion-card-header>
+      <ion-card-title>Horários de Interesse</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <div *ngIf="horariosSelecionados && horariosSelecionados.length > 0">
+        <ion-list>
+          <ion-item *ngFor="let horario of horariosSelecionados">
+            <ion-label>{{ horario }}</ion-label>
+          </ion-item>
+        </ion-list>
+      </div>
+      <p *ngIf="!horariosSelecionados || horariosSelecionados.length === 0">Nenhum horário específico selecionado</p>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-card *ngIf="declaracao && declaracao.mensagemAdicional">
+    <ion-card-header>
+      <ion-card-title>Observações do Responsável</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <p>{{ declaracao.mensagemAdicional }}</p>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-card *ngIf="declaracao && declaracao.observacoes">
+    <ion-card-header>
+      <ion-card-title>Observações Internas</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <p>{{ declaracao.observacoes }}</p>
     </ion-card-content>
   </ion-card>
 
   <div class="ion-padding">
-    <ion-button
-      expand="block"
-      color="success"
-      (click)="iniciarMatricula()"
-      *ngIf="!matriculaIniciada"
+    <ion-button expand="block" color="success" (click)="iniciarMatricula()" *ngIf="!matriculaIniciada"
       [disabled]="processandoMatricula">
       <ion-icon name="document-attach-outline" slot="start"></ion-icon>
       {{ processandoMatricula ? 'Processando...' : 'Iniciar Matrícula' }}

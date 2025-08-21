@@ -13,7 +13,7 @@ export class InteresseMatriculaService {
   constructor(
     private http: HttpClient,
     private apiConfig: ApiConfigService
-  ) {}
+  ) { }
 
   // Métodos para manipular o usuário logado no localStorage
   salvarUsuarioLogado(usuario: any): void {
@@ -34,6 +34,33 @@ export class InteresseMatriculaService {
     return this.http.post(this.apiUrl, backendData).pipe(
       catchError(error => {
         console.error('Erro ao enviar declaração:', error);
+        throw error;
+      })
+    );
+  }
+
+  // Verificar se o responsável existe por CPF
+  verificarResponsavel(cpf: string): Observable<any> {
+    const cpfLimpo = cpf.replace(/\D/g, ''); // Remove pontos e traços
+    return this.http.get(`http://localhost:8080/api/pessoa/verificar-cpf/${cpfLimpo}`).pipe(
+      catchError(error => {
+        console.error('Erro ao verificar responsável:', error);
+        throw error;
+      })
+    );
+  }
+
+  // Autenticar responsável com CPF e senha
+  autenticarResponsavel(cpf: string, senha: string): Observable<any> {
+    const cpfLimpo = cpf.replace(/\D/g, ''); // Remove pontos e traços
+    const loginData = {
+      usuario: cpfLimpo, // Usando CPF como usuário
+      senha: senha
+    };
+
+    return this.http.post('http://localhost:8080/api/pessoa/login', loginData).pipe(
+      catchError(error => {
+        console.error('Erro ao autenticar responsável:', error);
         throw error;
       })
     );
@@ -62,6 +89,35 @@ export class InteresseMatriculaService {
       dataEnvio: backendData.dataEnvio,
       dataInicioMatricula: backendData.dataInicioMatricula,
       observacoes: backendData.observacoes,
+
+      // Campos diretos para acesso no template
+      nomeResponsavel: backendData.nomeResponsavel,
+      cpfResponsavel: backendData.cpfResponsavel,
+      dataNascimentoResponsavel: backendData.dataNascimentoResponsavel,
+      emailResponsavel: backendData.emailResponsavel,
+      telefoneResponsavel: backendData.telefoneResponsavel,
+      nomeAluno: backendData.nomeAluno,
+      dataNascimentoAluno: backendData.dataNascimentoAluno,
+      cpfAluno: backendData.cpfAluno,
+      escolaAluno: backendData.escolaAluno,
+      codigoInepEscola: backendData.codigoInepEscola,
+      municipioEscola: backendData.municipioEscola,
+      ufEscola: backendData.ufEscola,
+      cep: backendData.cep,
+      logradouro: backendData.logradouro,
+      numero: backendData.numero,
+      complemento: backendData.complemento,
+      bairro: backendData.bairro,
+      cidade: backendData.cidade,
+      uf: backendData.uf,
+      pontoReferencia: backendData.pontoReferencia,
+      observacoesResponsavel: backendData.observacoesResponsavel,
+      rendaFamiliar: backendData.rendaFamiliar,
+      rendaPerCapita: backendData.rendaPerCapita,
+      numeroIntegrantes: backendData.numeroIntegrantes,
+      integrantesRenda: backendData.integrantesRenda,
+      horariosSelecionados: backendData.horariosSelecionados,
+
       dadosResponsavel: {
         nomeResponsavel: backendData.nomeResponsavel,
         cpfResponsavel: backendData.cpfResponsavel,
@@ -91,34 +147,67 @@ export class InteresseMatriculaService {
     };
   }
 
-  private mapFrontendToBackend(frontendData: InteresseMatricula): any {
+  private mapFrontendToBackend(frontendData: any): any {
+    console.log('Frontend data recebido:', frontendData);
+
+    // O frontend envia dados diretos do formulário, não na estrutura da interface
     const backendData: any = {
-      nomeResponsavel: frontendData.dadosResponsavel?.nomeResponsavel,
-      cpfResponsavel: frontendData.dadosResponsavel?.cpfResponsavel,
-      dataNascimentoResponsavel: frontendData.dadosResponsavel?.dataNascimentoResponsavel,
-      telefoneResponsavel: frontendData.dadosResponsavel?.telefoneResponsavel,
-      emailResponsavel: frontendData.dadosResponsavel?.emailResponsavel,
-      nomeAluno: frontendData.dadosAluno?.nomeAluno,
-      dataNascimentoAluno: frontendData.dadosAluno?.dataNascimentoAluno,
-      cpfAluno: frontendData.dadosAluno?.cpfAluno,
-      tipoCota: frontendData.tipoVaga?.tipoCota,
-      horariosSelecionados: frontendData.horariosVaga?.horariosSelecionados ?
-        JSON.stringify(frontendData.horariosVaga.horariosSelecionados) : null,
-      mensagemAdicional: frontendData.mensagemAdicional,
-      rendaFamiliar: frontendData.infoRenda?.rendaFamiliar,
-      rendaPerCapita: frontendData.infoRenda?.rendaPerCapita,
-      numeroIntegrantes: frontendData.infoRenda?.numeroIntegrantes,
-      enderecoCompleto: frontendData.infoRenda?.enderecoCompleto,
-      integrantesRenda: frontendData.infoRenda?.integrantesRenda ?
-        JSON.stringify(frontendData.infoRenda.integrantesRenda) : null
+      // Dados do responsável (vem direto do formulário)
+      nomeResponsavel: frontendData.dadosResponsavel?.nome,
+      cpfResponsavel: frontendData.dadosResponsavel?.cpf,
+      dataNascimentoResponsavel: frontendData.dadosResponsavel?.dataNascimento,
+      telefoneResponsavel: frontendData.dadosResponsavel?.telefone,
+      emailResponsavel: frontendData.dadosResponsavel?.email,
+      responsavelExistente: false,
+      senhaTemporariaEnviada: false,
+      responsavelAutenticado: false,
+
+      // Dados do aluno (vem direto do formulário)
+      nomeAluno: frontendData.dadosAluno?.nome,
+      dataNascimentoAluno: frontendData.dadosAluno?.dataNascimento,
+      cpfAluno: frontendData.dadosAluno?.cpf,
+      escolaAluno: frontendData.dadosAluno?.escola,
+
+      // Endereço (vem direto do formulário)
+      cep: frontendData.endereco?.cep,
+      logradouro: frontendData.endereco?.logradouro,
+      numero: frontendData.endereco?.numero,
+      complemento: frontendData.endereco?.complemento,
+      bairro: frontendData.endereco?.bairro,
+      cidade: frontendData.endereco?.cidade,
+      uf: frontendData.endereco?.uf,
+      pontoReferencia: frontendData.endereco?.pontoReferencia,
+
+      // Tipo de cota (vem direto do formulário)
+      tipoCota: frontendData.tipoCota,
+
+      // Horários selecionados (converte array em string JSON)
+      horariosSelecionados: frontendData.horarios && frontendData.horarios.length > 0 ?
+        JSON.stringify(frontendData.horarios) : null,
+
+      // Observações
+      observacoesResponsavel: frontendData.observacoes,
+
+      // Status e etapa
+      etapaAtual: 'finalizado',
+      status: 'em_preenchimento'
     };
 
+    // Se houver integrantes da família (para cota econômica)
+    if (frontendData.integrantesFamilia && frontendData.integrantesFamilia.length > 0) {
+      backendData.numeroIntegrantes = frontendData.integrantesFamilia.length;
+      backendData.integrantesRenda = JSON.stringify(frontendData.integrantesFamilia);
+      backendData.dadosFamiliaresPreenchidos = true;
+    }
+
+    // Remove campos undefined
     Object.keys(backendData).forEach(key => {
       if (backendData[key] === undefined) {
         delete backendData[key];
       }
     });
 
+    console.log('Backend data mapeado:', backendData);
     return backendData;
   }
 

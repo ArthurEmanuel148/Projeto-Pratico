@@ -16,7 +16,58 @@ export interface InteresseMatricula {
     status?: string; // Campo do backend
     dataEnvio?: string; // Campo do backend
     dataInicioMatricula?: string; // Campo do backend
+    dataFinalizacao?: string; // Campo do backend
     observacoes?: string; // Campo do backend
+    etapaAtual?: string; // Etapa atual do processo
+    dadosFamiliaresPreenchidos?: boolean; // Se os dados familiares foram preenchidos
+    funcionarioResponsavel?: string; // Funcionário responsável
+    responsavelExistente?: boolean; // Se o responsável já existe no sistema
+    senhaTemporariaEnviada?: boolean; // Se a senha temporária foi enviada
+    responsavelAutenticado?: boolean; // Se o responsável foi autenticado
+    responsavelLogin?: string; // Login do responsável
+
+    // Campos do responsável
+    nomeResponsavel?: string;
+    cpfResponsavel?: string;
+    dataNascimentoResponsavel?: string;
+    telefoneResponsavel?: string;
+    emailResponsavel?: string;
+
+    // Campos do aluno
+    nomeAluno?: string;
+    dataNascimentoAluno?: string;
+    cpfAluno?: string;
+
+    // Campos da escola
+    escolaAluno?: string;
+    codigoInepEscola?: string;
+    municipioEscola?: string;
+    ufEscola?: string;
+
+    // Campos de endereço
+    cep?: string;
+    logradouro?: string;
+    numero?: string;
+    complemento?: string;
+    bairro?: string;
+    cidade?: string;
+    uf?: string;
+    codigoIbgeCidade?: string;
+    pontoReferencia?: string;
+
+    // Campos de renda
+    rendaFamiliar?: number;
+    rendaPerCapita?: number;
+    numeroIntegrantes?: number;
+    enderecoCompleto?: string;
+    integrantesRenda?: string | any[]; // JSON string ou array
+
+    // Outros campos
+    horariosSelecionados?: string | string[]; // JSON string ou array
+    mensagemAdicional?: string;
+    observacoesResponsavel?: string; // Observações do responsável
+    observacoesInternas?: string; // Observações internas
+
     dadosResponsavel?: {
         nomeResponsavel?: string;
         cpfResponsavel?: string;
@@ -42,11 +93,10 @@ export interface InteresseMatricula {
     horariosVaga?: {
         horariosSelecionados?: string[];
     };
-    mensagemAdicional?: string;
 }
 
 export const TIPOS_VAGA = [
-  { chave: 'funcionario', nome: 'Cota de Funcionário' },
-  { chave: 'economica', nome: 'Cota Econômica (Renda)' },
-  { chave: 'livre', nome: 'Cota Livre (Ampla Concorrência)' }
+    { chave: 'funcionario', nome: 'Cota de Funcionário' },
+    { chave: 'economica', nome: 'Cota Econômica (Renda)' },
+    { chave: 'livre', nome: 'Cota Livre (Ampla Concorrência)' }
 ];

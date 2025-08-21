@@ -1,0 +1,317 @@
+// === ESTILO INSPIRADO NO SITE OFICIAL CIPALAM ===
+
+.entrada-content {
+    --padding-top: 0;
+    --padding-bottom: 0;
+    --background: #ffffff;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+// === HEADER ESTILO SITE OFICIAL ===
+.cipalam-header {
+    background: #ffffff;
+    border-bottom: 1px solid #e0e0e0;
+    padding: 2rem 0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.header-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    min-height: 30px;
+}
+
+.logo-cipalam {
+    display: flex;
+    align-items: center;
+
+    .logo-image {
+        width: 150px;
+    }
+
+    .logo-text {
+        font-size: 32px;
+        font-weight: 700;
+        color: #E53E3E;
+        margin: 0;
+        line-height: 1;
+        letter-spacing: -0.5px;
+    }
+
+    .logo-subtitle {
+        font-size: 12px;
+        color: #666;
+        margin: 0;
+        font-weight: 400;
+        line-height: 1;
+        margin-top: 2px;
+    }
+}
+
+
+.header-actions {
+    .portal-btn {
+        --color: #666;
+        font-size: 1rem;
+        font-weight: 600;
+        height: 44px;
+        --padding-start: 1.5rem;
+        --padding-end: 1.5rem;
+
+        ion-icon {
+            margin-right: 0.5rem;
+            font-size: 1.2rem;
+        }
+    }
+}
+
+// === CONTEÚDO PRINCIPAL ===
+.main-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 3rem 2rem;
+}
+
+.content-grid {
+    display: block;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+// === CONTEÚDO DE TEXTO ===
+.text-content {
+    text-align: center;
+
+    .main-title {
+        font-size: 2.8rem;
+        font-weight: 700;
+        color: #333;
+        margin: 0 0 2.5rem 0;
+        line-height: 1.2;
+    }
+
+    .description-text {
+        font-size: 1.1rem;
+        color: #555;
+        line-height: 1.7;
+        margin: 0 0 2rem 0;
+        text-align: justify;
+        max-width: 100%;
+
+        strong {
+            color: #dc3545;
+            font-weight: 600;
+        }
+    }
+}
+
+.cta-section {
+    margin: 3rem 0;
+    text-align: center;
+
+    .cta-button {
+        --background: #dc3545;
+        --background-hover: #c82333;
+        --background-activated: #bd2130;
+        --border-radius: 12px;
+        --padding-start: 3rem;
+        --padding-end: 3rem;
+        height: 64px;
+        font-size: 1.1rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        box-shadow: 0 6px 20px rgba(220, 53, 69, 0.4);
+        min-width: 300px;
+
+        ion-icon {
+            margin-right: 0.75rem;
+            font-size: 1.3rem;
+        }
+    }
+}
+
+.contact-info {
+    margin: 3rem 0;
+    padding: 2rem;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-radius: 12px;
+    border: 1px solid #e9ecef;
+    text-align: center;
+
+    p {
+        margin: 0 0 1rem 0;
+        font-size: 1rem;
+        color: #555;
+
+        &.email-contact {
+            margin-top: 1rem;
+            font-size: 1.1rem;
+        }
+    }
+
+    a {
+        color: #dc3545;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 1.2rem;
+
+        &:hover {
+            text-decoration: underline;
+        }
+    }
+}
+
+// === FOOTER ===
+.footer-section {
+    background: #f8f9fa;
+    border-top: 1px solid #e9ecef;
+    padding: 2rem 0;
+    margin-top: 3rem;
+}
+
+.footer-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    text-align: center;
+
+    p {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.75rem;
+        margin: 0;
+        font-size: 0.9rem;
+        color: #666;
+        line-height: 1.5;
+
+        ion-icon {
+            color: #dc3545;
+            font-size: 1.1rem;
+            flex-shrink: 0;
+        }
+    }
+}
+
+// === RESPONSIVIDADE ===
+@media (max-width: 992px) {
+    .text-content .main-title {
+        font-size: 2.4rem;
+    }
+
+    .main-content {
+        padding: 2rem 1.5rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .cipalam-header {
+        padding: 1.5rem 0;
+    }
+
+    .header-container {
+        padding: 0 1rem;
+        flex-direction: row;
+        justify-content: space-between;
+        min-height: 60px;
+    }
+
+    .logo-cipalam {
+        .logo-image {
+            width: 90px;
+        }
+
+    }
+
+    .header-actions .portal-btn {
+        font-size: 0.9rem;
+        height: 40px;
+    }
+
+    .main-content {
+        padding: 2rem 1rem;
+    }
+
+    .text-content .main-title {
+        font-size: 2rem;
+    }
+
+    .description-text {
+        font-size: 1rem;
+        text-align: left;
+    }
+
+    .cta-section .cta-button {
+        min-width: 100%;
+        height: 56px;
+        font-size: 1rem;
+    }
+
+    .contact-info {
+        margin: 2rem 0;
+        padding: 1.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .cipalam-header {
+        padding: 1rem 0;
+    }
+
+    .header-container {
+        padding: 0 0.75rem;
+        min-height: 50px;
+    }
+
+    .logo-cipalam {
+        .logo-image {
+            width: 100px;
+        }
+    }
+
+    .header-actions .portal-btn {
+        font-size: 0.85rem;
+        height: 36px;
+        --padding-start: 1rem;
+        --padding-end: 1rem;
+
+        ion-icon {
+            font-size: 1rem;
+        }
+    }
+
+    .main-content {
+        padding: 1.5rem 0.75rem;
+    }
+
+    .text-content .main-title {
+        font-size: 1.8rem;
+    }
+
+    .description-text {
+        font-size: 0.95rem;
+    }
+
+    .cta-section .cta-button {
+        height: 50px;
+        font-size: 0.9rem;
+        --padding-start: 2rem;
+        --padding-end: 2rem;
+    }
+
+    .contact-info {
+        padding: 1rem;
+
+        a {
+            font-size: 1rem;
+        }
+    }
+}

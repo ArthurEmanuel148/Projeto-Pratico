@@ -46,6 +46,70 @@ public class InteresseMatricula {
     @Column(name = "cpfAluno", length = 14)
     private String cpfAluno;
 
+    // DADOS DA ESCOLA
+    @Column(name = "escolaAluno", length = 200)
+    private String escolaAluno;
+
+    @Column(name = "codigoInepEscola", length = 20)
+    private String codigoInepEscola;
+
+    @Column(name = "municipioEscola", length = 100)
+    private String municipioEscola;
+
+    @Column(name = "ufEscola", length = 2)
+    private String ufEscola;
+
+    // ENDEREÇO DA FAMÍLIA
+    @Column(name = "cep", length = 9)
+    private String cep;
+
+    @Column(name = "logradouro", length = 200)
+    private String logradouro;
+
+    @Column(name = "numero", length = 20)
+    private String numero;
+
+    @Column(name = "complemento", length = 100)
+    private String complemento;
+
+    @Column(name = "bairro", length = 100)
+    private String bairro;
+
+    @Column(name = "cidade", length = 100)
+    private String cidade;
+
+    @Column(name = "uf", length = 2)
+    private String uf;
+
+    @Column(name = "codigoIbgeCidade", length = 10)
+    private String codigoIbgeCidade;
+
+    @Column(name = "pontoReferencia", columnDefinition = "TEXT")
+    private String pontoReferencia;
+
+    // CAMPOS DE CONTROLE DO RESPONSÁVEL
+    @Column(name = "responsavelExistente")
+    private Boolean responsavelExistente = false;
+
+    @Column(name = "senhaTemporariaEnviada")
+    private Boolean senhaTemporariaEnviada = false;
+
+    @Column(name = "responsavelAutenticado")
+    private Boolean responsavelAutenticado = false;
+
+    // ETAPA ATUAL DO PROCESSO
+    @Column(name = "etapaAtual")
+    @Enumerated(EnumType.STRING)
+    private EtapaProcesso etapaAtual = EtapaProcesso.dados_responsavel;
+
+    // OBSERVAÇÕES DO RESPONSÁVEL
+    @Column(name = "observacoesResponsavel", columnDefinition = "TEXT")
+    private String observacoesResponsavel;
+
+    // CAMPO PARA MARCAR SE DADOS FAMILIARES FORAM PREENCHIDOS
+    @Column(name = "dadosFamiliaresPreenchidos")
+    private Boolean dadosFamiliaresPreenchidos = false;
+
     // TIPO DE VAGA
     @Column(name = "tipoCota", nullable = false)
     @Enumerated(EnumType.STRING)
@@ -128,11 +192,18 @@ public class InteresseMatricula {
     }
 
     public enum StatusInteresse {
+        em_preenchimento,
         interesse_declarado,
         matricula_iniciada,
         documentos_pendentes,
         documentos_completos,
         matricula_aprovada,
         matricula_cancelada
+    }
+
+    public enum EtapaProcesso {
+        dados_responsavel,
+        dados_aluno,
+        finalizado
     }
 }

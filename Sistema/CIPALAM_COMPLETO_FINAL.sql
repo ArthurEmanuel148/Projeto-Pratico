@@ -1,7 +1,7 @@
 -- ===================================================================
 -- BANCO DE DADOS CIPALAM - VERSÃO COMPLETA ATUALIZADA
--- Data: 19/07/2025
--- Descrição: Schema completo com funcionalidades sem rotas e todas as correções
+-- Data: 20/08/2025
+-- Descrição: Schema completo com fluxo aprimorado de declaração de interesse
 -- ===================================================================
 
 -- MySQL Workbench Forward Engineering
@@ -64,13 +64,13 @@ CREATE TABLE `tblogin` (
 ) ENGINE = InnoDB;
 
 -- -----------------------------------------------------
--- Table `Cipalam`.`tbFamilia`
+-- Table `Cipalam`.`tbFamilia` (SIMPLIFICADA - SEM CAMPOS DE RENDA)
 -- -----------------------------------------------------
 CREATE TABLE `tbFamilia` (
     `idtbFamilia` INT NOT NULL AUTO_INCREMENT,
-    `rendaFamiliar` DECIMAL(10, 2) NULL,
-    `rendaPerCapita` DECIMAL(10, 2) NULL,
     `caminhoComprovanteresidencia` VARCHAR(255) NULL,
+    `observacoes` TEXT NULL,
+    `dataCriacao` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (`idtbFamilia`)
 ) ENGINE = InnoDB;
 
@@ -191,59 +191,120 @@ CREATE TABLE `tbFuncionario` (
 -- ===================================================================
 
 -- -----------------------------------------------------
--- Table `Cipalam`.`tbInteresseMatricula`
+-- Table `Cipalam`.`tbHorarioDisponivel` - Horários disponíveis do instituto
+-- -----------------------------------------------------
+CREATE TABLE `tbHorarioDisponivel` (
+    `idHorario` INT NOT NULL AUTO_INCREMENT,
+    `codigo` VARCHAR(20) NOT NULL UNIQUE,
+    `descricao` VARCHAR(100) NOT NULL,
+    `horaInicio` TIME NOT NULL,
+    `horaFim` TIME NOT NULL,
+    `diasSemana` JSON NOT NULL, -- ['segunda', 'terca', 'quarta', 'quinta', 'sexta', 'sabado']
+    `ativo` BOOLEAN DEFAULT TRUE,
+    `capacidadeMaxima` INT DEFAULT 20,
+    `ordemExibicao` INT DEFAULT 0,
+    PRIMARY KEY (`idHorario`),
+    INDEX `idx_codigo` (`codigo`),
+    INDEX `idx_ativo` (`ativo`)
+) ENGINE = InnoDB;
+
+-- -----------------------------------------------------
+-- Table `Cipalam`.`tbInteresseMatricula` - ATUALIZADA COM NOVO FLUXO
 -- -----------------------------------------------------
 CREATE TABLE `tbInteresseMatricula` (
     `id` INT NOT NULL AUTO_INCREMENT,
     `protocolo` VARCHAR(50) UNIQUE NOT NULL,
-    -- DADOS DO RESPONSÁVEL
-    `nomeResponsavel` VARCHAR(100) NOT NULL,
-    `cpfResponsavel` VARCHAR(14) NOT NULL,
-    `dataNascimentoResponsavel` DATE NOT NULL,
-    `telefoneResponsavel` VARCHAR(20) NOT NULL,
-    `emailResponsavel` VARCHAR(100) NOT NULL,
-    -- DADOS DO ALUNO
-    `nomeAluno` VARCHAR(100) NOT NULL,
-    `dataNascimentoAluno` DATE NOT NULL,
-    `cpfAluno` VARCHAR(14) NULL,
-    -- TIPO DE VAGA
-    `tipoCota` ENUM(
-        'livre',
-        'economica',
-        'funcionario'
-    ) NOT NULL,
-    -- INFORMAÇÕES DE RENDA
-    `rendaFamiliar` DECIMAL(10, 2) NULL,
-    `rendaPerCapita` DECIMAL(10, 2) NULL,
-    `numeroIntegrantes` INT NULL,
-    `enderecoCompleto` TEXT NULL,
-    `integrantesRenda` JSON NULL,
-    -- HORÁRIOS E MENSAGEM
-    `horariosSelecionados` JSON NULL,
-    `mensagemAdicional` TEXT NULL,
-    -- CONTROLE DE STATUS
-    `status` ENUM(
-        'interesse_declarado',
-        'matricula_iniciada',
-        'documentos_pendentes',
-        'documentos_completos',
-        'matricula_aprovada',
-        'matricula_cancelada'
-    ) DEFAULT 'interesse_declarado',
-    -- CONTROLE DE DATAS
-    `dataEnvio` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    `dataInicioMatricula` TIMESTAMP NULL,
-    `dataFinalizacao` TIMESTAMP NULL,
-    -- RESPONSÁVEIS PELO PROCESSO
-    `funcionarioResponsavel_idPessoa` INT NULL,
-    `responsavelLogin_idPessoa` INT NULL,
-    -- OBSERVAÇÕES
-    `observacoes` TEXT NULL,
-    `observacoesInternas` TEXT NULL,
+
+-- ETAPA DO PROCESSO
+`etapaAtual` ENUM(
+    'dados_responsavel',
+    'verificacao_responsavel',
+    'dados_aluno',
+    'dados_familiares',
+    'endereco_familia',
+    'observacoes',
+    'revisao',
+    'finalizado'
+) DEFAULT 'dados_responsavel',
+
+-- DADOS DO RESPONSÁVEL
+`nomeResponsavel` VARCHAR(100) NOT NULL,
+`cpfResponsavel` VARCHAR(14) NOT NULL,
+`dataNascimentoResponsavel` DATE NOT NULL,
+`telefoneResponsavel` VARCHAR(20) NOT NULL,
+`emailResponsavel` VARCHAR(100) NOT NULL,
+`responsavelExistente` BOOLEAN DEFAULT FALSE,
+`senhaTemporariaEnviada` BOOLEAN DEFAULT FALSE,
+`responsavelAutenticado` BOOLEAN DEFAULT FALSE,
+
+-- DADOS DO ALUNO
+`nomeAluno` VARCHAR(100) NULL,
+`dataNascimentoAluno` DATE NULL,
+`cpfAluno` VARCHAR(14) NULL,
+`escolaAluno` VARCHAR(200) NULL, -- Nome da escola (via API externa)
+`codigoInepEscola` VARCHAR(20) NULL, -- Código INEP da escola (via API)
+`municipioEscola` VARCHAR(100) NULL,
+`ufEscola` CHAR(2) NULL,
+
+-- ENDEREÇO DA FAMÍLIA (via API IBGE)
+`cep` CHAR(9) NULL,
+`logradouro` VARCHAR(200) NULL,
+`numero` VARCHAR(20) NULL,
+`complemento` VARCHAR(100) NULL,
+`bairro` VARCHAR(100) NULL,
+`cidade` VARCHAR(100) NULL,
+`uf` CHAR(2) NULL,
+`codigoIbgeCidade` VARCHAR(10) NULL,
+`pontoReferencia` TEXT NULL,
+
+-- TIPO DE VAGA
+`tipoCota` ENUM(
+    'livre',
+    'economica',
+    'funcionario'
+) NULL,
+
+-- INFORMAÇÕES FAMILIARES (para cota econômica)
+`numeroIntegrantes` INT NULL,
+`integrantesRenda` JSON NULL, -- Dados familiares completos com todas as rendas
+`dadosFamiliaresPreenchidos` BOOLEAN DEFAULT FALSE,
+
+-- HORÁRIOS E OBSERVAÇÕES
+`horariosSelecionados` JSON NULL,
+`observacoesResponsavel` TEXT NULL, -- Observações sobre o aluno
+
+-- CONTROLE DE STATUS
+`status` ENUM(
+    'em_preenchimento',
+    'interesse_declarado',
+    'matricula_iniciada',
+    'documentos_pendentes',
+    'documentos_completos',
+    'matricula_aprovada',
+    'matricula_cancelada'
+) DEFAULT 'em_preenchimento',
+
+-- CONTROLE DE DATAS
+`dataInicio` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+`dataEnvio` TIMESTAMP NULL,
+`dataInicioMatricula` TIMESTAMP NULL,
+`dataFinalizacao` TIMESTAMP NULL,
+`ultimaAtualizacao` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+-- RESPONSÁVEIS PELO PROCESSO
+`funcionarioResponsavel_idPessoa` INT NULL,
+`responsavelLogin_idPessoa` INT NULL,
+
+-- OBSERVAÇÕES INTERNAS
+`observacoesInternas` TEXT NULL,
+    `notasProcesso` TEXT NULL,
+    
     PRIMARY KEY (`id`),
     INDEX `idx_protocolo` (`protocolo`),
     INDEX `idx_status` (`status`),
+    INDEX `idx_etapa` (`etapaAtual`),
     INDEX `idx_tipoCota` (`tipoCota`),
+    INDEX `idx_cpf_responsavel` (`cpfResponsavel`),
     INDEX `idx_dataEnvio` (`dataEnvio`),
     INDEX `fk_tbInteresseMatricula_funcionario_idx` (
         `funcionarioResponsavel_idPessoa` ASC
@@ -254,7 +315,45 @@ CREATE TABLE `tbInteresseMatricula` (
     CONSTRAINT `fk_tbInteresseMatricula_funcionario` FOREIGN KEY (
         `funcionarioResponsavel_idPessoa`
     ) REFERENCES `tbPessoa` (`idPessoa`) ON DELETE SET NULL ON UPDATE NO ACTION,
-    CONSTRAINT `fk_tbInteresseMatricula_responsavel` FOREIGN KEY (`responsavelLogin_idPessoa`) REFERENCES `tbPessoa` (`idPessoa`) ON DELETE SET NULL ON UPDATE NO ACTION
+    CONSTRAINT `fk_tbInteresseMatricula_responsavel` FOREIGN KEY (
+        `responsavelLogin_idPessoa`
+    ) REFERENCES `tbPessoa` (`idPessoa`) ON DELETE SET NULL ON UPDATE NO ACTION
+) ENGINE = InnoDB;
+
+-- -----------------------------------------------------
+-- Table `Cipalam`.`tbHistoricoEtapaMatricula` - Histórico do processo
+-- -----------------------------------------------------
+CREATE TABLE `tbHistoricoEtapaMatricula` (
+    `idHistorico` INT NOT NULL AUTO_INCREMENT,
+    `tbInteresseMatricula_id` INT NOT NULL,
+    `etapa` ENUM(
+        'dados_responsavel',
+        'verificacao_responsavel',
+        'dados_aluno',
+        'dados_familiares',
+        'endereco_familia',
+        'observacoes',
+        'revisao',
+        'finalizado'
+    ) NOT NULL,
+    `status` ENUM(
+        'iniciada',
+        'concluida',
+        'erro',
+        'cancelada'
+    ) NOT NULL,
+    `dadosPreenchidos` JSON NULL,
+    `observacoes` TEXT NULL,
+    `dataInicio` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    `dataConclusao` TIMESTAMP NULL,
+    `tempoGasto` INT NULL, -- em segundos
+    PRIMARY KEY (`idHistorico`),
+    INDEX `idx_interesse_etapa` (
+        `tbInteresseMatricula_id`,
+        `etapa`
+    ),
+    INDEX `idx_data_inicio` (`dataInicio`),
+    CONSTRAINT `fk_tbHistoricoEtapa_interesse` FOREIGN KEY (`tbInteresseMatricula_id`) REFERENCES `tbInteresseMatricula` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION
 ) ENGINE = InnoDB;
 
 -- -----------------------------------------------------
@@ -656,6 +755,71 @@ VALUES (
     );
 
 -- ===================================================================
+-- INSERÇÃO DE DADOS PARA NOVAS TABELAS
+-- ===================================================================
+
+-- Horários Disponíveis do Instituto
+INSERT INTO
+    `tbHorarioDisponivel` (
+        `codigo`,
+        `descricao`,
+        `horaInicio`,
+        `horaFim`,
+        `diasSemana`,
+        `ordemExibicao`
+    )
+VALUES (
+        'manha-8h-12h',
+        'Manhã - 8h às 12h',
+        '08:00:00',
+        '12:00:00',
+        JSON_ARRAY(
+            'segunda',
+            'terca',
+            'quarta',
+            'quinta',
+            'sexta'
+        ),
+        1
+    ),
+    (
+        'tarde-13h-17h',
+        'Tarde - 13h às 17h',
+        '13:00:00',
+        '17:00:00',
+        JSON_ARRAY(
+            'segunda',
+            'terca',
+            'quarta',
+            'quinta',
+            'sexta'
+        ),
+        2
+    ),
+    (
+        'integral-8h-17h',
+        'Integral - 8h às 17h',
+        '08:00:00',
+        '17:00:00',
+        JSON_ARRAY(
+            'segunda',
+            'terca',
+            'quarta',
+            'quinta',
+            'sexta'
+        ),
+        3
+    ),
+    (
+        'sabado-8h-12h',
+        'Sábado - 8h às 12h',
+        '08:00:00',
+        '12:00:00',
+        JSON_ARRAY('sabado'),
+        4
+    );
+
+-- ===================================================================
 -- INSERÇÃO DE DADOS BÁSICOS
 -- ===================================================================
 
@@ -822,11 +986,10 @@ VALUES (
 
 -- Família para Maria
 INSERT INTO
-    `tbFamilia` (
-        `rendaFamiliar`,
-        `rendaPerCapita`
-    )
-VALUES (5000.00, 2500.00);
+    `tbFamilia` (`observacoes`)
+VALUES (
+        'Família cadastrada para teste do sistema'
+    );
 
 -- Maria como responsável
 INSERT INTO
@@ -843,60 +1006,378 @@ VALUES (1, 3);
 INSERT INTO
     `tbInteresseMatricula` (
         `protocolo`,
+        `etapaAtual`,
         `nomeResponsavel`,
         `cpfResponsavel`,
         `dataNascimentoResponsavel`,
         `telefoneResponsavel`,
         `emailResponsavel`,
+        `responsavelExistente`,
+        `responsavelAutenticado`,
         `nomeAluno`,
         `dataNascimentoAluno`,
         `cpfAluno`,
+        `escolaAluno`,
+        `codigoInepEscola`,
+        `municipioEscola`,
+        `ufEscola`,
+        `cep`,
+        `logradouro`,
+        `numero`,
+        `bairro`,
+        `cidade`,
+        `uf`,
+        `codigoIbgeCidade`,
         `tipoCota`,
         `horariosSelecionados`,
-        `status`
+        `observacoesResponsavel`,
+        `status`,
+        `dataEnvio`,
+        `dadosFamiliaresPreenchidos`
     )
 VALUES (
         'MAT-2025-001',
+        'finalizado',
         'Ana Silva Santos',
         '444.444.444-44',
         '1985-06-15',
         '(11) 99999-4444',
         'ana.santos@email.com',
+        FALSE,
+        TRUE,
         'João Silva Santos',
         '2017-03-20',
         '111.222.333-44',
+        'E.E. Professor João Silva',
+        '23456789',
+        'São Paulo',
+        'SP',
+        '01234-567',
+        'Rua das Flores',
+        '123',
+        'Centro',
+        'São Paulo',
+        'SP',
+        '3550308',
         'livre',
         JSON_ARRAY('manha-8h-12h'),
-        'interesse_declarado'
+        'Criança muito ativa e interessada em aprender. Tem facilidade com matemática.',
+        'interesse_declarado',
+        NOW(),
+        FALSE
     ),
     (
         'MAT-2025-002',
+        'finalizado',
         'Carlos Oliveira',
         '555.555.555-55',
         '1982-08-10',
         '(11) 99999-5555',
         'carlos.oliveira@email.com',
+        FALSE,
+        TRUE,
         'Pedro Oliveira',
         '2018-01-15',
         '222.333.444-55',
+        'E.M. Maria da Silva',
+        '34567890',
+        'São Paulo',
+        'SP',
+        '12345-678',
+        'Avenida Brasil',
+        '456',
+        'Vila Nova',
+        'São Paulo',
+        'SP',
+        '3550308',
         'economica',
         JSON_ARRAY('tarde-13h-17h'),
-        'interesse_declarado'
+        'Pedro é uma criança calma e gosta muito de desenhar. Tem interesse em artes.',
+        'interesse_declarado',
+        NOW(),
+        TRUE
     ),
     (
         'MAT-2025-003',
+        'finalizado',
         'Fernanda Costa',
         '666.666.666-66',
         '1987-12-05',
         '(11) 99999-6666',
         'fernanda.costa@email.com',
+        TRUE, -- Funcionária já tem cadastro
+        TRUE,
         'Lucas Costa',
         '2016-11-30',
         '333.444.555-66',
+        'Colégio Santa Cecília',
+        '45678901',
+        'São Paulo',
+        'SP',
+        '23456-789',
+        'Rua da Esperança',
+        '789',
+        'Jardim América',
+        'São Paulo',
+        'SP',
+        '3550308',
         'funcionario',
         JSON_ARRAY('manha-8h-12h'),
-        'interesse_declarado'
+        'Lucas é filho de funcionária do instituto. Muito participativo e gosta de esportes.',
+        'interesse_declarado',
+        NOW(),
+        TRUE
+    ),
+    (
+        'MAT-2025-004',
+        'dados_aluno',
+        'Roberto Silva',
+        '777.777.777-77',
+        '1983-09-25',
+        '(11) 99999-7777',
+        'roberto.silva@email.com',
+        FALSE,
+        TRUE,
+        NULL, -- Ainda não preencheu dados do aluno
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        'em_preenchimento',
+        NULL,
+        FALSE
     );
+
+-- Inserir histórico de etapas para as declarações completas
+INSERT INTO
+    `tbHistoricoEtapaMatricula` (
+        `tbInteresseMatricula_id`,
+        `etapa`,
+        `status`,
+        `dataInicio`,
+        `dataConclusao`,
+        `tempoGasto`
+    )
+VALUES
+    -- Histórico da MAT-2025-001 (Ana Silva Santos)
+    (
+        1,
+        'dados_responsavel',
+        'concluida',
+        DATE_SUB(NOW(), INTERVAL 10 DAY),
+        DATE_SUB(NOW(), INTERVAL 10 DAY),
+        300
+    ),
+    (
+        1,
+        'verificacao_responsavel',
+        'concluida',
+        DATE_SUB(NOW(), INTERVAL 10 DAY),
+        DATE_SUB(NOW(), INTERVAL 10 DAY),
+        5
+    ),
+    (
+        1,
+        'dados_aluno',
+        'concluida',
+        DATE_SUB(NOW(), INTERVAL 10 DAY),
+        DATE_SUB(NOW(), INTERVAL 10 DAY),
+        240
+    ),
+    (
+        1,
+        'endereco_familia',
+        'concluida',
+        DATE_SUB(NOW(), INTERVAL 10 DAY),
+        DATE_SUB(NOW(), INTERVAL 10 DAY),
+        180
+    ),
+    (
+        1,
+        'observacoes',
+        'concluida',
+        DATE_SUB(NOW(), INTERVAL 10 DAY),
+        DATE_SUB(NOW(), INTERVAL 10 DAY),
+        120
+    ),
+    (
+        1,
+        'revisao',
+        'concluida',
+        DATE_SUB(NOW(), INTERVAL 10 DAY),
+        DATE_SUB(NOW(), INTERVAL 10 DAY),
+        60
+    ),
+    (
+        1,
+        'finalizado',
+        'concluida',
+        DATE_SUB(NOW(), INTERVAL 10 DAY),
+        DATE_SUB(NOW(), INTERVAL 10 DAY),
+        30
+    ),
+
+-- Histórico da MAT-2025-002 (Carlos Oliveira - cota econômica)
+(
+    2,
+    'dados_responsavel',
+    'concluida',
+    DATE_SUB(NOW(), INTERVAL 8 DAY),
+    DATE_SUB(NOW(), INTERVAL 8 DAY),
+    280
+),
+(
+    2,
+    'verificacao_responsavel',
+    'concluida',
+    DATE_SUB(NOW(), INTERVAL 8 DAY),
+    DATE_SUB(NOW(), INTERVAL 8 DAY),
+    5
+),
+(
+    2,
+    'dados_aluno',
+    'concluida',
+    DATE_SUB(NOW(), INTERVAL 8 DAY),
+    DATE_SUB(NOW(), INTERVAL 8 DAY),
+    200
+),
+(
+    2,
+    'dados_familiares',
+    'concluida',
+    DATE_SUB(NOW(), INTERVAL 8 DAY),
+    DATE_SUB(NOW(), INTERVAL 8 DAY),
+    450
+),
+(
+    2,
+    'endereco_familia',
+    'concluida',
+    DATE_SUB(NOW(), INTERVAL 8 DAY),
+    DATE_SUB(NOW(), INTERVAL 8 DAY),
+    150
+),
+(
+    2,
+    'observacoes',
+    'concluida',
+    DATE_SUB(NOW(), INTERVAL 8 DAY),
+    DATE_SUB(NOW(), INTERVAL 8 DAY),
+    90
+),
+(
+    2,
+    'revisao',
+    'concluida',
+    DATE_SUB(NOW(), INTERVAL 8 DAY),
+    DATE_SUB(NOW(), INTERVAL 8 DAY),
+    75
+),
+(
+    2,
+    'finalizado',
+    'concluida',
+    DATE_SUB(NOW(), INTERVAL 8 DAY),
+    DATE_SUB(NOW(), INTERVAL 8 DAY),
+    25
+),
+
+-- Histórico da MAT-2025-003 (Fernanda Costa - funcionário)
+(
+    3,
+    'dados_responsavel',
+    'concluida',
+    DATE_SUB(NOW(), INTERVAL 5 DAY),
+    DATE_SUB(NOW(), INTERVAL 5 DAY),
+    180
+),
+(
+    3,
+    'verificacao_responsavel',
+    'concluida',
+    DATE_SUB(NOW(), INTERVAL 5 DAY),
+    DATE_SUB(NOW(), INTERVAL 5 DAY),
+    3
+),
+(
+    3,
+    'dados_aluno',
+    'concluida',
+    DATE_SUB(NOW(), INTERVAL 5 DAY),
+    DATE_SUB(NOW(), INTERVAL 5 DAY),
+    160
+),
+(
+    3,
+    'endereco_familia',
+    'concluida',
+    DATE_SUB(NOW(), INTERVAL 5 DAY),
+    DATE_SUB(NOW(), INTERVAL 5 DAY),
+    120
+),
+(
+    3,
+    'observacoes',
+    'concluida',
+    DATE_SUB(NOW(), INTERVAL 5 DAY),
+    DATE_SUB(NOW(), INTERVAL 5 DAY),
+    80
+),
+(
+    3,
+    'revisao',
+    'concluida',
+    DATE_SUB(NOW(), INTERVAL 5 DAY),
+    DATE_SUB(NOW(), INTERVAL 5 DAY),
+    45
+),
+(
+    3,
+    'finalizado',
+    'concluida',
+    DATE_SUB(NOW(), INTERVAL 5 DAY),
+    DATE_SUB(NOW(), INTERVAL 5 DAY),
+    20
+),
+
+-- Histórico da MAT-2025-004 (Roberto Silva - em andamento)
+(
+    4,
+    'dados_responsavel',
+    'concluida',
+    DATE_SUB(NOW(), INTERVAL 2 DAY),
+    DATE_SUB(NOW(), INTERVAL 2 DAY),
+    350
+),
+(
+    4,
+    'verificacao_responsavel',
+    'concluida',
+    DATE_SUB(NOW(), INTERVAL 2 DAY),
+    DATE_SUB(NOW(), INTERVAL 2 DAY),
+    8
+),
+(
+    4,
+    'dados_aluno',
+    'iniciada',
+    DATE_SUB(NOW(), INTERVAL 1 DAY),
+    NULL,
+    NULL
+);
 
 -- ===================================================================
 -- VIEWS ÚTEIS
@@ -907,28 +1388,80 @@ CREATE VIEW vw_declaracoes_completas AS
 SELECT
     i.id,
     i.protocolo,
+    i.etapaAtual,
     i.nomeResponsavel,
+    i.cpfResponsavel,
+    i.emailResponsavel,
+    i.telefoneResponsavel,
+    i.responsavelExistente,
+    i.responsavelAutenticado,
     i.nomeAluno,
+    i.dataNascimentoAluno,
+    i.cpfAluno,
+    i.escolaAluno,
+    i.municipioEscola,
+    i.ufEscola,
+    CONCAT(
+        COALESCE(i.logradouro, ''),
+        ', ',
+        COALESCE(i.numero, ''),
+        ' - ',
+        COALESCE(i.bairro, ''),
+        ', ',
+        COALESCE(i.cidade, ''),
+        '/',
+        COALESCE(i.uf, ''),
+        ' - ',
+        COALESCE(i.cep, '')
+    ) as enderecoCompleto,
     i.tipoCota,
     i.status,
+    i.dataInicio,
     i.dataEnvio,
     i.dataInicioMatricula,
+    i.ultimaAtualizacao,
+    i.observacoesResponsavel,
+    i.dadosFamiliaresPreenchidos,
+    CASE
+        WHEN i.etapaAtual = 'dados_responsavel' THEN 'Dados do Responsável'
+        WHEN i.etapaAtual = 'verificacao_responsavel' THEN 'Verificação do Responsável'
+        WHEN i.etapaAtual = 'dados_aluno' THEN 'Dados do Aluno'
+        WHEN i.etapaAtual = 'dados_familiares' THEN 'Dados Familiares'
+        WHEN i.etapaAtual = 'endereco_familia' THEN 'Endereço da Família'
+        WHEN i.etapaAtual = 'observacoes' THEN 'Observações'
+        WHEN i.etapaAtual = 'revisao' THEN 'Revisão'
+        WHEN i.etapaAtual = 'finalizado' THEN 'Finalizado'
+        ELSE i.etapaAtual
+    END as etapaFormatada,
     CASE
         WHEN i.tipoCota = 'livre' THEN 'Vaga Livre'
         WHEN i.tipoCota = 'economica' THEN 'Cota Econômica'
         WHEN i.tipoCota = 'funcionario' THEN 'Cota Funcionário'
-        ELSE i.tipoCota
+        ELSE COALESCE(i.tipoCota, 'Não definido')
     END as tipoVagaFormatado,
     CASE
-        WHEN i.status = 'interesse_declarado' THEN 'Nova'
-        WHEN i.status = 'matricula_iniciada' THEN 'Em Andamento'
+        WHEN i.status = 'em_preenchimento' THEN 'Em Preenchimento'
+        WHEN i.status = 'interesse_declarado' THEN 'Interesse Declarado'
+        WHEN i.status = 'matricula_iniciada' THEN 'Matrícula Iniciada'
         WHEN i.status = 'documentos_pendentes' THEN 'Documentos Pendentes'
         WHEN i.status = 'documentos_completos' THEN 'Documentos Completos'
-        WHEN i.status = 'matricula_aprovada' THEN 'Aprovada'
-        WHEN i.status = 'matricula_cancelada' THEN 'Cancelada'
+        WHEN i.status = 'matricula_aprovada' THEN 'Matrícula Aprovada'
+        WHEN i.status = 'matricula_cancelada' THEN 'Matrícula Cancelada'
         ELSE i.status
     END as statusFormatado,
-    p.NmPessoa as funcionarioResponsavel
+    p.NmPessoa as funcionarioResponsavel,
+    -- Calcular progresso baseado na etapa atual
+    CASE
+        WHEN i.etapaAtual = 'dados_responsavel' THEN 10
+        WHEN i.etapaAtual = 'verificacao_responsavel' THEN 20
+        WHEN i.etapaAtual = 'dados_aluno' THEN 30
+        WHEN i.etapaAtual = 'dados_familiares' THEN 50
+        WHEN i.etapaAtual = 'endereco_familia' THEN 70
+        WHEN i.etapaAtual = 'observacoes' THEN 85
+        WHEN i.etapaAtual = 'revisao' THEN 95
+        WHEN i.etapaAtual = 'finalizado' THEN 100
+        ELSE 0
+    END as progressoPercentual
 FROM
     tbInteresseMatricula i
     LEFT JOIN tbPessoa p ON i.funcionarioResponsavel_idPessoa = p.idPessoa;

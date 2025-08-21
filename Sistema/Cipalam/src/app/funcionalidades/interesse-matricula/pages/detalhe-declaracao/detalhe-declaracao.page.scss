@@ -1,0 +1,187 @@
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+    padding: 4px 0;
+
+    strong {
+        color: var(--ion-color-primary);
+        min-width: 150px;
+    }
+
+    span {
+        color: var(--ion-color-dark);
+        font-weight: 500;
+    }
+}
+
+.renda-section {
+    margin-top: 16px;
+
+    h4 {
+        color: var(--ion-color-primary);
+        margin: 16px 0 8px 0;
+        font-size: 1.1em;
+    }
+}
+
+.tabela-container {
+    overflow-x: auto;
+    margin: 16px 0;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.tabela-integrantes {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    font-size: 0.9em;
+
+    th {
+        background: var(--ion-color-primary);
+        color: white;
+        padding: 12px 8px;
+        text-align: left;
+        font-weight: 600;
+        font-size: 0.85em;
+        border-bottom: 2px solid var(--ion-color-primary-shade);
+
+        &:first-child {
+            border-top-left-radius: 8px;
+        }
+
+        &:last-child {
+            border-top-right-radius: 8px;
+        }
+    }
+
+    td {
+        padding: 10px 8px;
+        border-bottom: 1px solid var(--ion-color-light);
+        vertical-align: top;
+
+        &:first-child {
+            min-width: 150px;
+        }
+    }
+
+    tr:nth-child(even) {
+        background: var(--ion-color-light);
+    }
+
+    tr:hover {
+        background: var(--ion-color-light-tint);
+    }
+
+    tr:last-child td {
+        border-bottom: none;
+    }
+}
+
+.nome-integrante {
+    strong {
+        display: block;
+        color: var(--ion-color-primary);
+        margin-bottom: 2px;
+    }
+
+    .cpf-integrante {
+        display: block;
+        color: var(--ion-color-medium);
+        font-size: 0.8em;
+    }
+}
+
+.valor-renda {
+    font-weight: 600;
+    color: var(--ion-color-success);
+    text-align: right;
+}
+
+.observacoes-col {
+    max-width: 200px;
+
+    span {
+        display: block;
+        margin-bottom: 2px;
+    }
+
+    .obs-extra {
+        font-style: italic;
+        color: var(--ion-color-medium);
+        font-size: 0.85em;
+    }
+}
+
+// Responsivo para dispositivos móveis
+@media (max-width: 768px) {
+    .tabela-integrantes {
+        font-size: 0.8em;
+
+        th,
+        td {
+            padding: 8px 4px;
+        }
+
+        th {
+            font-size: 0.75em;
+        }
+    }
+
+    .observacoes-col {
+        max-width: 120px;
+    }
+}
+
+.integrante-item {
+    border-bottom: 1px solid var(--ion-color-light);
+    margin-bottom: 8px;
+
+    ion-label {
+        h3 {
+            color: var(--ion-color-primary);
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+    }
+}
+
+.integrante-details {
+    p {
+        margin: 4px 0;
+        font-size: 0.9em;
+
+        strong {
+            color: var(--ion-color-medium);
+            font-weight: 600;
+        }
+    }
+}
+
+.renda-total {
+    background: var(--ion-color-light);
+    border-radius: 8px;
+    padding: 12px;
+    margin-top: 16px;
+    border-left: 4px solid var(--ion-color-success);
+
+    p {
+        margin: 4px 0;
+        font-size: 1em;
+
+        strong {
+            color: var(--ion-color-success);
+        }
+    }
+}
+
+ion-card-title {
+    font-size: 1.2em;
+    font-weight: bold;
+
+    &::before {
+        margin-right: 8px;
+    }
+}

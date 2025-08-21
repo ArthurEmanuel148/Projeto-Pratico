@@ -3,16 +3,24 @@ import { RouterModule, Routes } from '@angular/router';
 
 const routes: Routes = [
   {
-    path: '', // Quando a URL for '/interesse-matricula' (definido no AppRoutingModule)
-    // Carrega o módulo da PÁGINA 'declaracao-interesse' que contém o orquestrador
-    loadChildren: () => import('./pages/lista-declaracoes/lista-declaracoes.module').then(m => m.ListaDeclaracoesPageModule)
+    path: '',
+    redirectTo: 'declaracoes',
+    pathMatch: 'full'
   },
   {
     path: 'declaracao-interesse',
     loadChildren: () => import('./pages/declaracao-interesse/declaracao-interesse.module').then(m => m.DeclaracaoInteressePageModule)
   },
   {
-    path: 'lista-declaracoes',
+    path: 'nova-declaracao', // Rota em português
+    loadChildren: () => import('./pages/declaracao-interesse/declaracao-interesse.module').then(m => m.DeclaracaoInteressePageModule)
+  },
+  {
+    path: 'lista-declaracoes', // Página administrativa - pode precisar de auth
+    loadChildren: () => import('./pages/lista-declaracoes/lista-declaracoes.module').then(m => m.ListaDeclaracoesPageModule)
+  },
+  {
+    path: 'declaracoes', // Rota em português
     loadChildren: () => import('./pages/lista-declaracoes/lista-declaracoes.module').then(m => m.ListaDeclaracoesPageModule)
   },
   {
@@ -21,13 +29,17 @@ const routes: Routes = [
   },
   {
     path: 'configuracao-documentos',
-    loadChildren: () => import('./pages/configuracao-documentos/configuracao-documentos.module').then( m => m.ConfiguracaoDocumentosPageModule)
+    loadChildren: () => import('./pages/configuracao-documentos/configuracao-documentos.module').then(m => m.ConfiguracaoDocumentosPageModule)
+  },
+  {
+    path: 'configurar-documentos', // Rota em português
+    loadChildren: () => import('./pages/configuracao-documentos/configuracao-documentos.module').then(m => m.ConfiguracaoDocumentosPageModule)
   },
   {
     path: 'inicio-matricula',
-    loadChildren: () => import('./pages/inicio-matricula/inicio-matricula.module').then( m => m.InicioMatriculaPageModule)
-  },
-  
+    loadChildren: () => import('./pages/inicio-matricula/inicio-matricula.module').then(m => m.InicioMatriculaPageModule)
+  }
+
 
 
   // Você poderia adicionar outras rotas de nível superior desta funcionalidade aqui, se necessário

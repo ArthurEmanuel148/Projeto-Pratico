@@ -18,6 +18,10 @@ export class DetalheDeclaracaoPage implements OnInit {
   matriculaIniciada = false;
   processandoMatricula = false;
   documentosNecessarios: any[] = [];
+  integrantesRenda: any[] = [];
+  horariosSelecionados: string[] = [];
+  rendaFamiliarCalculada = 0;
+  rendaPerCapitaCalculada = 0;
 
   constructor(
     private route: ActivatedRoute,
@@ -45,6 +49,33 @@ export class DetalheDeclaracaoPage implements OnInit {
         if (!declaracao) {
           this.mostrarErro('Declaração não encontrada');
           return;
+        }
+
+        // Processar dados JSON dos integrantes de renda
+        if (declaracao.integrantesRenda) {
+          try {
+            this.integrantesRenda = typeof declaracao.integrantesRenda === 'string'
+              ? JSON.parse(declaracao.integrantesRenda)
+              : declaracao.integrantesRenda;
+
+            // Calcular renda familiar e per capita
+            this.calcularRendas();
+          } catch (error) {
+            console.error('Erro ao processar integrantes de renda:', error);
+            this.integrantesRenda = [];
+          }
+        }
+
+        // Processar dados JSON dos horários selecionados
+        if (declaracao.horariosSelecionados) {
+          try {
+            this.horariosSelecionados = typeof declaracao.horariosSelecionados === 'string'
+              ? JSON.parse(declaracao.horariosSelecionados)
+              : declaracao.horariosSelecionados;
+          } catch (error) {
+            console.error('Erro ao processar horários selecionados:', error);
+            this.horariosSelecionados = [];
+          }
         }
 
         // Verificar se a matrícula já foi iniciada
@@ -176,7 +207,8 @@ export class DetalheDeclaracaoPage implements OnInit {
   }
 
   voltarLista() {
-    this.router.navigate(['/sistema/matriculas/declaracoes-interesse']);
+    // Usar rota absoluta correta
+    this.router.navigate(['/sistema/matriculas/declaracoes']);
   }
 
   private async mostrarSucesso(mensagem: string) {
@@ -197,5 +229,23 @@ export class DetalheDeclaracaoPage implements OnInit {
       position: 'top'
     });
     await toast.present();
+  }
+
+  private calcularRendas() {
+    if (!this.integrantesRenda || this.integrantesRenda.length === 0) {
+      this.rendaFamiliarCalculada = 0;
+      this.rendaPerCapitaCalculada = 0;
+      return;
+    }
+
+    // Somar todas as rendas dos integrantes
+    this.rendaFamiliarCalculada = this.integrantesRenda.reduce((total, integrante) => {
+      const renda = parseFloat(integrante.renda) || 0;
+      return total + renda;
+    }, 0);
+
+    // Calcular renda per capita
+    const numeroIntegrantes = this.declaracao?.numeroIntegrantes || this.integrantesRenda.length || 1;
+    this.rendaPerCapitaCalculada = this.rendaFamiliarCalculada / numeroIntegrantes;
   }
 }

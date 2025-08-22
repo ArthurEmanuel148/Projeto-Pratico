@@ -17,6 +17,48 @@ export interface InteresseMatricula {
     dataEnvio?: string; // Campo do backend
     dataInicioMatricula?: string; // Campo do backend
     observacoes?: string; // Campo do backend
+
+    // Campos de endereço
+    cep?: string;
+    logradouro?: string;
+    numero?: string;
+    complemento?: string;
+    bairro?: string;
+    cidade?: string;
+    uf?: string;
+    pontoReferencia?: string;
+
+    // Campos da escola
+    escolaAluno?: string;
+    codigoInepEscola?: string;
+    municipioEscola?: string;
+    ufEscola?: string;
+
+    // Campos do aluno
+    nomeAluno?: string;
+    dataNascimentoAluno?: string;
+    cpfAluno?: string;
+
+    // Campos do responsável
+    nomeResponsavel?: string;
+    cpfResponsavel?: string;
+    dataNascimentoResponsavel?: string;
+    emailResponsavel?: string;
+    telefoneResponsavel?: string;
+
+    // Campos de renda
+    rendaFamiliar?: number;
+    rendaPerCapita?: number;
+    numeroIntegrantes?: number;
+    integrantesRenda?: string; // JSON string
+
+    // Campos de horários
+    horariosSelecionados?: string; // JSON string
+
+    // Observações
+    observacoesResponsavel?: string;
+    mensagemAdicional?: string;
+
     dadosResponsavel?: {
         nomeResponsavel?: string;
         cpfResponsavel?: string;
@@ -42,11 +84,10 @@ export interface InteresseMatricula {
     horariosVaga?: {
         horariosSelecionados?: string[];
     };
-    mensagemAdicional?: string;
 }
 
 export const TIPOS_VAGA = [
-  { chave: 'funcionario', nome: 'Cota de Funcionário' },
-  { chave: 'economica', nome: 'Cota Econômica (Renda)' },
-  { chave: 'livre', nome: 'Cota Livre (Ampla Concorrência)' }
+    { chave: 'funcionario', nome: 'Cota de Funcionário' },
+    { chave: 'economica', nome: 'Cota Econômica (Renda)' },
+    { chave: 'livre', nome: 'Cota Livre (Ampla Concorrência)' }
 ];

@@ -1,6 +1,6 @@
 <!-- Declaração de Interesse - Novo Fluxo Completo -->
 <ion-header [translucent]="true" class="custom-header">
- 
+
 
 
   <!-- Barra de Progresso com Logo - VERSÃO SIMPLIFICADA -->
@@ -14,7 +14,7 @@
     <div class="progress-bar-custom">
       <div class="progress-fill-custom" [style.width.%]="progresso"></div>
     </div>
-    
+
     <div class="progress-text">
       <span class="progress-percentage">{{ progresso.toFixed(0) }}% Concluído</span>
     </div>
@@ -44,15 +44,8 @@
         </ion-item>
 
         <ion-item class="form-item">
-          <ion-input 
-            formControlName="cpf" 
-            placeholder="000.000.000-00" 
-            maxlength="14"
-            [clearInput]="true"
-            fill="outline" 
-            label="CPF" 
-            labelPlacement="floating"
-            (ionInput)="formatarCpf($event, 'responsavel')">
+          <ion-input formControlName="cpf" placeholder="000.000.000-00" maxlength="14" [clearInput]="true"
+            fill="outline" label="CPF" labelPlacement="floating" (ionInput)="formatarCpf($event, 'responsavel')">
           </ion-input>
         </ion-item>
 
@@ -69,8 +62,8 @@
         </ion-item>
 
         <ion-item class="form-item">
-          <ion-input formControlName="telefone" placeholder="(11) 99999-9999" mask="(00) 00000-0000" [clearInput]="true"
-            fill="outline" label="Telefone" labelPlacement="floating">
+          <ion-input formControlName="telefone" placeholder="(11) 99999-9999" maxlength="15" [clearInput]="true"
+            fill="outline" label="Telefone" labelPlacement="floating" (ionInput)="formatarTelefone($event)">
           </ion-input>
         </ion-item>
       </form>
@@ -100,6 +93,11 @@
           <p>Como este responsável já possui cadastro no instituto, seus dados familiares serão recuperados
             automaticamente caso seja necessário.</p>
         </div>
+
+        <div class="info-card" style="background-color: #f0f8ff; border-left: 4px solid #007bff;">
+          <ion-icon name="help-circle-outline" color="primary"></ion-icon>
+          <p><strong>Para teste:</strong> Use a senha "123456", "admin" ou os últimos 4 dígitos do CPF.</p>
+        </div>
       </form>
     </div>
 
@@ -123,15 +121,8 @@
         </ion-item>
 
         <ion-item class="form-item">
-          <ion-input 
-            formControlName="cpf" 
-            placeholder="000.000.000-00" 
-            maxlength="14"
-            [clearInput]="true"
-            fill="outline" 
-            label="CPF do aluno" 
-            labelPlacement="floating"
-            (ionInput)="formatarCpf($event, 'aluno')">
+          <ion-input formControlName="cpf" placeholder="000.000.000-00" maxlength="14" [clearInput]="true"
+            fill="outline" label="CPF do aluno" labelPlacement="floating" (ionInput)="formatarCpf($event, 'aluno')">
           </ion-input>
         </ion-item>
 
@@ -143,8 +134,8 @@
 
         <!-- Campo de Escola Simples -->
         <ion-item class="form-item">
-          <ion-input formControlName="escola" placeholder="Nome da escola onde estuda" [clearInput]="true" fill="outline"
-            label="Escola onde estuda" labelPlacement="floating">
+          <ion-input formControlName="escola" placeholder="Nome da escola onde estuda" [clearInput]="true"
+            fill="outline" label="Escola onde estuda" labelPlacement="floating">
           </ion-input>
         </ion-item>
 
@@ -153,8 +144,9 @@
           <h3>Tipo de Vaga</h3>
 
           <div class="radio-item">
-            <input type="radio" name="tipoCota" value="livre" (change)="declaracaoForm.get('tipoCota')?.setValue('livre')" 
-                   [checked]="declaracaoForm.get('tipoCota')?.value === 'livre'">
+            <input type="radio" name="tipoCota" value="livre"
+              (change)="declaracaoForm.get('tipoCota')?.setValue('livre')"
+              [checked]="declaracaoForm.get('tipoCota')?.value === 'livre'">
             <label>
               <h2>Vaga Livre</h2>
               <p>Processo seletivo regular</p>
@@ -162,8 +154,9 @@
           </div>
 
           <div class="radio-item">
-            <input type="radio" name="tipoCota" value="economica" (change)="declaracaoForm.get('tipoCota')?.setValue('economica')"
-                   [checked]="declaracaoForm.get('tipoCota')?.value === 'economica'">
+            <input type="radio" name="tipoCota" value="economica"
+              (change)="declaracaoForm.get('tipoCota')?.setValue('economica')"
+              [checked]="declaracaoForm.get('tipoCota')?.value === 'economica'">
             <label>
               <h2>Cota Econômica</h2>
               <p>Para famílias de baixa renda</p>
@@ -171,8 +164,9 @@
           </div>
 
           <div class="radio-item">
-            <input type="radio" name="tipoCota" value="funcionario" (change)="declaracaoForm.get('tipoCota')?.setValue('funcionario')"
-                   [checked]="declaracaoForm.get('tipoCota')?.value === 'funcionario'">
+            <input type="radio" name="tipoCota" value="funcionario"
+              (change)="declaracaoForm.get('tipoCota')?.setValue('funcionario')"
+              [checked]="declaracaoForm.get('tipoCota')?.value === 'funcionario'">
             <label>
               <h2>Cota Funcionário</h2>
               <p>Para filhos de funcionários do instituto</p>
@@ -185,7 +179,8 @@
           <h3>Horários Disponíveis</h3>
           <div class="horarios-list">
             <div class="checkbox-item">
-              <input type="checkbox" value="seg-qua-manha-8h-11h" (change)="toggleHorario('seg-qua-manha-8h-11h', $event)">
+              <input type="checkbox" value="seg-qua-manha-8h-11h"
+                (change)="toggleHorario('seg-qua-manha-8h-11h', $event)">
               <label>
                 <h2>Segunda e Quarta - Manhã (8h às 11h)</h2>
                 <p>Segunda-feira e Quarta-feira</p>
@@ -193,7 +188,8 @@
             </div>
 
             <div class="checkbox-item">
-              <input type="checkbox" value="seg-qua-tarde-13h-17h" (change)="toggleHorario('seg-qua-tarde-13h-17h', $event)">
+              <input type="checkbox" value="seg-qua-tarde-13h-17h"
+                (change)="toggleHorario('seg-qua-tarde-13h-17h', $event)">
               <label>
                 <h2>Segunda e Quarta - Tarde (13h às 17h)</h2>
                 <p>Segunda-feira e Quarta-feira</p>
@@ -201,7 +197,8 @@
             </div>
 
             <div class="checkbox-item">
-              <input type="checkbox" value="ter-qui-manha-8h-11h" (change)="toggleHorario('ter-qui-manha-8h-11h', $event)">
+              <input type="checkbox" value="ter-qui-manha-8h-11h"
+                (change)="toggleHorario('ter-qui-manha-8h-11h', $event)">
               <label>
                 <h2>Terça e Quinta - Manhã (8h às 11h)</h2>
                 <p>Terça-feira e Quinta-feira</p>
@@ -209,7 +206,8 @@
             </div>
 
             <div class="checkbox-item">
-              <input type="checkbox" value="ter-qui-tarde-13h-17h" (change)="toggleHorario('ter-qui-tarde-13h-17h', $event)">
+              <input type="checkbox" value="ter-qui-tarde-13h-17h"
+                (change)="toggleHorario('ter-qui-tarde-13h-17h', $event)">
               <label>
                 <h2>Terça e Quinta - Tarde (13h às 17h)</h2>
                 <p>Terça-feira e Quinta-feira</p>
@@ -272,32 +270,22 @@
               </div>
               <div class="inputs-renda">
                 <ion-item class="form-item-small">
-                  <ion-input 
-                    placeholder="Ex: Professor, Vendedor, Autônomo"
-                    fill="outline" 
-                    label="Ocupação" 
-                    labelPlacement="floating"
-                    [(ngModel)]="responsavelOcupacao"
-                    [ngModelOptions]="{standalone: true}">
+                  <ion-input placeholder="Ex: Professor, Vendedor, Autônomo" fill="outline" label="Ocupação"
+                    labelPlacement="floating" [(ngModel)]="responsavelOcupacao" [ngModelOptions]="{standalone: true}">
                   </ion-input>
                 </ion-item>
                 <ion-item class="form-item-small">
-                  <ion-input 
-                    type="number" 
-                    placeholder="0,00"
-                    fill="outline" 
-                    label="Renda Mensal (R$)" 
-                    labelPlacement="floating"
-                    [(ngModel)]="responsavelRenda"
-                    [ngModelOptions]="{standalone: true}">
+                  <ion-input type="number" placeholder="0,00" fill="outline" label="Renda Mensal (R$)"
+                    labelPlacement="floating" [(ngModel)]="responsavelRenda" [ngModelOptions]="{standalone: true}">
                   </ion-input>
                 </ion-item>
               </div>
-              
+
               <!-- Informação sobre dados pré-cadastrados -->
               <div class="info-responsavel" *ngIf="responsavelExiste">
                 <ion-icon name="information-circle-outline" color="primary"></ion-icon>
-                <p>Os dados pessoais foram recuperados do cadastro anterior. Informe apenas a ocupação e renda atual.</p>
+                <p>Os dados pessoais foram recuperados do cadastro anterior. Informe apenas a ocupação e renda atual.
+                </p>
               </div>
             </div>
           </div>
@@ -319,24 +307,13 @@
               </div>
               <div class="inputs-renda">
                 <ion-item class="form-item-small">
-                  <ion-input 
-                    placeholder="Ex: Estudante, Estagiário, Não trabalha"
-                    fill="outline" 
-                    label="Ocupação" 
-                    labelPlacement="floating"
-                    [(ngModel)]="alunoOcupacao"
-                    [ngModelOptions]="{standalone: true}">
+                  <ion-input placeholder="Ex: Estudante, Estagiário, Não trabalha" fill="outline" label="Ocupação"
+                    labelPlacement="floating" [(ngModel)]="alunoOcupacao" [ngModelOptions]="{standalone: true}">
                   </ion-input>
                 </ion-item>
                 <ion-item class="form-item-small">
-                  <ion-input 
-                    type="number" 
-                    placeholder="0,00"
-                    fill="outline" 
-                    label="Renda Mensal (R$)" 
-                    labelPlacement="floating"
-                    [(ngModel)]="alunoRenda"
-                    [ngModelOptions]="{standalone: true}">
+                  <ion-input type="number" placeholder="0,00" fill="outline" label="Renda Mensal (R$)"
+                    labelPlacement="floating" [(ngModel)]="alunoRenda" [ngModelOptions]="{standalone: true}">
                   </ion-input>
                 </ion-item>
               </div>
@@ -360,58 +337,32 @@
               <div class="membro-dados">
                 <div class="inputs-info">
                   <ion-item class="form-item-small">
-                    <ion-input 
-                      placeholder="Nome completo"
-                      fill="outline" 
-                      label="Nome" 
-                      labelPlacement="floating"
-                      [(ngModel)]="integrante.nome"
-                      [ngModelOptions]="{standalone: true}">
+                    <ion-input placeholder="Nome completo" fill="outline" label="Nome" labelPlacement="floating"
+                      [(ngModel)]="integrante.nome" [ngModelOptions]="{standalone: true}">
                     </ion-input>
                   </ion-item>
                   <ion-item class="form-item-small">
-                    <ion-input 
-                      placeholder="000.000.000-00"
-                      maxlength="14"
-                      fill="outline" 
-                      label="CPF" 
-                      labelPlacement="floating"
-                      [(ngModel)]="integrante.cpf"
-                      [ngModelOptions]="{standalone: true}"
+                    <ion-input placeholder="000.000.000-00" maxlength="14" fill="outline" label="CPF"
+                      labelPlacement="floating" [(ngModel)]="integrante.cpf" [ngModelOptions]="{standalone: true}"
                       (ionInput)="formatarCpfIntegrante($event, integrante)">
                     </ion-input>
                   </ion-item>
                 </div>
                 <div class="inputs-renda">
                   <ion-item class="form-item-small">
-                    <ion-input 
-                      placeholder="Ex: Pai, Mãe, Irmão, Avô"
-                      fill="outline" 
-                      label="Parentesco" 
-                      labelPlacement="floating"
-                      [(ngModel)]="integrante.parentesco"
+                    <ion-input placeholder="Ex: Pai, Mãe, Irmão, Avô" fill="outline" label="Parentesco"
+                      labelPlacement="floating" [(ngModel)]="integrante.parentesco"
                       [ngModelOptions]="{standalone: true}">
                     </ion-input>
                   </ion-item>
                   <ion-item class="form-item-small">
-                    <ion-input 
-                      placeholder="Ex: Enfermeiro, Motorista, Aposentado"
-                      fill="outline" 
-                      label="Ocupação" 
-                      labelPlacement="floating"
-                      [(ngModel)]="integrante.ocupacao"
-                      [ngModelOptions]="{standalone: true}">
+                    <ion-input placeholder="Ex: Enfermeiro, Motorista, Aposentado" fill="outline" label="Ocupação"
+                      labelPlacement="floating" [(ngModel)]="integrante.ocupacao" [ngModelOptions]="{standalone: true}">
                     </ion-input>
                   </ion-item>
                   <ion-item class="form-item-small">
-                    <ion-input 
-                      type="number" 
-                      placeholder="0,00"
-                      fill="outline" 
-                      label="Renda Mensal (R$)" 
-                      labelPlacement="floating"
-                      [(ngModel)]="integrante.renda"
-                      [ngModelOptions]="{standalone: true}">
+                    <ion-input type="number" placeholder="0,00" fill="outline" label="Renda Mensal (R$)"
+                      labelPlacement="floating" [(ngModel)]="integrante.renda" [ngModelOptions]="{standalone: true}">
                     </ion-input>
                   </ion-item>
                 </div>
@@ -438,11 +389,11 @@
               </div>
               <div class="renda-item total">
                 <span>Renda Familiar Total:</span>
-                <span class="valor">R$ {{ getRendaFamiliarTotal() | number:'1.2-2':'pt-BR' }}</span>
+                <span class="valor">{{ getRendaFamiliarTotalFormatada() }}</span>
               </div>
               <div class="renda-item per-capita">
                 <span>Renda Per Capita:</span>
-                <span class="valor">R$ {{ getRendaPerCapita() | number:'1.2-2':'pt-BR' }}</span>
+                <span class="valor">{{ getRendaPerCapitaFormatada() }}</span>
               </div>
             </div>
           </div>
@@ -464,9 +415,9 @@
 
       <form [formGroup]="enderecoForm" class="form-container">
         <ion-item class="form-item">
-          <ion-input formControlName="cep" placeholder="00000-000" mask="00000-000"
-            (ionBlur)="buscarEnderecoPorCep(enderecoForm.get('cep')?.value || '')" [clearInput]="true" fill="outline" label="CEP"
-            labelPlacement="floating">
+          <ion-input formControlName="cep" placeholder="00000-000" maxlength="9"
+            (ionBlur)="buscarEnderecoPorCep(enderecoForm.get('cep')?.value || '')" [clearInput]="true" fill="outline"
+            label="CEP" labelPlacement="floating" (ionInput)="formatarCep($event)">
           </ion-input>
         </ion-item>
 
@@ -531,7 +482,7 @@
         </div>
       </div>
 
-      <div class="form-container">
+      <form [formGroup]="declaracaoForm" class="form-container">
         <ion-item class="form-item">
           <ion-textarea formControlName="observacoes"
             placeholder="Ex: Criança muito ativa, tem dificuldades de aprendizagem, necessidades especiais, etc..."
@@ -544,7 +495,7 @@
           <p>Essas informações ajudam nossa equipe pedagógica a conhecer melhor o aluno e preparar um atendimento mais
             adequado.</p>
         </div>
-      </div>
+      </form>
     </div>
 
     <!-- ===== ETAPA 7: REVISÃO FINAL ===== -->

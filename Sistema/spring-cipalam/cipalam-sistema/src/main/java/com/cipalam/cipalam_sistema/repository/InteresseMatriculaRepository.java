@@ -12,4 +12,6 @@ public interface InteresseMatriculaRepository extends JpaRepository<InteresseMat
     Optional<InteresseMatricula> findByProtocolo(String protocolo);
 
     List<InteresseMatricula> findByResponsavelLogin_IdPessoa(Integer responsavelId);
+
+    List<InteresseMatricula> findByCpfResponsavel(String cpfResponsavel);
 }

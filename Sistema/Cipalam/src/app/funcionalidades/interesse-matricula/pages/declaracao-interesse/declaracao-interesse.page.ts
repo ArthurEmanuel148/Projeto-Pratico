@@ -78,17 +78,17 @@ export class DeclaracaoInteressePage implements OnInit {
     return this.fb.group({
       dadosResponsavel: this.fb.group({
         nome: ['', [Validators.required, Validators.minLength(2)]],
-        cpf: ['', [Validators.required, Validators.pattern(/^\d{11}$/)]],
+        cpf: ['', [Validators.required, Validators.pattern(/^(\d{3}\.\d{3}\.\d{3}-\d{2}|\d{11})$/)]],
         dataNascimento: ['', Validators.required],
         email: ['', [Validators.required, Validators.email]],
-        telefone: ['', [Validators.required, Validators.pattern(/^\(\d{2}\)\s\d{4,5}-\d{4}$/)]],
+        telefone: ['', [Validators.required, Validators.pattern(/^\(\d{2}\)\s?\d{4,5}-\d{4}$/)]],
       }),
       verificacaoResponsavel: this.fb.group({
         senha: ['', Validators.required]
       }),
       dadosAluno: this.fb.group({
         nome: ['', [Validators.required, Validators.minLength(2)]],
-        cpf: ['', [Validators.required, Validators.pattern(/^\d{11}$/)]],
+        cpf: ['', [Validators.required, Validators.pattern(/^(\d{3}\.\d{3}\.\d{3}-\d{2}|\d{11})$/)]],
         dataNascimento: ['', Validators.required],
         escola: ['', Validators.required],
         codigoInep: ['']
@@ -158,17 +158,20 @@ export class DeclaracaoInteressePage implements OnInit {
         }
         break;
       case this.ETAPAS.DADOS_ALUNO:
-        etapaValida = this.dadosAlunoForm.valid && this.horariosArray.length > 0;
+        const tipoCota = this.declaracaoForm.get('tipoCota')?.value;
+        etapaValida = this.dadosAlunoForm.valid && this.horariosArray.length > 0 && tipoCota;
         if (etapaValida) {
-          const tipoCota = this.declaracaoForm.get('tipoCota')?.value;
+          // Só vai para dados familiares se for cota econômica E o responsável não existir
           if (tipoCota === 'economica' && !this.responsavelExiste) {
             proxima = this.ETAPAS.DADOS_FAMILIARES;
           } else {
+            // Para vaga livre, funcionário, ou responsável já cadastrado, vai direto para endereço
             proxima = this.ETAPAS.ENDERECO_FAMILIA;
           }
         }
         break;
       case this.ETAPAS.DADOS_FAMILIARES:
+        // Só valida dados familiares se estiver realmente nesta etapa (cota econômica)
         etapaValida = this.validarDadosFamiliares();
         if (etapaValida) proxima = this.ETAPAS.ENDERECO_FAMILIA;
         break;
@@ -177,6 +180,7 @@ export class DeclaracaoInteressePage implements OnInit {
         if (etapaValida) proxima = this.ETAPAS.OBSERVACOES;
         break;
       case this.ETAPAS.OBSERVACOES:
+        etapaValida = true; // Observações são opcionais
         proxima = this.ETAPAS.REVISAO;
         break;
       case this.ETAPAS.REVISAO:
@@ -218,25 +222,37 @@ export class DeclaracaoInteressePage implements OnInit {
 
     try {
       const cpf = this.dadosResponsavelForm.get('cpf')?.value;
-      // Aqui você faria a chamada para a API para verificar se o responsável existe
-      // const responsavel = await this.interesseService.verificarResponsavel(cpf);
 
-      // Simulando resposta da API
-      await new Promise(resolve => setTimeout(resolve, 1000));
-
-      // Se responsável existe, pedir senha
-      if (Math.random() > 0.7) { // 30% chance de existir (simulação)
-        this.responsavelExiste = true;
-        this.navegarParaEtapa(this.ETAPAS.VERIFICACAO_RESPONSAVEL);
-      } else {
-        // Se não existe, ir direto para dados do aluno
-        this.responsavelExiste = false;
-        this.navegarParaEtapa(this.ETAPAS.DADOS_ALUNO);
-      }
+      // Chamada real para a API
+      this.interesseService.verificarResponsavelExiste(cpf).subscribe({
+        next: (response) => {
+          if (response && response.existe) {
+            // Responsável existe no banco
+            this.responsavelExiste = true;
+            this.dadosResponsavel = response.dadosResponsavel;
+            this.preencherDadosResponsavelExistente(response.dadosResponsavel);
+            this.navegarParaEtapa(this.ETAPAS.VERIFICACAO_RESPONSAVEL);
+            this.mostrarToast(`Bem-vindo de volta, ${response.dadosResponsavel.nome}! Digite sua senha para continuar.`, 'success');
+          } else {
+            // Responsável não existe, criar novo
+            this.responsavelExiste = false;
+            this.navegarParaEtapa(this.ETAPAS.DADOS_ALUNO);
+            this.mostrarToast('Novo responsável! Prosseguindo com o cadastro.', 'primary');
+          }
+          loading.dismiss();
+        },
+        error: (error) => {
+          console.warn('Sistema de verificação indisponível, prosseguindo com cadastro novo');
+          // Em caso de erro, assumir que é novo responsável
+          this.responsavelExiste = false;
+          this.navegarParaEtapa(this.ETAPAS.DADOS_ALUNO);
+          this.mostrarToast('Prosseguindo com o cadastro...', 'primary');
+          loading.dismiss();
+        }
+      });
     } catch (error) {
-      console.error('Erro ao verificar responsável:', error);
-      this.mostrarToast('Erro ao verificar dados do responsável', 'danger');
-    } finally {
+      console.warn('Erro na verificação do responsável:', error);
+      this.mostrarToast('Prosseguindo com o cadastro...', 'primary');
       loading.dismiss();
     }
   }
@@ -248,22 +264,31 @@ export class DeclaracaoInteressePage implements OnInit {
     await loading.present();
 
     try {
+      const cpf = this.dadosResponsavelForm.get('cpf')?.value;
       const senha = this.verificacaoResponsavelForm.get('senha')?.value;
-      // Aqui você faria a autenticação
-      // const resultado = await this.interesseService.autenticarResponsavel(cpf, senha);
 
-      // Simulando autenticação
-      await new Promise(resolve => setTimeout(resolve, 1000));
-
-      if (Math.random() > 0.3) { // 70% chance de sucesso (simulação)
-        this.navegarParaEtapa(this.ETAPAS.DADOS_ALUNO);
-      } else {
-        this.mostrarToast('Senha incorreta', 'danger');
-      }
+      // Chamada real para autenticação
+      this.interesseService.autenticarResponsavel(cpf, senha).subscribe({
+        next: (response) => {
+          if (response && response.autenticado) {
+            // Autenticação bem-sucedida
+            this.dadosResponsavel = response.dadosResponsavel;
+            this.navegarParaEtapa(this.ETAPAS.DADOS_ALUNO);
+            this.mostrarToast('Autenticado com sucesso!', 'success');
+          } else {
+            this.mostrarToast('Senha incorreta. Tente novamente.', 'danger');
+          }
+          loading.dismiss();
+        },
+        error: (error) => {
+          console.error('Erro na autenticação:', error);
+          this.mostrarToast('Erro na autenticação. Verifique sua senha.', 'danger');
+          loading.dismiss();
+        }
+      });
     } catch (error) {
       console.error('Erro na autenticação:', error);
       this.mostrarToast('Erro na autenticação', 'danger');
-    } finally {
       loading.dismiss();
     }
   }
@@ -309,8 +334,14 @@ export class DeclaracaoInteressePage implements OnInit {
 
   // VALIDAÇÕES
   validarDadosFamiliares(): boolean {
-    const integrantesArray = this.dadosFamiliaresForm.get('integrantesRenda') as FormArray;
-    return integrantesArray.length > 0 && integrantesArray.valid;
+    // Se não é cota econômica, não precisa validar dados familiares
+    const tipoCota = this.declaracaoForm.get('tipoCota')?.value;
+    if (tipoCota !== 'economica') {
+      return true;
+    }
+
+    // Para cota econômica, valida se tem dados de renda
+    return this.responsavelRenda > 0 || this.alunoRenda > 0 || this.integrantesFamilia.length > 0;
   }
 
   // MANIPULAÇÃO DE HORÁRIOS
@@ -409,33 +440,197 @@ export class DeclaracaoInteressePage implements OnInit {
   }
 
   mostrarErrosFormulario() {
-    this.mostrarToast('Por favor, preencha todos os campos obrigatórios', 'warning');
+    let erros: string[] = [];
+
+    switch (this.etapaAtual) {
+      case this.ETAPAS.DADOS_RESPONSAVEL:
+        if (this.dadosResponsavelForm.invalid) {
+          if (this.dadosResponsavelForm.get('nome')?.invalid) erros.push('Nome do responsável');
+          if (this.dadosResponsavelForm.get('cpf')?.invalid) erros.push('CPF do responsável');
+          if (this.dadosResponsavelForm.get('dataNascimento')?.invalid) erros.push('Data de nascimento');
+          if (this.dadosResponsavelForm.get('email')?.invalid) erros.push('E-mail');
+          if (this.dadosResponsavelForm.get('telefone')?.invalid) erros.push('Telefone');
+        }
+        break;
+      case this.ETAPAS.VERIFICACAO_RESPONSAVEL:
+        if (this.verificacaoResponsavelForm.invalid) {
+          if (this.verificacaoResponsavelForm.get('senha')?.invalid) erros.push('Senha');
+        }
+        break;
+      case this.ETAPAS.DADOS_ALUNO:
+        if (this.dadosAlunoForm.invalid) {
+          if (this.dadosAlunoForm.get('nome')?.invalid) erros.push('Nome do aluno');
+          if (this.dadosAlunoForm.get('cpf')?.invalid) erros.push('CPF do aluno');
+          if (this.dadosAlunoForm.get('dataNascimento')?.invalid) erros.push('Data de nascimento do aluno');
+          if (this.dadosAlunoForm.get('escola')?.invalid) erros.push('Escola do aluno');
+        }
+        if (!this.declaracaoForm.get('tipoCota')?.value) erros.push('Tipo de vaga');
+        if (this.horariosArray.length === 0) erros.push('Pelo menos um horário');
+        break;
+      case this.ETAPAS.DADOS_FAMILIARES:
+        const tipoCota = this.declaracaoForm.get('tipoCota')?.value;
+        if (tipoCota === 'economica') {
+          if (!this.responsavelRenda && !this.alunoRenda && this.integrantesFamilia.length === 0) {
+            erros.push('Informações de renda familiar (responsável, aluno ou outros integrantes)');
+          }
+        }
+        break;
+      case this.ETAPAS.ENDERECO_FAMILIA:
+        if (this.enderecoForm.invalid) {
+          if (this.enderecoForm.get('cep')?.invalid) erros.push('CEP');
+          if (this.enderecoForm.get('logradouro')?.invalid) erros.push('Logradouro');
+          if (this.enderecoForm.get('numero')?.invalid) erros.push('Número');
+          if (this.enderecoForm.get('bairro')?.invalid) erros.push('Bairro');
+          if (this.enderecoForm.get('cidade')?.invalid) erros.push('Cidade');
+          if (this.enderecoForm.get('uf')?.invalid) erros.push('UF');
+        }
+        break;
+    }
+
+    if (erros.length > 0) {
+      this.mostrarToast(`Preencha os campos obrigatórios: ${erros.join(', ')}`, 'warning');
+    } else {
+      // Debug - mostrar informações para investigar
+      console.log('Etapa atual:', this.etapaAtual);
+      console.log('Tipo de cota:', this.declaracaoForm.get('tipoCota')?.value);
+      console.log('Formulário aluno válido:', this.dadosAlunoForm.valid);
+      console.log('Horários selecionados:', this.horariosArray.length);
+      this.mostrarToast('Verifique se todos os campos estão preenchidos corretamente', 'warning');
+    }
   }
 
   async enviarDeclaracaoFinal() {
+    this.isSubmitting = true;
     const loading = await this.loadingCtrl.create({
-      message: 'Enviando declaração...'
+      message: 'Enviando declaração para o sistema...'
     });
     await loading.present();
 
     try {
-      const dadosCompletos = this.declaracaoForm.getRawValue();
+      // Verificar o tipo de cota
+      const tipoCota = this.declaracaoForm.get('tipoCota')?.value;
 
-      // Aqui você enviaria os dados para o backend
-      // await this.interesseService.enviarDeclaracao(dadosCompletos);
+      // Compilar integrantes da renda apenas se for cota econômica
+      const integrantesRenda = [];
 
-      // Simulando envio
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      if (tipoCota === 'economica') {
+        // Adicionar responsável
+        integrantesRenda.push({
+          nome: this.getResponsavelNome(),
+          parentesco: "responsavel",
+          idade: this.calcularIdade(this.dadosResponsavelForm.get('dataNascimento')?.value),
+          renda: this.responsavelRenda || 0,
+          tipoRenda: this.responsavelRenda > 0 ? "salario" : "nenhuma",
+          observacoes: this.responsavelOcupacao || ""
+        });
 
-      this.navegarParaEtapa(this.ETAPAS.CONCLUIDO);
-      this.mostrarToast('Declaração enviada com sucesso!', 'success');
+        // Adicionar aluno
+        integrantesRenda.push({
+          nome: this.dadosAlunoForm.get('nome')?.value,
+          parentesco: "filho",
+          idade: this.calcularIdade(this.dadosAlunoForm.get('dataNascimento')?.value),
+          renda: this.alunoRenda || 0,
+          tipoRenda: this.alunoRenda > 0 ? "autonomo" : "nenhuma",
+          observacoes: this.alunoOcupacao || "Estudante a ser matriculado"
+        });
+
+        // Adicionar outros integrantes
+        this.integrantesFamilia.forEach(integrante => {
+          integrantesRenda.push({
+            nome: integrante.nome,
+            parentesco: integrante.parentesco || "outro",
+            idade: integrante.idade || 0,
+            renda: integrante.renda || 0,
+            tipoRenda: integrante.renda > 0 ? "salario" : "nenhuma",
+            observacoes: integrante.ocupacao || ""
+          });
+        });
+      }
+
+      // Compilar dados conforme formato esperado pelo backend
+      const dadosCompletos = {
+        dataDeclaracao: new Date().toISOString().split('T')[0],
+        observacoes: this.declaracaoForm.get('observacoes')?.value || '',
+        status: 'AGUARDANDO_ANALISE',
+        dadosResponsavel: {
+          nome: this.getResponsavelNome(),
+          cpf: this.dadosResponsavelForm.get('cpf')?.value,
+          telefone: this.dadosResponsavelForm.get('telefone')?.value,
+          email: this.dadosResponsavelForm.get('email')?.value,
+          endereco: {
+            cep: this.enderecoForm.get('cep')?.value,
+            logradouro: this.enderecoForm.get('logradouro')?.value,
+            numero: this.enderecoForm.get('numero')?.value,
+            complemento: this.enderecoForm.get('complemento')?.value || '',
+            bairro: this.enderecoForm.get('bairro')?.value,
+            cidade: this.enderecoForm.get('cidade')?.value,
+            estado: this.enderecoForm.get('estado')?.value
+          },
+          dataNascimento: this.dadosResponsavelForm.get('dataNascimento')?.value
+        },
+        dadosAluno: {
+          nome: this.dadosAlunoForm.get('nome')?.value,
+          cpf: this.dadosAlunoForm.get('cpf')?.value,
+          dataNascimento: this.dadosAlunoForm.get('dataNascimento')?.value,
+          escola: this.dadosAlunoForm.get('escola')?.value,
+          necessidadeEspecial: this.dadosAlunoForm.get('necessidadeEspecial')?.value || '',
+          curso: this.declaracaoForm.get('curso')?.value
+        },
+        infoRenda: tipoCota === 'economica' ? {
+          rendaFamiliarTotal: this.getRendaFamiliarTotal(),
+          membrosComRenda: integrantesRenda.filter(m => m.renda > 0).length,
+          integrantesRenda: integrantesRenda,
+          documentosComprobatorios: ['rg', 'cpf', 'comprovante_renda', 'comprovante_residencia']
+        } : null,
+        horariosVaga: {
+          turno: this.declaracaoForm.get('turno')?.value,
+          horariosSelecionados: this.horariosArray.value
+        },
+        tipoCota: tipoCota
+      };
+
+      console.log('Dados compilados para envio:', dadosCompletos);
+
+      // Chamada real para o backend
+      this.interesseService.enviarDeclaracaoCompleta(dadosCompletos).subscribe({
+        next: (response) => {
+          console.log('Declaração enviada com sucesso:', response);
+          this.navegarParaEtapa(this.ETAPAS.CONCLUIDO);
+          this.mostrarToast(`Declaração enviada com sucesso! Protocolo: ${response.protocolo || 'Gerado'}`, 'success');
+          loading.dismiss();
+          this.isSubmitting = false;
+        },
+        error: (error) => {
+          console.error('Erro ao enviar declaração:', error);
+          let mensagem = 'Erro ao enviar declaração para o sistema.';
+          if (error.error && error.error.message) {
+            mensagem += ` Detalhes: ${error.error.message}`;
+          }
+          this.mostrarToast(mensagem, 'danger');
+          loading.dismiss();
+          this.isSubmitting = false;
+        }
+      });
 
     } catch (error) {
-      console.error('Erro ao enviar declaração:', error);
-      this.mostrarToast('Erro ao enviar declaração', 'danger');
-    } finally {
+      console.error('Erro ao compilar dados:', error);
+      this.mostrarToast('Erro ao preparar dados da declaração', 'danger');
       loading.dismiss();
+      this.isSubmitting = false;
     }
+  }
+
+  // Método auxiliar para calcular idade
+  calcularIdade(dataNascimento: string): number {
+    if (!dataNascimento) return 0;
+    const hoje = new Date();
+    const nascimento = new Date(dataNascimento);
+    let idade = hoje.getFullYear() - nascimento.getFullYear();
+    const mes = hoje.getMonth() - nascimento.getMonth();
+    if (mes < 0 || (mes === 0 && hoje.getDate() < nascimento.getDate())) {
+      idade--;
+    }
+    return idade;
   }
 
   // MÉTODOS PARA FORMATAÇÃO E MANIPULAÇÃO DE DADOS
@@ -464,6 +659,27 @@ export class DeclaracaoInteressePage implements OnInit {
     valor = valor.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
     event.target.value = valor;
     integrante.cpf = valor;
+  }
+
+  formatarTelefone(event: any) {
+    let valor = event.target.value;
+    valor = valor.replace(/\D/g, '');
+    valor = valor.replace(/(\d{2})(\d)/, '($1) $2');
+    valor = valor.replace(/(\d{4,5})(\d{4})$/, '$1-$2');
+    event.target.value = valor;
+
+    // Atualizar o FormControl
+    this.dadosResponsavelForm.get('telefone')?.setValue(valor);
+  }
+
+  formatarCep(event: any) {
+    let valor = event.target.value;
+    valor = valor.replace(/\D/g, '');
+    valor = valor.replace(/(\d{5})(\d)/, '$1-$2');
+    event.target.value = valor;
+
+    // Atualizar o FormControl
+    this.enderecoForm.get('cep')?.setValue(valor);
   }
 
   getResponsavelNome(): string {
@@ -521,6 +737,50 @@ export class DeclaracaoInteressePage implements OnInit {
     const total = this.getRendaFamiliarTotal();
     const integrantes = this.getTotalIntegrantes();
     return integrantes > 0 ? total / integrantes : 0;
+  }
+
+  formatarMoeda(valor: number): string {
+    return new Intl.NumberFormat('pt-BR', {
+      style: 'currency',
+      currency: 'BRL'
+    }).format(valor);
+  }
+
+  getRendaFamiliarTotalFormatada(): string {
+    return this.formatarMoeda(this.getRendaFamiliarTotal());
+  }
+
+  getRendaPerCapitaFormatada(): string {
+    return this.formatarMoeda(this.getRendaPerCapita());
+  }
+
+  preencherDadosResponsavelExistente(dadosResponsavel: any) {
+    // Preencher formulário com dados do responsável existente
+    this.dadosResponsavelForm.patchValue({
+      nome: dadosResponsavel.nome,
+      cpf: dadosResponsavel.cpf,
+      dataNascimento: dadosResponsavel.dataNascimento,
+      telefone: dadosResponsavel.telefone,
+      email: dadosResponsavel.email
+    });
+
+    // Se houver dados de endereço, preencher também
+    if (dadosResponsavel.endereco && typeof dadosResponsavel.endereco === 'string') {
+      try {
+        const enderecoObj = JSON.parse(dadosResponsavel.endereco);
+        this.enderecoForm.patchValue(enderecoObj);
+      } catch (e) {
+        console.warn('Erro ao parsear endereço:', e);
+      }
+    } else if (dadosResponsavel.endereco && typeof dadosResponsavel.endereco === 'object') {
+      this.enderecoForm.patchValue(dadosResponsavel.endereco);
+    }
+
+    // Marcar campos como tocados para mostrar validação
+    this.dadosResponsavelForm.markAllAsTouched();
+    this.enderecoForm.markAllAsTouched();
+
+    console.log('Dados do responsável existente preenchidos:', dadosResponsavel);
   }
 
   voltarParaInicio() {

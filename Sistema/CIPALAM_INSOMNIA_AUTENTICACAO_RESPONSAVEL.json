@@ -1,0 +1,219 @@
+{
+    "_type": "export",
+    "__export_format": 4,
+    "__export_date": "2025-01-20T10:00:00.000Z",
+    "__export_source": "insomnia.desktop.app:v2023.5.8",
+    "resources": [
+        {
+            "_id": "req_auth_responsavel_maria",
+            "parentId": "fld_autenticacao",
+            "modified": 1705737600000,
+            "created": 1705737600000,
+            "url": "http://localhost:8080/api/interesse-matricula/autenticar-responsavel",
+            "name": "Autenticar Responsável - Maria Santos",
+            "description": "Teste de autenticação para responsável já cadastrado no banco (Maria Santos) usando senha real do banco de dados",
+            "method": "POST",
+            "body": {
+                "mimeType": "application/json",
+                "text": "{\n  \"cpf\": \"12345678901\",\n  \"senha\": \"password\"\n}"
+            },
+            "parameters": [],
+            "headers": [
+                {
+                    "name": "Content-Type",
+                    "value": "application/json",
+                    "id": "pair_content_type"
+                }
+            ],
+            "authentication": {},
+            "metaSortKey": -1705737600000,
+            "isPrivate": false,
+            "settingStoreCookies": true,
+            "settingSendCookies": true,
+            "settingDisableRenderRequestBody": false,
+            "settingEncodeUrl": true,
+            "settingRebuildPath": true,
+            "settingFollowRedirects": "global",
+            "_type": "request"
+        },
+        {
+            "_id": "req_verificar_responsavel_maria",
+            "parentId": "fld_autenticacao",
+            "modified": 1705737600000,
+            "created": 1705737600000,
+            "url": "http://localhost:8080/api/interesse-matricula/verificar-responsavel/12345678901",
+            "name": "Verificar Responsável - Maria Santos",
+            "description": "Verificar se responsável Maria Santos está cadastrado",
+            "method": "GET",
+            "body": {},
+            "parameters": [],
+            "headers": [
+                {
+                    "name": "Content-Type",
+                    "value": "application/json",
+                    "id": "pair_content_type"
+                }
+            ],
+            "authentication": {},
+            "metaSortKey": -1705737590000,
+            "isPrivate": false,
+            "settingStoreCookies": true,
+            "settingSendCookies": true,
+            "settingDisableRenderRequestBody": false,
+            "settingEncodeUrl": true,
+            "settingRebuildPath": true,
+            "settingFollowRedirects": "global",
+            "_type": "request"
+        },
+        {
+            "_id": "req_auth_responsavel_joao",
+            "parentId": "fld_autenticacao",
+            "modified": 1705737600000,
+            "created": 1705737600000,
+            "url": "http://localhost:8080/api/interesse-matricula/autenticar-responsavel",
+            "name": "Autenticar Responsável - João Silva",
+            "description": "Teste de autenticação para responsável João Silva",
+            "method": "POST",
+            "body": {
+                "mimeType": "application/json",
+                "text": "{\n  \"cpf\": \"98765432100\",\n  \"senha\": \"password\"\n}"
+            },
+            "parameters": [],
+            "headers": [
+                {
+                    "name": "Content-Type",
+                    "value": "application/json",
+                    "id": "pair_content_type"
+                }
+            ],
+            "authentication": {},
+            "metaSortKey": -1705737580000,
+            "isPrivate": false,
+            "settingStoreCookies": true,
+            "settingSendCookies": true,
+            "settingDisableRenderRequestBody": false,
+            "settingEncodeUrl": true,
+            "settingRebuildPath": true,
+            "settingFollowRedirects": "global",
+            "_type": "request"
+        },
+        {
+            "_id": "req_auth_responsavel_ana",
+            "parentId": "fld_autenticacao",
+            "modified": 1705737600000,
+            "created": 1705737600000,
+            "url": "http://localhost:8080/api/interesse-matricula/autenticar-responsavel",
+            "name": "Autenticar Responsável - Ana Costa",
+            "description": "Teste de autenticação para responsável Ana Costa",
+            "method": "POST",
+            "body": {
+                "mimeType": "application/json",
+                "text": "{\n  \"cpf\": \"11122233344\",\n  \"senha\": \"password\"\n}"
+            },
+            "parameters": [],
+            "headers": [
+                {
+                    "name": "Content-Type",
+                    "value": "application/json",
+                    "id": "pair_content_type"
+                }
+            ],
+            "authentication": {},
+            "metaSortKey": -1705737570000,
+            "isPrivate": false,
+            "settingStoreCookies": true,
+            "settingSendCookies": true,
+            "settingDisableRenderRequestBody": false,
+            "settingEncodeUrl": true,
+            "settingRebuildPath": true,
+            "settingFollowRedirects": "global",
+            "_type": "request"
+        },
+        {
+            "_id": "req_auth_responsavel_senha_incorreta",
+            "parentId": "fld_autenticacao",
+            "modified": 1705737600000,
+            "created": 1705737600000,
+            "url": "http://localhost:8080/api/interesse-matricula/autenticar-responsavel",
+            "name": "Teste Senha Incorreta - Maria Santos",
+            "description": "Teste com senha incorreta para validar erro de autenticação",
+            "method": "POST",
+            "body": {
+                "mimeType": "application/json",
+                "text": "{\n  \"cpf\": \"12345678901\",\n  \"senha\": \"senhaerrada123\"\n}"
+            },
+            "parameters": [],
+            "headers": [
+                {
+                    "name": "Content-Type",
+                    "value": "application/json",
+                    "id": "pair_content_type"
+                }
+            ],
+            "authentication": {},
+            "metaSortKey": -1705737560000,
+            "isPrivate": false,
+            "settingStoreCookies": true,
+            "settingSendCookies": true,
+            "settingDisableRenderRequestBody": false,
+            "settingEncodeUrl": true,
+            "settingRebuildPath": true,
+            "settingFollowRedirects": "global",
+            "_type": "request"
+        },
+        {
+            "_id": "req_auth_responsavel_nao_cadastrado",
+            "parentId": "fld_autenticacao",
+            "modified": 1705737600000,
+            "created": 1705737600000,
+            "url": "http://localhost:8080/api/interesse-matricula/autenticar-responsavel",
+            "name": "Teste Responsável Não Cadastrado",
+            "description": "Teste com CPF não cadastrado no sistema",
+            "method": "POST",
+            "body": {
+                "mimeType": "application/json",
+                "text": "{\n  \"cpf\": \"99999999999\",\n  \"senha\": \"qualquersenha\"\n}"
+            },
+            "parameters": [],
+            "headers": [
+                {
+                    "name": "Content-Type",
+                    "value": "application/json",
+                    "id": "pair_content_type"
+                }
+            ],
+            "authentication": {},
+            "metaSortKey": -1705737550000,
+            "isPrivate": false,
+            "settingStoreCookies": true,
+            "settingSendCookies": true,
+            "settingDisableRenderRequestBody": false,
+            "settingEncodeUrl": true,
+            "settingRebuildPath": true,
+            "settingFollowRedirects": "global",
+            "_type": "request"
+        },
+        {
+            "_id": "fld_autenticacao",
+            "parentId": "wrk_main",
+            "modified": 1705737600000,
+            "created": 1705737600000,
+            "name": "Autenticação Responsável",
+            "description": "Testes de autenticação para responsáveis já cadastrados no sistema",
+            "environment": {},
+            "environmentPropertyOrder": null,
+            "metaSortKey": -1705737600000,
+            "_type": "request_group"
+        },
+        {
+            "_id": "wrk_main",
+            "parentId": null,
+            "modified": 1705737600000,
+            "created": 1705737600000,
+            "name": "CIPALAM - Autenticação Responsável",
+            "description": "Testes para autenticação de responsáveis já cadastrados no banco de dados",
+            "scope": "collection",
+            "_type": "workspace"
+        }
+    ]
+}

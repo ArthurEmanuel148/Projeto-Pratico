@@ -1,0 +1,41 @@
+{
+    "method": "POST",
+    "url": "http://localhost:8080/api/interesse-matricula",
+    "headers": {
+        "Content-Type": "application/json"
+    },
+    "body": {
+        "nomeResponsavel": "Maria Silva Santos",
+        "cpfResponsavel": "123.456.789-10",
+        "dataNascimentoResponsavel": "1985-05-15",
+        "telefoneResponsavel": "(11) 99876-5432",
+        "emailResponsavel": "maria.silva@email.com",
+        "responsavelExistente": false,
+        "senhaTemporariaEnviada": false,
+        "responsavelAutenticado": false,
+        "nomeAluno": "João Silva Santos",
+        "dataNascimentoAluno": "2017-08-20",
+        "cpfAluno": "987.654.321-00",
+        "escolaAluno": "Escola Municipal João da Silva",
+        "codigoInepEscola": "35123456",
+        "municipioEscola": "São Paulo",
+        "ufEscola": "SP",
+        "cep": "01234-567",
+        "logradouro": "Rua das Flores",
+        "numero": "123",
+        "complemento": "Apto 45",
+        "bairro": "Centro",
+        "cidade": "São Paulo",
+        "uf": "SP",
+        "codigoIbgeCidade": "3550308",
+        "pontoReferencia": "Próximo ao mercado São João",
+        "tipoCota": "livre",
+        "numeroIntegrantes": 1,
+        "integrantesRenda": "[]",
+        "dadosFamiliaresPreenchidos": false,
+        "horariosSelecionados": "[\"manha-8h-12h\", \"ter-qui-manha-8h-11h\"]",
+        "observacoesResponsavel": "Gostaria de matricular meu filho no período da manhã. Ele tem facilidade para aprender e é muito dedicado aos estudos.",
+        "etapaAtual": "finalizado",
+        "status": "interesse_declarado"
+    }
+}

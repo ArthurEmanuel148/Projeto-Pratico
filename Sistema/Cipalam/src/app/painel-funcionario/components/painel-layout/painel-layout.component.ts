@@ -105,12 +105,9 @@ export class PainelLayoutComponent implements OnInit {
   }
 
   private loadUserMenu() {
-    console.log('🚀 [DEBUG] ==== CARREGANDO MENU DO USUÁRIO ====');
     const usuarioLogado = this.authService.getFuncionarioLogado();
-    console.log('🚀 [DEBUG] Usuário logado:', usuarioLogado);
 
     if (!usuarioLogado) {
-      console.log('❌ [DEBUG] Nenhum usuário logado encontrado');
       this.menu = [];
       this.topMenuItems = [];
       return;
@@ -118,22 +115,19 @@ export class PainelLayoutComponent implements OnInit {
 
     // Se a resposta do login já trouxe as funcionalidades, usar elas diretamente
     if (usuarioLogado.funcionalidades && usuarioLogado.funcionalidades.length > 0) {
-      console.log('🚀 [DEBUG] Usando funcionalidades do usuário logado:', usuarioLogado.funcionalidades);
       this.buildMenuFromFuncionalidades(usuarioLogado.funcionalidades, usuarioLogado);
       return;
     }
 
     // Caso contrário, buscar do endpoint de menu hierárquico
     if (usuarioLogado.pessoaId) {
-      console.log('🚀 [DEBUG] Buscando menu hierárquico para pessoa ID:', usuarioLogado.pessoaId);
       this.funcionalidadesService.getMenuHierarquico(usuarioLogado.pessoaId).subscribe(
         menu => {
-          console.log('🚀 [DEBUG] Menu hierárquico recebido:', menu);
           this.menu = menu;
           this.initializeTopMenuFromMenu(menu);
         },
         error => {
-          console.error('❌ [DEBUG] Erro ao carregar menu hierárquico:', error);
+          console.error('Erro ao carregar menu hierárquico:', error);
           // Fallback para permissões padrão
           this.buildMenuFromPermissoes(usuarioLogado);
         }
@@ -330,9 +324,7 @@ export class PainelLayoutComponent implements OnInit {
   }
 
   private buildMenuFromPermissoes(usuarioLogado: any) {
-    console.log('🚀 [DEBUG] ==== CONSTRUINDO MENU A PARTIR DE PERMISSÕES ====');
     const permissoes = usuarioLogado.permissoes || this.authService.getPermissoesFuncionario();
-    console.log('🚀 [DEBUG] Permissões completas:', JSON.stringify(permissoes, null, 2));
 
     // Menu básico baseado apenas nas permissões conhecidas
     const menuItems = [];
@@ -383,23 +375,15 @@ export class PainelLayoutComponent implements OnInit {
         matriculasSubmenus.push({
           chave: 'declaracoesInteresse',
           nomeAmigavel: 'Declarações de Interesse',
-          rota: '/sistema/matriculas/declaracoes',
+          rota: '/sistema/matriculas/lista-declaracoes',
           icone: 'document-text-outline'
-        });
-      }
-      if (permissoes['declaracaoInteresse']) {
-        matriculasSubmenus.push({
-          chave: 'declaracaoInteresse',
-          nomeAmigavel: 'Nova Declaração',
-          rota: '/sistema/matriculas/nova-declaracao',
-          icone: 'add-circle-outline'
         });
       }
       if (permissoes['configurarDocumentosCota']) {
         matriculasSubmenus.push({
           chave: 'configurarDocumentosCota',
           nomeAmigavel: 'Configurar Documentos por Cota',
-          rota: '/sistema/matriculas/configurar-documentos',
+          rota: '/sistema/matriculas/configuracao-documentos',
           icone: 'settings-outline'
         });
       }
@@ -461,8 +445,6 @@ export class PainelLayoutComponent implements OnInit {
     }
 
     this.menu = menuItems;
-    console.log('🚀 [DEBUG] Menu final construído:', JSON.stringify(this.menu, null, 2));
-    console.log('🚀 [DEBUG] ==== FIM DA CONSTRUÇÃO DO MENU ====');
   }
 
   handleTopMenuClick(item: any, event: Event) {
@@ -540,43 +522,18 @@ export class PainelLayoutComponent implements OnInit {
    * Registra o acesso a uma funcionalidade (para uso no template)
    */
   onFuncionalidadeClick(funcionalidade: any): void {
-    console.log('🚀 [DEBUG] ==== CLIQUE NA FUNCIONALIDADE ====');
-    console.log('🚀 [DEBUG] Funcionalidade completa:', JSON.stringify(funcionalidade, null, 2));
+    console.log('🚀 [DEBUG] Clique na funcionalidade:', funcionalidade);
     console.log('🚀 [DEBUG] Rota da funcionalidade:', funcionalidade.rota);
-    console.log('🚀 [DEBUG] Chave da funcionalidade:', funcionalidade.chave);
-    console.log('🚀 [DEBUG] Nome da funcionalidade:', funcionalidade.nomeAmigavel);
-
-    // Verificar se o router está disponível
-    console.log('🚀 [DEBUG] Router disponível:', !!this.router);
 
     this.funcionalidadesUsosService.registrarAcesso(funcionalidade);
 
     // Se a funcionalidade tem rota, navegar para ela
     if (funcionalidade.rota) {
-      console.log('🚀 [DEBUG] Tentando navegar para:', funcionalidade.rota);
-
-      // Tentar diferentes métodos de navegação
-      this.router.navigateByUrl(funcionalidade.rota).then(success => {
-        console.log('🚀 [DEBUG] NavigateByUrl resultado:', success);
-        if (!success) {
-          console.log('🚀 [DEBUG] Tentando com navigate...');
-          this.router.navigate([funcionalidade.rota]).then(navResult => {
-            console.log('🚀 [DEBUG] Navigate resultado:', navResult);
-          }).catch(navError => {
-            console.error('❌ [DEBUG] Erro no navigate:', navError);
-          });
-        }
-      }).catch(error => {
-        console.error('❌ [DEBUG] Erro no navigateByUrl:', error);
-        console.log('🚀 [DEBUG] Tentando com navigate como fallback...');
-        this.router.navigate([funcionalidade.rota]).catch(navError => {
-          console.error('❌ [DEBUG] Erro no navigate fallback:', navError);
-        });
-      });
+      console.log('🚀 [DEBUG] Navegando para:', funcionalidade.rota);
+      this.router.navigateByUrl(funcionalidade.rota);
     } else {
       console.warn('⚠️ [DEBUG] Funcionalidade sem rota definida:', funcionalidade.chave);
     }
-    console.log('🚀 [DEBUG] ==== FIM DO CLIQUE ====');
   }
 
   // OTIMIZAÇÃO: Métodos para gerenciar cache

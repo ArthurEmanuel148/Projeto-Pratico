@@ -161,7 +161,7 @@ export class InicioMatriculaPage implements OnInit {
   }
 
   voltarParaLista() {
-    this.router.navigate(['/sistema/matriculas/declaracoes']);
+    this.router.navigate(['/sistema/matriculas/declaracoes-interesse']);
   }
 
   iniciarNova() {

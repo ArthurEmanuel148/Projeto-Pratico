@@ -61,35 +61,6 @@ public class PessoaController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @GetMapping("/verificar-cpf/{cpf}")
-    public ResponseEntity<?> verificarPorCpf(@PathVariable String cpf) {
-        try {
-            // Limpar CPF removendo pontos, traços e espaços
-            String cpfLimpo = cpf.replaceAll("[^0-9]", "");
-
-            Optional<Pessoa> pessoa = pessoaService.buscarPorCpf(cpfLimpo);
-
-            if (pessoa.isPresent()) {
-                Pessoa p = pessoa.get();
-                Map<String, Object> response = Map.of(
-                        "existe", true,
-                        "dados", Map.of(
-                                "id", p.getIdPessoa(),
-                                "nome", p.getNmPessoa(),
-                                "cpf", p.getCpfPessoa(),
-                                "email", p.getEmail() != null ? p.getEmail() : "",
-                                "telefone", p.getTelefone() != null ? p.getTelefone() : "",
-                                "dataNascimento", p.getDtNascPessoa() != null ? p.getDtNascPessoa().toString() : ""));
-                return ResponseEntity.ok(response);
-            } else {
-                return ResponseEntity.ok(Map.of("existe", false));
-            }
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.of("erro", "Erro ao verificar CPF: " + e.getMessage()));
-        }
-    }
-
     @PutMapping("/{id}")
     public ResponseEntity<Pessoa> atualizar(@PathVariable Integer id, @RequestBody Pessoa pessoa) {
         try {

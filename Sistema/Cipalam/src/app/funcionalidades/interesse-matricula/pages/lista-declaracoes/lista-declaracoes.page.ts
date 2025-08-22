@@ -57,6 +57,6 @@ export class ListaDeclaracoesPage implements OnInit {
 
   iniciarMatricula(declaracao: InteresseMatricula) {
     // Implementar navegação para página de matrícula
-    this.router.navigate(['/sistema/matriculas/iniciar-matricula', declaracao.id]);
+    this.router.navigate(['/sistema/matriculas/inicio-matricula', declaracao.id]);
   }
 }

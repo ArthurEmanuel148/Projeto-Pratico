@@ -49,35 +49,6 @@ public class PessoaService {
         return pessoaRepo.findById(id);
     }
 
-    public Optional<Pessoa> buscarPorCpf(String cpf) {
-        // Primeiro tenta buscar com o CPF como recebido
-        Optional<Pessoa> pessoa = pessoaRepo.findByCpfPessoa(cpf);
-
-        // Se não encontrou, tenta limpar o CPF e buscar novamente
-        if (pessoa.isEmpty()) {
-            String cpfLimpo = cpf.replaceAll("[^0-9]", "");
-            pessoa = pessoaRepo.findByCpfPessoa(cpfLimpo);
-        }
-
-        // Se ainda não encontrou, tenta formatar o CPF e buscar
-        if (pessoa.isEmpty()) {
-            String cpfFormatado = formatarCpf(cpf.replaceAll("[^0-9]", ""));
-            pessoa = pessoaRepo.findByCpfPessoa(cpfFormatado);
-        }
-
-        return pessoa;
-    }
-
-    private String formatarCpf(String cpf) {
-        if (cpf.length() == 11) {
-            return cpf.substring(0, 3) + "." +
-                    cpf.substring(3, 6) + "." +
-                    cpf.substring(6, 9) + "-" +
-                    cpf.substring(9, 11);
-        }
-        return cpf;
-    }
-
     public Pessoa atualizarPessoa(Integer id, Pessoa pessoaAtualizada) {
         Pessoa pessoa = pessoaRepo.findById(id)
                 .orElseThrow(() -> new RuntimeException("Pessoa não encontrada"));

@@ -68,7 +68,20 @@
       <ion-card-title>Dados da Escola</ion-card-title>
     </ion-card-header>
     <ion-card-content>
-      <p><strong>Escola do Aluno:</strong> {{ declaracao.escolaAluno || 'Não informado' }}</p>
+      <p><strong>Escola do Aluno:</strong> {{ declaracao.tipoEscola || 'Não informado' }}</p>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Seção de Datas Importantes -->
+  <ion-card *ngIf="declaracao">
+    <ion-card-header>
+      <ion-card-title>Datas Importantes</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <p><strong>Data de Envio da Declaração:</strong> {{ (declaracao.dataEnvio | date:'dd/MM/yyyy HH:mm') || 'Não
+        informado' }}</p>
+      <p *ngIf="declaracao.dataInicioMatricula"><strong>Data de Início da Matrícula:</strong> {{
+        declaracao.dataInicioMatricula | date:'dd/MM/yyyy HH:mm' }}</p>
     </ion-card-content>
   </ion-card>
 
@@ -77,14 +90,7 @@
       <ion-card-title>Endereço da Família</ion-card-title>
     </ion-card-header>
     <ion-card-content>
-      <p><strong>CEP:</strong> {{ declaracao.cep || 'Não informado' }}</p>
-      <p><strong>Logradouro:</strong> {{ declaracao.logradouro || 'Não informado' }}</p>
-      <p><strong>Número:</strong> {{ declaracao.numero || 'Não informado' }}</p>
-      <p><strong>Complemento:</strong> {{ declaracao.complemento || 'Não informado' }}</p>
-      <p><strong>Bairro:</strong> {{ declaracao.bairro || 'Não informado' }}</p>
-      <p><strong>Cidade:</strong> {{ declaracao.cidade || 'Não informado' }}</p>
-      <p><strong>UF:</strong> {{ declaracao.uf || 'Não informado' }}</p>
-      <p *ngIf="declaracao.pontoReferencia"><strong>Ponto de Referência:</strong> {{ declaracao.pontoReferencia }}</p>
+      <p><strong>Endereço Completo:</strong> {{ declaracao.infoRenda?.enderecoCompleto || 'Não informado' }}</p>
     </ion-card-content>
   </ion-card>
 
@@ -95,7 +101,7 @@
     <ion-card-content>
       <div class="info-row">
         <strong>Número de Integrantes da Família:</strong>
-        <span>{{ declaracao.numeroIntegrantes || 'Não informado' }}</span>
+        <span>{{ declaracao.infoRenda?.numeroIntegrantes || 'Não informado' }}</span>
       </div>
 
       <div *ngIf="integrantesRenda && integrantesRenda.length > 0" class="renda-section">
@@ -146,7 +152,7 @@
     </ion-card-content>
   </ion-card>
 
-  <ion-card *ngIf="declaracao && declaracao.horariosSelecionados">
+  <ion-card *ngIf="declaracao && declaracao.horariosVaga?.horariosSelecionados">
     <ion-card-header>
       <ion-card-title>Horários de Interesse</ion-card-title>
     </ion-card-header>

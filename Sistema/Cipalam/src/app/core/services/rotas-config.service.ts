@@ -21,8 +21,8 @@ export class RotasConfigService {
 
         // Matrículas
         ['declaracoesInteresse', '/sistema/matriculas/declaracoes'],
-        ['configurarDocumentosCota', '/sistema/matriculas/configurar-documentos'],
-        ['declaracaoInteresse', '/sistema/matriculas/nova-declaracao'],
+        ['configurarDocumentosCota', '/sistema/matriculas/configuracao-documentos'],
+        ['declaracaoInteresse', '/sistema/matriculas/declaracao-interesse'],
         ['matriculas', '/sistema/matriculas'],
 
         // Alunos (futuras implementações)

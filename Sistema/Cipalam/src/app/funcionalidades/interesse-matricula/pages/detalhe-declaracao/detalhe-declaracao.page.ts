@@ -52,11 +52,11 @@ export class DetalheDeclaracaoPage implements OnInit {
         }
 
         // Processar dados JSON dos integrantes de renda
-        if (declaracao.integrantesRenda) {
+        if (declaracao.infoRenda?.integrantesRenda) {
           try {
-            this.integrantesRenda = typeof declaracao.integrantesRenda === 'string'
-              ? JSON.parse(declaracao.integrantesRenda)
-              : declaracao.integrantesRenda;
+            this.integrantesRenda = typeof declaracao.infoRenda.integrantesRenda === 'string'
+              ? JSON.parse(declaracao.infoRenda.integrantesRenda)
+              : declaracao.infoRenda.integrantesRenda;
 
             // Calcular renda familiar e per capita
             this.calcularRendas();
@@ -67,11 +67,11 @@ export class DetalheDeclaracaoPage implements OnInit {
         }
 
         // Processar dados JSON dos horários selecionados
-        if (declaracao.horariosSelecionados) {
+        if (declaracao.horariosVaga?.horariosSelecionados) {
           try {
-            this.horariosSelecionados = typeof declaracao.horariosSelecionados === 'string'
-              ? JSON.parse(declaracao.horariosSelecionados)
-              : declaracao.horariosSelecionados;
+            this.horariosSelecionados = typeof declaracao.horariosVaga.horariosSelecionados === 'string'
+              ? JSON.parse(declaracao.horariosVaga.horariosSelecionados)
+              : declaracao.horariosVaga.horariosSelecionados;
           } catch (error) {
             console.error('Erro ao processar horários selecionados:', error);
             this.horariosSelecionados = [];
@@ -245,7 +245,7 @@ export class DetalheDeclaracaoPage implements OnInit {
     }, 0);
 
     // Calcular renda per capita
-    const numeroIntegrantes = this.declaracao?.numeroIntegrantes || this.integrantesRenda.length || 1;
+    const numeroIntegrantes = this.declaracao?.infoRenda?.numeroIntegrantes || this.integrantesRenda.length || 1;
     this.rendaPerCapitaCalculada = this.rendaFamiliarCalculada / numeroIntegrantes;
   }
 }

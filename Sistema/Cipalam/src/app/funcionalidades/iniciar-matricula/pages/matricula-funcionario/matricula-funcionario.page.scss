@@ -1,0 +1,379 @@
+/* ===== ESTILO GERAL DA PÁGINA ===== */
+ion-content {
+  --background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+}
+
+.page-header {
+  text-align: center;
+  margin-bottom: 30px;
+  padding: 20px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+
+  h1 {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin: 0 0 12px 0;
+    color: var(--ion-color-primary);
+    font-size: 1.8em;
+    font-weight: 700;
+
+    ion-icon {
+      font-size: 1.2em;
+    }
+  }
+
+  .descricao-sistema {
+    color: var(--ion-color-medium);
+    font-size: 1.05em;
+    line-height: 1.5;
+    margin: 0;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+}
+
+/* ===== CARDS DAS SEÇÕES ===== */
+.secao-card {
+  margin-bottom: 24px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+  }
+
+  ion-card-header {
+    background: linear-gradient(135deg, var(--ion-color-primary) 0%, var(--ion-color-primary-shade) 100%);
+    color: white;
+    padding: 20px;
+
+    ion-card-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 1.3em;
+      font-weight: 600;
+      margin: 0 0 8px 0;
+
+      ion-icon {
+        font-size: 1.2em;
+      }
+    }
+
+    ion-card-subtitle {
+      color: rgba(255, 255, 255, 0.9);
+      font-size: 0.95em;
+      margin: 0;
+    }
+  }
+
+  ion-card-content {
+    padding: 24px;
+  }
+}
+
+/* ===== SELEÇÃO DE TURMA ===== */
+.turma-nao-selecionada {
+  text-align: center;
+  padding: 20px;
+
+  .info-texto {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin: 16px 0 0 0;
+    color: var(--ion-color-medium);
+    font-size: 0.9em;
+
+    ion-icon {
+      font-size: 1.1em;
+    }
+  }
+}
+
+.turma-selecionada {
+  .turma-info {
+    background: rgba(var(--ion-color-success-rgb), 0.05);
+    border: 2px solid rgba(var(--ion-color-success-rgb), 0.2);
+    border-radius: 8px;
+    padding: 20px;
+
+    h3 {
+      margin: 0 0 16px 0;
+      color: var(--ion-color-success);
+      font-size: 1.4em;
+      font-weight: 600;
+    }
+
+    .detalhes-turma {
+      p {
+        margin: 8px 0;
+        font-size: 0.95em;
+
+        strong {
+          color: var(--ion-color-dark);
+          font-weight: 600;
+        }
+      }
+
+      .acoes-turma {
+        display: flex;
+        gap: 12px;
+        margin-top: 16px;
+        flex-wrap: wrap;
+      }
+    }
+  }
+}
+
+/* ===== FORMULÁRIO ===== */
+ion-item {
+  --border-radius: 8px;
+  --padding-start: 16px;
+  --padding-end: 16px;
+  margin-bottom: 16px;
+
+  &.item-fill-outline {
+    --border-color: var(--ion-color-light-shade);
+    --border-width: 2px;
+
+    &.item-has-focus {
+      --border-color: var(--ion-color-primary);
+    }
+  }
+
+  ion-label[position="stacked"] {
+    font-weight: 600;
+    color: var(--ion-color-dark);
+    margin-bottom: 8px;
+  }
+
+  ion-note {
+    font-size: 0.8em;
+    margin-top: 4px;
+
+    &[slot="error"] {
+      color: var(--ion-color-danger);
+    }
+
+    &[slot="helper"] {
+      color: var(--ion-color-medium);
+    }
+  }
+}
+
+/* ===== RESUMO ===== */
+.resumo-card {
+  .resumo-info {
+    .processo-automatico {
+      margin-bottom: 24px;
+
+      h4 {
+        color: var(--ion-color-primary);
+        font-size: 1.1em;
+        font-weight: 600;
+        margin: 0 0 16px 0;
+      }
+
+      ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+
+        li {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          padding: 8px 0;
+          font-size: 0.95em;
+          color: var(--ion-color-dark);
+
+          ion-icon {
+            font-size: 1.1em;
+            flex-shrink: 0;
+          }
+        }
+      }
+    }
+
+    .status-formulario {
+      background: var(--ion-color-light);
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 24px;
+
+      ion-item {
+        --background: transparent;
+        --padding-start: 0;
+        --padding-end: 0;
+        margin-bottom: 8px;
+
+        &:last-child {
+          margin-bottom: 0;
+        }
+      }
+    }
+  }
+
+  .acoes-finais {
+    ion-button {
+      margin: 8px 0;
+      font-weight: 600;
+
+      &[expand="block"] {
+        height: 48px;
+      }
+
+      &:first-child {
+        --background: linear-gradient(135deg, var(--ion-color-primary) 0%, var(--ion-color-primary-shade) 100%);
+      }
+    }
+  }
+}
+
+/* ===== LOADING OVERLAY ===== */
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+
+  ion-spinner {
+    --color: var(--ion-color-primary);
+    transform: scale(1.5);
+    margin-bottom: 16px;
+  }
+
+  p {
+    color: white;
+    font-size: 1.1em;
+    font-weight: 500;
+    margin: 0;
+  }
+}
+
+/* ===== CHIPS E BADGES ===== */
+ion-chip {
+  font-weight: 500;
+
+  ion-icon {
+    font-size: 1em;
+  }
+}
+
+/* ===== RESPONSIVIDADE ===== */
+@media (max-width: 768px) {
+  .page-header {
+    padding: 16px;
+    margin-bottom: 20px;
+
+    h1 {
+      font-size: 1.5em;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .descricao-sistema {
+      font-size: 1em;
+    }
+  }
+
+  .secao-card {
+    margin-bottom: 16px;
+
+    ion-card-header {
+      padding: 16px;
+
+      ion-card-title {
+        font-size: 1.2em;
+      }
+    }
+
+    ion-card-content {
+      padding: 16px;
+    }
+  }
+
+  .turma-selecionada .turma-info .detalhes-turma .acoes-turma {
+    flex-direction: column;
+
+    ion-button {
+      margin: 4px 0;
+    }
+  }
+
+  .resumo-card .acoes-finais {
+    ion-button {
+      height: 44px;
+    }
+  }
+}
+
+/* ===== ANIMAÇÕES ===== */
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.secao-card {
+  animation: slideInUp 0.4s ease-out;
+}
+
+.secao-card:nth-child(1) {
+  animation-delay: 0.1s;
+}
+
+.secao-card:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.secao-card:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+.secao-card:nth-child(4) {
+  animation-delay: 0.4s;
+}
+
+.secao-card:nth-child(5) {
+  animation-delay: 0.5s;
+}
+
+/* ===== ESTADOS DE VALIDAÇÃO ===== */
+ion-item.ng-invalid.ng-touched {
+  --border-color: var(--ion-color-danger);
+}
+
+ion-item.ng-valid.ng-touched {
+  --border-color: var(--ion-color-success);
+}
+
+/* ===== MODAL CUSTOMIZATIONS ===== */
+.seletor-turma-modal {
+  --width: 90%;
+  --max-width: 800px;
+  --height: 80%;
+  --border-radius: 12px;
+}

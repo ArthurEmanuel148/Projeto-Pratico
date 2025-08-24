@@ -18,6 +18,11 @@ export class DetalheDeclaracaoPage implements OnInit {
   matriculaIniciada = false;
   processandoMatricula = false;
   documentosNecessarios: any[] = [];
+  integrantesRenda: any[] = [];
+  horariosSelecionados: string[] = [];
+  rendaFamiliarCalculada = 0;
+  rendaPerCapitaCalculada = 0;
+  enderecoCompleto = '';
 
   constructor(
     private route: ActivatedRoute,
@@ -46,6 +51,63 @@ export class DetalheDeclaracaoPage implements OnInit {
           this.mostrarErro('Declaração não encontrada');
           return;
         }
+
+        // Processar dados JSON dos integrantes de renda
+        if (declaracao.integrantesRenda) {
+          try {
+            this.integrantesRenda = typeof declaracao.integrantesRenda === 'string'
+              ? JSON.parse(declaracao.integrantesRenda)
+              : declaracao.integrantesRenda;
+
+            // Calcular idades para os integrantes
+            this.calcularIdades();
+
+            // Calcular renda familiar e per capita
+            this.calcularRendas();
+          } catch (error) {
+            console.error('Erro ao processar integrantes de renda:', error);
+            this.integrantesRenda = [];
+          }
+        } else if (declaracao.infoRenda?.integrantesRenda) {
+          try {
+            this.integrantesRenda = typeof declaracao.infoRenda.integrantesRenda === 'string'
+              ? JSON.parse(declaracao.infoRenda.integrantesRenda)
+              : declaracao.infoRenda.integrantesRenda;
+
+            // Calcular idades para os integrantes
+            this.calcularIdades();
+
+            // Calcular renda familiar e per capita
+            this.calcularRendas();
+          } catch (error) {
+            console.error('Erro ao processar integrantes de renda:', error);
+            this.integrantesRenda = [];
+          }
+        }
+
+        // Processar dados JSON dos horários selecionados
+        if (declaracao.horariosSelecionados) {
+          try {
+            this.horariosSelecionados = typeof declaracao.horariosSelecionados === 'string'
+              ? JSON.parse(declaracao.horariosSelecionados)
+              : declaracao.horariosSelecionados;
+          } catch (error) {
+            console.error('Erro ao processar horários selecionados:', error);
+            this.horariosSelecionados = [];
+          }
+        } else if (declaracao.horariosVaga?.horariosSelecionados) {
+          try {
+            this.horariosSelecionados = typeof declaracao.horariosVaga.horariosSelecionados === 'string'
+              ? JSON.parse(declaracao.horariosVaga.horariosSelecionados)
+              : declaracao.horariosVaga.horariosSelecionados;
+          } catch (error) {
+            console.error('Erro ao processar horários selecionados:', error);
+            this.horariosSelecionados = [];
+          }
+        }
+
+        // Montar endereço completo
+        this.montarEnderecoCompleto();
 
         // Verificar se a matrícula já foi iniciada
         if (declaracao.dataInicioMatricula) {
@@ -176,7 +238,8 @@ export class DetalheDeclaracaoPage implements OnInit {
   }
 
   voltarLista() {
-    this.router.navigate(['/sistema/matriculas/declaracoes-interesse']);
+    // Usar rota absoluta correta
+    this.router.navigate(['/sistema/matriculas/declaracoes']);
   }
 
   private async mostrarSucesso(mensagem: string) {
@@ -197,5 +260,54 @@ export class DetalheDeclaracaoPage implements OnInit {
       position: 'top'
     });
     await toast.present();
+  }
+
+  private calcularRendas() {
+    if (this.integrantesRenda && this.integrantesRenda.length > 0) {
+      this.rendaFamiliarCalculada = this.integrantesRenda.reduce((total, integrante) => {
+        return total + (integrante.renda || 0);
+      }, 0);
+
+      const numIntegrantes = this.declaracao?.numeroIntegrantes || this.integrantesRenda.length;
+      this.rendaPerCapitaCalculada = numIntegrantes > 0 ? this.rendaFamiliarCalculada / numIntegrantes : 0;
+    }
+  }
+
+  private calcularIdades() {
+    if (this.integrantesRenda && this.integrantesRenda.length > 0) {
+      const dataAtual = new Date();
+
+      this.integrantesRenda = this.integrantesRenda.map(integrante => {
+        if (integrante.dataNascimento && !integrante.idade) {
+          const dataNascimento = new Date(integrante.dataNascimento);
+          const idade = dataAtual.getFullYear() - dataNascimento.getFullYear();
+          const mesAtual = dataAtual.getMonth();
+          const mesNascimento = dataNascimento.getMonth();
+
+          if (mesAtual < mesNascimento || (mesAtual === mesNascimento && dataAtual.getDate() < dataNascimento.getDate())) {
+            integrante.idade = idade - 1;
+          } else {
+            integrante.idade = idade;
+          }
+        }
+        return integrante;
+      });
+    }
+  }
+
+  private montarEnderecoCompleto() {
+    if (this.declaracao) {
+      const partes = [];
+
+      if (this.declaracao.logradouro) partes.push(this.declaracao.logradouro);
+      if (this.declaracao.numero) partes.push(this.declaracao.numero);
+      if (this.declaracao.complemento) partes.push(this.declaracao.complemento);
+      if (this.declaracao.bairro) partes.push(this.declaracao.bairro);
+      if (this.declaracao.cidade) partes.push(this.declaracao.cidade);
+      if (this.declaracao.uf) partes.push(this.declaracao.uf);
+      if (this.declaracao.cep) partes.push(`CEP: ${this.declaracao.cep}`);
+
+      this.enderecoCompleto = partes.join(', ');
+    }
   }
 }

@@ -5,7 +5,6 @@ import lombok.Data;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import java.time.LocalDateTime;
 import java.time.LocalDate;
-import java.math.BigDecimal;
 
 @Entity
 @Data
@@ -46,23 +45,53 @@ public class InteresseMatricula {
     @Column(name = "cpfAluno", length = 14)
     private String cpfAluno;
 
+    @Column(name = "escolaAluno", length = 200)
+    private String escolaAluno;
+
+    @Column(name = "codigoInepEscola", length = 20)
+    private String codigoInepEscola;
+
+    @Column(name = "municipioEscola", length = 100)
+    private String municipioEscola;
+
+    @Column(name = "ufEscola", length = 2)
+    private String ufEscola;
+
+    // ENDEREÇO DA FAMÍLIA
+    @Column(name = "cep", length = 9)
+    private String cep;
+
+    @Column(name = "logradouro", length = 200)
+    private String logradouro;
+
+    @Column(name = "numero", length = 20)
+    private String numero;
+
+    @Column(name = "complemento", length = 100)
+    private String complemento;
+
+    @Column(name = "bairro", length = 100)
+    private String bairro;
+
+    @Column(name = "cidade", length = 100)
+    private String cidade;
+
+    @Column(name = "uf", length = 2)
+    private String uf;
+
+    @Column(name = "codigoIbgeCidade", length = 10)
+    private String codigoIbgeCidade;
+
+    @Column(name = "pontoReferencia", columnDefinition = "TEXT")
+    private String pontoReferencia;
+
     // TIPO DE VAGA
     @Column(name = "tipoCota", nullable = false)
     @Enumerated(EnumType.STRING)
     private TipoCota tipoCota;
 
-    // INFORMAÇÕES DE RENDA (para cota econômica)
-    @Column(name = "rendaFamiliar", precision = 10, scale = 2)
-    private BigDecimal rendaFamiliar;
-
-    @Column(name = "rendaPerCapita", precision = 10, scale = 2)
-    private BigDecimal rendaPerCapita;
-
     @Column(name = "numeroIntegrantes")
     private Integer numeroIntegrantes;
-
-    @Column(name = "enderecoCompleto", columnDefinition = "TEXT")
-    private String enderecoCompleto;
 
     @Column(name = "integrantesRenda", columnDefinition = "JSON")
     private String integrantesRenda;
@@ -71,9 +100,9 @@ public class InteresseMatricula {
     @Column(name = "horariosSelecionados", columnDefinition = "JSON")
     private String horariosSelecionados;
 
-    // MENSAGEM ADICIONAL
-    @Column(name = "mensagemAdicional", columnDefinition = "TEXT")
-    private String mensagemAdicional;
+    // OBSERVAÇÕES DO RESPONSÁVEL
+    @Column(name = "observacoesResponsavel", columnDefinition = "TEXT")
+    private String observacoesResponsavel;
 
     // CONTROLE DE STATUS
     @Column(name = "status")
@@ -103,9 +132,6 @@ public class InteresseMatricula {
     private Pessoa responsavelLogin;
 
     // OBSERVAÇÕES
-    @Column(name = "observacoes", columnDefinition = "TEXT")
-    private String observacoes;
-
     @Column(name = "observacoesInternas", columnDefinition = "TEXT")
     private String observacoesInternas;
 
@@ -128,6 +154,7 @@ public class InteresseMatricula {
     }
 
     public enum StatusInteresse {
+        em_preenchimento,
         interesse_declarado,
         matricula_iniciada,
         documentos_pendentes,

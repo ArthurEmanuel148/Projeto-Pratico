@@ -1,0 +1,76 @@
+<ion-content [fullscreen]="true" class="entrada-content">
+
+    <!-- Header CIPALAM - Estilo do site oficial -->
+    <div class="cipalam-header">
+        <div class="header-container">
+            <div class="logo-cipalam">
+                <img src="assets/images/logo-instituto.png" alt="Logo CIPALAM" class="logo-image">
+            </div>
+
+            <div class="header-actions">
+                <ion-button fill="clear" class="portal-btn" [routerLink]="['/login']">
+                    <ion-icon name="person-outline"></ion-icon>
+                    Sistema Interno
+                </ion-button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Conteúdo Principal - Layout inspirado no site oficial -->
+    <div class="main-content">
+
+        <div class="content-grid">
+            <!-- Texto principal - lado esquerdo -->
+            <div class="text-content">
+                <h1 class="main-title">Declaração de Interesse</h1>
+
+                <p class="description-text">
+                    O CIPALAM mantém, desde abril de 2008, um projeto social que atende a comunidade
+                    do entorno das duas unidades - no bairro Iguaçu, em Ipatinga, e na Santana do
+                    Paraíso.
+                </p>
+
+                <p class="description-text">
+                    Manifeste seu interesse em uma vaga na nossa instituição de ensino.
+                    Este processo é <strong>gratuito</strong> e não requer cadastro prévio.
+                </p>
+
+                <p class="description-text">
+                    A escolha dos participantes, que têm entre seis e 16 anos, é feita de acordo com a
+                    situação socioeconômica da família, entre eles, filhos de funcionários.
+                </p>
+
+                <div class="cta-section">
+                    <ion-button class="cta-button" color="danger" size="large"
+                        [routerLink]="['/interesse-matricula/declaracao-interesse']">
+                        <ion-icon slot="start" name="document-text-outline"></ion-icon>
+                        INICIAR DECLARAÇÃO
+                    </ion-button>
+                </div>
+
+                <div class="contact-info">
+                    <p><strong>Para mais informações, sugestões e/ou requerimentos entre em contato:</strong></p>
+                    <p class="email-contact">
+                        <strong>E-mail:</strong>
+                        <a href="mailto:instituto&#64;cipalam.com.br">instituto&#64;cipalam.com.br</a>
+                    </p>
+                </div>
+            </div>
+
+
+        </div>
+
+    </div>
+
+    <!-- Footer simples -->
+    <div class="footer-section">
+        <div class="footer-content">
+            <p>
+                <ion-icon name="information-circle-outline"></ion-icon>
+                Esta declaração não garante a matrícula. É apenas uma manifestação de interesse que será analisada
+                conforme disponibilidade de vagas.
+            </p>
+        </div>
+    </div>
+
+</ion-content>

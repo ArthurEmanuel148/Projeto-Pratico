@@ -1,94 +1,377 @@
 <!-- Conteúdo específico da página do painel -->
 <ion-content class="ion-padding home-content">
-  <div class="welcome-message">
-    <h3>Bem-vindo(a) de volta, {{ usuarioLogado?.nomeCompleto || 'Usuário' }}!</h3>
-    <p>Aqui estão suas funcionalidades mais acessadas e atalhos rápidos.</p>
-  </div>
 
-  <!-- Seção de Funcionalidades Mais Usadas -->
-  <div class="section-container">
-    <ion-text color="medium">
-      <h4><ion-icon name="star-outline" class="section-icon"></ion-icon> Funcionalidades Mais Usadas</h4>
-    </ion-text>
-    <ion-grid>
-      <ion-row>
-        <ion-col size="6" size-md="4" size-lg="3" *ngFor="let feature of mostUsedFeatures">
-          <ion-card class="feature-card" button (click)="handleFeatureClick(feature)">
-            <ion-card-header class="ion-text-center">
-              <ion-icon [name]="feature.icon" [color]="feature.color || 'primary'" class="feature-icon"></ion-icon>
-              <div class="usage-badge" *ngIf="feature.usageCount > 0">
-                <ion-text color="medium">{{ feature.usageCount }}x</ion-text>
-              </div>
-            </ion-card-header>
-            <ion-card-content class="ion-text-center">
-              <ion-label>{{ feature.name }}</ion-label>
-              <p class="last-access" *ngIf="feature.lastAccess">
-                <small>Último acesso: {{ feature.lastAccess | date:'dd/MM/yyyy' }}</small>
-              </p>
-            </ion-card-content>
-          </ion-card>
-        </ion-col>
-      </ion-row>
-      <div *ngIf="!mostUsedFeatures || mostUsedFeatures.length === 0" class="empty-state">
-        <ion-icon name="information-circle-outline"></ion-icon>
-        <p>Comece a usar o sistema para ver suas funcionalidades mais acessadas aqui!</p>
+  <!-- PAINEL ESPECÍFICO PARA RESPONSÁVEIS -->
+  <div *ngIf="isResponsavel" class="responsavel-content">
+    <div class="welcome-container">
+      <div class="welcome-header">
+        <ion-icon name="home-outline" color="primary" class="welcome-icon"></ion-icon>
+        <h1>Bem-vindo(a), {{ usuarioLogado?.pessoa?.nmPessoa || usuarioLogado?.nomePessoa || 'Responsável' }}!</h1>
+        <p>Esta é sua área exclusiva para acompanhar a matrícula do seu filho(a).</p>
       </div>
-    </ion-grid>
+    </div>
+
+    <!-- Seção de Informações da Matrícula -->
+    <div class="section-container">
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title color="primary">
+            <ion-icon name="school-outline" slot="start"></ion-icon>
+            Situação da Matrícula
+          </ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <div class="status-info">
+            <ion-chip color="success">
+              <ion-icon name="checkmark-circle-outline"></ion-icon>
+              <ion-label>Matrícula Ativa</ion-label>
+            </ion-chip>
+            <p>Sua matrícula foi processada com sucesso. Agora você pode acompanhar o progresso dos documentos
+              necessários.</p>
+          </div>
+        </ion-card-content>
+      </ion-card>
+    </div>
+
+    <!-- Seção de Documentos -->
+    <div class="section-container">
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title color="primary">
+            <ion-icon name="document-text-outline" slot="start"></ion-icon>
+            Documentos Necessários
+          </ion-card-title>
+          <ion-card-subtitle>
+            Envie os documentos para finalizar o processo de matrícula
+          </ion-card-subtitle>
+        </ion-card-header>
+        <ion-card-content>
+
+          <!-- Loading de documentos -->
+          <div *ngIf="documentosCarregando" class="loading-container">
+            <ion-spinner name="crescent"></ion-spinner>
+            <p>Carregando documentos...</p>
+          </div>
+
+          <!-- Documentos carregados -->
+          <div *ngIf="!documentosCarregando">
+
+            <!-- Documentos do Responsável -->
+            <div class="document-category" *ngIf="obterDocumentosPorCategoria('responsavel').length > 0">
+              <h3>
+                <ion-icon [name]="obterIconeDocumento('responsavel')" color="primary"></ion-icon>
+                Documentos do Responsável
+              </h3>
+              <ion-list>
+                <ion-item *ngFor="let documento of obterDocumentosPorCategoria('responsavel')">
+                  <ion-icon name="document-outline" slot="start" [color]="obterCorStatus(documento.status)"></ion-icon>
+                  <ion-label>
+                    <h2>{{ documento.nomeDocumento }}</h2>
+                    <p>{{ documento.descricao }}</p>
+                    <p *ngIf="documento.nomeArquivoOriginal" class="arquivo-anexado">
+                      📎 {{ documento.nomeArquivoOriginal }}
+                    </p>
+                  </ion-label>
+                  <ion-chip slot="end" [color]="obterCorStatus(documento.status)">
+                    <ion-icon name="time-outline" *ngIf="documento.status === 'pendente'"></ion-icon>
+                    <ion-icon name="cloud-upload-outline" *ngIf="documento.status === 'anexado'"></ion-icon>
+                    <ion-icon name="checkmark-circle-outline" *ngIf="documento.status === 'aprovado'"></ion-icon>
+                    <ion-icon name="close-circle-outline" *ngIf="documento.status === 'rejeitado'"></ion-icon>
+                    <ion-label>{{ documento.statusDescricao }}</ion-label>
+                  </ion-chip>
+
+                  <!-- Botões de ação -->
+                  <ion-button fill="clear" slot="end" (click)="anexarDocumento(documento)"
+                    *ngIf="documento.status === 'pendente' || documento.status === 'rejeitado'">
+                    <ion-icon name="attach-outline"></ion-icon>
+                  </ion-button>
+
+                  <ion-button fill="clear" slot="end" (click)="baixarDocumento(documento)"
+                    *ngIf="documento.status !== 'pendente'">
+                    <ion-icon name="download-outline"></ion-icon>
+                  </ion-button>
+
+                  <ion-button fill="clear" slot="end" (click)="removerDocumento(documento)"
+                    *ngIf="documento.status === 'anexado' || documento.status === 'rejeitado'">
+                    <ion-icon name="trash-outline" color="danger"></ion-icon>
+                  </ion-button>
+                </ion-item>
+              </ion-list>
+            </div>
+
+            <!-- Documentos da Família -->
+            <div class="document-category" *ngIf="obterDocumentosPorCategoria('familia').length > 0">
+              <h3>
+                <ion-icon [name]="obterIconeDocumento('familia')" color="secondary"></ion-icon>
+                Documentos da Família
+              </h3>
+              <ion-list>
+                <ion-item *ngFor="let documento of obterDocumentosPorCategoria('familia')">
+                  <ion-icon name="document-outline" slot="start" [color]="obterCorStatus(documento.status)"></ion-icon>
+                  <ion-label>
+                    <h2>{{ documento.nomeDocumento }}</h2>
+                    <p>{{ documento.descricao }}</p>
+                    <p *ngIf="documento.nomeArquivoOriginal" class="arquivo-anexado">
+                      📎 {{ documento.nomeArquivoOriginal }}
+                    </p>
+                  </ion-label>
+                  <ion-chip slot="end" [color]="obterCorStatus(documento.status)">
+                    <ion-icon name="time-outline" *ngIf="documento.status === 'pendente'"></ion-icon>
+                    <ion-icon name="cloud-upload-outline" *ngIf="documento.status === 'anexado'"></ion-icon>
+                    <ion-icon name="checkmark-circle-outline" *ngIf="documento.status === 'aprovado'"></ion-icon>
+                    <ion-icon name="close-circle-outline" *ngIf="documento.status === 'rejeitado'"></ion-icon>
+                    <ion-label>{{ documento.statusDescricao }}</ion-label>
+                  </ion-chip>
+
+                  <!-- Botões de ação -->
+                  <ion-button fill="clear" slot="end" (click)="anexarDocumento(documento)"
+                    *ngIf="documento.status === 'pendente' || documento.status === 'rejeitado'">
+                    <ion-icon name="attach-outline"></ion-icon>
+                  </ion-button>
+
+                  <ion-button fill="clear" slot="end" (click)="baixarDocumento(documento)"
+                    *ngIf="documento.status !== 'pendente'">
+                    <ion-icon name="download-outline"></ion-icon>
+                  </ion-button>
+
+                  <ion-button fill="clear" slot="end" (click)="removerDocumento(documento)"
+                    *ngIf="documento.status === 'anexado' || documento.status === 'rejeitado'">
+                    <ion-icon name="trash-outline" color="danger"></ion-icon>
+                  </ion-button>
+                </ion-item>
+              </ion-list>
+            </div>
+
+            <!-- Documentos do Aluno -->
+            <div class="document-category" *ngIf="obterDocumentosPorCategoria('aluno').length > 0">
+              <h3>
+                <ion-icon [name]="obterIconeDocumento('aluno')" color="tertiary"></ion-icon>
+                Documentos do Aluno
+              </h3>
+              <ion-list>
+                <ion-item *ngFor="let documento of obterDocumentosPorCategoria('aluno')">
+                  <ion-icon name="document-outline" slot="start" [color]="obterCorStatus(documento.status)"></ion-icon>
+                  <ion-label>
+                    <h2>{{ documento.nomeDocumento }}</h2>
+                    <p>{{ documento.descricao }}</p>
+                    <p *ngIf="documento.nomeArquivoOriginal" class="arquivo-anexado">
+                      📎 {{ documento.nomeArquivoOriginal }}
+                    </p>
+                  </ion-label>
+                  <ion-chip slot="end" [color]="obterCorStatus(documento.status)">
+                    <ion-icon name="time-outline" *ngIf="documento.status === 'pendente'"></ion-icon>
+                    <ion-icon name="cloud-upload-outline" *ngIf="documento.status === 'anexado'"></ion-icon>
+                    <ion-icon name="checkmark-circle-outline" *ngIf="documento.status === 'aprovado'"></ion-icon>
+                    <ion-icon name="close-circle-outline" *ngIf="documento.status === 'rejeitado'"></ion-icon>
+                    <ion-label>{{ documento.statusDescricao }}</ion-label>
+                  </ion-chip>
+
+                  <!-- Botões de ação -->
+                  <ion-button fill="clear" slot="end" (click)="anexarDocumento(documento)"
+                    *ngIf="documento.status === 'pendente' || documento.status === 'rejeitado'">
+                    <ion-icon name="attach-outline"></ion-icon>
+                  </ion-button>
+
+                  <ion-button fill="clear" slot="end" (click)="baixarDocumento(documento)"
+                    *ngIf="documento.status !== 'pendente'">
+                    <ion-icon name="download-outline"></ion-icon>
+                  </ion-button>
+
+                  <ion-button fill="clear" slot="end" (click)="removerDocumento(documento)"
+                    *ngIf="documento.status === 'anexado' || documento.status === 'rejeitado'">
+                    <ion-icon name="trash-outline" color="danger"></ion-icon>
+                  </ion-button>
+                </ion-item>
+              </ion-list>
+            </div>
+
+            <!-- Documentos Específicos da Cota -->
+            <div class="document-category" *ngIf="obterDocumentosPorCategoria('cota').length > 0">
+              <h3>
+                <ion-icon [name]="obterIconeDocumento('cota')" color="warning"></ion-icon>
+                Documentos Específicos da Cota {{ getTipoCotaDisplay() }}
+              </h3>
+              <ion-list>
+                <ion-item *ngFor="let documento of obterDocumentosPorCategoria('cota')">
+                  <ion-icon name="document-outline" slot="start" [color]="obterCorStatus(documento.status)"></ion-icon>
+                  <ion-label>
+                    <h2>{{ documento.nomeDocumento }}</h2>
+                    <p>{{ documento.descricao }}</p>
+                    <p *ngIf="documento.nomeArquivoOriginal" class="arquivo-anexado">
+                      📎 {{ documento.nomeArquivoOriginal }}
+                    </p>
+                  </ion-label>
+                  <ion-chip slot="end" [color]="obterCorStatus(documento.status)">
+                    <ion-icon name="time-outline" *ngIf="documento.status === 'pendente'"></ion-icon>
+                    <ion-icon name="cloud-upload-outline" *ngIf="documento.status === 'anexado'"></ion-icon>
+                    <ion-icon name="checkmark-circle-outline" *ngIf="documento.status === 'aprovado'"></ion-icon>
+                    <ion-icon name="close-circle-outline" *ngIf="documento.status === 'rejeitado'"></ion-icon>
+                    <ion-label>{{ documento.statusDescricao }}</ion-label>
+                  </ion-chip>
+
+                  <!-- Botões de ação -->
+                  <ion-button fill="clear" slot="end" (click)="anexarDocumento(documento)"
+                    *ngIf="documento.status === 'pendente' || documento.status === 'rejeitado'">
+                    <ion-icon name="attach-outline"></ion-icon>
+                  </ion-button>
+
+                  <ion-button fill="clear" slot="end" (click)="baixarDocumento(documento)"
+                    *ngIf="documento.status !== 'pendente'">
+                    <ion-icon name="download-outline"></ion-icon>
+                  </ion-button>
+
+                  <ion-button fill="clear" slot="end" (click)="removerDocumento(documento)"
+                    *ngIf="documento.status === 'anexado' || documento.status === 'rejeitado'">
+                    <ion-icon name="trash-outline" color="danger"></ion-icon>
+                  </ion-button>
+                </ion-item>
+              </ion-list>
+            </div>
+
+            <!-- Mensagem quando não há documentos -->
+            <div *ngIf="documentosPendentes.length === 0" class="no-documents">
+              <ion-icon name="document-text-outline" color="medium"></ion-icon>
+              <p>Nenhum documento pendente encontrado.</p>
+            </div>
+          </div>
+
+        </ion-card-content>
+      </ion-card>
+    </div>
+
+    <!-- Seção de Informações de Contato -->
+    <div class="section-container">
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title color="primary">
+            <ion-icon name="call-outline" slot="start"></ion-icon>
+            Precisa de Ajuda?
+          </ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <p>Entre em contato conosco caso tenha dúvidas sobre o processo de matrícula:</p>
+
+          <ion-item lines="none">
+            <ion-icon name="call" slot="start" color="primary"></ion-icon>
+            <ion-label>
+              <h3>Telefone</h3>
+              <p>(31) 3822-9999</p>
+            </ion-label>
+          </ion-item>
+
+          <ion-item lines="none">
+            <ion-icon name="mail" slot="start" color="primary"></ion-icon>
+            <ion-label>
+              <h3>E-mail</h3>
+              <p>contato&#64;cipalam.org.br</p>
+            </ion-label>
+          </ion-item>
+
+          <ion-item lines="none">
+            <ion-icon name="time" slot="start" color="primary"></ion-icon>
+            <ion-label>
+              <h3>Horário de Atendimento</h3>
+              <p>Segunda a Sexta: 8h às 17h</p>
+            </ion-label>
+          </ion-item>
+        </ion-card-content>
+      </ion-card>
+    </div>
   </div>
 
-  <!-- Estatísticas Rápidas -->
-  <div class="section-container" *ngIf="estatisticasUso && estatisticasUso.totalAcessos > 0">
-    <ion-text color="medium">
-      <h4><ion-icon name="analytics-outline" class="section-icon"></ion-icon> Suas Estatísticas</h4>
-    </ion-text>
-    <ion-grid>
-      <ion-row>
-        <ion-col size="6" size-md="3">
-          <div class="stat-card">
-            <ion-text color="primary">
-              <h2>{{ estatisticasUso.totalAcessos }}</h2>
-              <p>Total de Acessos</p>
-            </ion-text>
-          </div>
-        </ion-col>
-        <ion-col size="6" size-md="3">
-          <div class="stat-card">
-            <ion-text color="success">
-              <h2>{{ estatisticasUso.totalFuncionalidades }}</h2>
-              <p>Funcionalidades Usadas</p>
-            </ion-text>
-          </div>
-        </ion-col>
-        <ion-col size="12" size-md="6" *ngIf="estatisticasUso.funcionalidadeMaisUsada">
-          <div class="stat-card">
-            <ion-text color="warning">
-              <h3>{{ estatisticasUso.funcionalidadeMaisUsada.nomeAmigavel }}</h3>
-              <p>Funcionalidade Favorita ({{ estatisticasUso.funcionalidadeMaisUsada.contador }}x)</p>
-            </ion-text>
-          </div>
-        </ion-col>
-      </ion-row>
-    </ion-grid>
-  </div>
+  <!-- PAINEL ORIGINAL PARA FUNCIONÁRIOS -->
+  <div *ngIf="!isResponsavel">
+    <div class="welcome-message">
+      <h3>Bem-vindo(a) de volta, {{ usuarioLogado?.nomeCompleto || 'Usuário' }}!</h3>
+      <p>Aqui estão suas funcionalidades mais acessadas e atalhos rápidos.</p>
+    </div>
 
-  <!-- Seção de Avisos -->
-  <div class="section-container">
-    <ion-text color="medium">
-      <h4><ion-icon name="newspaper-outline" class="section-icon"></ion-icon> Avisos Recentes</h4>
-    </ion-text>
-    <ion-list lines="none">
-      <ion-item *ngFor="let i of [1,2,3]">
-        <ion-icon name="alert-circle-outline" slot="start" color="warning"></ion-icon>
-        <ion-label>
-          <h2>Aviso Importante {{i}}</h2>
-          <p>Detalhes sobre o aviso recente para os funcionários...</p>
-        </ion-label>
-      </ion-item>
-      <!-- Exemplo de estado vazio -->
-      <div *ngIf="true" class="empty-state">
-        <ion-icon name="chatbubbles-outline"></ion-icon>
-        <p>Nenhum aviso no momento.</p>
-      </div>
-    </ion-list>
-  </div>
+    <!-- Seção de Funcionalidades Mais Usadas -->
+    <div class="section-container">
+      <ion-text color="medium">
+        <h4><ion-icon name="star-outline" class="section-icon"></ion-icon> Funcionalidades Mais Usadas</h4>
+      </ion-text>
+      <ion-grid>
+        <ion-row>
+          <ion-col size="6" size-md="4" size-lg="3" *ngFor="let feature of mostUsedFeatures">
+            <ion-card class="feature-card" button (click)="handleFeatureClick(feature)">
+              <ion-card-header class="ion-text-center">
+                <ion-icon [name]="feature.icon" [color]="feature.color || 'primary'" class="feature-icon"></ion-icon>
+                <div class="usage-badge" *ngIf="feature.usageCount > 0">
+                  <ion-text color="medium">{{ feature.usageCount }}x</ion-text>
+                </div>
+              </ion-card-header>
+              <ion-card-content class="ion-text-center">
+                <ion-label>{{ feature.name }}</ion-label>
+                <p class="last-access" *ngIf="feature.lastAccess">
+                  <small>Último acesso: {{ feature.lastAccess | date:'dd/MM/yyyy' }}</small>
+                </p>
+              </ion-card-content>
+            </ion-card>
+          </ion-col>
+        </ion-row>
+        <div *ngIf="!mostUsedFeatures || mostUsedFeatures.length === 0" class="empty-state">
+          <ion-icon name="information-circle-outline"></ion-icon>
+          <p>Comece a usar o sistema para ver suas funcionalidades mais acessadas aqui!</p>
+        </div>
+      </ion-grid>
+    </div>
+
+    <!-- Estatísticas Rápidas -->
+    <div class="section-container" *ngIf="estatisticasUso && estatisticasUso.totalAcessos > 0">
+      <ion-text color="medium">
+        <h4><ion-icon name="analytics-outline" class="section-icon"></ion-icon> Suas Estatísticas</h4>
+      </ion-text>
+      <ion-grid>
+        <ion-row>
+          <ion-col size="6" size-md="3">
+            <div class="stat-card">
+              <ion-text color="primary">
+                <h2>{{ estatisticasUso.totalAcessos }}</h2>
+                <p>Total de Acessos</p>
+              </ion-text>
+            </div>
+          </ion-col>
+          <ion-col size="6" size-md="3">
+            <div class="stat-card">
+              <ion-text color="success">
+                <h2>{{ estatisticasUso.totalFuncionalidades }}</h2>
+                <p>Funcionalidades Usadas</p>
+              </ion-text>
+            </div>
+          </ion-col>
+          <ion-col size="12" size-md="6" *ngIf="estatisticasUso.funcionalidadeMaisUsada">
+            <div class="stat-card">
+              <ion-text color="warning">
+                <h3>{{ estatisticasUso.funcionalidadeMaisUsada.nomeAmigavel }}</h3>
+                <p>Funcionalidade Favorita ({{ estatisticasUso.funcionalidadeMaisUsada.contador }}x)</p>
+              </ion-text>
+            </div>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </div>
+
+    <!-- Seção de Avisos -->
+    <div class="section-container">
+      <ion-text color="medium">
+        <h4><ion-icon name="newspaper-outline" class="section-icon"></ion-icon> Avisos Recentes</h4>
+      </ion-text>
+      <ion-list lines="none">
+        <ion-item *ngFor="let i of [1,2,3]">
+          <ion-icon name="alert-circle-outline" slot="start" color="warning"></ion-icon>
+          <ion-label>
+            <h2>Aviso Importante {{i}}</h2>
+            <p>Detalhes sobre o aviso recente para os funcionários...</p>
+          </ion-label>
+        </ion-item>
+        <!-- Exemplo de estado vazio -->
+        <div *ngIf="true" class="empty-state">
+          <ion-icon name="chatbubbles-outline"></ion-icon>
+          <p>Nenhum aviso no momento.</p>
+        </div>
+      </ion-list>
+    </div>
+
+  </div> <!-- Fim do painel para funcionários -->
 </ion-content>

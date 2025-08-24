@@ -1,0 +1,571 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] --------------------< com.cipalam:cipalam-sistema >---------------------
+[INFO] Building cipalam-sistema 0.0.1-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] >>> spring-boot:3.4.7:run (default-cli) > test-compile @ cipalam-sistema >>>
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ cipalam-sistema ---
+[INFO] Copying 2 resources from src/main/resources to target/classes
+[INFO] Copying 0 resource from src/main/resources to target/classes
+[INFO] 
+[INFO] --- compiler:3.13.0:compile (default-compile) @ cipalam-sistema ---
+[INFO] Recompiling the module because of changed source code.
+[INFO] Compiling 75 source files with javac [debug parameters release 21] to target/classes
+[INFO] 
+[INFO] --- resources:3.3.1:testResources (default-testResources) @ cipalam-sistema ---
+[INFO] skip non existing resourceDirectory /Applications/XAMPP/xamppfiles/htdocs/GitHub/Projeto-Pratico/Sistema/spring-cipalam/cipalam-sistema/src/test/resources
+[INFO] 
+[INFO] --- compiler:3.13.0:testCompile (default-testCompile) @ cipalam-sistema ---
+[INFO] Recompiling the module because of changed dependency.
+[INFO] Compiling 1 source file with javac [debug parameters release 21] to target/test-classes
+[INFO] 
+[INFO] <<< spring-boot:3.4.7:run (default-cli) < test-compile @ cipalam-sistema <<<
+[INFO] 
+[INFO] 
+[INFO] --- spring-boot:3.4.7:run (default-cli) @ cipalam-sistema ---
+[INFO] Attaching agents: []
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v3.4.7)
+
+2025-08-22T23:59:53.234-03:00  INFO 50721 --- [  restartedMain] c.c.c.CipalamSistemaApplication          : Starting CipalamSistemaApplication using Java 21.0.6 with PID 50721 (/Applications/XAMPP/xamppfiles/htdocs/GitHub/Projeto-Pratico/Sistema/spring-cipalam/cipalam-sistema/target/classes started by arthuremanuel in /Applications/XAMPP/xamppfiles/htdocs/GitHub/Projeto-Pratico/Sistema/spring-cipalam/cipalam-sistema)
+2025-08-22T23:59:53.235-03:00  INFO 50721 --- [  restartedMain] c.c.c.CipalamSistemaApplication          : No active profile set, falling back to 1 default profile: "default"
+2025-08-22T23:59:53.250-03:00  INFO 50721 --- [  restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2025-08-22T23:59:53.250-03:00  INFO 50721 --- [  restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2025-08-22T23:59:53.532-03:00  INFO 50721 --- [  restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-08-22T23:59:53.564-03:00  INFO 50721 --- [  restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 28 ms. Found 12 JPA repository interfaces.
+2025-08-22T23:59:53.837-03:00  INFO 50721 --- [  restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2025-08-22T23:59:53.844-03:00  INFO 50721 --- [  restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-08-22T23:59:53.844-03:00  INFO 50721 --- [  restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.42]
+2025-08-22T23:59:53.858-03:00  INFO 50721 --- [  restartedMain] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-08-22T23:59:53.858-03:00  INFO 50721 --- [  restartedMain] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 608 ms
+2025-08-22T23:59:53.925-03:00  INFO 50721 --- [  restartedMain] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-08-22T23:59:53.952-03:00  INFO 50721 --- [  restartedMain] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.6.18.Final
+2025-08-22T23:59:53.966-03:00  INFO 50721 --- [  restartedMain] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-08-22T23:59:54.085-03:00  INFO 50721 --- [  restartedMain] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-08-22T23:59:54.098-03:00  INFO 50721 --- [  restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2025-08-22T23:59:54.179-03:00  INFO 50721 --- [  restartedMain] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@26c0ad4d
+2025-08-22T23:59:54.180-03:00  INFO 50721 --- [  restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2025-08-22T23:59:54.203-03:00  WARN 50721 --- [  restartedMain] org.hibernate.dialect.Dialect            : HHH000511: The 5.5.5 version for [org.hibernate.dialect.MySQLDialect] is no longer supported, hence certain features may not work properly. The minimum supported version is 8.0.0. Check the community dialects project for available legacy versions.
+2025-08-22T23:59:54.211-03:00  INFO 50721 --- [  restartedMain] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 5.5.5
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-08-22T23:59:54.665-03:00  INFO 50721 --- [  restartedMain] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-08-22T23:59:54.666-03:00  INFO 50721 --- [  restartedMain] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-08-22T23:59:54.887-03:00  INFO 50721 --- [  restartedMain] eAuthenticationProviderManagerConfigurer : Global AuthenticationManager configured with AuthenticationProvider bean with name authenticationProvider
+2025-08-22T23:59:54.888-03:00  WARN 50721 --- [  restartedMain] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with an AuthenticationProvider bean. UserDetailsService beans will not be used by Spring Security for automatically configuring username/password login. Consider removing the AuthenticationProvider bean. Alternatively, consider using the UserDetailsService in a manually instantiated DaoAuthenticationProvider. If the current configuration is intentional, to turn off this warning, increase the logging level of 'org.springframework.security.config.annotation.authentication.configuration.InitializeUserDetailsBeanManagerConfigurer' to ERROR
+2025-08-22T23:59:54.901-03:00  INFO 50721 --- [  restartedMain] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
+2025-08-22T23:59:55.484-03:00  WARN 50721 --- [  restartedMain] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-08-22T23:59:55.798-03:00  INFO 50721 --- [  restartedMain] o.s.b.d.a.OptionalLiveReloadServer       : LiveReload server is running on port 35729
+2025-08-22T23:59:55.816-03:00  INFO 50721 --- [  restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/'
+2025-08-22T23:59:55.820-03:00  INFO 50721 --- [  restartedMain] c.c.c.CipalamSistemaApplication          : Started CipalamSistemaApplication in 2.724 seconds (process running for 2.884)
+Hibernate: select l1_0.idtblogin,l1_0.tbPessoa_idPessoa,l1_0.senha,l1_0.usuario from tblogin l1_0 where l1_0.usuario=?
+Hibernate: select p1_0.idPessoa,p1_0.caminhoIdentidadePessoa,p1_0.caminhoImagem,p1_0.CpfPessoa,p1_0.dtNascPessoa,p1_0.email,p1_0.NmPessoa,p1_0.telefone from tbPessoa p1_0 where p1_0.idPessoa=?
+Hibernate: select l1_0.idtblogin,l1_0.tbPessoa_idPessoa,l1_0.senha,l1_0.usuario from tblogin l1_0 where l1_0.usuario=?
+Hibernate: select p1_0.idPessoa,p1_0.caminhoIdentidadePessoa,p1_0.caminhoImagem,p1_0.CpfPessoa,p1_0.dtNascPessoa,p1_0.email,p1_0.NmPessoa,p1_0.telefone from tbPessoa p1_0 where p1_0.idPessoa=?
+2025-08-23T00:00:09.378-03:00  INFO 50721 --- [nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-08-23T00:00:09.378-03:00  INFO 50721 --- [nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2025-08-23T00:00:09.382-03:00  INFO 50721 --- [nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 4 ms
+Hibernate: select im1_0.id,im1_0.bairro,im1_0.cep,im1_0.cidade,im1_0.codigoIbgeCidade,im1_0.codigoInepEscola,im1_0.complemento,im1_0.cpfAluno,im1_0.cpfResponsavel,im1_0.dataEnvio,im1_0.dataFinalizacao,im1_0.dataInicioMatricula,im1_0.dataNascimentoAluno,im1_0.dataNascimentoResponsavel,im1_0.emailResponsavel,im1_0.enderecoCompleto,im1_0.escolaAluno,im1_0.funcionarioResponsavel_idPessoa,im1_0.horariosSelecionados,im1_0.integrantesRenda,im1_0.logradouro,im1_0.mensagemAdicional,im1_0.municipioEscola,im1_0.nomeAluno,im1_0.nomeResponsavel,im1_0.numero,im1_0.numeroIntegrantes,im1_0.observacoes,im1_0.observacoesInternas,im1_0.observacoesResponsavel,im1_0.pontoReferencia,im1_0.protocolo,im1_0.rendaFamiliar,im1_0.rendaPerCapita,im1_0.responsavelLogin_idPessoa,im1_0.status,im1_0.telefoneResponsavel,im1_0.tipoCota,im1_0.uf,im1_0.ufEscola from tbInteresseMatricula im1_0
+Hibernate: select p1_0.idPessoa,p1_0.caminhoIdentidadePessoa,p1_0.caminhoImagem,p1_0.CpfPessoa,p1_0.dtNascPessoa,p1_0.email,p1_0.NmPessoa,p1_0.telefone from tbPessoa p1_0 where p1_0.idPessoa=?
+Hibernate: select p1_0.idPessoa,p1_0.caminhoIdentidadePessoa,p1_0.caminhoImagem,p1_0.CpfPessoa,p1_0.dtNascPessoa,p1_0.email,p1_0.NmPessoa,p1_0.telefone from tbPessoa p1_0 where p1_0.idPessoa=?
+Hibernate: select p1_0.idPessoa,p1_0.caminhoIdentidadePessoa,p1_0.caminhoImagem,p1_0.CpfPessoa,p1_0.dtNascPessoa,p1_0.email,p1_0.NmPessoa,p1_0.telefone from tbPessoa p1_0 where p1_0.idPessoa=?
+Hibernate: select p1_0.idPessoa,p1_0.caminhoIdentidadePessoa,p1_0.caminhoImagem,p1_0.CpfPessoa,p1_0.dtNascPessoa,p1_0.email,p1_0.NmPessoa,p1_0.telefone from tbPessoa p1_0 where p1_0.idPessoa=?
+Hibernate: select p1_0.idPessoa,p1_0.caminhoIdentidadePessoa,p1_0.caminhoImagem,p1_0.CpfPessoa,p1_0.dtNascPessoa,p1_0.email,p1_0.NmPessoa,p1_0.telefone from tbPessoa p1_0 where p1_0.idPessoa=?
+Hibernate: select t1_0.idtbTurma,t1_0.anoLetivo,t1_0.ativo,t1_0.capacidadeAtual,t1_0.capacidadeMaxima,t1_0.dataCriacao,t1_0.nomeTurma,t1_0.observacoes,t1_0.periodo from tbTurma t1_0 where t1_0.idtbTurma=?
+org.springframework.dao.DuplicateKeyException: PreparedStatementCallback; SQL [CALL sp_IniciarMatricula(?, ?, ?)]; Duplicate entry '111.222.333-44' for key 'unique_cpf'
+	at org.springframework.jdbc.support.SQLExceptionSubclassTranslator.doTranslate(SQLExceptionSubclassTranslator.java:95)
+	at org.springframework.jdbc.support.AbstractFallbackSQLExceptionTranslator.translate(AbstractFallbackSQLExceptionTranslator.java:107)
+	at org.springframework.jdbc.core.JdbcTemplate.translateException(JdbcTemplate.java:1556)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:677)
+	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:723)
+	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:754)
+	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:767)
+	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:820)
+	at org.springframework.jdbc.core.JdbcTemplate.queryForList(JdbcTemplate.java:954)
+	at com.cipalam.cipalam_sistema.service.MatriculaService.iniciarMatricula(MatriculaService.java:57)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:359)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.invokeJoinpoint(ReflectiveMethodInvocation.java:196)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:163)
+	at org.springframework.transaction.interceptor.TransactionAspectSupport.invokeWithinTransaction(TransactionAspectSupport.java:380)
+	at org.springframework.transaction.interceptor.TransactionInterceptor.invoke(TransactionInterceptor.java:119)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184)
+	at org.springframework.aop.framework.CglibAopProxy$DynamicAdvisedInterceptor.intercept(CglibAopProxy.java:728)
+	at com.cipalam.cipalam_sistema.service.MatriculaService$$SpringCGLIB$$0.iniciarMatricula(<generated>)
+	at com.cipalam.cipalam_sistema.controller.MatriculaController.iniciarMatriculaProcedural(MatriculaController.java:477)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at org.springframework.web.method.support.InvocableHandlerMethod.doInvoke(InvocableHandlerMethod.java:258)
+	at org.springframework.web.method.support.InvocableHandlerMethod.invokeForRequest(InvocableHandlerMethod.java:191)
+	at org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod.invokeAndHandle(ServletInvocableHandlerMethod.java:118)
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.invokeHandlerMethod(RequestMappingHandlerAdapter.java:986)
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.handleInternal(RequestMappingHandlerAdapter.java:891)
+	at org.springframework.web.servlet.mvc.method.AbstractHandlerMethodAdapter.handle(AbstractHandlerMethodAdapter.java:87)
+	at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:1089)
+	at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:979)
+	at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1014)
+	at org.springframework.web.servlet.FrameworkServlet.doPost(FrameworkServlet.java:914)
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:590)
+	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:885)
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:658)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:195)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140)
+	at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:51)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:110)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140)
+	at org.springframework.web.filter.CompositeFilter$VirtualFilterChain.doFilter(CompositeFilter.java:108)
+	at org.springframework.security.web.FilterChainProxy.lambda$doFilterInternal$3(FilterChainProxy.java:231)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:365)
+	at org.springframework.security.web.access.intercept.AuthorizationFilter.doFilter(AuthorizationFilter.java:101)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.access.ExceptionTranslationFilter.doFilter(ExceptionTranslationFilter.java:126)
+	at org.springframework.security.web.access.ExceptionTranslationFilter.doFilter(ExceptionTranslationFilter.java:120)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.session.SessionManagementFilter.doFilter(SessionManagementFilter.java:131)
+	at org.springframework.security.web.session.SessionManagementFilter.doFilter(SessionManagementFilter.java:85)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.authentication.AnonymousAuthenticationFilter.doFilter(AnonymousAuthenticationFilter.java:100)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter.doFilter(SecurityContextHolderAwareRequestFilter.java:179)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.savedrequest.RequestCacheAwareFilter.doFilter(RequestCacheAwareFilter.java:63)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at com.cipalam.cipalam_sistema.security.JwtAuthenticationFilter.doFilterInternal(JwtAuthenticationFilter.java:51)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.authentication.logout.LogoutFilter.doFilter(LogoutFilter.java:107)
+	at org.springframework.security.web.authentication.logout.LogoutFilter.doFilter(LogoutFilter.java:93)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.web.filter.CorsFilter.doFilterInternal(CorsFilter.java:91)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.header.HeaderWriterFilter.doHeadersAfter(HeaderWriterFilter.java:90)
+	at org.springframework.security.web.header.HeaderWriterFilter.doFilterInternal(HeaderWriterFilter.java:75)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.context.SecurityContextHolderFilter.doFilter(SecurityContextHolderFilter.java:82)
+	at org.springframework.security.web.context.SecurityContextHolderFilter.doFilter(SecurityContextHolderFilter.java:69)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter.doFilterInternal(WebAsyncManagerIntegrationFilter.java:62)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.session.DisableEncodeUrlFilter.doFilterInternal(DisableEncodeUrlFilter.java:42)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.FilterChainProxy.doFilterInternal(FilterChainProxy.java:233)
+	at org.springframework.security.web.FilterChainProxy.doFilter(FilterChainProxy.java:191)
+	at org.springframework.web.filter.CompositeFilter$VirtualFilterChain.doFilter(CompositeFilter.java:113)
+	at org.springframework.web.servlet.handler.HandlerMappingIntrospector.lambda$createCacheFilter$4(HandlerMappingIntrospector.java:267)
+	at org.springframework.web.filter.CompositeFilter$VirtualFilterChain.doFilter(CompositeFilter.java:113)
+	at org.springframework.web.filter.CompositeFilter.doFilter(CompositeFilter.java:74)
+	at org.springframework.security.config.annotation.web.configuration.WebMvcSecurityConfiguration$CompositeFilterChainProxy.doFilter(WebMvcSecurityConfiguration.java:238)
+	at org.springframework.web.filter.DelegatingFilterProxy.invokeDelegate(DelegatingFilterProxy.java:362)
+	at org.springframework.web.filter.DelegatingFilterProxy.doFilter(DelegatingFilterProxy.java:278)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140)
+	at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:100)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140)
+	at org.springframework.web.filter.FormContentFilter.doFilterInternal(FormContentFilter.java:93)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140)
+	at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:201)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140)
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:167)
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:90)
+	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:483)
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:116)
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:93)
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:74)
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:344)
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:398)
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63)
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:903)
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1769)
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1189)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:658)
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:63)
+	at java.base/java.lang.Thread.run(Thread.java:1583)
+Caused by: java.sql.SQLIntegrityConstraintViolationException: Duplicate entry '111.222.333-44' for key 'unique_cpf'
+	at com.mysql.cj.jdbc.exceptions.SQLError.createSQLException(SQLError.java:109)
+	at com.mysql.cj.jdbc.exceptions.SQLExceptionsMapping.translateException(SQLExceptionsMapping.java:114)
+	at com.mysql.cj.jdbc.ClientPreparedStatement.executeInternal(ClientPreparedStatement.java:988)
+	at com.mysql.cj.jdbc.ClientPreparedStatement.executeQuery(ClientPreparedStatement.java:1056)
+	at com.zaxxer.hikari.pool.ProxyPreparedStatement.executeQuery(ProxyPreparedStatement.java:52)
+	at com.zaxxer.hikari.pool.HikariProxyPreparedStatement.executeQuery(HikariProxyPreparedStatement.java)
+	at org.springframework.jdbc.core.JdbcTemplate$1.doInPreparedStatement(JdbcTemplate.java:732)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:658)
+	... 118 more
+Hibernate: insert into tbInteresseMatricula (bairro,cep,cidade,codigoIbgeCidade,codigoInepEscola,complemento,cpfAluno,cpfResponsavel,dataEnvio,dataFinalizacao,dataInicioMatricula,dataNascimentoAluno,dataNascimentoResponsavel,emailResponsavel,enderecoCompleto,escolaAluno,funcionarioResponsavel_idPessoa,horariosSelecionados,integrantesRenda,logradouro,mensagemAdicional,municipioEscola,nomeAluno,nomeResponsavel,numero,numeroIntegrantes,observacoes,observacoesInternas,observacoesResponsavel,pontoReferencia,protocolo,rendaFamiliar,rendaPerCapita,responsavelLogin_idPessoa,status,telefoneResponsavel,tipoCota,uf,ufEscola) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+Hibernate: select t1_0.idtbTurma,t1_0.anoLetivo,t1_0.ativo,t1_0.capacidadeAtual,t1_0.capacidadeMaxima,t1_0.dataCriacao,t1_0.nomeTurma,t1_0.observacoes,t1_0.periodo from tbTurma t1_0 where t1_0.idtbTurma=?
+Hibernate: select l1_0.idtblogin,l1_0.tbPessoa_idPessoa,l1_0.senha,l1_0.usuario from tblogin l1_0 where l1_0.usuario=?
+Hibernate: select p1_0.idPessoa,p1_0.caminhoIdentidadePessoa,p1_0.caminhoImagem,p1_0.CpfPessoa,p1_0.dtNascPessoa,p1_0.email,p1_0.NmPessoa,p1_0.telefone from tbPessoa p1_0 where p1_0.idPessoa=?
+Hibernate: update tblogin set tbPessoa_idPessoa=?,senha=?,usuario=? where idtblogin=?
+Hibernate: select p1_0.idPessoa,p1_0.caminhoIdentidadePessoa,p1_0.caminhoImagem,p1_0.CpfPessoa,p1_0.dtNascPessoa,p1_0.email,p1_0.NmPessoa,p1_0.telefone from tbPessoa p1_0 where p1_0.CpfPessoa=?
+Hibernate: select l1_0.idtblogin,l1_0.tbPessoa_idPessoa,l1_0.senha,l1_0.usuario from tblogin l1_0 where l1_0.tbPessoa_idPessoa=?
+Hibernate: select im1_0.id,im1_0.bairro,im1_0.cep,im1_0.cidade,im1_0.codigoIbgeCidade,im1_0.codigoInepEscola,im1_0.complemento,im1_0.cpfAluno,im1_0.cpfResponsavel,im1_0.dataEnvio,im1_0.dataFinalizacao,im1_0.dataInicioMatricula,im1_0.dataNascimentoAluno,im1_0.dataNascimentoResponsavel,im1_0.emailResponsavel,im1_0.enderecoCompleto,im1_0.escolaAluno,im1_0.funcionarioResponsavel_idPessoa,im1_0.horariosSelecionados,im1_0.integrantesRenda,im1_0.logradouro,im1_0.mensagemAdicional,im1_0.municipioEscola,im1_0.nomeAluno,im1_0.nomeResponsavel,im1_0.numero,im1_0.numeroIntegrantes,im1_0.observacoes,im1_0.observacoesInternas,im1_0.observacoesResponsavel,im1_0.pontoReferencia,im1_0.protocolo,im1_0.rendaFamiliar,im1_0.rendaPerCapita,im1_0.responsavelLogin_idPessoa,im1_0.status,im1_0.telefoneResponsavel,im1_0.tipoCota,im1_0.uf,im1_0.ufEscola from tbInteresseMatricula im1_0 where im1_0.cpfResponsavel=?
+Hibernate: select p1_0.idPessoa,p1_0.caminhoIdentidadePessoa,p1_0.caminhoImagem,p1_0.CpfPessoa,p1_0.dtNascPessoa,p1_0.email,p1_0.NmPessoa,p1_0.telefone from tbPessoa p1_0 where p1_0.idPessoa=?
+Hibernate: select im1_0.id,im1_0.bairro,im1_0.cep,im1_0.cidade,im1_0.codigoIbgeCidade,im1_0.codigoInepEscola,im1_0.complemento,im1_0.cpfAluno,im1_0.cpfResponsavel,im1_0.dataEnvio,im1_0.dataFinalizacao,im1_0.dataInicioMatricula,im1_0.dataNascimentoAluno,im1_0.dataNascimentoResponsavel,im1_0.emailResponsavel,im1_0.enderecoCompleto,im1_0.escolaAluno,im1_0.funcionarioResponsavel_idPessoa,im1_0.horariosSelecionados,im1_0.integrantesRenda,im1_0.logradouro,im1_0.mensagemAdicional,im1_0.municipioEscola,im1_0.nomeAluno,im1_0.nomeResponsavel,im1_0.numero,im1_0.numeroIntegrantes,im1_0.observacoes,im1_0.observacoesInternas,im1_0.observacoesResponsavel,im1_0.pontoReferencia,im1_0.protocolo,im1_0.rendaFamiliar,im1_0.rendaPerCapita,im1_0.responsavelLogin_idPessoa,im1_0.status,im1_0.telefoneResponsavel,im1_0.tipoCota,im1_0.uf,im1_0.ufEscola from tbInteresseMatricula im1_0 where im1_0.protocolo=?
+Hibernate: select p1_0.idPessoa,p1_0.caminhoIdentidadePessoa,p1_0.caminhoImagem,p1_0.CpfPessoa,p1_0.dtNascPessoa,p1_0.email,p1_0.NmPessoa,p1_0.telefone from tbPessoa p1_0 where p1_0.CpfPessoa=?
+Hibernate: select l1_0.idtblogin,l1_0.tbPessoa_idPessoa,l1_0.senha,l1_0.usuario from tblogin l1_0 where l1_0.usuario=?
+Hibernate: select p1_0.idPessoa,p1_0.caminhoIdentidadePessoa,p1_0.caminhoImagem,p1_0.CpfPessoa,p1_0.dtNascPessoa,p1_0.email,p1_0.NmPessoa,p1_0.telefone from tbPessoa p1_0 where p1_0.idPessoa=?
+Hibernate: select r1_0.tbPessoa_idPessoa,r1_0.tbFamilia_idtbFamilia from tbResponsavel r1_0 where r1_0.tbPessoa_idPessoa=?
+Hibernate: select p1_0.idPermissao,p1_0.dataAtualizacao,p1_0.dataCriacao,p1_0.tbFuncionalidade_idFuncionalidade,p1_0.tbPessoa_idPessoa,p1_0.temPermissao from tbPermissao p1_0 where p1_0.tbPessoa_idPessoa=? and p1_0.temPermissao=1
+Hibernate: select r1_0.tbPessoa_idPessoa,r1_0.tbFamilia_idtbFamilia from tbResponsavel r1_0 where r1_0.tbPessoa_idPessoa=?
+2025-08-23T00:12:25.223-03:00  INFO 50721 --- [   File Watcher] rtingClassPathChangeChangedEventListener : Restarting due to 69 class path changes (0 additions, 69 deletions, 0 modifications)
+2025-08-23T00:12:25.301-03:00  INFO 50721 --- [       Thread-5] o.s.b.w.e.tomcat.GracefulShutdown        : Commencing graceful shutdown. Waiting for active requests to complete
+2025-08-23T00:12:25.312-03:00  INFO 50721 --- [tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown        : Graceful shutdown complete
+2025-08-23T00:12:25.355-03:00  INFO 50721 --- [       Thread-5] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-08-23T00:12:25.395-03:00  INFO 50721 --- [       Thread-5] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2025-08-23T00:12:25.426-03:00  INFO 50721 --- [       Thread-5] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v3.4.7)
+
+2025-08-23T00:12:25.865-03:00  INFO 50721 --- [  restartedMain] c.c.c.CipalamSistemaApplication          : Starting CipalamSistemaApplication using Java 21.0.6 with PID 50721 (/Applications/XAMPP/xamppfiles/htdocs/GitHub/Projeto-Pratico/Sistema/spring-cipalam/cipalam-sistema/target/classes started by arthuremanuel in /Applications/XAMPP/xamppfiles/htdocs/GitHub/Projeto-Pratico/Sistema/spring-cipalam/cipalam-sistema)
+2025-08-23T00:12:25.865-03:00  INFO 50721 --- [  restartedMain] c.c.c.CipalamSistemaApplication          : No active profile set, falling back to 1 default profile: "default"
+2025-08-23T00:12:26.311-03:00  INFO 50721 --- [  restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-08-23T00:12:26.324-03:00  INFO 50721 --- [  restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 11 ms. Found 0 JPA repository interfaces.
+2025-08-23T00:12:26.528-03:00  INFO 50721 --- [  restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2025-08-23T00:12:26.530-03:00  INFO 50721 --- [  restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-08-23T00:12:26.530-03:00  INFO 50721 --- [  restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.42]
+2025-08-23T00:12:26.537-03:00  INFO 50721 --- [  restartedMain] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-08-23T00:12:26.537-03:00  INFO 50721 --- [  restartedMain] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 669 ms
+2025-08-23T00:12:26.588-03:00  INFO 50721 --- [  restartedMain] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-08-23T00:12:26.589-03:00  INFO 50721 --- [  restartedMain] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-08-23T00:12:26.630-03:00  INFO 50721 --- [  restartedMain] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-08-23T00:12:26.632-03:00  INFO 50721 --- [  restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-2 - Starting...
+2025-08-23T00:12:26.676-03:00  INFO 50721 --- [  restartedMain] com.zaxxer.hikari.pool.HikariPool        : HikariPool-2 - Added connection com.mysql.cj.jdbc.ConnectionImpl@37d0f1e5
+2025-08-23T00:12:26.676-03:00  INFO 50721 --- [  restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-2 - Start completed.
+2025-08-23T00:12:26.678-03:00  WARN 50721 --- [  restartedMain] org.hibernate.dialect.Dialect            : HHH000511: The 5.5.5 version for [org.hibernate.dialect.MySQLDialect] is no longer supported, hence certain features may not work properly. The minimum supported version is 8.0.0. Check the community dialects project for available legacy versions.
+2025-08-23T00:12:26.678-03:00  INFO 50721 --- [  restartedMain] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-2)']
+	Database driver: undefined/unknown
+	Database version: 5.5.5
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-08-23T00:12:27.164-03:00  INFO 50721 --- [  restartedMain] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-08-23T00:12:27.164-03:00  INFO 50721 --- [  restartedMain] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-08-23T00:12:27.191-03:00  WARN 50721 --- [  restartedMain] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-08-23T00:12:27.291-03:00  WARN 50721 --- [  restartedMain] .s.s.UserDetailsServiceAutoConfiguration : 
+
+Using generated security password: 7a87bf7e-14a6-413d-9b0d-36d13c899f96
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+2025-08-23T00:12:27.292-03:00  INFO 50721 --- [  restartedMain] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
+2025-08-23T00:12:27.339-03:00  INFO 50721 --- [  restartedMain] o.s.b.d.a.OptionalLiveReloadServer       : LiveReload server is running on port 35729
+2025-08-23T00:12:27.348-03:00  INFO 50721 --- [  restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/'
+2025-08-23T00:12:27.357-03:00  INFO 50721 --- [  restartedMain] c.c.c.CipalamSistemaApplication          : Started CipalamSistemaApplication in 1.508 seconds (process running for 754.531)
+2025-08-23T00:12:27.363-03:00  INFO 50721 --- [  restartedMain] .ConditionEvaluationDeltaLoggingListener : Condition evaluation delta:
+
+
+==========================
+CONDITION EVALUATION DELTA
+==========================
+
+
+Positive matches:
+-----------------
+
+   SpringBootWebSecurityConfiguration.SecurityFilterChainConfiguration matched:
+      - AllNestedConditions 2 matched 0 did not; NestedCondition on DefaultWebSecurityCondition.Beans @ConditionalOnMissingBean (types: org.springframework.security.web.SecurityFilterChain; SearchStrategy: all) did not find any beans; NestedCondition on DefaultWebSecurityCondition.Classes @ConditionalOnClass found required classes 'org.springframework.security.web.SecurityFilterChain', 'org.springframework.security.config.annotation.web.builders.HttpSecurity' (DefaultWebSecurityCondition)
+
+   SpringBootWebSecurityConfiguration.WebSecurityEnablerConfiguration matched:
+      - @ConditionalOnClass found required class 'org.springframework.security.config.annotation.web.configuration.EnableWebSecurity' (OnClassCondition)
+      - @ConditionalOnMissingBean (names: springSecurityFilterChain; SearchStrategy: all) did not find any beans (OnBeanCondition)
+
+   UserDetailsServiceAutoConfiguration matched:
+      - @ConditionalOnClass found required class 'org.springframework.security.authentication.AuthenticationManager' (OnClassCondition)
+      - found 'session' scope (OnWebApplicationCondition)
+      - AnyNestedCondition 1 matched 2 did not; NestedCondition on UserDetailsServiceAutoConfiguration.MissingAlternativeOrUserPropertiesConfigured.PasswordConfigured @ConditionalOnProperty (spring.security.user.password) did not find property 'password'; NestedCondition on UserDetailsServiceAutoConfiguration.MissingAlternativeOrUserPropertiesConfigured.NameConfigured @ConditionalOnProperty (spring.security.user.name) did not find property 'name'; NestedCondition on UserDetailsServiceAutoConfiguration.MissingAlternativeOrUserPropertiesConfigured.MissingAlternative @ConditionalOnMissingClass did not find unwanted classes 'org.springframework.security.oauth2.client.registration.ClientRegistrationRepository', 'org.springframework.security.oauth2.server.resource.introspection.OpaqueTokenIntrospector', 'org.springframework.security.saml2.provider.service.registration.RelyingPartyRegistrationRepository' (UserDetailsServiceAutoConfiguration.MissingAlternativeOrUserPropertiesConfigured)
+      - @ConditionalOnBean (types: org.springframework.security.config.ObjectPostProcessor; SearchStrategy: all) found beans 'objectPostProcessor', 'webAuthorizationManagerPostProcessor', 'filterChainDecoratorPostProcessor', 'authenticationManagerPostProcessor'; @ConditionalOnMissingBean (types: org.springframework.security.authentication.AuthenticationManager,org.springframework.security.authentication.AuthenticationProvider,org.springframework.security.core.userdetails.UserDetailsService,org.springframework.security.authentication.AuthenticationManagerResolver,org.springframework.security.oauth2.jwt.JwtDecoder; SearchStrategy: all) did not find any beans (OnBeanCondition)
+
+
+Negative matches:
+-----------------
+
+    None
+
+
+Exclusions:
+-----------
+
+    None
+
+
+Unconditional classes:
+----------------------
+
+    None
+
+
+
+2025-08-23T00:12:28.755-03:00  INFO 50721 --- [   File Watcher] rtingClassPathChangeChangedEventListener : Restarting due to 69 class path changes (69 additions, 0 deletions, 0 modifications)
+2025-08-23T00:12:28.756-03:00  INFO 50721 --- [       Thread-7] o.s.b.w.e.tomcat.GracefulShutdown        : Commencing graceful shutdown. Waiting for active requests to complete
+2025-08-23T00:12:28.757-03:00  INFO 50721 --- [tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown        : Graceful shutdown complete
+2025-08-23T00:12:28.758-03:00  INFO 50721 --- [       Thread-7] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-08-23T00:12:28.759-03:00  INFO 50721 --- [       Thread-7] com.zaxxer.hikari.HikariDataSource       : HikariPool-2 - Shutdown initiated...
+2025-08-23T00:12:28.761-03:00  INFO 50721 --- [       Thread-7] com.zaxxer.hikari.HikariDataSource       : HikariPool-2 - Shutdown completed.
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v3.4.7)
+
+2025-08-23T00:12:28.830-03:00  INFO 50721 --- [  restartedMain] c.c.c.CipalamSistemaApplication          : Starting CipalamSistemaApplication using Java 21.0.6 with PID 50721 (/Applications/XAMPP/xamppfiles/htdocs/GitHub/Projeto-Pratico/Sistema/spring-cipalam/cipalam-sistema/target/classes started by arthuremanuel in /Applications/XAMPP/xamppfiles/htdocs/GitHub/Projeto-Pratico/Sistema/spring-cipalam/cipalam-sistema)
+2025-08-23T00:12:28.830-03:00  INFO 50721 --- [  restartedMain] c.c.c.CipalamSistemaApplication          : No active profile set, falling back to 1 default profile: "default"
+2025-08-23T00:12:28.909-03:00  INFO 50721 --- [  restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-08-23T00:12:28.924-03:00  INFO 50721 --- [  restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 14 ms. Found 12 JPA repository interfaces.
+2025-08-23T00:12:29.014-03:00  INFO 50721 --- [  restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2025-08-23T00:12:29.015-03:00  INFO 50721 --- [  restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-08-23T00:12:29.015-03:00  INFO 50721 --- [  restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.42]
+2025-08-23T00:12:29.020-03:00  INFO 50721 --- [  restartedMain] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-08-23T00:12:29.020-03:00  INFO 50721 --- [  restartedMain] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 189 ms
+2025-08-23T00:12:29.056-03:00  INFO 50721 --- [  restartedMain] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-08-23T00:12:29.057-03:00  INFO 50721 --- [  restartedMain] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-08-23T00:12:29.061-03:00  INFO 50721 --- [  restartedMain] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-08-23T00:12:29.062-03:00  INFO 50721 --- [  restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-3 - Starting...
+2025-08-23T00:12:29.065-03:00  INFO 50721 --- [  restartedMain] com.zaxxer.hikari.pool.HikariPool        : HikariPool-3 - Added connection com.mysql.cj.jdbc.ConnectionImpl@1279f5a0
+2025-08-23T00:12:29.065-03:00  INFO 50721 --- [  restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-3 - Start completed.
+2025-08-23T00:12:29.065-03:00  WARN 50721 --- [  restartedMain] org.hibernate.dialect.Dialect            : HHH000511: The 5.5.5 version for [org.hibernate.dialect.MySQLDialect] is no longer supported, hence certain features may not work properly. The minimum supported version is 8.0.0. Check the community dialects project for available legacy versions.
+2025-08-23T00:12:29.066-03:00  INFO 50721 --- [  restartedMain] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-3)']
+	Database driver: undefined/unknown
+	Database version: 5.5.5
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-08-23T00:12:29.194-03:00  INFO 50721 --- [  restartedMain] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-08-23T00:12:29.194-03:00  INFO 50721 --- [  restartedMain] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-08-23T00:12:29.301-03:00  INFO 50721 --- [  restartedMain] eAuthenticationProviderManagerConfigurer : Global AuthenticationManager configured with AuthenticationProvider bean with name authenticationProvider
+2025-08-23T00:12:29.302-03:00  WARN 50721 --- [  restartedMain] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with an AuthenticationProvider bean. UserDetailsService beans will not be used by Spring Security for automatically configuring username/password login. Consider removing the AuthenticationProvider bean. Alternatively, consider using the UserDetailsService in a manually instantiated DaoAuthenticationProvider. If the current configuration is intentional, to turn off this warning, increase the logging level of 'org.springframework.security.config.annotation.authentication.configuration.InitializeUserDetailsBeanManagerConfigurer' to ERROR
+2025-08-23T00:12:29.479-03:00  WARN 50721 --- [  restartedMain] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-08-23T00:12:29.723-03:00  INFO 50721 --- [  restartedMain] o.s.b.d.a.OptionalLiveReloadServer       : LiveReload server is running on port 35729
+2025-08-23T00:12:29.734-03:00  INFO 50721 --- [  restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/'
+2025-08-23T00:12:29.736-03:00  INFO 50721 --- [  restartedMain] c.c.c.CipalamSistemaApplication          : Started CipalamSistemaApplication in 0.919 seconds (process running for 756.911)
+Hibernate: select l1_0.idtblogin,l1_0.tbPessoa_idPessoa,l1_0.senha,l1_0.usuario from tblogin l1_0 where l1_0.usuario=?
+Hibernate: select p1_0.idPessoa,p1_0.caminhoIdentidadePessoa,p1_0.caminhoImagem,p1_0.CpfPessoa,p1_0.dtNascPessoa,p1_0.email,p1_0.NmPessoa,p1_0.telefone from tbPessoa p1_0 where p1_0.idPessoa=?
+Hibernate: select l1_0.idtblogin,l1_0.tbPessoa_idPessoa,l1_0.senha,l1_0.usuario from tblogin l1_0 where l1_0.usuario=?
+Hibernate: select p1_0.idPessoa,p1_0.caminhoIdentidadePessoa,p1_0.caminhoImagem,p1_0.CpfPessoa,p1_0.dtNascPessoa,p1_0.email,p1_0.NmPessoa,p1_0.telefone from tbPessoa p1_0 where p1_0.idPessoa=?
+2025-08-23T00:12:29.804-03:00  INFO 50721 --- [  restartedMain] .ConditionEvaluationDeltaLoggingListener : Condition evaluation delta:
+
+
+==========================
+CONDITION EVALUATION DELTA
+==========================
+
+
+Positive matches:
+-----------------
+
+    None
+
+
+Negative matches:
+-----------------
+
+   SpringBootWebSecurityConfiguration.SecurityFilterChainConfiguration:
+      Did not match:
+         - AllNestedConditions 1 matched 1 did not; NestedCondition on DefaultWebSecurityCondition.Beans @ConditionalOnMissingBean (types: org.springframework.security.web.SecurityFilterChain; SearchStrategy: all) found beans of type 'org.springframework.security.web.SecurityFilterChain' filterChain; NestedCondition on DefaultWebSecurityCondition.Classes @ConditionalOnClass found required classes 'org.springframework.security.web.SecurityFilterChain', 'org.springframework.security.config.annotation.web.builders.HttpSecurity' (DefaultWebSecurityCondition)
+
+   SpringBootWebSecurityConfiguration.WebSecurityEnablerConfiguration:
+      Did not match:
+         - @ConditionalOnMissingBean (names: springSecurityFilterChain; SearchStrategy: all) found beans named springSecurityFilterChain (OnBeanCondition)
+      Matched:
+         - @ConditionalOnClass found required class 'org.springframework.security.config.annotation.web.configuration.EnableWebSecurity' (OnClassCondition)
+
+   UserDetailsServiceAutoConfiguration:
+      Did not match:
+         - @ConditionalOnMissingBean (types: org.springframework.security.authentication.AuthenticationManager,org.springframework.security.authentication.AuthenticationProvider,org.springframework.security.core.userdetails.UserDetailsService,org.springframework.security.authentication.AuthenticationManagerResolver,org.springframework.security.oauth2.jwt.JwtDecoder; SearchStrategy: all) found beans of type 'org.springframework.security.authentication.AuthenticationManager' authenticationManager and found beans of type 'org.springframework.security.core.userdetails.UserDetailsService' customUserDetailsService and found beans of type 'org.springframework.security.authentication.AuthenticationProvider' authenticationProvider (OnBeanCondition)
+      Matched:
+         - @ConditionalOnClass found required class 'org.springframework.security.authentication.AuthenticationManager' (OnClassCondition)
+         - found 'session' scope (OnWebApplicationCondition)
+         - AnyNestedCondition 1 matched 2 did not; NestedCondition on UserDetailsServiceAutoConfiguration.MissingAlternativeOrUserPropertiesConfigured.PasswordConfigured @ConditionalOnProperty (spring.security.user.password) did not find property 'password'; NestedCondition on UserDetailsServiceAutoConfiguration.MissingAlternativeOrUserPropertiesConfigured.NameConfigured @ConditionalOnProperty (spring.security.user.name) did not find property 'name'; NestedCondition on UserDetailsServiceAutoConfiguration.MissingAlternativeOrUserPropertiesConfigured.MissingAlternative @ConditionalOnMissingClass did not find unwanted classes 'org.springframework.security.oauth2.client.registration.ClientRegistrationRepository', 'org.springframework.security.oauth2.server.resource.introspection.OpaqueTokenIntrospector', 'org.springframework.security.saml2.provider.service.registration.RelyingPartyRegistrationRepository' (UserDetailsServiceAutoConfiguration.MissingAlternativeOrUserPropertiesConfigured)
+
+
+Exclusions:
+-----------
+
+    None
+
+
+Unconditional classes:
+----------------------
+
+    None
+
+
+
+2025-08-23T00:12:46.627-03:00  INFO 50721 --- [nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-08-23T00:12:46.628-03:00  INFO 50721 --- [nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2025-08-23T00:12:46.635-03:00  INFO 50721 --- [nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 5 ms
+Hibernate: select p1_0.idPessoa,p1_0.caminhoIdentidadePessoa,p1_0.caminhoImagem,p1_0.CpfPessoa,p1_0.dtNascPessoa,p1_0.email,p1_0.NmPessoa,p1_0.telefone from tbPessoa p1_0 where p1_0.CpfPessoa=?
+Hibernate: select l1_0.idtblogin,l1_0.tbPessoa_idPessoa,l1_0.senha,l1_0.usuario from tblogin l1_0 where l1_0.tbPessoa_idPessoa=?
+Hibernate: select im1_0.id,im1_0.bairro,im1_0.cep,im1_0.cidade,im1_0.codigoIbgeCidade,im1_0.codigoInepEscola,im1_0.complemento,im1_0.cpfAluno,im1_0.cpfResponsavel,im1_0.dataEnvio,im1_0.dataFinalizacao,im1_0.dataInicioMatricula,im1_0.dataNascimentoAluno,im1_0.dataNascimentoResponsavel,im1_0.emailResponsavel,im1_0.enderecoCompleto,im1_0.escolaAluno,im1_0.funcionarioResponsavel_idPessoa,im1_0.horariosSelecionados,im1_0.integrantesRenda,im1_0.logradouro,im1_0.mensagemAdicional,im1_0.municipioEscola,im1_0.nomeAluno,im1_0.nomeResponsavel,im1_0.numero,im1_0.numeroIntegrantes,im1_0.observacoes,im1_0.observacoesInternas,im1_0.observacoesResponsavel,im1_0.pontoReferencia,im1_0.protocolo,im1_0.rendaFamiliar,im1_0.rendaPerCapita,im1_0.responsavelLogin_idPessoa,im1_0.status,im1_0.telefoneResponsavel,im1_0.tipoCota,im1_0.uf,im1_0.ufEscola from tbInteresseMatricula im1_0 where im1_0.cpfResponsavel=?
+Hibernate: select p1_0.idPessoa,p1_0.caminhoIdentidadePessoa,p1_0.caminhoImagem,p1_0.CpfPessoa,p1_0.dtNascPessoa,p1_0.email,p1_0.NmPessoa,p1_0.telefone from tbPessoa p1_0 where p1_0.idPessoa=?
+Hibernate: select im1_0.id,im1_0.bairro,im1_0.cep,im1_0.cidade,im1_0.codigoIbgeCidade,im1_0.codigoInepEscola,im1_0.complemento,im1_0.cpfAluno,im1_0.cpfResponsavel,im1_0.dataEnvio,im1_0.dataFinalizacao,im1_0.dataInicioMatricula,im1_0.dataNascimentoAluno,im1_0.dataNascimentoResponsavel,im1_0.emailResponsavel,im1_0.enderecoCompleto,im1_0.escolaAluno,im1_0.funcionarioResponsavel_idPessoa,im1_0.horariosSelecionados,im1_0.integrantesRenda,im1_0.logradouro,im1_0.mensagemAdicional,im1_0.municipioEscola,im1_0.nomeAluno,im1_0.nomeResponsavel,im1_0.numero,im1_0.numeroIntegrantes,im1_0.observacoes,im1_0.observacoesInternas,im1_0.observacoesResponsavel,im1_0.pontoReferencia,im1_0.protocolo,im1_0.rendaFamiliar,im1_0.rendaPerCapita,im1_0.responsavelLogin_idPessoa,im1_0.status,im1_0.telefoneResponsavel,im1_0.tipoCota,im1_0.uf,im1_0.ufEscola from tbInteresseMatricula im1_0 where im1_0.protocolo=?
+Hibernate: select im1_0.id,im1_0.bairro,im1_0.cep,im1_0.cidade,im1_0.codigoIbgeCidade,im1_0.codigoInepEscola,im1_0.complemento,im1_0.cpfAluno,im1_0.cpfResponsavel,im1_0.dataEnvio,im1_0.dataFinalizacao,im1_0.dataInicioMatricula,im1_0.dataNascimentoAluno,im1_0.dataNascimentoResponsavel,im1_0.emailResponsavel,im1_0.enderecoCompleto,im1_0.escolaAluno,im1_0.funcionarioResponsavel_idPessoa,im1_0.horariosSelecionados,im1_0.integrantesRenda,im1_0.logradouro,im1_0.mensagemAdicional,im1_0.municipioEscola,im1_0.nomeAluno,im1_0.nomeResponsavel,im1_0.numero,im1_0.numeroIntegrantes,im1_0.observacoes,im1_0.observacoesInternas,im1_0.observacoesResponsavel,im1_0.pontoReferencia,im1_0.protocolo,im1_0.rendaFamiliar,im1_0.rendaPerCapita,im1_0.responsavelLogin_idPessoa,im1_0.status,im1_0.telefoneResponsavel,im1_0.tipoCota,im1_0.uf,im1_0.ufEscola from tbInteresseMatricula im1_0 where im1_0.protocolo=?
+Hibernate: select im1_0.id,im1_0.bairro,im1_0.cep,im1_0.cidade,im1_0.codigoIbgeCidade,im1_0.codigoInepEscola,im1_0.complemento,im1_0.cpfAluno,im1_0.cpfResponsavel,im1_0.dataEnvio,im1_0.dataFinalizacao,im1_0.dataInicioMatricula,im1_0.dataNascimentoAluno,im1_0.dataNascimentoResponsavel,im1_0.emailResponsavel,im1_0.enderecoCompleto,im1_0.escolaAluno,im1_0.funcionarioResponsavel_idPessoa,im1_0.horariosSelecionados,im1_0.integrantesRenda,im1_0.logradouro,im1_0.mensagemAdicional,im1_0.municipioEscola,im1_0.nomeAluno,im1_0.nomeResponsavel,im1_0.numero,im1_0.numeroIntegrantes,im1_0.observacoes,im1_0.observacoesInternas,im1_0.observacoesResponsavel,im1_0.pontoReferencia,im1_0.protocolo,im1_0.rendaFamiliar,im1_0.rendaPerCapita,im1_0.responsavelLogin_idPessoa,im1_0.status,im1_0.telefoneResponsavel,im1_0.tipoCota,im1_0.uf,im1_0.ufEscola from tbInteresseMatricula im1_0 where im1_0.protocolo=?
+Hibernate: select im1_0.id,im1_0.bairro,im1_0.cep,im1_0.cidade,im1_0.codigoIbgeCidade,im1_0.codigoInepEscola,im1_0.complemento,im1_0.cpfAluno,im1_0.cpfResponsavel,im1_0.dataEnvio,im1_0.dataFinalizacao,im1_0.dataInicioMatricula,im1_0.dataNascimentoAluno,im1_0.dataNascimentoResponsavel,im1_0.emailResponsavel,im1_0.enderecoCompleto,im1_0.escolaAluno,im1_0.funcionarioResponsavel_idPessoa,im1_0.horariosSelecionados,im1_0.integrantesRenda,im1_0.logradouro,im1_0.mensagemAdicional,im1_0.municipioEscola,im1_0.nomeAluno,im1_0.nomeResponsavel,im1_0.numero,im1_0.numeroIntegrantes,im1_0.observacoes,im1_0.observacoesInternas,im1_0.observacoesResponsavel,im1_0.pontoReferencia,im1_0.protocolo,im1_0.rendaFamiliar,im1_0.rendaPerCapita,im1_0.responsavelLogin_idPessoa,im1_0.status,im1_0.telefoneResponsavel,im1_0.tipoCota,im1_0.uf,im1_0.ufEscola from tbInteresseMatricula im1_0 where im1_0.protocolo=?
+2025-08-23T00:22:59.930-03:00  INFO 50721 --- [   File Watcher] rtingClassPathChangeChangedEventListener : Restarting due to 69 class path changes (0 additions, 69 deletions, 0 modifications)
+2025-08-23T00:23:00.218-03:00  INFO 50721 --- [      Thread-11] o.s.b.w.e.tomcat.GracefulShutdown        : Commencing graceful shutdown. Waiting for active requests to complete
+2025-08-23T00:23:00.301-03:00  INFO 50721 --- [tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown        : Graceful shutdown complete
+2025-08-23T00:23:00.441-03:00  INFO 50721 --- [      Thread-11] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-08-23T00:23:00.581-03:00  INFO 50721 --- [      Thread-11] com.zaxxer.hikari.HikariDataSource       : HikariPool-3 - Shutdown initiated...
+2025-08-23T00:23:00.617-03:00  INFO 50721 --- [      Thread-11] com.zaxxer.hikari.HikariDataSource       : HikariPool-3 - Shutdown completed.
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v3.4.7)
+
+2025-08-23T00:23:01.900-03:00  INFO 50721 --- [  restartedMain] c.c.c.CipalamSistemaApplication          : Starting CipalamSistemaApplication using Java 21.0.6 with PID 50721 (/Applications/XAMPP/xamppfiles/htdocs/GitHub/Projeto-Pratico/Sistema/spring-cipalam/cipalam-sistema/target/classes started by arthuremanuel in /Applications/XAMPP/xamppfiles/htdocs/GitHub/Projeto-Pratico/Sistema/spring-cipalam/cipalam-sistema)
+2025-08-23T00:23:01.900-03:00  INFO 50721 --- [  restartedMain] c.c.c.CipalamSistemaApplication          : No active profile set, falling back to 1 default profile: "default"
+2025-08-23T00:23:02.509-03:00  INFO 50721 --- [  restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-08-23T00:23:02.585-03:00  INFO 50721 --- [  restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 69 ms. Found 12 JPA repository interfaces.
+2025-08-23T00:23:02.759-03:00  INFO 50721 --- [  restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2025-08-23T00:23:02.760-03:00  INFO 50721 --- [  restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-08-23T00:23:02.760-03:00  INFO 50721 --- [  restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.42]
+2025-08-23T00:23:02.766-03:00  INFO 50721 --- [  restartedMain] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-08-23T00:23:02.766-03:00  INFO 50721 --- [  restartedMain] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 861 ms
+2025-08-23T00:23:02.820-03:00  INFO 50721 --- [  restartedMain] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-08-23T00:23:02.825-03:00  INFO 50721 --- [  restartedMain] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-08-23T00:23:02.851-03:00  INFO 50721 --- [  restartedMain] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-08-23T00:23:02.852-03:00  INFO 50721 --- [  restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-4 - Starting...
+2025-08-23T00:23:02.862-03:00  INFO 50721 --- [  restartedMain] com.zaxxer.hikari.pool.HikariPool        : HikariPool-4 - Added connection com.mysql.cj.jdbc.ConnectionImpl@1341a2d6
+2025-08-23T00:23:02.862-03:00  INFO 50721 --- [  restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-4 - Start completed.
+2025-08-23T00:23:02.863-03:00  WARN 50721 --- [  restartedMain] org.hibernate.dialect.Dialect            : HHH000511: The 5.5.5 version for [org.hibernate.dialect.MySQLDialect] is no longer supported, hence certain features may not work properly. The minimum supported version is 8.0.0. Check the community dialects project for available legacy versions.
+2025-08-23T00:23:02.863-03:00  INFO 50721 --- [  restartedMain] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-4)']
+	Database driver: undefined/unknown
+	Database version: 5.5.5
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-08-23T00:23:03.057-03:00  INFO 50721 --- [  restartedMain] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-08-23T00:23:03.057-03:00  INFO 50721 --- [  restartedMain] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-08-23T00:23:03.159-03:00  INFO 50721 --- [  restartedMain] eAuthenticationProviderManagerConfigurer : Global AuthenticationManager configured with AuthenticationProvider bean with name authenticationProvider
+2025-08-23T00:23:03.159-03:00  WARN 50721 --- [  restartedMain] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with an AuthenticationProvider bean. UserDetailsService beans will not be used by Spring Security for automatically configuring username/password login. Consider removing the AuthenticationProvider bean. Alternatively, consider using the UserDetailsService in a manually instantiated DaoAuthenticationProvider. If the current configuration is intentional, to turn off this warning, increase the logging level of 'org.springframework.security.config.annotation.authentication.configuration.InitializeUserDetailsBeanManagerConfigurer' to ERROR
+2025-08-23T00:23:03.321-03:00  WARN 50721 --- [  restartedMain] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-08-23T00:23:03.620-03:00  INFO 50721 --- [  restartedMain] o.s.b.d.a.OptionalLiveReloadServer       : LiveReload server is running on port 35729
+2025-08-23T00:23:03.627-03:00  INFO 50721 --- [  restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/'
+2025-08-23T00:23:03.630-03:00  INFO 50721 --- [  restartedMain] c.c.c.CipalamSistemaApplication          : Started CipalamSistemaApplication in 1.861 seconds (process running for 1390.815)
+Hibernate: select l1_0.idtblogin,l1_0.tbPessoa_idPessoa,l1_0.senha,l1_0.usuario from tblogin l1_0 where l1_0.usuario=?
+Hibernate: select p1_0.idPessoa,p1_0.caminhoIdentidadePessoa,p1_0.caminhoImagem,p1_0.CpfPessoa,p1_0.dtNascPessoa,p1_0.email,p1_0.NmPessoa,p1_0.telefone from tbPessoa p1_0 where p1_0.idPessoa=?
+Hibernate: select l1_0.idtblogin,l1_0.tbPessoa_idPessoa,l1_0.senha,l1_0.usuario from tblogin l1_0 where l1_0.usuario=?
+Hibernate: select p1_0.idPessoa,p1_0.caminhoIdentidadePessoa,p1_0.caminhoImagem,p1_0.CpfPessoa,p1_0.dtNascPessoa,p1_0.email,p1_0.NmPessoa,p1_0.telefone from tbPessoa p1_0 where p1_0.idPessoa=?
+2025-08-23T00:23:03.705-03:00  INFO 50721 --- [  restartedMain] .ConditionEvaluationDeltaLoggingListener : Condition evaluation unchanged
+2025-08-23T00:23:05.036-03:00  INFO 50721 --- [   File Watcher] rtingClassPathChangeChangedEventListener : Restarting due to 69 class path changes (69 additions, 0 deletions, 0 modifications)
+2025-08-23T00:23:05.037-03:00  INFO 50721 --- [      Thread-15] o.s.b.w.e.tomcat.GracefulShutdown        : Commencing graceful shutdown. Waiting for active requests to complete
+2025-08-23T00:23:05.038-03:00  INFO 50721 --- [tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown        : Graceful shutdown complete
+2025-08-23T00:23:05.040-03:00  INFO 50721 --- [      Thread-15] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-08-23T00:23:05.041-03:00  INFO 50721 --- [      Thread-15] com.zaxxer.hikari.HikariDataSource       : HikariPool-4 - Shutdown initiated...
+2025-08-23T00:23:05.042-03:00  INFO 50721 --- [      Thread-15] com.zaxxer.hikari.HikariDataSource       : HikariPool-4 - Shutdown completed.
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v3.4.7)
+
+2025-08-23T00:23:05.102-03:00  INFO 50721 --- [  restartedMain] c.c.c.CipalamSistemaApplication          : Starting CipalamSistemaApplication using Java 21.0.6 with PID 50721 (/Applications/XAMPP/xamppfiles/htdocs/GitHub/Projeto-Pratico/Sistema/spring-cipalam/cipalam-sistema/target/classes started by arthuremanuel in /Applications/XAMPP/xamppfiles/htdocs/GitHub/Projeto-Pratico/Sistema/spring-cipalam/cipalam-sistema)
+2025-08-23T00:23:05.103-03:00  INFO 50721 --- [  restartedMain] c.c.c.CipalamSistemaApplication          : No active profile set, falling back to 1 default profile: "default"
+2025-08-23T00:23:05.170-03:00  INFO 50721 --- [  restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-08-23T00:23:05.182-03:00  INFO 50721 --- [  restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 11 ms. Found 12 JPA repository interfaces.
+2025-08-23T00:23:05.251-03:00  INFO 50721 --- [  restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2025-08-23T00:23:05.252-03:00  INFO 50721 --- [  restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-08-23T00:23:05.252-03:00  INFO 50721 --- [  restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.42]
+2025-08-23T00:23:05.257-03:00  INFO 50721 --- [  restartedMain] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-08-23T00:23:05.257-03:00  INFO 50721 --- [  restartedMain] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 154 ms
+2025-08-23T00:23:05.287-03:00  INFO 50721 --- [  restartedMain] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-08-23T00:23:05.288-03:00  INFO 50721 --- [  restartedMain] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-08-23T00:23:05.292-03:00  INFO 50721 --- [  restartedMain] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-08-23T00:23:05.292-03:00  INFO 50721 --- [  restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-5 - Starting...
+2025-08-23T00:23:05.296-03:00  INFO 50721 --- [  restartedMain] com.zaxxer.hikari.pool.HikariPool        : HikariPool-5 - Added connection com.mysql.cj.jdbc.ConnectionImpl@7c9a3d9b
+2025-08-23T00:23:05.296-03:00  INFO 50721 --- [  restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-5 - Start completed.
+2025-08-23T00:23:05.296-03:00  WARN 50721 --- [  restartedMain] org.hibernate.dialect.Dialect            : HHH000511: The 5.5.5 version for [org.hibernate.dialect.MySQLDialect] is no longer supported, hence certain features may not work properly. The minimum supported version is 8.0.0. Check the community dialects project for available legacy versions.
+2025-08-23T00:23:05.296-03:00  INFO 50721 --- [  restartedMain] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-5)']
+	Database driver: undefined/unknown
+	Database version: 5.5.5
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-08-23T00:23:05.403-03:00  INFO 50721 --- [  restartedMain] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-08-23T00:23:05.404-03:00  INFO 50721 --- [  restartedMain] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-08-23T00:23:05.498-03:00  INFO 50721 --- [  restartedMain] eAuthenticationProviderManagerConfigurer : Global AuthenticationManager configured with AuthenticationProvider bean with name authenticationProvider
+2025-08-23T00:23:05.498-03:00  WARN 50721 --- [  restartedMain] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with an AuthenticationProvider bean. UserDetailsService beans will not be used by Spring Security for automatically configuring username/password login. Consider removing the AuthenticationProvider bean. Alternatively, consider using the UserDetailsService in a manually instantiated DaoAuthenticationProvider. If the current configuration is intentional, to turn off this warning, increase the logging level of 'org.springframework.security.config.annotation.authentication.configuration.InitializeUserDetailsBeanManagerConfigurer' to ERROR
+2025-08-23T00:23:05.641-03:00  WARN 50721 --- [  restartedMain] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-08-23T00:23:05.848-03:00  INFO 50721 --- [  restartedMain] o.s.b.d.a.OptionalLiveReloadServer       : LiveReload server is running on port 35729
+2025-08-23T00:23:05.855-03:00  INFO 50721 --- [  restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/'
+2025-08-23T00:23:05.856-03:00  INFO 50721 --- [  restartedMain] c.c.c.CipalamSistemaApplication          : Started CipalamSistemaApplication in 0.763 seconds (process running for 1393.042)
+Hibernate: select l1_0.idtblogin,l1_0.tbPessoa_idPessoa,l1_0.senha,l1_0.usuario from tblogin l1_0 where l1_0.usuario=?
+Hibernate: select p1_0.idPessoa,p1_0.caminhoIdentidadePessoa,p1_0.caminhoImagem,p1_0.CpfPessoa,p1_0.dtNascPessoa,p1_0.email,p1_0.NmPessoa,p1_0.telefone from tbPessoa p1_0 where p1_0.idPessoa=?
+Hibernate: select l1_0.idtblogin,l1_0.tbPessoa_idPessoa,l1_0.senha,l1_0.usuario from tblogin l1_0 where l1_0.usuario=?
+Hibernate: select p1_0.idPessoa,p1_0.caminhoIdentidadePessoa,p1_0.caminhoImagem,p1_0.CpfPessoa,p1_0.dtNascPessoa,p1_0.email,p1_0.NmPessoa,p1_0.telefone from tbPessoa p1_0 where p1_0.idPessoa=?
+2025-08-23T00:23:05.878-03:00  INFO 50721 --- [  restartedMain] .ConditionEvaluationDeltaLoggingListener : Condition evaluation unchanged
+2025-08-23T00:23:24.280-03:00  INFO 50721 --- [ionShutdownHook] o.s.b.w.e.tomcat.GracefulShutdown        : Commencing graceful shutdown. Waiting for active requests to complete
+2025-08-23T00:23:24.286-03:00  INFO 50721 --- [tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown        : Graceful shutdown complete
+2025-08-23T00:23:24.291-03:00  INFO 50721 --- [ionShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-08-23T00:23:24.292-03:00  INFO 50721 --- [ionShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-5 - Shutdown initiated...
+2025-08-23T00:23:24.296-03:00  INFO 50721 --- [ionShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-5 - Shutdown completed.
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  23:34 min
+[INFO] Finished at: 2025-08-23T00:23:25-03:00
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.springframework.boot:spring-boot-maven-plugin:3.4.7:run (default-cli) on project cipalam-sistema: Process terminated with exit code: 143 -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoExecutionException

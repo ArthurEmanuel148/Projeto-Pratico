@@ -1,0 +1,302 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-title>Iniciar Matrícula</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding">
+  <!-- Header com título e descrição -->
+  <div class="page-header">
+    <h1>
+      <ion-icon name="school-outline"></ion-icon>
+      Sistema de Matrícula Automática
+    </h1>
+    <p class="descricao-sistema">
+      Este sistema permite criar automaticamente famílias, alunos e responsáveis com credenciais de acesso geradas
+      automaticamente.
+    </p>
+  </div>
+
+  <!-- Formulário de Matrícula -->
+  <form [formGroup]="matriculaForm" (ngSubmit)="iniciarMatricula()">
+
+    <!-- Seleção de Turma -->
+    <ion-card class="secao-card">
+      <ion-card-header>
+        <ion-card-title>
+          <ion-icon name="calendar-outline"></ion-icon>
+          1. Seleção da Turma
+        </ion-card-title>
+        <ion-card-subtitle>Escolha a turma para a matrícula</ion-card-subtitle>
+      </ion-card-header>
+
+      <ion-card-content>
+        <div *ngIf="!turmaSelecionada" class="turma-nao-selecionada">
+          <ion-button expand="block" fill="outline" (click)="abrirSeletorTurma()"
+            [disabled]="turmasDisponiveis.length === 0">
+            <ion-icon name="search" slot="start"></ion-icon>
+            Selecionar Turma
+          </ion-button>
+
+          <p class="info-texto">
+            <ion-icon name="information-circle-outline"></ion-icon>
+            Clique para ver e escolher uma turma disponível
+          </p>
+        </div>
+
+        <div *ngIf="turmaSelecionada" class="turma-selecionada">
+          <div class="turma-info">
+            <h3>{{ turmaSelecionada.nomeTurma }}</h3>
+
+            <div class="detalhes-turma">
+              <ion-chip [color]="getCorPeriodo(turmaSelecionada.periodo)" outline>
+                <ion-icon name="time-outline"></ion-icon>
+                <ion-label>{{ getPeriodoTexto(turmaSelecionada.periodo) }}</ion-label>
+              </ion-chip>
+
+              <p><strong>Atividade:</strong> {{ turmaSelecionada.atividade }}</p>
+              <p><strong>Vagas disponíveis:</strong> {{ turmaSelecionada.vagasDisponiveis }}</p>
+
+              <div class="acoes-turma">
+                <ion-button fill="outline" size="small" color="medium" (click)="abrirSeletorTurma()">
+                  <ion-icon name="swap-horizontal" slot="start"></ion-icon>
+                  Trocar Turma
+                </ion-button>
+
+                <ion-button fill="clear" size="small" color="danger" (click)="removerTurmaSelecionada()">
+                  <ion-icon name="trash" slot="start"></ion-icon>
+                  Remover
+                </ion-button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Dados do Responsável -->
+    <ion-card class="secao-card">
+      <ion-card-header>
+        <ion-card-title>
+          <ion-icon name="person-outline"></ion-icon>
+          2. Dados do Responsável
+        </ion-card-title>
+        <ion-card-subtitle>Informações da pessoa responsável pelo aluno</ion-card-subtitle>
+      </ion-card-header>
+
+      <ion-card-content>
+        <ion-row>
+          <ion-col size="12" size-md="6">
+            <ion-item fill="outline">
+              <ion-label position="stacked">Nome Completo *</ion-label>
+              <ion-input formControlName="nomeResponsavel" placeholder="Digite o nome completo" maxlength="100">
+              </ion-input>
+              <ion-note slot="error"
+                *ngIf="matriculaForm.get('nomeResponsavel')?.touched && matriculaForm.get('nomeResponsavel')?.errors">
+                Nome é obrigatório (mínimo 3 caracteres)
+              </ion-note>
+            </ion-item>
+          </ion-col>
+
+          <ion-col size="12" size-md="6">
+            <ion-item fill="outline">
+              <ion-label position="stacked">CPF *</ion-label>
+              <ion-input formControlName="cpfResponsavel" placeholder="000.000.000-00" maxlength="14"
+                (ionInput)="formatarCPF($event)">
+              </ion-input>
+              <ion-note slot="error"
+                *ngIf="matriculaForm.get('cpfResponsavel')?.touched && matriculaForm.get('cpfResponsavel')?.errors">
+                CPF é obrigatório
+              </ion-note>
+            </ion-item>
+          </ion-col>
+        </ion-row>
+
+        <ion-row>
+          <ion-col size="12" size-md="6">
+            <ion-item fill="outline">
+              <ion-label position="stacked">Email *</ion-label>
+              <ion-input type="email" formControlName="emailResponsavel" placeholder="exemplo@email.com">
+              </ion-input>
+              <ion-note slot="error"
+                *ngIf="matriculaForm.get('emailResponsavel')?.touched && matriculaForm.get('emailResponsavel')?.errors">
+                Email válido é obrigatório
+              </ion-note>
+            </ion-item>
+          </ion-col>
+
+          <ion-col size="12" size-md="6">
+            <ion-item fill="outline">
+              <ion-label position="stacked">Telefone *</ion-label>
+              <ion-input formControlName="telefoneResponsavel" placeholder="(00) 00000-0000" maxlength="15"
+                (ionInput)="formatarTelefone($event)">
+              </ion-input>
+              <ion-note slot="error"
+                *ngIf="matriculaForm.get('telefoneResponsavel')?.touched && matriculaForm.get('telefoneResponsavel')?.errors">
+                Telefone é obrigatório
+              </ion-note>
+            </ion-item>
+          </ion-col>
+        </ion-row>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Dados do Aluno -->
+    <ion-card class="secao-card">
+      <ion-card-header>
+        <ion-card-title>
+          <ion-icon name="happy-outline"></ion-icon>
+          3. Dados do Aluno
+        </ion-card-title>
+        <ion-card-subtitle>Informações do aluno que será matriculado</ion-card-subtitle>
+      </ion-card-header>
+
+      <ion-card-content>
+        <ion-row>
+          <ion-col size="12" size-md="6">
+            <ion-item fill="outline">
+              <ion-label position="stacked">Nome Completo *</ion-label>
+              <ion-input formControlName="nomeAluno" placeholder="Digite o nome completo do aluno" maxlength="100">
+              </ion-input>
+              <ion-note slot="error"
+                *ngIf="matriculaForm.get('nomeAluno')?.touched && matriculaForm.get('nomeAluno')?.errors">
+                Nome do aluno é obrigatório (mínimo 3 caracteres)
+              </ion-note>
+            </ion-item>
+          </ion-col>
+
+          <ion-col size="12" size-md="6">
+            <ion-item fill="outline">
+              <ion-label position="stacked">Data de Nascimento *</ion-label>
+              <ion-datetime formControlName="dataNascimentoAluno" presentation="date" placeholder="Selecione a data">
+              </ion-datetime>
+              <ion-note slot="error"
+                *ngIf="matriculaForm.get('dataNascimentoAluno')?.touched && matriculaForm.get('dataNascimentoAluno')?.errors">
+                Data de nascimento é obrigatória
+              </ion-note>
+            </ion-item>
+          </ion-col>
+        </ion-row>
+
+        <ion-row>
+          <ion-col size="12" size-md="6">
+            <ion-item fill="outline">
+              <ion-label position="stacked">CPF (opcional)</ion-label>
+              <ion-input formControlName="cpfAluno" placeholder="000.000.000-00" maxlength="14"
+                (ionInput)="formatarCPF($event)">
+              </ion-input>
+              <ion-note slot="helper">Preencha apenas se o aluno possuir CPF</ion-note>
+            </ion-item>
+          </ion-col>
+        </ion-row>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Observações -->
+    <ion-card class="secao-card">
+      <ion-card-header>
+        <ion-card-title>
+          <ion-icon name="document-text-outline"></ion-icon>
+          4. Observações (Opcional)
+        </ion-card-title>
+        <ion-card-subtitle>Informações adicionais sobre a matrícula</ion-card-subtitle>
+      </ion-card-header>
+
+      <ion-card-content>
+        <ion-item fill="outline">
+          <ion-label position="stacked">Observações</ion-label>
+          <ion-textarea formControlName="observacoes" placeholder="Digite observações relevantes sobre a matrícula..."
+            rows="3" maxlength="500">
+          </ion-textarea>
+          <ion-note slot="helper">Máximo 500 caracteres</ion-note>
+        </ion-item>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Resumo e Ações -->
+    <ion-card class="secao-card resumo-card">
+      <ion-card-header>
+        <ion-card-title>
+          <ion-icon name="checkmark-done-outline"></ion-icon>
+          Resumo da Matrícula
+        </ion-card-title>
+      </ion-card-header>
+
+      <ion-card-content>
+        <div class="resumo-info">
+          <div class="processo-automatico">
+            <h4>Este processo irá automaticamente:</h4>
+            <ul>
+              <li>
+                <ion-icon name="people-outline" color="primary"></ion-icon>
+                Criar a família no sistema
+              </li>
+              <li>
+                <ion-icon name="person-add-outline" color="primary"></ion-icon>
+                Criar o responsável com os dados informados
+              </li>
+              <li>
+                <ion-icon name="school-outline" color="primary"></ion-icon>
+                Criar o aluno e matriculá-lo na turma
+              </li>
+              <li>
+                <ion-icon name="key-outline" color="primary"></ion-icon>
+                Gerar credenciais de acesso (usuário: CPF, senha: últimos 4 dígitos)
+              </li>
+              <li>
+                <ion-icon name="document-outline" color="primary"></ion-icon>
+                Criar documentos pendentes conforme configuração
+              </li>
+            </ul>
+          </div>
+
+          <div class="status-formulario">
+            <ion-item>
+              <ion-icon [name]="turmaSelecionada ? 'checkmark-circle' : 'ellipse-outline'"
+                [color]="turmaSelecionada ? 'success' : 'medium'" slot="start">
+              </ion-icon>
+              <ion-label>Turma selecionada</ion-label>
+            </ion-item>
+
+            <ion-item>
+              <ion-icon
+                [name]="matriculaForm.get('nomeResponsavel')?.valid && matriculaForm.get('cpfResponsavel')?.valid && matriculaForm.get('emailResponsavel')?.valid && matriculaForm.get('telefoneResponsavel')?.valid ? 'checkmark-circle' : 'ellipse-outline'"
+                [color]="matriculaForm.get('nomeResponsavel')?.valid && matriculaForm.get('cpfResponsavel')?.valid && matriculaForm.get('emailResponsavel')?.valid && matriculaForm.get('telefoneResponsavel')?.valid ? 'success' : 'medium'"
+                slot="start">
+              </ion-icon>
+              <ion-label>Dados do responsável completos</ion-label>
+            </ion-item>
+
+            <ion-item>
+              <ion-icon
+                [name]="matriculaForm.get('nomeAluno')?.valid && matriculaForm.get('dataNascimentoAluno')?.valid ? 'checkmark-circle' : 'ellipse-outline'"
+                [color]="matriculaForm.get('nomeAluno')?.valid && matriculaForm.get('dataNascimentoAluno')?.valid ? 'success' : 'medium'"
+                slot="start">
+              </ion-icon>
+              <ion-label>Dados do aluno completos</ion-label>
+            </ion-item>
+          </div>
+        </div>
+
+        <!-- Botões de Ação -->
+        <div class="acoes-finais">
+          <ion-button expand="block" size="large" [disabled]="!isFormValid || isLoading" (click)="iniciarMatricula()">
+            <ion-icon name="rocket" slot="start"></ion-icon>
+            {{ isLoading ? 'Processando...' : 'Iniciar Matrícula Automática' }}
+          </ion-button>
+
+          <ion-button expand="block" fill="outline" color="medium" (click)="limparFormulario()">
+            <ion-icon name="refresh" slot="start"></ion-icon>
+            Limpar Formulário
+          </ion-button>
+        </div>
+      </ion-card-content>
+    </ion-card>
+  </form>
+
+  <!-- Loading Overlay -->
+  <div *ngIf="isLoading" class="loading-overlay">
+    <ion-spinner name="crescent" color="primary"></ion-spinner>
+    <p>Processando matrícula...</p>
+  </div>
+</ion-content>

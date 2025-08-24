@@ -1,634 +1,618 @@
-<!-- Declaração de Interesse - Versão Melhorada e Profissional -->
+<!-- Declaração de Interesse - Novo Fluxo Completo -->
 <ion-header [translucent]="true" class="custom-header">
-  <ion-toolbar color="primary" class="custom-toolbar">
-    <!-- Botão Voltar -->
-    <ion-buttons slot="start" *ngIf="etapaAtual !== ETAPAS.DADOS_RESPONSAVEL">
-      <ion-button (click)="etapaAnterior()" fill="clear" color="light" class="nav-button">
-        <ion-icon slot="icon-only" name="chevron-back-outline"></ion-icon>
-      </ion-button>
-    </ion-buttons>
 
-    <!-- Título Dinâmico -->
-    <ion-title class="page-title">
-      {{ getTituloEtapa() }}
-    </ion-title>
 
-    <!-- Indicador de Progresso -->
-    <ion-buttons slot="end" *ngIf="etapaAtual !== ETAPAS.CONCLUIDO">
-      <ion-chip color="light" outline class="progress-chip">
-        <ion-icon name="layers-outline" slot="start"></ion-icon>
-        <span>{{ getEtapaAtual() }}/{{ getTotalEtapas() }}</span>
-      </ion-chip>
-    </ion-buttons>
-  </ion-toolbar>
 
-  <!-- Barra de Progresso Avançada -->
-  <div class="progress-section" *ngIf="etapaAtual !== ETAPAS.CONCLUIDO">
-    <div class="progress-info">
-      <span class="progress-text">{{ getDescricaoProgresso() }}</span>
-      <span class="progress-percentage">{{ progresso.toFixed(0) }}%</span>
-    </div>
-    <ion-progress-bar
-      [value]="progresso / 100"
-      color="success"
-      class="enhanced-progress">
-    </ion-progress-bar>
-    <div class="step-indicators">
-      <div
-        class="step-dot"
-        *ngFor="let step of getStepIndicators(); let i = index"
-        [class.active]="step.active"
-        [class.completed]="step.completed">
-        <ion-icon [name]="step.icon"></ion-icon>
+  <!-- Barra de Progresso com Logo - VERSÃO SIMPLIFICADA -->
+  <div class="progress-container">
+    <div class="progress-header">
+      <div class="logo-progress">
+        <img src="assets/images/logo-instituto.png" alt="CIPALAM" class="progress-logo">
+        <span class="declaration-text">Declaração de Interesse</span>
       </div>
+    </div>
+    <div class="progress-bar-custom">
+      <div class="progress-fill-custom" [style.width.%]="progresso"></div>
+    </div>
+
+    <div class="progress-text">
+      <span class="progress-percentage">{{ progresso.toFixed(0) }}% Concluído</span>
     </div>
   </div>
 </ion-header>
 
-<ion-content [fullscreen]="true" class="main-content">
+<ion-content [fullscreen]="true" class="custom-content">
   <div class="container">
 
-    <!-- =================== ETAPA 1: DADOS DO RESPONSÁVEL =================== -->
-    <div *ngIf="etapaAtual === ETAPAS.DADOS_RESPONSAVEL" class="step-container" [@slideIn]>
-      <!-- Cabeçalho da Etapa -->
-      <div class="step-header">
-        <div class="step-icon-container">
-          <ion-icon name="person-circle" color="primary"></ion-icon>
+    <!-- ===== ETAPA 1: DADOS DO RESPONSÁVEL ===== -->
+    <div *ngIf="etapaAtual === ETAPAS.DADOS_RESPONSAVEL" class="etapa-container">
+      <div class="etapa-header">
+        <div class="header-icon">
+          <ion-icon name="person-circle-outline" color="primary"></ion-icon>
         </div>
-        <div class="step-info">
-          <h1 class="step-title">Dados do Responsável</h1>
-          <p class="step-description">
-            Informe os dados da pessoa responsável pela matrícula.
-            Estes dados serão utilizados para contato e acesso ao sistema.
-          </p>
+        <div class="header-content">
+          <h2>Dados do Responsável</h2>
+          <p>Informe os dados da pessoa responsável pela matrícula</p>
         </div>
       </div>
 
-      <!-- Formulário -->
-      <form [formGroup]="dadosResponsavelForm" (ngSubmit)="proximaEtapa()" class="step-form">
+      <form [formGroup]="dadosResponsavelForm" class="form-container">
+        <ion-item class="form-item">
+          <ion-input formControlName="nome" placeholder="Nome completo" [clearInput]="true" fill="outline"
+            label="Nome completo" labelPlacement="floating">
+          </ion-input>
+        </ion-item>
 
-        <!-- Seção: Informações Pessoais -->
-        <div class="form-section">
+        <ion-item class="form-item">
+          <ion-input formControlName="cpf" placeholder="000.000.000-00" maxlength="14" [clearInput]="true"
+            fill="outline" label="CPF" labelPlacement="floating" (ionInput)="formatarCpf($event, 'responsavel')">
+          </ion-input>
+        </ion-item>
+
+        <ion-item class="form-item">
+          <ion-input formControlName="dataNascimento" type="date" fill="outline" label="Data de nascimento"
+            labelPlacement="floating">
+          </ion-input>
+        </ion-item>
+
+        <ion-item class="form-item">
+          <ion-input formControlName="email" type="email" placeholder="email@exemplo.com" [clearInput]="true"
+            fill="outline" label="E-mail" labelPlacement="floating">
+          </ion-input>
+        </ion-item>
+
+        <ion-item class="form-item">
+          <ion-input formControlName="telefone" placeholder="(11) 99999-9999" maxlength="15" [clearInput]="true"
+            fill="outline" label="Telefone" labelPlacement="floating" (ionInput)="formatarTelefone($event)">
+          </ion-input>
+        </ion-item>
+      </form>
+    </div>
+
+    <!-- ===== ETAPA 2: VERIFICAÇÃO DO RESPONSÁVEL ===== -->
+    <div *ngIf="etapaAtual === ETAPAS.VERIFICACAO_RESPONSAVEL" class="etapa-container">
+      <div class="etapa-header">
+        <div class="header-icon">
+          <ion-icon name="key-outline" color="primary"></ion-icon>
+        </div>
+        <div class="header-content">
+          <h2>Responsável Já Cadastrado</h2>
+          <p>Encontramos um cadastro com este CPF. Por favor, digite sua senha para continuar.</p>
+        </div>
+      </div>
+
+      <form [formGroup]="verificacaoResponsavelForm" class="form-container">
+        <ion-item class="form-item">
+          <ion-input formControlName="senha" type="password" placeholder="Digite sua senha" [clearInput]="true"
+            fill="outline" label="Senha" labelPlacement="floating">
+          </ion-input>
+        </ion-item>
+
+        <div class="info-card">
+          <ion-icon name="information-circle-outline" color="primary"></ion-icon>
+          <p>Como este responsável já possui cadastro no instituto, seus dados familiares serão recuperados
+            automaticamente caso seja necessário.</p>
+        </div>
+
+        <div class="info-card" style="background-color: #f0f8ff; border-left: 4px solid #007bff;">
+          <ion-icon name="help-circle-outline" color="primary"></ion-icon>
+          <p><strong>Para teste:</strong> Use a senha "123456", "admin" ou os últimos 4 dígitos do CPF.</p>
+        </div>
+      </form>
+    </div>
+
+    <!-- ===== ETAPA 3: DADOS DO ALUNO ===== -->
+    <div *ngIf="etapaAtual === ETAPAS.DADOS_ALUNO" class="etapa-container">
+      <div class="etapa-header">
+        <div class="header-icon">
+          <ion-icon name="school-outline" color="primary"></ion-icon>
+        </div>
+        <div class="header-content">
+          <h2>Dados do Aluno</h2>
+          <p>Informe os dados do aluno que deseja matricular</p>
+        </div>
+      </div>
+
+      <form [formGroup]="dadosAlunoForm" class="form-container">
+        <ion-item class="form-item">
+          <ion-input formControlName="nome" placeholder="Nome completo do aluno" [clearInput]="true" fill="outline"
+            label="Nome completo" labelPlacement="floating">
+          </ion-input>
+        </ion-item>
+
+        <ion-item class="form-item">
+          <ion-input formControlName="cpf" placeholder="000.000.000-00" maxlength="14" [clearInput]="true"
+            fill="outline" label="CPF do aluno" labelPlacement="floating" (ionInput)="formatarCpf($event, 'aluno')">
+          </ion-input>
+        </ion-item>
+
+        <ion-item class="form-item">
+          <ion-input formControlName="dataNascimento" type="date" fill="outline" label="Data de nascimento"
+            labelPlacement="floating">
+          </ion-input>
+        </ion-item>
+
+        <!-- Campo de Escola Simples -->
+        <ion-item class="form-item">
+          <ion-input formControlName="escola" placeholder="Nome da escola onde estuda" [clearInput]="true"
+            fill="outline" label="Escola onde estuda" labelPlacement="floating">
+          </ion-input>
+        </ion-item>
+
+        <!-- Tipo de Cota -->
+        <div class="cota-group">
+          <h3>Tipo de Vaga</h3>
+
+          <div class="radio-item">
+            <input type="radio" name="tipoCota" value="livre"
+              (change)="declaracaoForm.get('tipoCota')?.setValue('livre')"
+              [checked]="declaracaoForm.get('tipoCota')?.value === 'livre'">
+            <label>
+              <h2>Vaga Livre</h2>
+              <p>Processo seletivo regular</p>
+            </label>
+          </div>
+
+          <div class="radio-item">
+            <input type="radio" name="tipoCota" value="economica"
+              (change)="declaracaoForm.get('tipoCota')?.setValue('economica')"
+              [checked]="declaracaoForm.get('tipoCota')?.value === 'economica'">
+            <label>
+              <h2>Cota Econômica</h2>
+              <p>Para famílias de baixa renda</p>
+            </label>
+          </div>
+
+          <div class="radio-item">
+            <input type="radio" name="tipoCota" value="funcionario"
+              (change)="declaracaoForm.get('tipoCota')?.setValue('funcionario')"
+              [checked]="declaracaoForm.get('tipoCota')?.value === 'funcionario'">
+            <label>
+              <h2>Cota Funcionário</h2>
+              <p>Para filhos de funcionários do instituto</p>
+            </label>
+          </div>
+        </div>
+
+        <!-- Horários Disponíveis -->
+        <div class="horarios-container">
+          <h3>Horários Disponíveis</h3>
+          <div class="horarios-list">
+            <div class="checkbox-item">
+              <input type="checkbox" value="seg-qua-manha-8h-11h"
+                (change)="toggleHorario('seg-qua-manha-8h-11h', $event)">
+              <label>
+                <h2>Segunda e Quarta - Manhã (8h às 11h)</h2>
+                <p>Segunda-feira e Quarta-feira</p>
+              </label>
+            </div>
+
+            <div class="checkbox-item">
+              <input type="checkbox" value="seg-qua-tarde-13h-17h"
+                (change)="toggleHorario('seg-qua-tarde-13h-17h', $event)">
+              <label>
+                <h2>Segunda e Quarta - Tarde (13h às 17h)</h2>
+                <p>Segunda-feira e Quarta-feira</p>
+              </label>
+            </div>
+
+            <div class="checkbox-item">
+              <input type="checkbox" value="ter-qui-manha-8h-11h"
+                (change)="toggleHorario('ter-qui-manha-8h-11h', $event)">
+              <label>
+                <h2>Terça e Quinta - Manhã (8h às 11h)</h2>
+                <p>Terça-feira e Quinta-feira</p>
+              </label>
+            </div>
+
+            <div class="checkbox-item">
+              <input type="checkbox" value="ter-qui-tarde-13h-17h"
+                (change)="toggleHorario('ter-qui-tarde-13h-17h', $event)">
+              <label>
+                <h2>Terça e Quinta - Tarde (13h às 17h)</h2>
+                <p>Terça-feira e Quinta-feira</p>
+              </label>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <!-- ===== ETAPA 4: DADOS FAMILIARES (só para cota econômica) ===== -->
+    <div *ngIf="etapaAtual === ETAPAS.DADOS_FAMILIARES" class="etapa-container">
+      <div class="etapa-header">
+        <div class="header-icon">
+          <ion-icon name="people-outline" color="primary"></ion-icon>
+        </div>
+        <div class="header-content">
+          <h2>Dados Familiares</h2>
+          <p>Informe a renda de todos os integrantes da família</p>
+        </div>
+      </div>
+
+      <div class="info-card" *ngIf="responsavelExiste">
+        <ion-icon name="information-circle-outline" color="primary"></ion-icon>
+        <p>Como este responsável já possui cadastro, os dados familiares cadastrados anteriormente estão
+          pré-preenchidos. Você pode fazer alterações se necessário.</p>
+      </div>
+
+      <form [formGroup]="dadosFamiliaresForm" class="form-container">
+        <!-- Tabela de Integrantes da Família -->
+        <div class="familia-section">
           <div class="section-header">
-            <ion-icon name="id-card-outline" color="medium"></ion-icon>
-            <h3 class="section-title">Informações Pessoais</h3>
+            <h3>Composição Familiar</h3>
+            <p>Liste todos os integrantes da família que possuem renda</p>
           </div>
 
-          <div class="form-grid">
-            <!-- Nome Completo -->
-            <div class="form-group full-width">
-              <ion-item class="modern-input" fill="outline">
-                <ion-label position="stacked">
-                  <span class="label-text">Nome Completo</span>
-                  <span class="required-marker">*</span>
-                </ion-label>
-                <ion-input
-                  formControlName="nomeResponsavel"
-                  type="text"
-                  placeholder="Digite seu nome completo"
-                  clearInput="true">
-                </ion-input>
-                <ion-icon name="person-outline" slot="start" color="medium"></ion-icon>
-              </ion-item>
-              <div class="field-hint">
-                <ion-icon name="information-circle-outline" color="medium"></ion-icon>
-                <span>Nome como aparece no documento de identidade</span>
-              </div>
+          <!-- Responsável (dados do banco se já cadastrado, senão do formulário) -->
+          <div class="membro-familia responsavel-item">
+            <div class="membro-header">
+              <ion-icon name="person-circle" color="primary"></ion-icon>
+              <span class="membro-tipo">Responsável</span>
+              <span *ngIf="responsavelExiste" class="status-badge">Já Cadastrado</span>
             </div>
-
-            <!-- CPF e Data de Nascimento -->
-            <div class="form-group half-width">
-              <ion-item class="modern-input" fill="outline">
-                <ion-label position="stacked">
-                  <span class="label-text">CPF</span>
-                  <span class="required-marker">*</span>
-                </ion-label>
-                <ion-input
-                  formControlName="cpfResponsavel"
-                  type="text"
-                  placeholder="000.000.000-00"
-                  maxlength="14">
-                </ion-input>
-                <ion-icon name="card-outline" slot="start" color="medium"></ion-icon>
-              </ion-item>
-            </div>
-
-            <div class="form-group half-width">
-              <ion-item class="modern-input" fill="outline">
-                <ion-label position="stacked">
-                  <span class="label-text">Data de Nascimento</span>
-                  <span class="required-marker">*</span>
-                </ion-label>
-                <ion-input
-                  formControlName="dataNascimentoResponsavel"
-                  type="date">
-                </ion-input>
-                <ion-icon name="calendar-outline" slot="start" color="medium"></ion-icon>
-              </ion-item>
-            </div>
-
-            <!-- Telefone e Email -->
-            <div class="form-group half-width">
-              <ion-item class="modern-input" fill="outline">
-                <ion-label position="stacked">
-                  <span class="label-text">Telefone</span>
-                  <span class="required-marker">*</span>
-                </ion-label>
-                <ion-input
-                  formControlName="telefoneResponsavel"
-                  type="tel"
-                  placeholder="(11) 99999-9999"
-                  maxlength="15">
-                </ion-input>
-                <ion-icon name="call-outline" slot="start" color="medium"></ion-icon>
-              </ion-item>
-            </div>
-
-            <div class="form-group half-width">
-              <ion-item class="modern-input" fill="outline">
-                <ion-label position="stacked">
-                  <span class="label-text">Email</span>
-                  <span class="required-marker">*</span>
-                </ion-label>
-                <ion-input
-                  formControlName="emailResponsavel"
-                  type="email"
-                  placeholder="seu.email@exemplo.com"
-                  clearInput="true">
-                </ion-input>
-                <ion-icon name="mail-outline" slot="start" color="medium"></ion-icon>
-              </ion-item>
-              <div class="field-hint">
-                <ion-icon name="shield-checkmark-outline" color="medium"></ion-icon>
-                <span>Este email será usado para acesso ao sistema e comunicações</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Botões de Ação -->
-        <div class="form-actions">
-          <ion-button
-            expand="block"
-            type="submit"
-            color="primary"
-            size="large"
-            class="primary-button"
-            [disabled]="!dadosResponsavelForm.valid">
-            <ion-icon name="arrow-forward" slot="end"></ion-icon>
-            Continuar para Tipo de Vaga
-          </ion-button>
-
-          <div class="action-info">
-            <ion-icon name="lock-closed-outline" color="success"></ion-icon>
-            <span>Suas informações estão protegidas e seguras</span>
-          </div>
-        </div>
-      </form>
-    </div>
-
-    <!-- =================== ETAPA 2: TIPO DE VAGA =================== -->
-    <div *ngIf="etapaAtual === ETAPAS.TIPO_VAGA" class="step-container" [@slideIn]>
-      <!-- Cabeçalho da Etapa -->
-      <div class="step-header">
-        <div class="step-icon-container">
-          <ion-icon name="ribbon" color="primary"></ion-icon>
-        </div>
-        <div class="step-info">
-          <h1 class="step-title">Tipo de Vaga</h1>
-          <p class="step-description">
-            Selecione o tipo de vaga que se adequa à sua situação.
-            Cada modalidade possui critérios específicos de seleção.
-          </p>
-        </div>
-      </div>
-
-      <!-- Formulário -->
-      <form [formGroup]="tipoVagaForm" (ngSubmit)="proximaEtapa()" class="step-form">
-
-        <div class="form-section">
-          <ion-radio-group formControlName="tipoCota" class="vaga-options">
-
-            <!-- Vaga Livre -->
-            <div class="vaga-card">
-              <ion-item lines="none" class="vaga-item">
-                <ion-radio slot="start" value="livre" color="primary"></ion-radio>
-                <div class="vaga-content">
-                  <div class="vaga-header">
-                    <ion-icon name="people-outline" color="primary"></ion-icon>
-                    <h3 class="vaga-title">Vaga Livre</h3>
-                    <ion-badge color="primary" class="vaga-badge">Ampla Concorrência</ion-badge>
-                  </div>
-                  <p class="vaga-description">
-                    Destinada a todos os candidatos, sem critérios específicos de seleção.
-                    Processo seletivo por ordem de chegada ou sorteio, conforme regulamento.
-                  </p>
-                  <div class="vaga-info">
-                    <div class="info-item">
-                      <ion-icon name="checkmark-circle-outline" color="success"></ion-icon>
-                      <span>Não requer documentação específica</span>
-                    </div>
-                    <div class="info-item">
-                      <ion-icon name="time-outline" color="medium"></ion-icon>
-                      <span>Processo mais ágil</span>
-                    </div>
-                  </div>
-                </div>
-              </ion-item>
-            </div>
-
-            <!-- Vaga Econômica -->
-            <div class="vaga-card">
-              <ion-item lines="none" class="vaga-item">
-                <ion-radio slot="start" value="economica" color="success"></ion-radio>
-                <div class="vaga-content">
-                  <div class="vaga-header">
-                    <ion-icon name="wallet-outline" color="success"></ion-icon>
-                    <h3 class="vaga-title">Vaga Econômica</h3>
-                    <ion-badge color="success" class="vaga-badge">Auxílio Social</ion-badge>
-                  </div>
-                  <p class="vaga-description">
-                    Para famílias em situação de vulnerabilidade socioeconômica.
-                    Oferece benefícios de mensalidade reduzida ou bolsa integral.
-                  </p>
-                  <div class="vaga-info">
-                    <div class="info-item">
-                      <ion-icon name="document-text-outline" color="warning"></ion-icon>
-                      <span>Requer comprovação de renda</span>
-                    </div>
-                    <div class="info-item">
-                      <ion-icon name="heart-outline" color="success"></ion-icon>
-                      <span>Benefícios educacionais inclusos</span>
-                    </div>
-                  </div>
-                </div>
-              </ion-item>
-            </div>
-
-            <!-- Vaga de Funcionário -->
-            <div class="vaga-card">
-              <ion-item lines="none" class="vaga-item">
-                <ion-radio slot="start" value="funcionario" color="tertiary"></ion-radio>
-                <div class="vaga-content">
-                  <div class="vaga-header">
-                    <ion-icon name="business-outline" color="tertiary"></ion-icon>
-                    <h3 class="vaga-title">Vaga de Funcionário</h3>
-                    <ion-badge color="tertiary" class="vaga-badge">Colaboradores</ion-badge>
-                  </div>
-                  <p class="vaga-description">
-                    Reservada para filhos de funcionários e colaboradores da instituição.
-                    Desconto especial na mensalidade conforme política interna.
-                  </p>
-                  <div class="vaga-info">
-                    <div class="info-item">
-                      <ion-icon name="id-card-outline" color="tertiary"></ion-icon>
-                      <span>Requer comprovação de vínculo</span>
-                    </div>
-                    <div class="info-item">
-                      <ion-icon name="star-outline" color="tertiary"></ion-icon>
-                      <span>Benefícios exclusivos</span>
-                    </div>
-                  </div>
-                </div>
-              </ion-item>
-            </div>
-          </ion-radio-group>
-        </div>
-
-        <!-- Botões de Ação -->
-        <div class="form-actions">
-          <ion-button
-            expand="block"
-            type="submit"
-            color="primary"
-            size="large"
-            class="primary-button"
-            [disabled]="!tipoVagaForm.valid">
-            <ion-icon name="arrow-forward" slot="end"></ion-icon>
-            <span *ngIf="tipoVagaForm.get('tipoCota')?.value === 'economica'">Continuar para Informações de Renda</span>
-            <span *ngIf="tipoVagaForm.get('tipoCota')?.value !== 'economica'">Continuar para Dados do Aluno</span>
-          </ion-button>
-        </div>
-      </form>
-    </div>
-
-    <!-- =================== ETAPA 3: INFORMAÇÕES DE RENDA (Condicional) =================== -->
-    <div *ngIf="etapaAtual === ETAPAS.INFO_RENDA" class="step-container" [@slideIn]>
-      <app-etapa-info-renda
-        [formGroup]="infoRendaForm!"
-        (formSubmitted)="proximaEtapa()">
-      </app-etapa-info-renda>
-    </div>
-
-    <!-- =================== ETAPA 4: DADOS DO ALUNO =================== -->
-    <div *ngIf="etapaAtual === ETAPAS.DADOS_ALUNO" class="step-container" [@slideIn]>
-      <!-- Cabeçalho da Etapa -->
-      <div class="step-header">
-        <div class="step-icon-container">
-          <ion-icon name="school" color="primary"></ion-icon>
-        </div>
-        <div class="step-info">
-          <h1 class="step-title">Dados do Aluno</h1>
-          <p class="step-description">
-            Informe os dados do aluno que será matriculado.
-            A idade deve estar entre 6 e 10 anos.
-          </p>
-        </div>
-      </div>
-
-      <!-- Formulário -->
-      <form [formGroup]="dadosAlunoForm" (ngSubmit)="proximaEtapa()" class="step-form">
-
-        <!-- Seção: Informações do Aluno -->
-        <div class="form-section">
-          <div class="section-header">
-            <ion-icon name="person-outline" color="medium"></ion-icon>
-            <h3 class="section-title">Informações do Aluno</h3>
-          </div>
-
-          <div class="form-grid">
-            <!-- Nome do Aluno -->
-            <div class="form-group full-width">
-              <ion-item class="modern-input" fill="outline">
-                <ion-label position="stacked">
-                  <span class="label-text">Nome Completo do Aluno</span>
-                  <span class="required-marker">*</span>
-                </ion-label>
-                <ion-input
-                  formControlName="nomeAluno"
-                  type="text"
-                  placeholder="Digite o nome completo do aluno"
-                  clearInput="true">
-                </ion-input>
-                <ion-icon name="person-outline" slot="start" color="medium"></ion-icon>
-              </ion-item>
-            </div>
-
-            <!-- Data de Nascimento e CPF do Aluno -->
-            <div class="form-group half-width">
-              <ion-item class="modern-input" fill="outline">
-                <ion-label position="stacked">
-                  <span class="label-text">Data de Nascimento</span>
-                  <span class="required-marker">*</span>
-                </ion-label>
-                <ion-input
-                  formControlName="dataNascimentoAluno"
-                  type="date">
-                </ion-input>
-                <ion-icon name="calendar-outline" slot="start" color="medium"></ion-icon>
-              </ion-item>
-              <div class="field-hint" *ngIf="dadosAlunoForm.get('dataNascimentoAluno')?.hasError('idadeInvalida')">
-                <ion-icon name="warning-outline" color="danger"></ion-icon>
-                <span>A idade deve estar entre 6 e 10 anos</span>
-              </div>
-            </div>
-
-            <div class="form-group half-width">
-              <ion-item class="modern-input" fill="outline">
-                <ion-label position="stacked">
-                  <span class="label-text">CPF do Aluno</span>
-                  <span class="optional-marker">(opcional)</span>
-                </ion-label>
-                <ion-input
-                  formControlName="cpfAluno"
-                  type="text"
-                  placeholder="000.000.000-00"
-                  maxlength="14">
-                </ion-input>
-                <ion-icon name="card-outline" slot="start" color="medium"></ion-icon>
-              </ion-item>
-            </div>
-          </div>
-        </div>
-
-        <!-- Botões de Ação -->
-        <div class="form-actions">
-          <ion-button
-            expand="block"
-            type="submit"
-            color="primary"
-            size="large"
-            class="primary-button"
-            [disabled]="!dadosAlunoForm.valid">
-            <ion-icon name="arrow-forward" slot="end"></ion-icon>
-            Continuar para Horários
-          </ion-button>
-        </div>
-      </form>
-    </div>
-
-    <!-- =================== ETAPA 5: HORÁRIOS DA VAGA =================== -->
-    <div *ngIf="etapaAtual === ETAPAS.HORARIOS_VAGA" class="step-container" [@slideIn]>
-      <app-etapa-horarios-vaga
-        [formArray]="horariosSelecionadosFormArray"
-        (formSubmitted)="proximaEtapa()">
-      </app-etapa-horarios-vaga>
-    </div>
-
-    <!-- =================== ETAPA 6: REVISÃO =================== -->
-    <div *ngIf="etapaAtual === ETAPAS.REVISAO" class="step-container" [@slideIn]>
-      <!-- Cabeçalho da Etapa -->
-      <div class="step-header">
-        <div class="step-icon-container">
-          <ion-icon name="checkmark-circle" color="primary"></ion-icon>
-        </div>
-        <div class="step-info">
-          <h1 class="step-title">Revisão dos Dados</h1>
-          <p class="step-description">
-            Confira cuidadosamente todas as informações antes de enviar sua declaração.
-            Você poderá editar qualquer seção clicando no ícone de edição.
-          </p>
-        </div>
-      </div>
-
-      <!-- Revisão dos Dados -->
-      <div class="review-container">
-
-        <!-- Card: Dados do Responsável -->
-        <ion-card class="review-card">
-          <ion-card-header>
-            <div class="card-header">
-              <div class="header-info">
-                <ion-icon name="person-circle-outline" color="primary"></ion-icon>
-                <ion-card-title>Dados do Responsável</ion-card-title>
-              </div>
-              <ion-button
-                fill="clear"
-                color="medium"
-                (click)="editarEtapa(ETAPAS.DADOS_RESPONSAVEL)"
-                class="edit-button">
-                <ion-icon name="create-outline" slot="icon-only"></ion-icon>
-              </ion-button>
-            </div>
-          </ion-card-header>
-          <ion-card-content>
-            <div class="review-grid">
-              <div class="review-item">
+            <div class="membro-dados">
+              <div class="dado-item">
                 <label>Nome:</label>
-                <span>{{ dadosResponsavelForm.get('nomeResponsavel')?.value }}</span>
+                <span>{{ getResponsavelNome() || 'Não informado' }}</span>
               </div>
-              <div class="review-item">
+              <div class="dado-item">
                 <label>CPF:</label>
-                <span>{{ dadosResponsavelForm.get('cpfResponsavel')?.value }}</span>
+                <span>{{ getResponsavelCpf() || 'Não informado' }}</span>
               </div>
-              <div class="review-item">
-                <label>Telefone:</label>
-                <span>{{ dadosResponsavelForm.get('telefoneResponsavel')?.value }}</span>
-              </div>
-              <div class="review-item">
+              <div class="dado-item" *ngIf="responsavelExiste && dadosResponsavel?.email">
                 <label>Email:</label>
-                <span>{{ dadosResponsavelForm.get('emailResponsavel')?.value }}</span>
+                <span>{{ dadosResponsavel.email }}</span>
               </div>
-            </div>
-          </ion-card-content>
-        </ion-card>
+              <div class="dado-item" *ngIf="responsavelExiste && dadosResponsavel?.telefone">
+                <label>Telefone:</label>
+                <span>{{ dadosResponsavel.telefone }}</span>
+              </div>
+              <div class="inputs-renda">
+                <ion-item class="form-item-small">
+                  <ion-input placeholder="Ex: Professor, Vendedor, Autônomo" fill="outline" label="Ocupação"
+                    labelPlacement="floating" [(ngModel)]="responsavelOcupacao" [ngModelOptions]="{standalone: true}">
+                  </ion-input>
+                </ion-item>
+                <ion-item class="form-item-small">
+                  <ion-input type="number" placeholder="0,00" fill="outline" label="Renda Mensal (R$)"
+                    labelPlacement="floating" [(ngModel)]="responsavelRenda" [ngModelOptions]="{standalone: true}">
+                  </ion-input>
+                </ion-item>
+              </div>
 
-        <!-- Card: Tipo de Vaga -->
-        <ion-card class="review-card">
-          <ion-card-header>
-            <div class="card-header">
-              <div class="header-info">
-                <ion-icon name="ribbon-outline" color="primary"></ion-icon>
-                <ion-card-title>Tipo de Vaga</ion-card-title>
+              <!-- Informação sobre dados pré-cadastrados -->
+              <div class="info-responsavel" *ngIf="responsavelExiste">
+                <ion-icon name="information-circle-outline" color="primary"></ion-icon>
+                <p>Os dados pessoais foram recuperados do cadastro anterior. Informe apenas a ocupação e renda atual.
+                </p>
               </div>
-              <ion-button
-                fill="clear"
-                color="medium"
-                (click)="editarEtapa(ETAPAS.TIPO_VAGA)"
-                class="edit-button">
-                <ion-icon name="create-outline" slot="icon-only"></ion-icon>
-              </ion-button>
             </div>
-          </ion-card-header>
-          <ion-card-content>
-            <div class="review-vaga">
-              <div class="vaga-selected">
-                <ion-icon
-                  [name]="tipoVagaForm.get('tipoCota')?.value === 'livre' ? 'people-outline' :
-                          tipoVagaForm.get('tipoCota')?.value === 'economica' ? 'wallet-outline' : 'business-outline'"
-                  [color]="tipoVagaForm.get('tipoCota')?.value === 'livre' ? 'primary' :
-                           tipoVagaForm.get('tipoCota')?.value === 'economica' ? 'success' : 'tertiary'">
-                </ion-icon>
-                <div class="vaga-info">
-                  <h4>
-                    <span *ngIf="tipoVagaForm.get('tipoCota')?.value === 'livre'">Vaga Livre</span>
-                    <span *ngIf="tipoVagaForm.get('tipoCota')?.value === 'economica'">Vaga Econômica</span>
-                    <span *ngIf="tipoVagaForm.get('tipoCota')?.value === 'funcionario'">Vaga de Funcionário</span>
-                  </h4>
-                  <p>
-                    <span *ngIf="tipoVagaForm.get('tipoCota')?.value === 'livre'">Ampla concorrência</span>
-                    <span *ngIf="tipoVagaForm.get('tipoCota')?.value === 'economica'">Para famílias de baixa renda</span>
-                    <span *ngIf="tipoVagaForm.get('tipoCota')?.value === 'funcionario'">Para filhos de funcionários</span>
-                  </p>
+          </div>
+
+          <!-- Aluno (pré-preenchido) -->
+          <div class="membro-familia aluno-item">
+            <div class="membro-header">
+              <ion-icon name="school" color="primary"></ion-icon>
+              <span class="membro-tipo">Aluno</span>
+            </div>
+            <div class="membro-dados">
+              <div class="dado-item">
+                <label>Nome:</label>
+                <span>{{ dadosAlunoForm.get('nome')?.value || 'Não informado' }}</span>
+              </div>
+              <div class="dado-item">
+                <label>CPF:</label>
+                <span>{{ dadosAlunoForm.get('cpf')?.value || 'Não informado' }}</span>
+              </div>
+              <div class="inputs-renda">
+                <ion-item class="form-item-small">
+                  <ion-input placeholder="Ex: Estudante, Estagiário, Não trabalha" fill="outline" label="Ocupação"
+                    labelPlacement="floating" [(ngModel)]="alunoOcupacao" [ngModelOptions]="{standalone: true}">
+                  </ion-input>
+                </ion-item>
+                <ion-item class="form-item-small">
+                  <ion-input type="number" placeholder="0,00" fill="outline" label="Renda Mensal (R$)"
+                    labelPlacement="floating" [(ngModel)]="alunoRenda" [ngModelOptions]="{standalone: true}">
+                  </ion-input>
+                </ion-item>
+              </div>
+            </div>
+          </div>
+
+          <!-- Outros Integrantes (dinâmicos) -->
+          <div class="outros-integrantes">
+            <div class="section-header">
+              <h4>Outros Integrantes da Família</h4>
+            </div>
+
+            <div *ngFor="let integrante of integrantesFamilia; let i = index" class="membro-familia integrante-item">
+              <div class="membro-header">
+                <ion-icon name="person" color="primary"></ion-icon>
+                <span class="membro-tipo">Integrante {{ i + 1 }}</span>
+                <ion-button fill="clear" color="danger" (click)="removerIntegrante(i)" class="remove-btn">
+                  <ion-icon name="trash-outline"></ion-icon>
+                </ion-button>
+              </div>
+              <div class="membro-dados">
+                <div class="inputs-info">
+                  <ion-item class="form-item-small">
+                    <ion-input placeholder="Nome completo" fill="outline" label="Nome" labelPlacement="floating"
+                      [(ngModel)]="integrante.nome" [ngModelOptions]="{standalone: true}">
+                    </ion-input>
+                  </ion-item>
+                  <ion-item class="form-item-small">
+                    <ion-input placeholder="000.000.000-00" maxlength="14" fill="outline" label="CPF"
+                      labelPlacement="floating" [(ngModel)]="integrante.cpf" [ngModelOptions]="{standalone: true}"
+                      (ionInput)="formatarCpfIntegrante($event, integrante)">
+                    </ion-input>
+                  </ion-item>
+                </div>
+                <div class="inputs-renda">
+                  <ion-item class="form-item-small">
+                    <ion-input placeholder="Ex: Pai, Mãe, Irmão, Avô" fill="outline" label="Parentesco"
+                      labelPlacement="floating" [(ngModel)]="integrante.parentesco"
+                      [ngModelOptions]="{standalone: true}">
+                    </ion-input>
+                  </ion-item>
+                  <ion-item class="form-item-small">
+                    <ion-input placeholder="Ex: Enfermeiro, Motorista, Aposentado" fill="outline" label="Ocupação"
+                      labelPlacement="floating" [(ngModel)]="integrante.ocupacao" [ngModelOptions]="{standalone: true}">
+                    </ion-input>
+                  </ion-item>
+                  <ion-item class="form-item-small">
+                    <ion-input type="number" placeholder="0,00" fill="outline" label="Renda Mensal (R$)"
+                      labelPlacement="floating" [(ngModel)]="integrante.renda" [ngModelOptions]="{standalone: true}">
+                    </ion-input>
+                  </ion-item>
                 </div>
               </div>
             </div>
-          </ion-card-content>
-        </ion-card>
 
-        <!-- Card: Dados do Aluno -->
-        <ion-card class="review-card">
-          <ion-card-header>
-            <div class="card-header">
-              <div class="header-info">
-                <ion-icon name="school-outline" color="primary"></ion-icon>
-                <ion-card-title>Dados do Aluno</ion-card-title>
-              </div>
-              <ion-button
-                fill="clear"
-                color="medium"
-                (click)="editarEtapa(ETAPAS.DADOS_ALUNO)"
-                class="edit-button">
-                <ion-icon name="create-outline" slot="icon-only"></ion-icon>
-              </ion-button>
-            </div>
-          </ion-card-header>
-          <ion-card-content>
-            <div class="review-grid">
-              <div class="review-item">
-                <label>Nome do Aluno:</label>
-                <span>{{ dadosAlunoForm.get('nomeAluno')?.value }}</span>
-              </div>
-              <div class="review-item" *ngIf="dadosAlunoForm.get('cpfAluno')?.value">
-                <label>CPF:</label>
-                <span>{{ dadosAlunoForm.get('cpfAluno')?.value }}</span>
-              </div>
-              <div class="review-item">
-                <label>Data de Nascimento:</label>
-                <span>{{ dadosAlunoForm.get('dataNascimentoAluno')?.value | date:'dd/MM/yyyy' }}</span>
-              </div>
-            </div>
-          </ion-card-content>
-        </ion-card>
+            <!-- Botão para adicionar integrante -->
+            <ion-button fill="outline" color="primary" (click)="adicionarIntegrante()" class="add-integrante-btn">
+              <ion-icon name="person-add-outline" slot="start"></ion-icon>
+              Adicionar Integrante
+            </ion-button>
+          </div>
 
-        <!-- Card: Informações de Renda (se aplicável) -->
-        <ion-card class="review-card" *ngIf="infoRendaForm">
-          <ion-card-header>
-            <div class="card-header">
-              <div class="header-info">
-                <ion-icon name="wallet-outline" color="primary"></ion-icon>
-                <ion-card-title>Informações de Renda</ion-card-title>
-              </div>
-              <ion-button
-                fill="clear"
-                color="medium"
-                (click)="editarEtapa(ETAPAS.INFO_RENDA)"
-                class="edit-button">
-                <ion-icon name="create-outline" slot="icon-only"></ion-icon>
-              </ion-button>
+          <!-- Resumo da Renda Total -->
+          <div class="renda-total-card">
+            <div class="renda-header">
+              <ion-icon name="calculator-outline" color="primary"></ion-icon>
+              <h4>Resumo da Renda Familiar</h4>
             </div>
-          </ion-card-header>
-          <ion-card-content>
-            <p>Informações de renda familiar cadastradas</p>
-          </ion-card-content>
-        </ion-card>
+            <div class="renda-detalhes">
+              <div class="renda-item">
+                <span>Total de integrantes:</span>
+                <span class="valor">{{ getTotalIntegrantes() }}</span>
+              </div>
+              <div class="renda-item total">
+                <span>Renda Familiar Total:</span>
+                <span class="valor">{{ getRendaFamiliarTotalFormatada() }}</span>
+              </div>
+              <div class="renda-item per-capita">
+                <span>Renda Per Capita:</span>
+                <span class="valor">{{ getRendaPerCapitaFormatada() }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <!-- ===== ETAPA 5: ENDEREÇO DA FAMÍLIA ===== -->
+    <div *ngIf="etapaAtual === ETAPAS.ENDERECO_FAMILIA" class="etapa-container">
+      <div class="etapa-header">
+        <div class="header-icon">
+          <ion-icon name="location-outline" color="primary"></ion-icon>
+        </div>
+        <div class="header-content">
+          <h2>Endereço da Família</h2>
+          <p>Informe o endereço completo da residência</p>
+        </div>
       </div>
 
-      <!-- Mensagem Adicional -->
-      <div class="form-section">
-        <div class="section-header">
-          <ion-icon name="chatbubble-outline" color="medium"></ion-icon>
-          <h3 class="section-title">Mensagem Adicional (Opcional)</h3>
+      <form [formGroup]="enderecoForm" class="form-container">
+        <ion-item class="form-item">
+          <ion-input formControlName="cep" placeholder="00000-000" maxlength="9"
+            (ionBlur)="buscarEnderecoPorCep(enderecoForm.get('cep')?.value || '')" [clearInput]="true" fill="outline"
+            label="CEP" labelPlacement="floating" (ionInput)="formatarCep($event)">
+          </ion-input>
+        </ion-item>
+
+        <ion-item class="form-item">
+          <ion-input formControlName="logradouro" placeholder="Rua, Avenida, etc." [clearInput]="true" fill="outline"
+            label="Logradouro" labelPlacement="floating">
+          </ion-input>
+        </ion-item>
+
+        <div class="row-container">
+          <ion-item class="form-item flex-2">
+            <ion-input formControlName="numero" placeholder="123" [clearInput]="true" fill="outline" label="Número"
+              labelPlacement="floating">
+            </ion-input>
+          </ion-item>
+
+          <ion-item class="form-item flex-3">
+            <ion-input formControlName="complemento" placeholder="Apto, Bloco, etc." [clearInput]="true" fill="outline"
+              label="Complemento" labelPlacement="floating">
+            </ion-input>
+          </ion-item>
         </div>
-        <ion-item class="modern-input" fill="outline">
-          <ion-label position="stacked">
-            <span class="label-text">Informações Complementares</span>
-          </ion-label>
-          <ion-textarea
-            formControlName="mensagemAdicional"
-            placeholder="Descreva qualquer informação adicional relevante..."
-            rows="4">
+
+        <ion-item class="form-item">
+          <ion-input formControlName="bairro" placeholder="Nome do bairro" [clearInput]="true" fill="outline"
+            label="Bairro" labelPlacement="floating">
+          </ion-input>
+        </ion-item>
+
+        <div class="row-container">
+          <ion-item class="form-item flex-4">
+            <ion-input formControlName="cidade" placeholder="Nome da cidade" [clearInput]="true" fill="outline"
+              label="Cidade" labelPlacement="floating">
+            </ion-input>
+          </ion-item>
+
+          <ion-item class="form-item flex-1">
+            <ion-input formControlName="uf" placeholder="SP" maxlength="2" [clearInput]="true" fill="outline" label="UF"
+              labelPlacement="floating">
+            </ion-input>
+          </ion-item>
+        </div>
+
+        <ion-item class="form-item">
+          <ion-textarea formControlName="pontoReferencia"
+            placeholder="Ex: Próximo ao mercado X, em frente à escola Y..." rows="3" fill="outline"
+            label="Ponto de referência (opcional)" labelPlacement="floating">
           </ion-textarea>
         </ion-item>
+      </form>
+    </div>
+
+    <!-- ===== ETAPA 6: OBSERVAÇÕES ===== -->
+    <div *ngIf="etapaAtual === ETAPAS.OBSERVACOES" class="etapa-container">
+      <div class="etapa-header">
+        <div class="header-icon">
+          <ion-icon name="document-text-outline" color="primary"></ion-icon>
+        </div>
+        <div class="header-content">
+          <h2>Observações</h2>
+          <p>Informações relevantes sobre o aluno</p>
+        </div>
       </div>
 
-      <!-- Botões de Ação -->
-      <div class="form-actions">
-        <ion-button
-          expand="block"
-          color="success"
-          size="large"
-          class="success-button"
-          [disabled]="declaracaoForm.invalid || isSubmitting"
-          (click)="enviarDeclaracaoFinal()">
-          <ion-icon name="send" slot="start"></ion-icon>
-          <span *ngIf="!isSubmitting">Enviar Declaração de Interesse</span>
-          <span *ngIf="isSubmitting">Enviando...</span>
-        </ion-button>
+      <form [formGroup]="declaracaoForm" class="form-container">
+        <ion-item class="form-item">
+          <ion-textarea formControlName="observacoes"
+            placeholder="Ex: Criança muito ativa, tem dificuldades de aprendizagem, necessidades especiais, etc..."
+            rows="6" fill="outline" label="Observações sobre o aluno (opcional)" labelPlacement="floating">
+          </ion-textarea>
+        </ion-item>
 
-        <div class="action-info">
-          <ion-icon name="shield-checkmark-outline" color="success"></ion-icon>
-          <span>Sua declaração será processada em até 2 dias úteis</span>
+        <div class="info-card">
+          <ion-icon name="information-circle-outline" color="primary"></ion-icon>
+          <p>Essas informações ajudam nossa equipe pedagógica a conhecer melhor o aluno e preparar um atendimento mais
+            adequado.</p>
+        </div>
+      </form>
+    </div>
+
+    <!-- ===== ETAPA 7: REVISÃO FINAL ===== -->
+    <div *ngIf="etapaAtual === ETAPAS.REVISAO" class="etapa-container">
+      <div class="etapa-header">
+        <div class="header-icon">
+          <ion-icon name="checkmark-circle-outline" color="primary"></ion-icon>
+        </div>
+        <div class="header-content">
+          <h2>Revisão Final</h2>
+          <p>Confira todos os dados antes de enviar</p>
+        </div>
+      </div>
+
+      <div class="revisao-container">
+        <!-- Dados do Responsável -->
+        <div class="revisao-section">
+          <h3>Dados do Responsável</h3>
+          <div class="revisao-item">
+            <span class="label">Nome:</span>
+            <span class="value">{{ dadosResponsavelForm.get('nome')?.value }}</span>
+          </div>
+          <div class="revisao-item">
+            <span class="label">CPF:</span>
+            <span class="value">{{ dadosResponsavelForm.get('cpf')?.value }}</span>
+          </div>
+          <div class="revisao-item">
+            <span class="label">E-mail:</span>
+            <span class="value">{{ dadosResponsavelForm.get('email')?.value }}</span>
+          </div>
+          <div class="revisao-item">
+            <span class="label">Telefone:</span>
+            <span class="value">{{ dadosResponsavelForm.get('telefone')?.value }}</span>
+          </div>
+        </div>
+
+        <!-- Dados do Aluno -->
+        <div class="revisao-section">
+          <h3>Dados do Aluno</h3>
+          <div class="revisao-item">
+            <span class="label">Nome:</span>
+            <span class="value">{{ dadosAlunoForm.get('nome')?.value }}</span>
+          </div>
+          <div class="revisao-item">
+            <span class="label">CPF:</span>
+            <span class="value">{{ dadosAlunoForm.get('cpf')?.value }}</span>
+          </div>
+          <div class="revisao-item">
+            <span class="label">Escola:</span>
+            <span class="value">{{ dadosAlunoForm.get('escola')?.value }}</span>
+          </div>
+          <div class="revisao-item">
+            <span class="label">Tipo de Vaga:</span>
+            <span class="value">{{ declaracaoForm.get('tipoCota')?.value }}</span>
+          </div>
+        </div>
+
+        <!-- Endereço -->
+        <div class="revisao-section">
+          <h3>Endereço</h3>
+          <div class="revisao-item">
+            <span class="label">Endereço:</span>
+            <span class="value">
+              {{ enderecoForm.get('logradouro')?.value }},
+              {{ enderecoForm.get('numero')?.value }}
+              <span *ngIf="enderecoForm.get('complemento')?.value"> - {{ enderecoForm.get('complemento')?.value
+                }}</span>
+            </span>
+          </div>
+          <div class="revisao-item">
+            <span class="label">Bairro:</span>
+            <span class="value">{{ enderecoForm.get('bairro')?.value }}</span>
+          </div>
+          <div class="revisao-item">
+            <span class="label">Cidade/UF:</span>
+            <span class="value">{{ enderecoForm.get('cidade')?.value }}/{{ enderecoForm.get('uf')?.value }}</span>
+          </div>
+          <div class="revisao-item">
+            <span class="label">CEP:</span>
+            <span class="value">{{ enderecoForm.get('cep')?.value }}</span>
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- =================== ETAPA 7: SUCESSO =================== -->
-    <div *ngIf="etapaAtual === ETAPAS.CONCLUIDO" class="step-container success-container" [@slideIn]>
-      <app-comprovante-declaracao
-        [dadosComprovante]="dadosDeclaracaoCompleta"
-        (novaDeclaracao)="resetGeral()">
-      </app-comprovante-declaracao>
+    <!-- ===== ETAPA 8: CONCLUÍDO ===== -->
+    <div *ngIf="etapaAtual === ETAPAS.CONCLUIDO" class="etapa-container concluido">
+      <div class="success-container">
+        <ion-icon name="checkmark-circle" color="success" class="success-icon"></ion-icon>
+        <h2>Declaração Enviada com Sucesso!</h2>
+        <p>Sua declaração de interesse foi recebida e está sendo analisada.</p>
+
+        <div class="info-card">
+          <ion-icon name="information-circle-outline" color="primary"></ion-icon>
+          <p>Você será contatado por e-mail ou telefone assim que houver atualizações sobre o processo de matrícula.</p>
+        </div>
+
+        <ion-button expand="block" color="success" (click)="voltarParaInicio()" class="action-button">
+          <ion-icon name="home-outline" slot="start"></ion-icon>
+          Voltar ao Início
+        </ion-button>
+      </div>
+    </div>
+
+    <!-- Botões de Navegação -->
+    <div class="navigation-buttons" *ngIf="etapaAtual !== ETAPAS.CONCLUIDO">
+      <ion-button expand="block" color="success" (click)="proximaEtapa()" [disabled]="isSubmitting"
+        class="action-button">
+        <span *ngIf="etapaAtual === ETAPAS.REVISAO">
+          <ion-icon name="send-outline" slot="start"></ion-icon>
+          Enviar Declaração
+        </span>
+        <span *ngIf="etapaAtual !== ETAPAS.REVISAO">
+          Prosseguir
+          <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
+        </span>
+      </ion-button>
     </div>
 
   </div>

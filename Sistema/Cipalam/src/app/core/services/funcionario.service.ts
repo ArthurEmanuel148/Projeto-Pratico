@@ -6,7 +6,7 @@ import { ApiConfigService } from './api-config.service';
 export interface FuncionarioCadastroDTO {
   pessoa: {
     nmPessoa: string;
-    cpfPessoa: string;
+    cpfPessoa?: string; // Opcional para funcionários
     email: string;
     telefone: string;
     dtNascPessoa: string;
@@ -36,7 +36,7 @@ export class FuncionarioService {
         nmPessoa: funcionarioData.nomeCompleto,
         email: funcionarioData.email,
         telefone: funcionarioData.telefone,
-        cpfPessoa: funcionarioData.cpf,
+        cpfPessoa: funcionarioData.cpf || '', // CPF opcional para funcionários
         dtNascPessoa: funcionarioData.dataNascimento,
         caminhoImagem: undefined,
         caminhoIdentidadePessoa: undefined

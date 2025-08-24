@@ -226,26 +226,9 @@ mvn spring-boot:run
 - Integração com outros sistemas
 - App mobile nativo
 
-## 🤝 Contribuição
-
-Para contribuir com o projeto:
-
-1. Fork o repositório
-2. Crie uma branch para sua feature (`git checkout -b feature/nova-funcionalidade`)
-3. Commit suas mudanças (`git commit -m 'Adiciona nova funcionalidade'`)
-4. Push para a branch (`git push origin feature/nova-funcionalidade`)
-5. Abra um Pull Request
-
 ## 📝 Licença
 
 Este projeto está sob a licença MIT. Veja o arquivo `LICENSE` para mais detalhes.
-
-## 📞 Suporte
-
-Para suporte técnico ou dúvidas:
-- Documentação: [README.md](./README.md)
-- Issues: [GitHub Issues](../../issues)
-- Email: suporte@cipalam.com.br
 
 ---
 

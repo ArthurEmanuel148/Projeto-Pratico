@@ -79,23 +79,39 @@ export class InicioMatriculaPage implements OnInit {
 
     try {
       const payload = {
-        interesseId: this.interesseSelecionado.id,
-        funcionarioId: this.funcionarioSelecionado,
-        observacoes: this.observacoes || 'Matrícula iniciada via painel administrativo'
+        idDeclaracao: this.interesseSelecionado.id,
+        idTurma: 1, // Por enquanto usando turma padrão - pode ser implementado seleção depois
+        idFuncionario: this.funcionarioSelecionado
       };
 
       console.log('Iniciando matrícula com payload:', payload);
 
-      const response = await this.http.post<any>(`${this.apiUrl}/matricula/iniciar`, payload).toPromise();
+      const response = await this.http.post<any>(`${this.apiUrl}/matricula/iniciar-procedural`, payload).toPromise();
 
       if (response?.success) {
-        this.resultadoMatricula = response;
+        this.resultadoMatricula = {
+          success: response.success,
+          message: response.message,
+          credenciaisResponsavel: {
+            usuario: response.data?.loginResponsavel,
+            senha: response.data?.senhaTemporaria
+          },
+          matricula: response.data?.matricula,
+          idFamilia: response.data?.idFamilia,
+          idResponsavel: response.data?.idResponsavel,
+          idAluno: response.data?.idAluno
+        };
         this.matriculaIniciada = true;
+
+        console.log('Dados da matrícula criada:', this.resultadoMatricula);
 
         // Carregar documentos necessários
         await this.carregarDocumentosNecessarios();
 
-        this.mostrarSucesso('Matrícula iniciada com sucesso!');
+        this.mostrarSucesso(`Matrícula iniciada com sucesso! 
+        Matrícula: ${this.resultadoMatricula.matricula}
+        Login: ${this.resultadoMatricula.credenciaisResponsavel.usuario}
+        Senha: ${this.resultadoMatricula.credenciaisResponsavel.senha}`);
       } else {
         this.mostrarErro(response?.message || 'Erro desconhecido ao iniciar matrícula');
       }

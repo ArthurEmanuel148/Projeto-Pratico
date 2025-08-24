@@ -91,6 +91,37 @@ public class InteresseMatriculaController {
         return ResponseEntity.ok(interesses);
     }
 
+    @GetMapping("/verificar-responsavel/{cpf}")
+    public ResponseEntity<?> verificarResponsavel(@PathVariable String cpf) {
+        try {
+            Map<String, Object> resultado = interesseMatriculaService.verificarResponsavelExiste(cpf);
+            return ResponseEntity.ok(resultado);
+        } catch (Exception e) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("existe", false);
+            errorResponse.put("dadosResponsavel", null);
+            errorResponse.put("message", "Erro ao verificar responsável: " + e.getMessage());
+            return ResponseEntity.ok(errorResponse);
+        }
+    }
+
+    @PostMapping("/autenticar-responsavel")
+    public ResponseEntity<?> autenticarResponsavel(@RequestBody Map<String, String> dados) {
+        try {
+            String cpf = dados.get("cpf");
+            String senha = dados.get("senha");
+
+            Map<String, Object> resultado = interesseMatriculaService.autenticarResponsavel(cpf, senha);
+            return ResponseEntity.ok(resultado);
+        } catch (Exception e) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("autenticado", false);
+            errorResponse.put("dadosResponsavel", null);
+            errorResponse.put("message", "Erro na autenticação: " + e.getMessage());
+            return ResponseEntity.ok(errorResponse);
+        }
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletar(@PathVariable Integer id) {
         try {

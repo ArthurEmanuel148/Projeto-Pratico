@@ -20,10 +20,11 @@ export class RotasConfigService {
         ['funcionarios', '/sistema/funcionarios'],
 
         // Matrículas
-        ['declaracoesInteresse', '/sistema/matriculas/declaracoes-interesse'],
+        ['declaracoesInteresse', '/sistema/matriculas/declaracoes'],
         ['configurarDocumentosCota', '/sistema/matriculas/configuracao-documentos'],
-        ['declaracaoInteresse', '/sistema/matriculas/declaracoes-interesse'],
+        ['declaracaoInteresse', '/sistema/matriculas/declaracao-interesse'],
         ['matriculas', '/sistema/matriculas'],
+        ['iniciarMatricula', '/sistema/iniciar-matricula'],
 
         // Alunos (futuras implementações)
         ['listaAlunos', '/sistema/alunos/lista'],

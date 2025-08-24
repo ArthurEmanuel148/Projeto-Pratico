@@ -1,0 +1,221 @@
+.filtros-container {
+  background: var(--ion-color-light);
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 20px;
+
+  h3 {
+    margin: 0 0 16px 0;
+    color: var(--ion-color-primary);
+    font-size: 1.2em;
+    font-weight: 600;
+  }
+
+  .limpar-filtros {
+    margin-top: 8px;
+    --color: var(--ion-color-medium);
+  }
+}
+
+.turmas-lista {
+  h3 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 16px;
+    color: var(--ion-color-dark);
+    font-size: 1.2em;
+    font-weight: 600;
+  }
+}
+
+.sem-turmas {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--ion-color-medium);
+
+  ion-icon {
+    font-size: 64px;
+    margin-bottom: 16px;
+  }
+
+  p {
+    font-size: 1.1em;
+    margin: 0;
+  }
+}
+
+ion-card {
+  margin: 0 0 16px 0;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  border: 2px solid transparent;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  }
+
+  &.selecionada {
+    border-color: var(--ion-color-success);
+    background: rgba(var(--ion-color-success-rgb), 0.05);
+  }
+
+  &.indisponivel {
+    opacity: 0.6;
+    cursor: not-allowed;
+
+    &:hover {
+      transform: none;
+      box-shadow: none;
+    }
+  }
+
+  ion-card-header {
+    padding-bottom: 8px;
+
+    ion-card-subtitle {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 8px;
+      flex-wrap: wrap;
+    }
+
+    ion-card-title {
+      font-size: 1.3em;
+      font-weight: 600;
+      color: var(--ion-color-dark);
+    }
+  }
+
+  ion-card-content {
+    position: relative;
+  }
+}
+
+.turma-info {
+  p {
+    margin: 8px 0;
+    font-size: 0.95em;
+
+    strong {
+      color: var(--ion-color-dark);
+      font-weight: 600;
+    }
+  }
+
+  .descricao {
+    font-style: italic;
+    color: var(--ion-color-medium);
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--ion-color-light);
+  }
+}
+
+.vagas-info {
+  margin: 12px 0;
+
+  ion-progress-bar {
+    height: 8px;
+    border-radius: 4px;
+    margin-bottom: 4px;
+  }
+
+  .vagas-texto {
+    font-size: 0.85em;
+    color: var(--ion-color-medium);
+    margin: 0;
+  }
+}
+
+.motivo-indisponibilidade {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+  padding: 8px 12px;
+  background: rgba(var(--ion-color-danger-rgb), 0.1);
+  border-radius: 6px;
+  font-size: 0.9em;
+  color: var(--ion-color-danger);
+
+  ion-icon {
+    font-size: 1.2em;
+  }
+}
+
+.selecionado-indicador {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(var(--ion-color-success-rgb), 0.9);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 0.8em;
+  font-weight: 600;
+
+  ion-icon {
+    font-size: 1.1em;
+  }
+}
+
+ion-chip {
+  font-size: 0.8em;
+  font-weight: 500;
+
+  ion-icon {
+    font-size: 1em;
+  }
+}
+
+ion-footer {
+  ion-toolbar {
+    --padding-start: 16px;
+    --padding-end: 16px;
+  }
+}
+
+// Responsividade
+@media (max-width: 768px) {
+  .filtros-container {
+    ion-row ion-col {
+      padding: 4px;
+    }
+  }
+
+  ion-card {
+    ion-card-header {
+      ion-card-subtitle {
+        ion-chip {
+          font-size: 0.75em;
+        }
+      }
+
+      ion-card-title {
+        font-size: 1.1em;
+      }
+    }
+  }
+}
+
+// Animações
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+ion-card {
+  animation: fadeIn 0.3s ease-out;
+}

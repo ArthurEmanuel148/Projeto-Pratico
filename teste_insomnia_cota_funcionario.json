@@ -1,0 +1,41 @@
+{
+    "method": "POST",
+    "url": "http://localhost:8080/api/interesse-matricula",
+    "headers": {
+        "Content-Type": "application/json"
+    },
+    "body": {
+        "nomeResponsavel": "Carlos Eduardo Silva",
+        "cpfResponsavel": "555.666.777-88",
+        "dataNascimentoResponsavel": "1982-07-25",
+        "telefoneResponsavel": "(11) 97654-3210",
+        "emailResponsavel": "carlos.silva@cipalam.org.br",
+        "responsavelExistente": false,
+        "senhaTemporariaEnviada": false,
+        "responsavelAutenticado": false,
+        "nomeAluno": "Lucas Eduardo Silva",
+        "dataNascimentoAluno": "2016-04-10",
+        "cpfAluno": "888.999.111-22",
+        "escolaAluno": "EMEF Monteiro Lobato",
+        "codigoInepEscola": "35456789",
+        "municipioEscola": "São Paulo",
+        "ufEscola": "SP",
+        "cep": "03456-789",
+        "logradouro": "Rua dos Funcionários",
+        "numero": "789",
+        "complemento": "Bloco B Apto 102",
+        "bairro": "Vila Nova",
+        "cidade": "São Paulo",
+        "uf": "SP",
+        "codigoIbgeCidade": "3550308",
+        "pontoReferencia": "Próximo à escola municipal",
+        "tipoCota": "funcionario",
+        "numeroIntegrantes": 1,
+        "integrantesRenda": "[]",
+        "dadosFamiliaresPreenchidos": false,
+        "horariosSelecionados": "[\"manha-8h-12h\", \"seg-qua-sex-manha-8h-11h\"]",
+        "observacoesResponsavel": "Sou funcionário da CIPALAM há 5 anos, trabalho no setor administrativo. Gostaria de matricular meu filho no curso de música.",
+        "etapaAtual": "finalizado",
+        "status": "interesse_declarado"
+    }
+}

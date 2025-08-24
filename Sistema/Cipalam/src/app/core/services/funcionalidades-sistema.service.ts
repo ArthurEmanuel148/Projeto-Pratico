@@ -77,6 +77,15 @@ export class FuncionalidadesSistemaService {
       pai: 'matriculas',
       categoria: 'configuracao',
       ordemExibicao: 32
+    },
+    {
+      chave: 'iniciarMatricula',
+      nomeAmigavel: 'Iniciar Matrícula Automática',
+      descricao: 'Sistema para criar matrículas completas automaticamente com famílias, alunos e responsáveis.',
+      icone: 'rocket-outline',
+      pai: 'matriculas',
+      categoria: 'acao',
+      ordemExibicao: 33
     }
   ];
 

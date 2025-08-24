@@ -5,7 +5,6 @@ import lombok.Data;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import java.time.LocalDateTime;
 import java.time.LocalDate;
-import java.math.BigDecimal;
 
 @Entity
 @Data
@@ -91,18 +90,8 @@ public class InteresseMatricula {
     @Enumerated(EnumType.STRING)
     private TipoCota tipoCota;
 
-    // INFORMAÇÕES DE RENDA (para cota econômica)
-    @Column(name = "rendaFamiliar", precision = 10, scale = 2)
-    private BigDecimal rendaFamiliar;
-
-    @Column(name = "rendaPerCapita", precision = 10, scale = 2)
-    private BigDecimal rendaPerCapita;
-
     @Column(name = "numeroIntegrantes")
     private Integer numeroIntegrantes;
-
-    @Column(name = "enderecoCompleto", columnDefinition = "TEXT")
-    private String enderecoCompleto;
 
     @Column(name = "integrantesRenda", columnDefinition = "JSON")
     private String integrantesRenda;
@@ -114,10 +103,6 @@ public class InteresseMatricula {
     // OBSERVAÇÕES DO RESPONSÁVEL
     @Column(name = "observacoesResponsavel", columnDefinition = "TEXT")
     private String observacoesResponsavel;
-
-    // MENSAGEM ADICIONAL
-    @Column(name = "mensagemAdicional", columnDefinition = "TEXT")
-    private String mensagemAdicional;
 
     // CONTROLE DE STATUS
     @Column(name = "status")
@@ -147,9 +132,6 @@ public class InteresseMatricula {
     private Pessoa responsavelLogin;
 
     // OBSERVAÇÕES
-    @Column(name = "observacoes", columnDefinition = "TEXT")
-    private String observacoes;
-
     @Column(name = "observacoesInternas", columnDefinition = "TEXT")
     private String observacoesInternas;
 

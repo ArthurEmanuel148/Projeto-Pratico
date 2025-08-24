@@ -19,7 +19,13 @@ const routes: Routes = [
         path: 'dashboard',
         loadChildren: () => import('../painel-funcionario/painel-funcionario.module').then(m => m.PainelFuncionarioPageModule),
         canActivate: [RoleGuard],
-        data: { requiredRole: ['admin', 'professor', 'funcionario', 'responsavel'] }
+        data: { requiredRole: ['admin', 'professor', 'funcionario'] }
+      },
+      {
+        path: 'responsavel',
+        loadChildren: () => import('../painel-funcionario/painel-funcionario.module').then(m => m.PainelFuncionarioPageModule),
+        canActivate: [RoleGuard],
+        data: { requiredRole: ['responsavel'] }
       },
       {
         path: 'funcionarios',
@@ -32,6 +38,12 @@ const routes: Routes = [
         loadChildren: () => import('../funcionalidades/interesse-matricula/interesse-matricula.module').then(m => m.InteresseMatriculaModule),
         canActivate: [RoleGuard],
         data: { requiredPermission: 'declaracoesInteresse' }
+      },
+      {
+        path: 'iniciar-matricula',
+        loadChildren: () => import('../funcionalidades/iniciar-matricula/iniciar-matricula.module').then(m => m.IniciarMatriculaModule),
+        canActivate: [RoleGuard],
+        data: { requiredRole: ['admin', 'funcionario'] }
       }
     ]
   }

@@ -43,6 +43,12 @@
           </ion-item>
 
           <ion-item fill="outline">
+            <ion-label position="floating">CPF (opcional)</ion-label>
+            <ion-input type="text" formControlName="cpf" placeholder="000.000.000-00" clearInput="true">
+            </ion-input>
+          </ion-item>
+
+          <ion-item fill="outline">
             <ion-label position="floating">Telefone *</ion-label>
             <ion-input type="tel" formControlName="telefone" placeholder="(00) 00000-0000" clearInput="true">
             </ion-input>
@@ -63,7 +69,7 @@
         </div>
 
         <div class="form-group">
-            <div>
+          <div>
             <ion-label position="floating">Data de Nascimento *</ion-label>
             <ion-datetime formControlName="dataNascimento" presentation="date" displayFormat="DD/MM/YYYY"
               placeholder="Selecione a data">

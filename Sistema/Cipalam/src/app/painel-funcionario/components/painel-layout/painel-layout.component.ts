@@ -43,6 +43,7 @@ export class PainelLayoutComponent implements OnInit {
   // Propriedades do usuário integradas
   userInfo: UserInfo | null = null;
   userInfoLoading = true;
+  isResponsavel: boolean = false;
 
   public currentRoute: string = '';
 
@@ -387,6 +388,14 @@ export class PainelLayoutComponent implements OnInit {
           icone: 'settings-outline'
         });
       }
+      if (permissoes['tiposDocumento']) {
+        matriculasSubmenus.push({
+          chave: 'tiposDocumento',
+          nomeAmigavel: 'Tipos de Documento',
+          rota: '/sistema/matriculas/tipos-documento',
+          icone: 'document-outline'
+        });
+      }
 
       menuItems.push({
         chave: 'matriculas',
@@ -588,7 +597,13 @@ export class PainelLayoutComponent implements OnInit {
     if (userType === 'responsavel') {
       if (!currentUrl.includes('/sistema/')) {
         console.warn('Responsável tentando acessar área não autorizada:', currentUrl);
-        this.router.navigate(['/sistema/dashboard']);
+        this.router.navigate(['/sistema/responsavel']);
+        return;
+      }
+      // Se responsável está em rota errada do sistema, redirecionar para área específica
+      if (currentUrl.includes('/sistema/dashboard') || currentUrl === '/sistema') {
+        console.log('Redirecionando responsável para área específica');
+        this.router.navigate(['/sistema/responsavel']);
         return;
       }
     }
@@ -616,6 +631,7 @@ export class PainelLayoutComponent implements OnInit {
     const urlPermissionMap: { [key: string]: string } = {
       'gerenciamento-funcionarios': 'gerenciamentoFuncionarios',
       'interesse-matricula': 'declaracoesInteresse',
+      'tipos-documento': 'tiposDocumento',
       // Adicionar mais mapeamentos conforme necessário
     };
 
@@ -653,6 +669,9 @@ export class PainelLayoutComponent implements OnInit {
       dtNascPessoa: usuario.pessoa?.dtNascPessoa,
       caminhoImagem: usuario.pessoa?.caminhoImagem
     };
+
+    // Detectar se é responsável
+    this.isResponsavel = this.userInfo.tipo === 'responsavel';
 
     this.userInfoLoading = false;
   }

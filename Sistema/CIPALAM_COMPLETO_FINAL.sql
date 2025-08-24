@@ -1,7 +1,8 @@
 -- ===================================================================
 -- BANCO DE DADOS CIPALAM - VERSÃO COMPLETA ATUALIZADA
--- Data: 20/08/2025
--- Descrição: Schema completo com fluxo aprimorado de declaração de interesse
+-- Data: 22/08/2025
+-- Descrição: Schema completo com fluxo de INICIAR MATRÍCULA implementado
+-- Inclui: Distribuição automática de dados + Login responsável + Documentos organizados
 -- ===================================================================
 
 -- MySQL Workbench Forward Engineering
@@ -64,55 +65,130 @@ CREATE TABLE `tblogin` (
 ) ENGINE = InnoDB;
 
 -- -----------------------------------------------------
--- Table `Cipalam`.`tbFamilia` (SIMPLIFICADA - SEM CAMPOS DE RENDA)
+-- Table `Cipalam`.`tbFamilia` - ATUALIZADA COM DADOS DE ENDEREÇO
 -- -----------------------------------------------------
 CREATE TABLE `tbFamilia` (
     `idtbFamilia` INT NOT NULL AUTO_INCREMENT,
     `caminhoComprovanteresidencia` VARCHAR(255) NULL,
     `observacoes` TEXT NULL,
+    -- CAMPOS DE ENDEREÇO (vindos da declaração de interesse)
+    `cep` CHAR(9) NULL,
+    `logradouro` VARCHAR(200) NULL,
+    `numero` VARCHAR(20) NULL,
+    `complemento` VARCHAR(100) NULL,
+    `bairro` VARCHAR(100) NULL,
+    `cidade` VARCHAR(100) NULL,
+    `uf` CHAR(2) NULL,
+    `codigoIbgeCidade` VARCHAR(10) NULL,
+    `pontoReferencia` TEXT NULL,
+    -- CAMPOS DE RENDA (para cota econômica)
+    `numeroIntegrantes` INT NULL,
+    `integrantesRenda` JSON NULL,
+    `dadosFamiliaresPreenchidos` BOOLEAN DEFAULT FALSE,
+    `tipoCota` ENUM(
+        'livre',
+        'economica',
+        'funcionario'
+    ) NULL,
+    -- CONTROLE
     `dataCriacao` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    `dataAtualizacao` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (`idtbFamilia`)
 ) ENGINE = InnoDB;
 
 -- -----------------------------------------------------
--- Table `Cipalam`.`tbTurma`
+-- Table `Cipalam`.`tbTurma` - ATUALIZADA COM MAIS INFORMAÇÕES
 -- -----------------------------------------------------
 CREATE TABLE `tbTurma` (
     `idtbTurma` INT NOT NULL AUTO_INCREMENT,
-    `nomeTurma` VARCHAR(50) NULL,
+    `nomeTurma` VARCHAR(50) NOT NULL,
     `capacidadeMaxima` INT DEFAULT 20,
-    PRIMARY KEY (`idtbTurma`)
+    `capacidadeAtual` INT DEFAULT 0,
+    `anoLetivo` YEAR NOT NULL,
+    `periodo` ENUM(
+        'manha',
+        'tarde',
+        'integral',
+        'noite'
+    ) NOT NULL,
+    `ativo` BOOLEAN DEFAULT TRUE,
+    `observacoes` TEXT NULL,
+    `dataCriacao` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (`idtbTurma`),
+    INDEX `idx_ativo` (`ativo`),
+    INDEX `idx_ano_periodo` (`anoLetivo`, `periodo`)
 ) ENGINE = InnoDB;
 
 -- -----------------------------------------------------
--- Table `Cipalam`.`tbResponsavel`
+-- Table `Cipalam`.`tbResponsavel` - ATUALIZADA COM CHAVES PRIMÁRIAS
 -- -----------------------------------------------------
 CREATE TABLE `tbResponsavel` (
-    `tbFamilia_idtbFamilia` INT NULL,
-    `tbPessoa_idPessoa` INT NULL,
+    `idResponsavel` INT NOT NULL AUTO_INCREMENT,
+    `tbFamilia_idtbFamilia` INT NOT NULL,
+    `tbPessoa_idPessoa` INT NOT NULL,
+    `dataVinculo` DATE DEFAULT(CURRENT_DATE),
+    `ativo` BOOLEAN DEFAULT TRUE,
+    `observacoes` TEXT NULL,
+    `dataCriacao` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (`idResponsavel`),
     INDEX `fk_tbResponsavel_tbFamilia1_idx` (`tbFamilia_idtbFamilia` ASC),
     INDEX `fk_tbResponsavel_tbPessoa1_idx` (`tbPessoa_idPessoa` ASC),
-    CONSTRAINT `fk_tbResponsavel_tbFamilia1` FOREIGN KEY (`tbFamilia_idtbFamilia`) REFERENCES `tbFamilia` (`idtbFamilia`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-    CONSTRAINT `fk_tbResponsavel_tbPessoa1` FOREIGN KEY (`tbPessoa_idPessoa`) REFERENCES `tbPessoa` (`idPessoa`) ON DELETE NO ACTION ON UPDATE NO ACTION
+    CONSTRAINT `fk_tbResponsavel_tbFamilia1` FOREIGN KEY (`tbFamilia_idtbFamilia`) REFERENCES `tbFamilia` (`idtbFamilia`) ON DELETE CASCADE ON UPDATE NO ACTION,
+    CONSTRAINT `fk_tbResponsavel_tbPessoa1` FOREIGN KEY (`tbPessoa_idPessoa`) REFERENCES `tbPessoa` (`idPessoa`) ON DELETE CASCADE ON UPDATE NO ACTION,
+    UNIQUE KEY `unique_pessoa_familia` (
+        `tbPessoa_idPessoa`,
+        `tbFamilia_idtbFamilia`
+    )
 ) ENGINE = InnoDB;
 
 -- -----------------------------------------------------
--- Table `Cipalam`.`tbAluno`
+-- Table `Cipalam`.`tbAluno` - ATUALIZADA COM DADOS DA DECLARAÇÃO
 -- -----------------------------------------------------
 CREATE TABLE `tbAluno` (
     `tbPessoa_idPessoa` INT NOT NULL,
-    `tbFamilia_idtbFamilia` INT NULL,
+    `tbFamilia_idtbFamilia` INT NOT NULL,
     `tbTurma_idtbTurma` INT NULL,
-    `matricula` VARCHAR(20) NULL,
+    `matricula` VARCHAR(20) NULL UNIQUE,
     `dataMatricula` DATE NULL,
-    `statusAluno` ENUM('ativo', 'inativo') DEFAULT 'ativo',
-    `caminhoFichaInscricao` VARCHAR(255),
+    `statusAluno` ENUM(
+        'matriculado',
+        'cursando',
+        'concluido',
+        'evadido',
+        'transferido'
+    ) DEFAULT 'matriculado',
+    -- DADOS VINDOS DA DECLARAÇÃO DE INTERESSE
+    `escolaAluno` VARCHAR(200) NULL,
+    `codigoInepEscola` VARCHAR(20) NULL,
+    `municipioEscola` VARCHAR(100) NULL,
+    `ufEscola` CHAR(2) NULL,
+    `horariosSelecionados` JSON NULL,
+    `observacoesResponsavel` TEXT NULL,
+    -- DADOS DO PROCESSO DE MATRÍCULA
+    `protocoloDeclaracao` VARCHAR(50) NULL, -- Referência ao protocolo original
+    `funcionarioMatricula_idPessoa` INT NULL, -- Funcionário que fez a matrícula
+    `dataInicioMatricula` TIMESTAMP NULL,
+    `dataFinalizacaoMatricula` TIMESTAMP NULL,
+    -- CONTROLE
+    `caminhoFichaInscricao` VARCHAR(255) NULL,
+    `ativo` BOOLEAN DEFAULT TRUE,
+    `dataCriacao` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    `dataAtualizacao` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (`tbPessoa_idPessoa`),
     INDEX `fk_tbAluno_tbFamilia1_idx` (`tbFamilia_idtbFamilia` ASC),
     INDEX `fk_tbAluno_tbTurma1_idx` (`tbTurma_idtbTurma` ASC),
+    INDEX `fk_tbAluno_funcionario_idx` (
+        `funcionarioMatricula_idPessoa` ASC
+    ),
+    INDEX `idx_matricula` (`matricula`),
+    INDEX `idx_protocolo` (`protocoloDeclaracao`),
+    INDEX `idx_status` (`statusAluno`),
     CONSTRAINT `fk_tbAluno_tbPessoa1` FOREIGN KEY (`tbPessoa_idPessoa`) REFERENCES `tbPessoa` (`idPessoa`) ON DELETE CASCADE ON UPDATE NO ACTION,
-    CONSTRAINT `fk_tbAluno_tbFamilia1` FOREIGN KEY (`tbFamilia_idtbFamilia`) REFERENCES `tbFamilia` (`idtbFamilia`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-    CONSTRAINT `fk_tbAluno_tbTurma1` FOREIGN KEY (`tbTurma_idtbTurma`) REFERENCES `tbTurma` (`idtbTurma`) ON DELETE NO ACTION ON UPDATE NO ACTION
+    CONSTRAINT `fk_tbAluno_tbFamilia1` FOREIGN KEY (`tbFamilia_idtbFamilia`) REFERENCES `tbFamilia` (`idtbFamilia`) ON DELETE CASCADE ON UPDATE NO ACTION,
+    CONSTRAINT `fk_tbAluno_tbTurma1` FOREIGN KEY (`tbTurma_idtbTurma`) REFERENCES `tbTurma` (`idtbTurma`) ON DELETE SET NULL ON UPDATE NO ACTION,
+    CONSTRAINT `fk_tbAluno_funcionario` FOREIGN KEY (
+        `funcionarioMatricula_idPessoa`
+    ) REFERENCES `tbPessoa` (`idPessoa`) ON DELETE SET NULL ON UPDATE NO ACTION
 ) ENGINE = InnoDB;
 
 -- ===================================================================
@@ -296,6 +372,8 @@ CREATE TABLE `tbInteresseMatricula` (
 `responsavelLogin_idPessoa` INT NULL,
 
 -- OBSERVAÇÕES INTERNAS
+
+
 `observacoesInternas` TEXT NULL,
     `notasProcesso` TEXT NULL,
     
@@ -357,7 +435,7 @@ CREATE TABLE `tbHistoricoEtapaMatricula` (
 ) ENGINE = InnoDB;
 
 -- -----------------------------------------------------
--- Table `Cipalam`.`tbTipoDocumento`
+-- Table `Cipalam`.`tbTipoDocumento` - ATUALIZADA COM ESCOPO
 -- -----------------------------------------------------
 CREATE TABLE `tbTipoDocumento` (
     `idTipoDocumento` INT NOT NULL AUTO_INCREMENT,
@@ -371,11 +449,14 @@ CREATE TABLE `tbTipoDocumento` (
         'economica',
         'funcionario'
     ) NULL,
+    -- NOVO CAMPO: Define se o documento é da família ou do aluno
+    `escopo` ENUM('familia', 'aluno', 'ambos') DEFAULT 'ambos',
     `ativo` BOOLEAN DEFAULT TRUE,
     `ordemExibicao` INT DEFAULT 0,
     `templateDocumento` TEXT NULL,
     PRIMARY KEY (`idTipoDocumento`),
     INDEX `idx_tipoCota` (`tipoCota`),
+    INDEX `idx_escopo` (`escopo`),
     INDEX `idx_ativo` (`ativo`)
 ) ENGINE = InnoDB;
 
@@ -403,12 +484,15 @@ CREATE TABLE `tbConfiguracaoDocumentosCota` (
 ) ENGINE = InnoDB;
 
 -- -----------------------------------------------------
--- Table `Cipalam`.`tbDocumentoMatricula`
+-- Table `Cipalam`.`tbDocumentoMatricula` - ATUALIZADA PARA SUPORTAR FAMÍLIA/ALUNO
 -- -----------------------------------------------------
 CREATE TABLE `tbDocumentoMatricula` (
     `idDocumentoMatricula` INT NOT NULL AUTO_INCREMENT,
-    `tbInteresseMatricula_id` INT NOT NULL,
+    `tbInteresseMatricula_id` INT NULL, -- NULL quando matrícula já foi iniciada
     `tbTipoDocumento_idTipoDocumento` INT NOT NULL,
+    -- NOVOS CAMPOS: Para documentos específicos após matrícula iniciada
+    `tbFamilia_idtbFamilia` INT NULL,
+    `tbAluno_idPessoa` INT NULL, -- Para documentos específicos do aluno
     `status` ENUM(
         'pendente',
         'enviado',
@@ -426,6 +510,8 @@ CREATE TABLE `tbDocumentoMatricula` (
     `observacoes` TEXT NULL,
     `motivoRejeicao` TEXT NULL,
     `funcionarioAprovador_idPessoa` INT NULL,
+    `dataCriacao` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    `dataAtualizacao` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (`idDocumentoMatricula`),
     INDEX `idx_status` (`status`),
     INDEX `fk_tbDocumentoMatricula_interesse_idx` (`tbInteresseMatricula_id`),
@@ -435,6 +521,8 @@ CREATE TABLE `tbDocumentoMatricula` (
     INDEX `fk_tbDocumentoMatricula_funcionario_idx` (
         `funcionarioAprovador_idPessoa`
     ),
+    INDEX `fk_tbDocumentoMatricula_familia_idx` (`tbFamilia_idtbFamilia`),
+    INDEX `fk_tbDocumentoMatricula_aluno_idx` (`tbAluno_idPessoa`),
     CONSTRAINT `fk_tbDocumentoMatricula_interesse` FOREIGN KEY (`tbInteresseMatricula_id`) REFERENCES `tbInteresseMatricula` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION,
     CONSTRAINT `fk_tbDocumentoMatricula_tipo` FOREIGN KEY (
         `tbTipoDocumento_idTipoDocumento`
@@ -442,10 +530,8 @@ CREATE TABLE `tbDocumentoMatricula` (
     CONSTRAINT `fk_tbDocumentoMatricula_funcionario` FOREIGN KEY (
         `funcionarioAprovador_idPessoa`
     ) REFERENCES `tbPessoa` (`idPessoa`) ON DELETE SET NULL ON UPDATE NO ACTION,
-    UNIQUE KEY `unique_documento_matricula` (
-        `tbInteresseMatricula_id`,
-        `tbTipoDocumento_idTipoDocumento`
-    )
+    CONSTRAINT `fk_tbDocumentoMatricula_familia` FOREIGN KEY (`tbFamilia_idtbFamilia`) REFERENCES `tbFamilia` (`idtbFamilia`) ON DELETE CASCADE ON UPDATE NO ACTION,
+    CONSTRAINT `fk_tbDocumentoMatricula_aluno` FOREIGN KEY (`tbAluno_idPessoa`) REFERENCES `tbAluno` (`tbPessoa_idPessoa`) ON DELETE CASCADE ON UPDATE NO ACTION
 ) ENGINE = InnoDB;
 
 -- -----------------------------------------------------
@@ -469,6 +555,305 @@ CREATE TABLE `tbLogMatricula` (
     CONSTRAINT `fk_tbLogMatricula_interesse` FOREIGN KEY (`tbInteresseMatricula_id`) REFERENCES `tbInteresseMatricula` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION,
     CONSTRAINT `fk_tbLogMatricula_usuario` FOREIGN KEY (`usuario_idPessoa`) REFERENCES `tbPessoa` (`idPessoa`) ON DELETE SET NULL ON UPDATE NO ACTION
 ) ENGINE = InnoDB;
+
+-- ===================================================================
+-- PROCEDURES PARA AUTOMATIZAR FLUXO DE MATRÍCULA
+-- ===================================================================
+
+DELIMITER $$
+
+-- -----------------------------------------------------
+-- Procedure: sp_IniciarMatricula
+-- Descrição: Automatiza o processo de iniciar matrícula
+-- Parâmetros:
+--   - p_idDeclaracao: ID da declaração de interesse
+--   - p_idTurma: ID da turma escolhida pelo funcionário
+--   - p_idFuncionario: ID do funcionário que está iniciando
+-- -----------------------------------------------------
+CREATE PROCEDURE `sp_IniciarMatricula`(
+    IN p_idDeclaracao INT,
+    IN p_idTurma INT,
+    IN p_idFuncionario INT
+)
+BEGIN
+    DECLARE v_idFamilia INT;
+    DECLARE v_idResponsavel INT;
+    DECLARE v_idAluno INT;
+    DECLARE v_usuarioLogin VARCHAR(45);
+    DECLARE v_senhaLogin VARCHAR(255);
+    DECLARE v_cpfResponsavel VARCHAR(14);
+    DECLARE v_ultimosQuatroCPF VARCHAR(4);
+    DECLARE v_proximaMatricula VARCHAR(20);
+    
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+        RESIGNAL;
+    END;
+
+    START TRANSACTION;
+    
+    -- 1. CRIAR FAMÍLIA com dados da declaração
+    INSERT INTO tbFamilia (
+        cep, logradouro, numero, complemento, bairro, cidade, uf, 
+        codigoIbgeCidade, pontoReferencia, numeroIntegrantes, 
+        integrantesRenda, dadosFamiliaresPreenchidos, tipoCota, observacoes
+    )
+    SELECT 
+        cep, logradouro, numero, complemento, bairro, cidade, uf,
+        codigoIbgeCidade, pontoReferencia, numeroIntegrantes,
+        integrantesRenda, dadosFamiliaresPreenchidos, tipoCota,
+        CONCAT('Família criada automaticamente da declaração: ', protocolo)
+    FROM tbInteresseMatricula 
+    WHERE id = p_idDeclaracao;
+    
+    SET v_idFamilia = LAST_INSERT_ID();
+    
+    -- 2. CRIAR PESSOA RESPONSÁVEL
+    INSERT INTO tbPessoa (
+        NmPessoa, CpfPessoa, dtNascPessoa, telefone, email
+    )
+    SELECT 
+        nomeResponsavel, cpfResponsavel, dataNascimentoResponsavel, 
+        telefoneResponsavel, emailResponsavel
+    FROM tbInteresseMatricula 
+    WHERE id = p_idDeclaracao;
+    
+    SET v_idResponsavel = LAST_INSERT_ID();
+    
+    -- 3. VINCULAR RESPONSÁVEL À FAMÍLIA
+    INSERT INTO tbResponsavel (tbFamilia_idtbFamilia, tbPessoa_idPessoa)
+    VALUES (v_idFamilia, v_idResponsavel);
+    
+    -- 4. CRIAR PESSOA ALUNO
+    INSERT INTO tbPessoa (
+        NmPessoa, CpfPessoa, dtNascPessoa
+    )
+    SELECT 
+        nomeAluno, cpfAluno, dataNascimentoAluno
+    FROM tbInteresseMatricula 
+    WHERE id = p_idDeclaracao;
+    
+    SET v_idAluno = LAST_INSERT_ID();
+    
+    -- 5. GERAR MATRÍCULA AUTOMÁTICA
+    SET v_proximaMatricula = CONCAT(
+        YEAR(CURDATE()), 
+        LPAD((
+            SELECT COALESCE(MAX(CAST(SUBSTRING(matricula, 5) AS UNSIGNED)), 0) + 1
+            FROM tbAluno 
+            WHERE matricula LIKE CONCAT(YEAR(CURDATE()), '%')
+        ), 4, '0')
+    );
+    
+    -- 6. CRIAR ALUNO
+    INSERT INTO tbAluno (
+        tbPessoa_idPessoa, tbFamilia_idtbFamilia, tbTurma_idtbTurma,
+        matricula, dataMatricula, escolaAluno, codigoInepEscola,
+        municipioEscola, ufEscola, horariosSelecionados, observacoesResponsavel,
+        protocoloDeclaracao, funcionarioMatricula_idPessoa, dataInicioMatricula
+    )
+    SELECT 
+        v_idAluno, v_idFamilia, p_idTurma,
+        v_proximaMatricula, CURDATE(), escolaAluno, codigoInepEscola,
+        municipioEscola, ufEscola, horariosSelecionados, observacoesResponsavel,
+        protocolo, p_idFuncionario, NOW()
+    FROM tbInteresseMatricula 
+    WHERE id = p_idDeclaracao;
+    
+    -- 7. CRIAR LOGIN PARA RESPONSÁVEL
+    SELECT cpfResponsavel INTO v_cpfResponsavel 
+    FROM tbInteresseMatricula 
+    WHERE id = p_idDeclaracao;
+    
+    -- Usuario = CPF sem pontuação
+    SET v_usuarioLogin = REPLACE(REPLACE(v_cpfResponsavel, '.', ''), '-', '');
+    
+    -- Senha = "password" (mesma hash BCrypt usada em todo o sistema)
+    SET v_ultimosQuatroCPF = RIGHT(REPLACE(REPLACE(v_cpfResponsavel, '.', ''), '-', ''), 4);
+    SET v_senhaLogin = '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi';
+    
+    INSERT INTO tblogin (usuario, senha, tbPessoa_idPessoa)
+    VALUES (v_usuarioLogin, v_senhaLogin, v_idResponsavel);
+    
+    -- 7.1. CRIAR INTEGRANTES DA FAMÍLIA (se existirem com CPF)
+    -- Verificar se há integrantes no JSON integrantesRenda
+    SET @integrantesJson = (SELECT integrantesRenda FROM tbInteresseMatricula WHERE id = p_idDeclaracao);
+    
+    IF @integrantesJson IS NOT NULL AND JSON_LENGTH(@integrantesJson) > 0 THEN
+        -- Loop através dos integrantes no JSON
+        SET @i = 0;
+        SET @maxIntegrantes = JSON_LENGTH(@integrantesJson);
+        
+        WHILE @i < @maxIntegrantes DO
+            SET @nomeIntegrante = JSON_UNQUOTE(JSON_EXTRACT(@integrantesJson, CONCAT('$[', @i, '].nome')));
+            SET @cpfIntegrante = JSON_UNQUOTE(JSON_EXTRACT(@integrantesJson, CONCAT('$[', @i, '].cpf')));
+            SET @dataNascIntegrante = JSON_UNQUOTE(JSON_EXTRACT(@integrantesJson, CONCAT('$[', @i, '].dataNascimento')));
+            SET @parentescoIntegrante = JSON_UNQUOTE(JSON_EXTRACT(@integrantesJson, CONCAT('$[', @i, '].parentesco')));
+            
+            -- Só criar pessoa se tiver nome E CPF válidos
+            IF @nomeIntegrante IS NOT NULL AND @nomeIntegrante != 'null' AND @nomeIntegrante != '' 
+               AND @cpfIntegrante IS NOT NULL AND @cpfIntegrante != 'null' AND @cpfIntegrante != '' THEN
+                -- Criar pessoa para o integrante
+                INSERT INTO tbPessoa (NmPessoa, CpfPessoa, dtNascPessoa)
+                VALUES (@nomeIntegrante, @cpfIntegrante, 
+                        CASE WHEN @dataNascIntegrante IS NOT NULL AND @dataNascIntegrante != 'null' AND @dataNascIntegrante != ''
+                             THEN STR_TO_DATE(@dataNascIntegrante, '%Y-%m-%d') 
+                             ELSE CURDATE() END);
+                
+                SET @idIntegrante = LAST_INSERT_ID();
+                
+                -- Se for um responsável adicional, criar vínculo
+                IF @parentescoIntegrante IN ('pai', 'mae', 'responsavel', 'tutor', 'conjuge') THEN
+                    INSERT INTO tbResponsavel (tbFamilia_idtbFamilia, tbPessoa_idPessoa)
+                    VALUES (v_idFamilia, @idIntegrante);
+                END IF;
+            END IF;
+            
+            SET @i = @i + 1;
+        END WHILE;
+    END IF;
+    
+    -- 8. CRIAR DOCUMENTOS PENDENTES baseados na cota
+    CALL sp_CriarDocumentosPendentes(v_idFamilia, v_idAluno);
+    
+    -- 9. ATUALIZAR STATUS DA DECLARAÇÃO
+    UPDATE tbInteresseMatricula 
+    SET 
+        status = 'matricula_iniciada',
+        dataInicioMatricula = NOW(),
+        funcionarioResponsavel_idPessoa = p_idFuncionario,
+        responsavelLogin_idPessoa = v_idResponsavel
+    WHERE id = p_idDeclaracao;
+    
+    -- 10. ATUALIZAR CAPACIDADE DA TURMA
+    UPDATE tbTurma 
+    SET capacidadeAtual = capacidadeAtual + 1 
+    WHERE idtbTurma = p_idTurma;
+    
+    -- 11. LOG DA AÇÃO
+    INSERT INTO tbLogMatricula (
+        tbInteresseMatricula_id, acao, descricao, usuario_idPessoa
+    ) VALUES (
+        p_idDeclaracao, 
+        'MATRICULA_INICIADA', 
+        CONCAT('Matrícula iniciada - Aluno: ', v_proximaMatricula, ' - Turma: ', p_idTurma),
+        p_idFuncionario
+    );
+    
+    COMMIT;
+    
+    -- Retornar dados importantes
+    SELECT 
+        v_idFamilia as idFamilia,
+        v_idResponsavel as idResponsavel, 
+        v_idAluno as idAluno,
+        v_proximaMatricula as matricula,
+        v_usuarioLogin as loginResponsavel,
+        'password' as senhaTemporaria;
+        
+END$$
+
+-- -----------------------------------------------------
+-- Procedure: sp_CriarDocumentosPendentes
+-- Descrição: Cria documentos pendentes baseados na configuração de cota
+-- -----------------------------------------------------
+CREATE PROCEDURE `sp_CriarDocumentosPendentes`(
+    IN p_idFamilia INT,
+    IN p_idAluno INT
+)
+BEGIN
+    DECLARE v_tipoCota ENUM('livre', 'economica', 'funcionario');
+    DECLARE v_documentosObrigatorios JSON;
+    DECLARE v_done INT DEFAULT FALSE;
+    DECLARE v_documentoId INT;
+    
+    -- Cursor para percorrer os IDs dos documentos
+    DECLARE cur_documentos CURSOR FOR 
+        SELECT JSON_UNQUOTE(JSON_EXTRACT(v_documentosObrigatorios, CONCAT('$[', idx.n, ']'))) as doc_id
+        FROM (
+            SELECT 0 as n UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL 
+            SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL 
+            SELECT 8 UNION ALL SELECT 9 UNION ALL SELECT 10 UNION ALL SELECT 11 UNION ALL 
+            SELECT 12 UNION ALL SELECT 13 UNION ALL SELECT 14 UNION ALL SELECT 15
+        ) idx
+        WHERE idx.n < JSON_LENGTH(v_documentosObrigatorios);
+        
+    DECLARE CONTINUE HANDLER FOR NOT FOUND SET v_done = TRUE;
+    
+    -- Obter tipo de cota da família
+    SELECT tipoCota INTO v_tipoCota FROM tbFamilia WHERE idtbFamilia = p_idFamilia;
+    
+    -- Obter configuração de documentos para esta cota
+    SELECT documentosObrigatorios INTO v_documentosObrigatorios 
+    FROM tbConfiguracaoDocumentosCota 
+    WHERE tipoCota = v_tipoCota;
+    
+    -- Se não há configuração específica, usar documentos padrão (todos ativos)
+    IF v_documentosObrigatorios IS NULL THEN
+        -- Criar documentos da FAMÍLIA (escopo 'familia' ou 'ambos')
+        INSERT INTO tbDocumentoMatricula (
+            tbFamilia_idtbFamilia, 
+            tbTipoDocumento_idTipoDocumento, 
+            status
+        )
+        SELECT 
+            p_idFamilia,
+            td.idTipoDocumento,
+            'pendente'
+        FROM tbTipoDocumento td
+        WHERE td.ativo = TRUE 
+        AND td.escopo IN ('familia', 'ambos');
+        
+        -- Criar documentos do ALUNO (escopo 'aluno' ou 'ambos')
+        INSERT INTO tbDocumentoMatricula (
+            tbAluno_idPessoa,
+            tbTipoDocumento_idTipoDocumento, 
+            status
+        )
+        SELECT 
+            p_idAluno,
+            td.idTipoDocumento,
+            'pendente'
+        FROM tbTipoDocumento td
+        WHERE td.ativo = TRUE 
+        AND td.escopo IN ('aluno', 'ambos');
+    ELSE
+        -- Usar configuração específica da cota
+        OPEN cur_documentos;
+        
+        read_loop: LOOP
+            FETCH cur_documentos INTO v_documentoId;
+            IF v_done THEN
+                LEAVE read_loop;
+            END IF;
+            
+            -- Verificar se o documento existe e está ativo
+            IF EXISTS (SELECT 1 FROM tbTipoDocumento WHERE idTipoDocumento = v_documentoId AND ativo = TRUE) THEN
+                -- Inserir documento baseado no escopo
+                INSERT INTO tbDocumentoMatricula (
+                    tbFamilia_idtbFamilia,
+                    tbAluno_idPessoa,
+                    tbTipoDocumento_idTipoDocumento, 
+                    status
+                )
+                SELECT 
+                    CASE WHEN td.escopo IN ('familia', 'ambos') THEN p_idFamilia ELSE NULL END,
+                    CASE WHEN td.escopo IN ('aluno', 'ambos') THEN p_idAluno ELSE NULL END,
+                    td.idTipoDocumento,
+                    'pendente'
+                FROM tbTipoDocumento td
+                WHERE td.idTipoDocumento = v_documentoId 
+                AND td.ativo = TRUE;
+            END IF;
+        END LOOP;
+        
+        CLOSE cur_documentos;
+    END IF;
+    
+END$$
+
+DELIMITER;
 
 -- ===================================================================
 -- INSERÇÃO DE FUNCIONALIDADES (SEM ROTAS)
@@ -581,6 +966,15 @@ VALUES
     'matriculas',
     'configuracao',
     32
+),
+(
+    'tiposDocumento',
+    'Tipos de Documento',
+    'Gerenciar tipos de documentos do sistema',
+    'document-outline',
+    'matriculas',
+    'configuracao',
+    34
 );
 
 -- ===================================================================
@@ -595,17 +989,19 @@ INSERT INTO
         `requerAssinatura`,
         `requerAnexo`,
         `tipoCota`,
+        `escopo`,
         `ordemExibicao`
     )
 VALUES
-    -- Documentos gerais
+    -- Documentos da FAMÍLIA
     (
-        'RG ou CNH',
+        'RG ou CNH do Responsável',
         'Documento de identidade com foto do responsável',
         TRUE,
         FALSE,
         TRUE,
         NULL,
+        'familia',
         1
     ),
     (
@@ -615,6 +1011,7 @@ VALUES
         FALSE,
         TRUE,
         NULL,
+        'familia',
         2
     ),
     (
@@ -624,35 +1021,41 @@ VALUES
         FALSE,
         TRUE,
         NULL,
+        'familia',
         3
     ),
-    (
-        'Certidão de Nascimento do Aluno',
-        'Certidão de nascimento do aluno',
-        TRUE,
-        FALSE,
-        TRUE,
-        NULL,
-        4
-    ),
-    (
-        'Foto 3x4',
-        'Foto 3x4 recente do aluno',
-        TRUE,
-        FALSE,
-        TRUE,
-        NULL,
-        5
-    ),
 
--- Documentos para cota econômica
+-- Documentos do ALUNO
 (
-    'Comprovante de Renda',
+    'Certidão de Nascimento do Aluno',
+    'Certidão de nascimento do aluno',
+    TRUE,
+    FALSE,
+    TRUE,
+    NULL,
+    'aluno',
+    4
+),
+(
+    'Foto 3x4 do Aluno',
+    'Foto 3x4 recente do aluno',
+    TRUE,
+    FALSE,
+    TRUE,
+    NULL,
+    'aluno',
+    5
+),
+
+-- Documentos para cota econômica (FAMÍLIA)
+(
+    'Comprovante de Renda Familiar',
     'Comprovante de renda familiar (últimos 3 meses)',
     TRUE,
     FALSE,
     TRUE,
     'economica',
+    'familia',
     10
 ),
 (
@@ -662,6 +1065,7 @@ VALUES
     FALSE,
     TRUE,
     'economica',
+    'familia',
     11
 ),
 (
@@ -671,10 +1075,11 @@ VALUES
     FALSE,
     TRUE,
     'economica',
+    'familia',
     12
 ),
 
--- Documentos para cota de funcionário
+-- Documentos para cota de funcionário (FAMÍLIA)
 (
     'Comprovante de Vínculo Empregatício',
     'Comprovante de vínculo com a instituição',
@@ -682,6 +1087,7 @@ VALUES
     FALSE,
     TRUE,
     'funcionario',
+    'familia',
     20
 ),
 (
@@ -691,6 +1097,7 @@ VALUES
     FALSE,
     TRUE,
     'funcionario',
+    'familia',
     21
 ),
 (
@@ -700,10 +1107,11 @@ VALUES
     FALSE,
     TRUE,
     'funcionario',
+    'familia',
     22
 ),
 
--- Documentos com assinatura
+-- Documentos com assinatura (AMBOS)
 (
     'Termo de Compromisso',
     'Termo de compromisso com as normas da instituição',
@@ -711,6 +1119,7 @@ VALUES
     TRUE,
     FALSE,
     NULL,
+    'ambos',
     50
 ),
 (
@@ -720,6 +1129,7 @@ VALUES
     TRUE,
     FALSE,
     NULL,
+    'ambos',
     51
 ),
 (
@@ -729,6 +1139,7 @@ VALUES
     TRUE,
     FALSE,
     NULL,
+    'ambos',
     52
 );
 
@@ -822,6 +1233,72 @@ VALUES (
 -- ===================================================================
 -- INSERÇÃO DE DADOS BÁSICOS
 -- ===================================================================
+
+-- TURMAS DISPONÍVEIS
+INSERT INTO
+    `tbTurma` (
+        `nomeTurma`,
+        `capacidadeMaxima`,
+        `capacidadeAtual`,
+        `anoLetivo`,
+        `periodo`,
+        `ativo`,
+        `observacoes`
+    )
+VALUES (
+        'Turma A - Manhã',
+        25,
+        0,
+        2025,
+        'manha',
+        TRUE,
+        'Turma matutina - 8h às 12h'
+    ),
+    (
+        'Turma B - Manhã',
+        25,
+        0,
+        2025,
+        'manha',
+        TRUE,
+        'Turma matutina - 8h às 12h'
+    ),
+    (
+        'Turma A - Tarde',
+        25,
+        0,
+        2025,
+        'tarde',
+        TRUE,
+        'Turma vespertina - 13h às 17h'
+    ),
+    (
+        'Turma B - Tarde',
+        25,
+        0,
+        2025,
+        'tarde',
+        TRUE,
+        'Turma vespertina - 13h às 17h'
+    ),
+    (
+        'Turma Integral',
+        20,
+        0,
+        2025,
+        'integral',
+        TRUE,
+        'Turma integral - 8h às 17h'
+    ),
+    (
+        'Turma Sábado',
+        30,
+        0,
+        2025,
+        'manha',
+        TRUE,
+        'Turma aos sábados - 8h às 12h'
+    );
 
 -- Administrador do Sistema
 INSERT INTO
@@ -1380,8 +1857,170 @@ VALUES
 );
 
 -- ===================================================================
--- VIEWS ÚTEIS
+-- VIEWS ÚTEIS - ATUALIZADAS PARA NOVO FLUXO
 -- ===================================================================
+
+-- View para documentos pendentes do responsável (por família)
+CREATE VIEW vw_documentos_familia AS
+SELECT
+    dm.idDocumentoMatricula,
+    dm.tbFamilia_idtbFamilia as idFamilia,
+    td.idTipoDocumento,
+    td.nome as nomeDocumento,
+    td.descricao,
+    td.obrigatorio,
+    td.requerAssinatura,
+    td.requerAnexo,
+    td.tipoCota,
+    td.escopo,
+    dm.status,
+    dm.caminhoArquivo,
+    dm.dataEnvio,
+    dm.dataAprovacao,
+    dm.motivoRejeicao,
+    dm.observacoes,
+    -- Dados da família
+    f.tipoCota as cotaFamilia,
+    p.NmPessoa as nomeResponsavel,
+    p.CpfPessoa as cpfResponsavel
+FROM
+    tbDocumentoMatricula dm
+    INNER JOIN tbTipoDocumento td ON dm.tbTipoDocumento_idTipoDocumento = td.idTipoDocumento
+    INNER JOIN tbFamilia f ON dm.tbFamilia_idtbFamilia = f.idtbFamilia
+    INNER JOIN tbResponsavel r ON f.idtbFamilia = r.tbFamilia_idtbFamilia
+    INNER JOIN tbPessoa p ON r.tbPessoa_idPessoa = p.idPessoa
+WHERE
+    dm.tbFamilia_idtbFamilia IS NOT NULL
+ORDER BY td.ordemExibicao;
+
+-- View para documentos pendentes do aluno (individuais)
+CREATE VIEW vw_documentos_aluno AS
+SELECT
+    dm.idDocumentoMatricula,
+    dm.tbAluno_idPessoa as idAluno,
+    td.idTipoDocumento,
+    td.nome as nomeDocumento,
+    td.descricao,
+    td.obrigatorio,
+    td.requerAssinatura,
+    td.requerAnexo,
+    td.tipoCota,
+    td.escopo,
+    dm.status,
+    dm.caminhoArquivo,
+    dm.dataEnvio,
+    dm.dataAprovacao,
+    dm.motivoRejeicao,
+    dm.observacoes,
+    -- Dados do aluno
+    pa.NmPessoa as nomeAluno,
+    pa.CpfPessoa as cpfAluno,
+    a.matricula,
+    -- Dados da família
+    f.tipoCota as cotaFamilia,
+    pr.NmPessoa as nomeResponsavel,
+    pr.CpfPessoa as cpfResponsavel
+FROM
+    tbDocumentoMatricula dm
+    INNER JOIN tbTipoDocumento td ON dm.tbTipoDocumento_idTipoDocumento = td.idTipoDocumento
+    INNER JOIN tbAluno a ON dm.tbAluno_idPessoa = a.tbPessoa_idPessoa
+    INNER JOIN tbPessoa pa ON a.tbPessoa_idPessoa = pa.idPessoa
+    INNER JOIN tbFamilia f ON a.tbFamilia_idtbFamilia = f.idtbFamilia
+    INNER JOIN tbResponsavel r ON f.idtbFamilia = r.tbFamilia_idtbFamilia
+    INNER JOIN tbPessoa pr ON r.tbPessoa_idPessoa = pr.idPessoa
+WHERE
+    dm.tbAluno_idPessoa IS NOT NULL
+ORDER BY td.ordemExibicao;
+
+-- View consolidada: Todos os documentos por responsável
+CREATE VIEW vw_documentos_responsavel AS
+SELECT
+    'familia' as tipoDocumento,
+    dm.idDocumentoMatricula,
+    dm.tbFamilia_idtbFamilia as idReferencia,
+    NULL as idAluno,
+    td.nome as nomeDocumento,
+    td.descricao,
+    td.escopo,
+    dm.status,
+    dm.dataEnvio,
+    dm.dataAprovacao,
+    pr.idPessoa as idResponsavel,
+    pr.NmPessoa as nomeResponsavel,
+    pr.CpfPessoa as cpfResponsavel,
+    NULL as nomeAluno,
+    f.tipoCota
+FROM
+    tbDocumentoMatricula dm
+    INNER JOIN tbTipoDocumento td ON dm.tbTipoDocumento_idTipoDocumento = td.idTipoDocumento
+    INNER JOIN tbFamilia f ON dm.tbFamilia_idtbFamilia = f.idtbFamilia
+    INNER JOIN tbResponsavel r ON f.idtbFamilia = r.tbFamilia_idtbFamilia
+    INNER JOIN tbPessoa pr ON r.tbPessoa_idPessoa = pr.idPessoa
+WHERE
+    dm.tbFamilia_idtbFamilia IS NOT NULL
+UNION ALL
+SELECT
+    'aluno' as tipoDocumento,
+    dm.idDocumentoMatricula,
+    dm.tbAluno_idPessoa as idReferencia,
+    a.tbPessoa_idPessoa as idAluno,
+    td.nome as nomeDocumento,
+    td.descricao,
+    td.escopo,
+    dm.status,
+    dm.dataEnvio,
+    dm.dataAprovacao,
+    pr.idPessoa as idResponsavel,
+    pr.NmPessoa as nomeResponsavel,
+    pr.CpfPessoa as cpfResponsavel,
+    pa.NmPessoa as nomeAluno,
+    f.tipoCota
+FROM
+    tbDocumentoMatricula dm
+    INNER JOIN tbTipoDocumento td ON dm.tbTipoDocumento_idTipoDocumento = td.idTipoDocumento
+    INNER JOIN tbAluno a ON dm.tbAluno_idPessoa = a.tbPessoa_idPessoa
+    INNER JOIN tbPessoa pa ON a.tbPessoa_idPessoa = pa.idPessoa
+    INNER JOIN tbFamilia f ON a.tbFamilia_idtbFamilia = f.idtbFamilia
+    INNER JOIN tbResponsavel r ON f.idtbFamilia = r.tbFamilia_idtbFamilia
+    INNER JOIN tbPessoa pr ON r.tbPessoa_idPessoa = pr.idPessoa
+WHERE
+    dm.tbAluno_idPessoa IS NOT NULL
+ORDER BY
+    idResponsavel,
+    tipoDocumento,
+    nomeDocumento;
+
+-- View para turmas disponíveis
+CREATE VIEW vw_turmas_disponiveis AS
+SELECT
+    t.idtbTurma,
+    t.nomeTurma,
+    t.capacidadeMaxima,
+    t.capacidadeAtual,
+    (
+        t.capacidadeMaxima - t.capacidadeAtual
+    ) as vagasDisponiveis,
+    t.anoLetivo,
+    t.periodo,
+    CASE
+        WHEN t.periodo = 'manha' THEN 'Manhã'
+        WHEN t.periodo = 'tarde' THEN 'Tarde'
+        WHEN t.periodo = 'integral' THEN 'Integral'
+        WHEN t.periodo = 'noite' THEN 'Noite'
+        ELSE t.periodo
+    END as periodoFormatado,
+    t.ativo,
+    t.observacoes,
+    CASE
+        WHEN (
+            t.capacidadeMaxima - t.capacidadeAtual
+        ) > 0 THEN TRUE
+        ELSE FALSE
+    END as temVagas
+FROM tbTurma t
+WHERE
+    t.ativo = TRUE
+ORDER BY t.periodo, t.nomeTurma;
 
 -- View para declarações completas
 CREATE VIEW vw_declaracoes_completas AS
@@ -1548,38 +2187,95 @@ WHERE
 SELECT
     'BANCO CIPALAM CRIADO COM SUCESSO!' as status,
     NOW() as data_criacao,
-    'Versão atualizada sem rotas nas funcionalidades' as observacao;
+    'Versão com FLUXO DE INICIAR MATRÍCULA implementado' as observacao;
 
 -- ===================================================================
--- INSTRUÇÕES DE USO
+-- INSTRUÇÕES DE USO - ATUALIZADO PARA INICIAR MATRÍCULA
 -- ===================================================================
 
 /*
-🎉 BANCO DE DADOS CIPALAM CRIADO COM SUCESSO!
+🎉 BANCO DE DADOS CIPALAM ATUALIZADO COM SUCESSO!
 
-📋 FUNCIONALIDADES IMPLEMENTADAS:
-✅ Sistema de funcionalidades sem rotas (gerenciadas no frontend)
-✅ Categorização de funcionalidades (menu, acao, configuracao)
-✅ Sistema de permissões completo
-✅ Identificação correta de tipos de usuário
-✅ Administrador configurado como funcionário
+🆕 NOVO FLUXO IMPLEMENTADO - INICIAR MATRÍCULA:
+✅ Procedure sp_IniciarMatricula() - Automatiza todo o processo
+✅ Distribuição automática de dados da declaração para tabelas finais
+✅ Criação automática de login para responsável (CPF/últimos 4 dígitos)
+✅ Sistema de documentos organizados por família e aluno
+✅ Views especializadas para documentos pendentes
+✅ Seleção de turma durante o processo
+
+📋 FUNCIONALIDADES JÁ EXISTENTES:
+✅ Sistema de declaração de interesse (NÃO ALTERADO)
+✅ Sistema de funcionalidades e permissões
+✅ Documentos organizados por cota
 ✅ Dados de teste incluídos
 
-👤 USUÁRIOS CRIADOS:
-- admin / password (Administrador - tipo: funcionario)
-- joao.professor / password (Professor - tipo: funcionario)
-- maria.responsavel / password (Responsável - tipo: responsavel)
+🔄 COMO FUNCIONA O FLUXO DE INICIAR MATRÍCULA:
 
-🚀 PRÓXIMOS PASSOS:
-1. Executar este arquivo no MySQL
-2. Verificar login dos usuários
-3. Testar navegação e permissões
-4. Backend deve usar a view vw_usuarios_sistema para login
-5. Frontend usa RotasConfigService para mapeamento de rotas
+1. **FUNCIONÁRIO** vê lista de declarações com status 'interesse_declarado'
+2. **FUNCIONÁRIO** clica em "Iniciar Matrícula" e escolhe a TURMA
+3. **SISTEMA** executa sp_IniciarMatricula(idDeclaracao, idTurma, idFuncionario)
+4. **AUTOMATICAMENTE**:
+- Cria família com dados da declaração
+- Cria pessoa responsável  
+- Cria pessoa aluno
+- Vincula responsável à família
+- Matricula aluno na turma escolhida
+- Cria login: usuário=CPF, senha=últimos4CPF
+- Cria documentos pendentes baseados na cota
+- Atualiza status para 'matricula_iniciada'
 
-📊 ESTRUTURA:
-- Funcionalidades: SEM campo 'rota' (gerenciadas no frontend)
-- Usuários: Corretamente categorizados via view
-- Permissões: Administrador tem acesso total
-- Dados: Prontos para desenvolvimento e testes
+5. **RESPONSÁVEL** faz login e vê:
+- Documentos da FAMÍLIA (compartilhados)
+- Documentos de CADA ALUNO (individuais)
+
+👤 TIPOS DE LOGIN:
+- **admin** / password (Administrador)
+- **joao.professor** / password (Funcionário)
+- **maria.responsavel** / password (Responsável teste)
+- **11122233344** / 3344 (Login automático de responsável)
+
+� PRINCIPAIS TABELAS ATUALIZADAS:
+- tbFamilia: Agora inclui dados de endereço e renda
+- tbTurma: Controle de capacidade e informações detalhadas
+- tbResponsavel: Chave primária e controle de vínculos
+- tbAluno: Dados completos da declaração + matrícula
+- tbDocumentoMatricula: Suporte para família/aluno separadamente
+- tbTipoDocumento: Campo 'escopo' (familia/aluno/ambos)
+
+🔍 VIEWS ÚTEIS PARA CONSULTAS:
+- vw_documentos_familia: Documentos pendentes por família
+- vw_documentos_aluno: Documentos pendentes por aluno
+- vw_documentos_responsavel: Visão consolidada do responsável
+- vw_turmas_disponiveis: Turmas com vagas disponíveis
+- vw_declaracoes_completas: Declarações formatadas
+- vw_usuarios_sistema: Para autenticação
+
+⚡ EXEMPLOS DE USO:
+
+-- Iniciar matrícula (funcionário escolhe turma 1)
+CALL sp_IniciarMatricula(1, 1, 2);
+
+-- Ver documentos pendentes de um responsável
+SELECT * FROM vw_documentos_responsavel WHERE cpfResponsavel = '111.222.333-44';
+
+-- Ver turmas disponíveis
+SELECT * FROM vw_turmas_disponiveis WHERE temVagas = TRUE;
+
+-- Ver declarações prontas para iniciar matrícula
+SELECT * FROM vw_declaracoes_completas WHERE status = 'interesse_declarado';
+
+� PRÓXIMOS PASSOS:
+1. Executar este SQL no banco
+2. Testar procedure sp_IniciarMatricula
+3. Implementar no backend as APIs para:
+- Listar turmas disponíveis
+- Executar iniciar matrícula
+- Documentos do responsável
+4. Implementar no frontend:
+- Seleção de turma
+- Área do responsável
+- Upload de documentos organizados
+
+✨ SISTEMA PRONTO PARA DESENVOLVIMENTO COMPLETO!
 */

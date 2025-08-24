@@ -10,13 +10,8 @@ const TIPOS_COTA = [
   { chave: 'livre', nome: 'Ampla Concorrência' }
 ];
 
-const TODOS_DOCUMENTOS: DocumentoMatricula[] = [
-  { id: 'rg', nome: 'RG do Responsável', obrigatorio: true, tipo: 'documento' },
-  { id: 'cpf', nome: 'CPF do Responsável', obrigatorio: true, tipo: 'documento' },
-  { id: 'comprovanteRenda', nome: 'Comprovante de Renda', obrigatorio: false, tipo: 'comprovante' },
-  { id: 'comprovanteEndereco', nome: 'Comprovante de Endereço', obrigatorio: false, tipo: 'comprovante' },
-  // ...adicione outros documentos se necessário
-];
+// Remover documentos hardcoded - serão carregados da API
+// const TODOS_DOCUMENTOS: DocumentoMatricula[] = [...];
 
 @Component({
   selector: 'app-configuracao-documentos',
@@ -26,12 +21,12 @@ const TODOS_DOCUMENTOS: DocumentoMatricula[] = [
 })
 export class ConfiguracaoDocumentosPage implements OnInit {
   tiposCota = TIPOS_COTA;
-  documentosPorCota: Record<string, string[]> = {
+  documentosPorCota: Record<string, number[]> = {
     funcionario: [],
     economica: [],
     livre: []
   };
-  todosDocumentos: DocumentoMatricula[] = [];
+  todosDocumentos: any[] = []; // Mudado para aceitar os tipos de documento reais
   carregando = true;
   salvando = false;
 
@@ -40,35 +35,43 @@ export class ConfiguracaoDocumentosPage implements OnInit {
     private loadingCtrl: LoadingController,
     private toastCtrl: ToastController,
     private interesseService: InteresseMatriculaService
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.carregarDados();
   }
 
   async carregarDados() {
-    this.carregando = true;
-
     try {
-      // Carrega tipos de documento disponíveis
-      this.interesseService.getTiposDocumento().subscribe({
-        next: (documentos: any[]) => {
-          this.todosDocumentos = documentos;
-        },
-        error: (error: any) => {
-          console.error('Erro ao carregar tipos de documento:', error);
-          this.todosDocumentos = TODOS_DOCUMENTOS;
-        }
-      });
+      this.carregando = true;
 
-      // Carrega configuração existente
-      this.interesseService.getConfiguracaoDocumentos().subscribe({
-        next: (configuracao) => {
-          this.documentosPorCota = configuracao;
-          this.carregando = false;
+      // Carregar tipos de documentos reais da API
+      this.interesseService.getTiposDocumento().subscribe({
+        next: (tiposDocumento) => {
+          this.todosDocumentos = tiposDocumento;
+
+          // Carregar configuração existente
+          this.interesseService.getConfiguracaoDocumentos().subscribe({
+            next: (configuracao) => {
+              // A configuração já vem com number[] do backend
+              this.documentosPorCota = configuracao;
+              this.carregando = false;
+            },
+            error: (error) => {
+              console.error('Erro ao carregar configuração:', error);
+              this.carregando = false;
+            }
+          });
         },
         error: (error) => {
-          console.error('Erro ao carregar configuração:', error);
+          console.error('Erro ao carregar tipos de documento:', error);
+          // Fallback para documentos padrão se a API falhar
+          this.todosDocumentos = [
+            { idTipoDocumento: 1, nome: 'RG do Responsável', obrigatorio: true },
+            { idTipoDocumento: 2, nome: 'CPF do Responsável', obrigatorio: true },
+            { idTipoDocumento: 3, nome: 'Comprovante de Renda', obrigatorio: false },
+            { idTipoDocumento: 4, nome: 'Comprovante de Endereço', obrigatorio: false }
+          ];
           this.carregando = false;
         }
       });
@@ -145,8 +148,8 @@ export class ConfiguracaoDocumentosPage implements OnInit {
     if (documentos.length === 0) return 'Nenhum documento configurado';
 
     const nomes = documentos.map(docId => {
-      const doc = this.todosDocumentos.find(d => d.id === docId);
-      return doc ? doc.nome : docId;
+      const doc = this.todosDocumentos.find(d => d.idTipoDocumento === docId);
+      return doc ? doc.nome : `ID ${docId}`;
     });
 
     return nomes.length > 2

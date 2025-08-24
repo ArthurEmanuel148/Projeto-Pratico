@@ -41,9 +41,9 @@ export class NavigationService {
         break;
 
       case 'responsavel':
-        // Responsáveis também vão para o dashboard (com permissões limitadas)
-        console.log('Redirecionando responsável para dashboard');
-        this.router.navigate(['/sistema/dashboard']);
+        // Responsáveis vão para uma área específica com funcionalidades limitadas
+        console.log('Redirecionando responsável para área de responsável');
+        this.router.navigate(['/sistema/responsavel']);
         break;
 
       default:

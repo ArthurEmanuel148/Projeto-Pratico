@@ -28,6 +28,7 @@ export class CadastroFuncionarioPage implements OnInit {
     this.cadastroForm = this.fb.group({
       nomeCompleto: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
+      cpf: [''], // CPF opcional para funcionários
       dataNascimento: ['', Validators.required],
       dataEntradaInstituto: ['', Validators.required],
       telefone: ['', Validators.required],

@@ -4,6 +4,12 @@
       <ion-icon name="home-outline" color="primary" class="welcome-icon"></ion-icon>
       <h1>Bem-vindo(a), {{ usuarioLogado?.pessoa?.nmPessoa || usuarioLogado?.nomePessoa || 'Responsável' }}!</h1>
       <p>Esta é sua área exclusiva para acompanhar a matrícula do seu filho(a).</p>
+      
+      <!-- Botão de debug temporário -->
+      <ion-button size="small" fill="clear" color="medium" (click)="debugDados()">
+        <ion-icon name="bug-outline" slot="start"></ion-icon>
+        Debug
+      </ion-button>
     </div>
   </div>
 
@@ -22,68 +28,161 @@
             <ion-icon name="checkmark-circle-outline"></ion-icon>
             <ion-label>Matrícula Ativa</ion-label>
           </ion-chip>
-          <p>Sua matrícula foi processada com sucesso. Agora você pode acompanhar o progresso dos documentos
-            necessários.</p>
+          <p>Sessários.</p>
         </div>
       </ion-card-content>
     </ion-card>
   </div>
 
-  <!-- Seção de Documentos -->
+  <!-- Seção de Documentos Necessários -->
   <div class="section-container">
     <ion-card>
       <ion-card-header>
         <ion-card-title color="primary">
-          <ion-icon name="document-text-outline" slot="start"></ion-icon>
+          <ion-icon name="folder-outline" slot="start"></ion-icon>
           Documentos Necessários
         </ion-card-title>
-        <ion-card-subtitle>
-          Envie os documentos para finalizar o processo de matrícula
-        </ion-card-subtitle>
+        <ion-card-subtitle>Envie os documentos para finalizar o processo de matrícula</ion-card-subtitle>
       </ion-card-header>
       <ion-card-content>
-        <ion-list>
-          <ion-item>
-            <ion-icon name="document-outline" slot="start" color="warning"></ion-icon>
-            <ion-label>
-              <h3>RG do Responsável</h3>
-              <p>Status: Pendente</p>
-            </ion-label>
-            <ion-chip slot="end" color="warning">Pendente</ion-chip>
-          </ion-item>
+        <!-- Loading de documentos -->
+        <div *ngIf="documentosCarregando" class="loading-container">
+          <ion-spinner name="crescent"></ion-spinner>
+          <p>Carregando documentos...</p>
+        </div>
 
-          <ion-item>
-            <ion-icon name="document-outline" slot="start" color="warning"></ion-icon>
-            <ion-label>
-              <h3>CPF do Responsável</h3>
-              <p>Status: Pendente</p>
-            </ion-label>
-            <ion-chip slot="end" color="warning">Pendente</ion-chip>
-          </ion-item>
+        <!-- Documentos carregados -->
+        <div *ngIf="!documentosCarregando">
+          <!-- Documentos do Responsável/Família -->
+          <div class="document-category" *ngIf="obterDocumentosPorCategoria('familia').length > 0">
+            <h3>
+              <ion-icon name="people-outline" color="primary"></ion-icon>
+              Documentos da Família
+            </h3>
+            <ion-list>
+              <ion-item *ngFor="let documento of obterDocumentosPorCategoria('familia')">
+                <ion-icon name="document-outline" slot="start"
+                  [color]="obterCorStatus(documento.status)"></ion-icon>
+                <ion-label>
+                  <h2>{{ documento.nomeDocumento }}</h2>
+                  <p>{{ documento.descricao }}</p>
+                  <p *ngIf="documento.nomeArquivoOriginal" class="arquivo-anexado">
+                    📎 {{ documento.nomeArquivoOriginal }}
+                  </p>
+                </ion-label>
+                <ion-chip slot="end" [color]="obterCorStatus(documento.status)">
+                  <ion-icon name="time-outline" *ngIf="documento.status === 'pendente'"></ion-icon>
+                  <ion-icon name="cloud-upload-outline" *ngIf="documento.status === 'anexado'"></ion-icon>
+                  <ion-icon name="checkmark-circle-outline" *ngIf="documento.status === 'aprovado'"></ion-icon>
+                  <ion-icon name="close-circle-outline" *ngIf="documento.status === 'rejeitado'"></ion-icon>
+                  <ion-label>{{ documento.statusDescricao }}</ion-label>
+                </ion-chip>
+                <!-- Botões de ação -->
+                <ion-button fill="clear" slot="end" (click)="anexarDocumento(documento)"
+                  *ngIf="documento.status === 'pendente' || documento.status === 'rejeitado'">
+                  <ion-icon name="attach-outline"></ion-icon>
+                </ion-button>
+                <ion-button fill="clear" slot="end" (click)="baixarDocumento(documento)"
+                  *ngIf="documento.status !== 'pendente'">
+                  <ion-icon name="download-outline"></ion-icon>
+                </ion-button>
+                <ion-button fill="clear" slot="end" (click)="removerDocumento(documento)"
+                  *ngIf="documento.status === 'anexado' || documento.status === 'rejeitado'">
+                  <ion-icon name="trash-outline" color="danger"></ion-icon>
+                </ion-button>
+              </ion-item>
+            </ion-list>
+          </div>
 
-          <ion-item>
-            <ion-icon name="document-outline" slot="start" color="warning"></ion-icon>
-            <ion-label>
-              <h3>Certidão de Nascimento do Aluno</h3>
-              <p>Status: Pendente</p>
-            </ion-label>
-            <ion-chip slot="end" color="warning">Pendente</ion-chip>
-          </ion-item>
+          <!-- Documentos do Aluno -->
+          <div class="document-category" *ngIf="obterDocumentosPorCategoria('aluno').length > 0">
+            <h3>
+              <ion-icon name="person-outline" color="tertiary"></ion-icon>
+              Documentos do Aluno
+            </h3>
+            <ion-list>
+              <ion-item *ngFor="let documento of obterDocumentosPorCategoria('aluno')">
+                <ion-icon name="document-outline" slot="start"
+                  [color]="obterCorStatus(documento.status)"></ion-icon>
+                <ion-label>
+                  <h2>{{ documento.nomeDocumento }}</h2>
+                  <p>{{ documento.descricao }}</p>
+                  <p *ngIf="documento.nomeArquivoOriginal" class="arquivo-anexado">
+                    📎 {{ documento.nomeArquivoOriginal }}
+                  </p>
+                </ion-label>
+                <ion-chip slot="end" [color]="obterCorStatus(documento.status)">
+                  <ion-icon name="time-outline" *ngIf="documento.status === 'pendente'"></ion-icon>
+                  <ion-icon name="cloud-upload-outline" *ngIf="documento.status === 'anexado'"></ion-icon>
+                  <ion-icon name="checkmark-circle-outline" *ngIf="documento.status === 'aprovado'"></ion-icon>
+                  <ion-icon name="close-circle-outline" *ngIf="documento.status === 'rejeitado'"></ion-icon>
+                  <ion-label>{{ documento.statusDescricao }}</ion-label>
+                </ion-chip>
+                <!-- Botões de ação -->
+                <ion-button fill="clear" slot="end" (click)="anexarDocumento(documento)"
+                  *ngIf="documento.status === 'pendente' || documento.status === 'rejeitado'">
+                  <ion-icon name="attach-outline"></ion-icon>
+                </ion-button>
+                <ion-button fill="clear" slot="end" (click)="baixarDocumento(documento)"
+                  *ngIf="documento.status !== 'pendente'">
+                  <ion-icon name="download-outline"></ion-icon>
+                </ion-button>
+                <ion-button fill="clear" slot="end" (click)="removerDocumento(documento)"
+                  *ngIf="documento.status === 'anexado' || documento.status === 'rejeitado'">
+                  <ion-icon name="trash-outline" color="danger"></ion-icon>
+                </ion-button>
+              </ion-item>
+            </ion-list>
+          </div>
 
-          <ion-item>
-            <ion-icon name="document-outline" slot="start" color="warning"></ion-icon>
-            <ion-label>
-              <h3>Comprovante de Renda</h3>
-              <p>Status: Pendente</p>
-            </ion-label>
-            <ion-chip slot="end" color="warning">Pendente</ion-chip>
-          </ion-item>
-        </ion-list>
+          <!-- Documentos Específicos da Cota -->
+          <div class="document-category" *ngIf="obterDocumentosPorCategoria('cota').length > 0">
+            <h3>
+              <ion-icon name="document-text-outline" color="warning"></ion-icon>
+              Documentos Específicos da Cota
+            </h3>
+            <ion-list>
+              <ion-item *ngFor="let documento of obterDocumentosPorCategoria('cota')">
+                <ion-icon name="document-outline" slot="start"
+                  [color]="obterCorStatus(documento.status)"></ion-icon>
+                <ion-label>
+                  <h2>{{ documento.nomeDocumento }}</h2>
+                  <p>{{ documento.descricao }}</p>
+                  <p *ngIf="documento.nomeArquivoOriginal" class="arquivo-anexado">
+                    📎 {{ documento.nomeArquivoOriginal }}
+                  </p>
+                </ion-label>
+                <ion-chip slot="end" [color]="obterCorStatus(documento.status)">
+                  <ion-icon name="time-outline" *ngIf="documento.status === 'pendente'"></ion-icon>
+                  <ion-icon name="cloud-upload-outline" *ngIf="documento.status === 'anexado'"></ion-icon>
+                  <ion-icon name="checkmark-circle-outline" *ngIf="documento.status === 'aprovado'"></ion-icon>
+                  <ion-icon name="close-circle-outline" *ngIf="documento.status === 'rejeitado'"></ion-icon>
+                  <ion-label>{{ documento.statusDescricao }}</ion-label>
+                </ion-chip>
+                <!-- Botões de ação -->
+                <ion-button fill="clear" slot="end" (click)="anexarDocumento(documento)"
+                  *ngIf="documento.status === 'pendente' || documento.status === 'rejeitado'">
+                  <ion-icon name="attach-outline"></ion-icon>
+                </ion-button>
+                <ion-button fill="clear" slot="end" (click)="baixarDocumento(documento)"
+                  *ngIf="documento.status !== 'pendente'">
+                  <ion-icon name="download-outline"></ion-icon>
+                </ion-button>
+                <ion-button fill="clear" slot="end" (click)="removerDocumento(documento)"
+                  *ngIf="documento.status === 'anexado' || documento.status === 'rejeitado'">
+                  <ion-icon name="trash-outline" color="danger"></ion-icon>
+                </ion-button>
+              </ion-item>
+            </ion-list>
+          </div>
 
-        <ion-button expand="block" color="primary" class="upload-button">
-          <ion-icon name="cloud-upload-outline" slot="start"></ion-icon>
-          Enviar Documentos
-        </ion-button>
+          <!-- Mensagem quando não há documentos -->
+          <div *ngIf="documentosPendentes.length === 0" class="no-documents">
+            <ion-icon name="document-text-outline" color="medium" size="large"></ion-icon>
+            <h3>Nenhum documento pendente encontrado</h3>
+            <p>Todos os documentos necessários já foram enviados ou não há documentos configurados para sua matrícula.</p>
+          </div>
+        </div>
       </ion-card-content>
     </ion-card>
   </div>
@@ -112,7 +211,7 @@
           <ion-icon name="mail" slot="start" color="primary"></ion-icon>
           <ion-label>
             <h3>E-mail</h3>
-            <p>contato@cipalam.org.br</p>
+            <p>contato&#64;cipalam.org.br</p>
           </ion-label>
         </ion-item>
 

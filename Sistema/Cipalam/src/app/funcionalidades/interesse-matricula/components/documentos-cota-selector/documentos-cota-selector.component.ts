@@ -10,19 +10,18 @@ import { FormBuilder, FormGroup } from '@angular/forms';
   standalone: false
 })
 export class DocumentosCotaSelectorComponent implements OnInit {
-  @Input() documentosDisponiveis: any[] = []; // Mudado para aceitar tipos de documento reais
-  @Input() documentosSelecionados: number[] = []; // Mudado para number[]
+  @Input() documentosDisponiveis: DocumentoMatricula[] = [];
+  @Input() documentosSelecionados: string[] = [];
   @Input() nomeCota: string = '';
 
   form!: FormGroup;
 
-  constructor(private modalCtrl: ModalController, private fb: FormBuilder) { }
+  constructor(private modalCtrl: ModalController, private fb: FormBuilder) {}
 
   ngOnInit() {
     const group: any = {};
     this.documentosDisponiveis.forEach((doc) => {
-      const id = doc.idTipoDocumento || doc.id; // Suportar ambos os formatos
-      group[id] = [this.documentosSelecionados.includes(id)];
+      group[doc.id] = [this.documentosSelecionados.includes(doc.id)];
     });
     this.form = this.fb.group(group);
   }
@@ -30,7 +29,7 @@ export class DocumentosCotaSelectorComponent implements OnInit {
   confirmar() {
     const selecionados = Object.entries(this.form.value)
       .filter(([_, ativo]) => ativo)
-      .map(([id]) => Number(id)); // Converter para number
+      .map(([id]) => id);
     this.modalCtrl.dismiss(selecionados, 'confirmar');
   }
 

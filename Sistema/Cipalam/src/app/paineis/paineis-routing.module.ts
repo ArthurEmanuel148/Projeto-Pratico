@@ -23,7 +23,7 @@ const routes: Routes = [
       },
       {
         path: 'responsavel',
-        loadChildren: () => import('../painel-funcionario/painel-funcionario.module').then(m => m.PainelFuncionarioPageModule),
+        loadChildren: () => import('../painel-responsavel/painel-responsavel.module').then(m => m.PainelResponsavelPageModule),
         canActivate: [RoleGuard],
         data: { requiredRole: ['responsavel'] }
       },

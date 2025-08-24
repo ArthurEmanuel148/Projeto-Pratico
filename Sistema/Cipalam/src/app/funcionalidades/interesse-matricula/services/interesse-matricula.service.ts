@@ -302,12 +302,12 @@ export class InteresseMatriculaService {
     );
   }
 
-  salvarConfiguracaoDocumentos(configuracao: Record<string, number[]>): Observable<any> {
-    return this.http.post('http://localhost:8080/api/configuracao-documentos', configuracao);
+  salvarConfiguracaoDocumentos(configuracao: Record<string, string[]>): Observable<any> {
+    return this.http.post(`${this.apiUrl}/configuracao-documentos`, configuracao);
   }
 
-  getConfiguracaoDocumentos(): Observable<Record<string, number[]>> {
-    return this.http.get<Record<string, number[]>>('http://localhost:8080/api/configuracao-documentos?format=frontend');
+  getConfiguracaoDocumentos(): Observable<Record<string, string[]>> {
+    return this.http.get<Record<string, string[]>>(`${this.apiUrl}/configuracao-documentos`);
   }
 
   // Método para buscar tipos de documentos
@@ -315,36 +315,6 @@ export class InteresseMatriculaService {
     return this.http.get<any[]>('http://localhost:8080/api/tipos-documento').pipe(
       catchError(error => {
         console.error('Erro ao buscar tipos de documento:', error);
-        throw error;
-      })
-    );
-  }
-
-  // Método para criar tipo de documento
-  criarTipoDocumento(tipoDocumento: any): Observable<any> {
-    return this.http.post<any>('http://localhost:8080/api/tipos-documento', tipoDocumento).pipe(
-      catchError(error => {
-        console.error('Erro ao criar tipo de documento:', error);
-        throw error;
-      })
-    );
-  }
-
-  // Método para atualizar tipo de documento
-  atualizarTipoDocumento(id: number, tipoDocumento: any): Observable<any> {
-    return this.http.put<any>(`http://localhost:8080/api/tipos-documento/${id}`, tipoDocumento).pipe(
-      catchError(error => {
-        console.error('Erro ao atualizar tipo de documento:', error);
-        throw error;
-      })
-    );
-  }
-
-  // Método para excluir tipo de documento
-  excluirTipoDocumento(id: number): Observable<any> {
-    return this.http.delete<any>(`http://localhost:8080/api/tipos-documento/${id}`).pipe(
-      catchError(error => {
-        console.error('Erro ao excluir tipo de documento:', error);
         throw error;
       })
     );

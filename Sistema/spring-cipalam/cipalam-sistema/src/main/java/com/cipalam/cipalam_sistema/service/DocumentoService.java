@@ -33,32 +33,30 @@ public class DocumentoService {
                     SELECT
                         dm.idDocumentoMatricula as idDocumento,
                         dm.status,
-                        dm.dataAnexo,
+                        dm.dataEnvio as dataAnexo,
                         dm.nomeArquivoOriginal,
                         dm.observacoes,
                         td.nome as nomeDocumento,
                         td.categoria,
                         td.obrigatorio,
                         td.descricao,
-                        f.tipoCota,
+                        im.tipoCota,
                         CASE
                             WHEN dm.status = 'pendente' THEN 'Pendente de anexo'
-                            WHEN dm.status = 'anexado' THEN 'Documento anexado'
+                            WHEN dm.status = 'enviado' THEN 'Documento anexado'
                             WHEN dm.status = 'aprovado' THEN 'Aprovado'
                             WHEN dm.status = 'rejeitado' THEN 'Rejeitado - Reenviar'
                             ELSE dm.status
                         END as statusDescricao
                     FROM tbDocumentoMatricula dm
                     INNER JOIN tbTipoDocumento td ON dm.tbTipoDocumento_idTipoDocumento = td.idTipoDocumento
-                    INNER JOIN tbAluno a ON dm.tbAluno_idPessoa = a.tbPessoa_idPessoa
-                    INNER JOIN tbFamilia f ON a.tbFamilia_idtbFamilia = f.idtbFamilia
-                    INNER JOIN tbResponsavel r ON f.idtbFamilia = r.tbFamilia_idtbFamilia
-                    WHERE r.tbPessoa_idPessoa = ?
+                    INNER JOIN tbInteresseMatricula im ON dm.tbInteresseMatricula_id = im.id
+                    WHERE im.responsavelLogin_idPessoa = ?
                     ORDER BY
                         CASE dm.status
                             WHEN 'pendente' THEN 1
                             WHEN 'rejeitado' THEN 2
-                            WHEN 'anexado' THEN 3
+                            WHEN 'enviado' THEN 3
                             WHEN 'aprovado' THEN 4
                         END,
                         td.categoria, td.nome
@@ -76,10 +74,8 @@ public class DocumentoService {
         String verificarSql = """
                     SELECT COUNT(*)
                     FROM tbDocumentoMatricula dm
-                    INNER JOIN tbAluno a ON dm.tbAluno_idPessoa = a.tbPessoa_idPessoa
-                    INNER JOIN tbFamilia f ON a.tbFamilia_idtbFamilia = f.idtbFamilia
-                    INNER JOIN tbResponsavel r ON f.idtbFamilia = r.tbFamilia_idtbFamilia
-                    WHERE dm.idDocumentoMatricula = ? AND r.tbPessoa_idPessoa = ?
+                    INNER JOIN tbInteresseMatricula im ON dm.tbInteresseMatricula_id = im.id
+                    WHERE dm.idDocumentoMatricula = ? AND im.responsavelLogin_idPessoa = ?
                 """;
 
         Integer count = jdbcTemplate.queryForObject(verificarSql, Integer.class, idDocumento, idResponsavel);

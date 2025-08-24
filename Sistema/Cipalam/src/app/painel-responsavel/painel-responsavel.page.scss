@@ -143,6 +143,82 @@ ion-chip[color="danger"] {
   --color: #eb445a;
 }
 
+/* Estilos para documentos */
+.document-category {
+  margin-bottom: 24px;
+  
+  h3 {
+    color: var(--ion-color-dark);
+    font-weight: 600;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 1.1rem;
+    
+    ion-icon {
+      font-size: 1.3rem;
+    }
+  }
+}
+
+.loading-container {
+  text-align: center;
+  padding: 40px 20px;
+  
+  ion-spinner {
+    margin-bottom: 16px;
+  }
+  
+  p {
+    color: var(--ion-color-medium);
+    font-size: 0.9rem;
+    margin: 0;
+  }
+}
+
+.no-documents {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--ion-color-medium);
+  
+  ion-icon {
+    font-size: 3rem;
+    margin-bottom: 16px;
+    opacity: 0.5;
+  }
+  
+  h3 {
+    font-size: 1.1rem;
+    font-weight: 500;
+    margin: 0 0 8px 0;
+    color: var(--ion-color-medium-shade);
+  }
+  
+  p {
+    font-size: 0.9rem;
+    line-height: 1.4;
+    margin: 0;
+    opacity: 0.8;
+  }
+}
+
+.arquivo-anexado {
+  color: var(--ion-color-success) !important;
+  font-weight: 500;
+  font-size: 0.85rem !important;
+}
+
+/* Botões de ação nos documentos */
+ion-button[fill="clear"] {
+  --padding-start: 8px;
+  --padding-end: 8px;
+  
+  ion-icon {
+    font-size: 1.2rem;
+  }
+}
+
 /* Responsividade */
 @media (max-width: 768px) {
   .welcome-header h1 {

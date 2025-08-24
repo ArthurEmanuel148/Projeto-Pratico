@@ -152,7 +152,7 @@ mvn spring-boot:run
 ```
 
 ### Banco de Dados
-1. Executar script: `CIPALAM_HOSPEDAGEM_COMPLETO.sql` ou usar `./atalhoiniciarsistema.sh`
+1. Executar script: `Sistema/CIPALAM_COMPLETO_FINAL.sql`
 2. Configurar conexão em `application.properties`
 
 ## 🎯 Fluxos Principais

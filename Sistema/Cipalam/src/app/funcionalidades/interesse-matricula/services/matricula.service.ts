@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
+import { catchError } from 'rxjs/operators';
 import { DocumentoMatricula } from '../models/documento-matricula.interface';
 
 @Injectable({ providedIn: 'root' })
@@ -32,52 +32,11 @@ export class MatriculaService {
   constructor(private http: HttpClient) { }
 
   iniciarMatricula(dadosMatricula: any): Observable<any> {
-    // NOVO: Usar o método procedural que chama a stored procedure
-    console.log('Dados recebidos para matrícula:', dadosMatricula);
-
-    // Transformar os dados para o formato esperado pela API procedural
-    const requestProcedural = {
-      idDeclaracao: dadosMatricula.interesseId,
-      idTurma: 1, // Padrão - será melhorado para permitir seleção
-      idFuncionario: dadosMatricula.funcionarioId || 1
-    };
-
-    console.log('Chamando API procedural com:', requestProcedural);
-
-    return this.http.post(`${this.apiUrl}/iniciar-procedural`, requestProcedural).pipe(
-      map(response => {
-        console.log('Resposta da API procedural:', response);
-
-        // Transformar resposta para formato esperado pelo frontend
-        if (response && (response as any).success && (response as any).data) {
-          const data = (response as any).data;
-          return {
-            success: true,
-            message: (response as any).message || 'Matrícula iniciada com sucesso!',
-            credenciaisResponsavel: {
-              usuario: data.loginResponsavel,
-              senha: data.senhaTemporaria
-            },
-            idFamilia: data.idFamilia,
-            idResponsavel: data.idResponsavel,
-            idAluno: data.idAluno,
-            matricula: data.matricula,
-            documentosNecessarios: []
-          };
-        } else {
-          return {
-            success: false,
-            message: (response as any).message || 'Erro ao processar matrícula'
-          };
-        }
-      }),
+    return this.http.post(`${this.apiUrl}/iniciar`, dadosMatricula).pipe(
       catchError(error => {
         console.error('Erro ao iniciar matrícula no backend:', error);
-        // Em caso de erro, retornar erro em vez de fallback
-        return of({
-          success: false,
-          message: 'Erro ao conectar com o servidor. Verifique se o backend está rodando.'
-        });
+        // Fallback para simulação local
+        return of(this.criarLoginResponsavelLocal(dadosMatricula));
       })
     );
   }

@@ -373,7 +373,6 @@ CREATE TABLE `tbInteresseMatricula` (
 
 -- OBSERVAÇÕES INTERNAS
 
-
 `observacoesInternas` TEXT NULL,
     `notasProcesso` TEXT NULL,
     
@@ -756,7 +755,7 @@ END$$
 
 -- -----------------------------------------------------
 -- Procedure: sp_CriarDocumentosPendentes
--- Descrição: Cria documentos pendentes baseados na configuração de cota
+-- Descrição: Cria documentos pendentes baseados na cota da família
 -- -----------------------------------------------------
 CREATE PROCEDURE `sp_CriarDocumentosPendentes`(
     IN p_idFamilia INT,
@@ -764,96 +763,43 @@ CREATE PROCEDURE `sp_CriarDocumentosPendentes`(
 )
 BEGIN
     DECLARE v_tipoCota ENUM('livre', 'economica', 'funcionario');
-    DECLARE v_documentosObrigatorios JSON;
-    DECLARE v_done INT DEFAULT FALSE;
-    DECLARE v_documentoId INT;
-    
-    -- Cursor para percorrer os IDs dos documentos
-    DECLARE cur_documentos CURSOR FOR 
-        SELECT JSON_UNQUOTE(JSON_EXTRACT(v_documentosObrigatorios, CONCAT('$[', idx.n, ']'))) as doc_id
-        FROM (
-            SELECT 0 as n UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL 
-            SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL 
-            SELECT 8 UNION ALL SELECT 9 UNION ALL SELECT 10 UNION ALL SELECT 11 UNION ALL 
-            SELECT 12 UNION ALL SELECT 13 UNION ALL SELECT 14 UNION ALL SELECT 15
-        ) idx
-        WHERE idx.n < JSON_LENGTH(v_documentosObrigatorios);
-        
-    DECLARE CONTINUE HANDLER FOR NOT FOUND SET v_done = TRUE;
     
     -- Obter tipo de cota da família
     SELECT tipoCota INTO v_tipoCota FROM tbFamilia WHERE idtbFamilia = p_idFamilia;
     
-    -- Obter configuração de documentos para esta cota
-    SELECT documentosObrigatorios INTO v_documentosObrigatorios 
-    FROM tbConfiguracaoDocumentosCota 
-    WHERE tipoCota = v_tipoCota;
+    -- Criar documentos da FAMÍLIA (escopo 'familia' ou 'ambos')
+    INSERT INTO tbDocumentoMatricula (
+        tbFamilia_idtbFamilia, 
+        tbTipoDocumento_idTipoDocumento, 
+        status
+    )
+    SELECT 
+        p_idFamilia,
+        td.idTipoDocumento,
+        'pendente'
+    FROM tbTipoDocumento td
+    WHERE td.ativo = TRUE 
+    AND td.escopo IN ('familia', 'ambos')
+    AND (td.tipoCota IS NULL OR td.tipoCota = v_tipoCota);
     
-    -- Se não há configuração específica, usar documentos padrão (todos ativos)
-    IF v_documentosObrigatorios IS NULL THEN
-        -- Criar documentos da FAMÍLIA (escopo 'familia' ou 'ambos')
-        INSERT INTO tbDocumentoMatricula (
-            tbFamilia_idtbFamilia, 
-            tbTipoDocumento_idTipoDocumento, 
-            status
-        )
-        SELECT 
-            p_idFamilia,
-            td.idTipoDocumento,
-            'pendente'
-        FROM tbTipoDocumento td
-        WHERE td.ativo = TRUE 
-        AND td.escopo IN ('familia', 'ambos');
-        
-        -- Criar documentos do ALUNO (escopo 'aluno' ou 'ambos')
-        INSERT INTO tbDocumentoMatricula (
-            tbAluno_idPessoa,
-            tbTipoDocumento_idTipoDocumento, 
-            status
-        )
-        SELECT 
-            p_idAluno,
-            td.idTipoDocumento,
-            'pendente'
-        FROM tbTipoDocumento td
-        WHERE td.ativo = TRUE 
-        AND td.escopo IN ('aluno', 'ambos');
-    ELSE
-        -- Usar configuração específica da cota
-        OPEN cur_documentos;
-        
-        read_loop: LOOP
-            FETCH cur_documentos INTO v_documentoId;
-            IF v_done THEN
-                LEAVE read_loop;
-            END IF;
-            
-            -- Verificar se o documento existe e está ativo
-            IF EXISTS (SELECT 1 FROM tbTipoDocumento WHERE idTipoDocumento = v_documentoId AND ativo = TRUE) THEN
-                -- Inserir documento baseado no escopo
-                INSERT INTO tbDocumentoMatricula (
-                    tbFamilia_idtbFamilia,
-                    tbAluno_idPessoa,
-                    tbTipoDocumento_idTipoDocumento, 
-                    status
-                )
-                SELECT 
-                    CASE WHEN td.escopo IN ('familia', 'ambos') THEN p_idFamilia ELSE NULL END,
-                    CASE WHEN td.escopo IN ('aluno', 'ambos') THEN p_idAluno ELSE NULL END,
-                    td.idTipoDocumento,
-                    'pendente'
-                FROM tbTipoDocumento td
-                WHERE td.idTipoDocumento = v_documentoId 
-                AND td.ativo = TRUE;
-            END IF;
-        END LOOP;
-        
-        CLOSE cur_documentos;
-    END IF;
+    -- Criar documentos do ALUNO (escopo 'aluno' ou 'ambos')
+    INSERT INTO tbDocumentoMatricula (
+        tbAluno_idPessoa,
+        tbTipoDocumento_idTipoDocumento, 
+        status
+    )
+    SELECT 
+        p_idAluno,
+        td.idTipoDocumento,
+        'pendente'
+    FROM tbTipoDocumento td
+    WHERE td.ativo = TRUE 
+    AND td.escopo IN ('aluno', 'ambos')
+    AND (td.tipoCota IS NULL OR td.tipoCota = v_tipoCota);
     
 END$$
 
-DELIMITER;
+DELIMITER ;
 
 -- ===================================================================
 -- INSERÇÃO DE FUNCIONALIDADES (SEM ROTAS)
@@ -966,15 +912,6 @@ VALUES
     'matriculas',
     'configuracao',
     32
-),
-(
-    'tiposDocumento',
-    'Tipos de Documento',
-    'Gerenciar tipos de documentos do sistema',
-    'document-outline',
-    'matriculas',
-    'configuracao',
-    34
 );
 
 -- ===================================================================

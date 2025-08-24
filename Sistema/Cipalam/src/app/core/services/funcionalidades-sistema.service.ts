@@ -5,6 +5,7 @@ import { catchError, map } from 'rxjs/operators';
 import { FuncionalidadeSistema } from '../models/funcionalidade-sistema.interface';
 import { ApiConfigService } from './api-config.service';
 import { RotasConfigService } from './rotas-config.service';
+import { AuthService } from './auth.service';
 
 @Injectable({
   providedIn: 'root'
@@ -14,7 +15,8 @@ export class FuncionalidadesSistemaService {
   constructor(
     private http: HttpClient,
     private apiConfig: ApiConfigService,
-    private rotasConfig: RotasConfigService
+    private rotasConfig: RotasConfigService,
+    private authService: AuthService
   ) { }
 
   private mockFuncionalidades: FuncionalidadeSistema[] = [
@@ -113,7 +115,14 @@ export class FuncionalidadesSistemaService {
   }
 
   getMenuHierarquico(pessoaId: number): Observable<any[]> {
-    // Buscar menu hierárquico do usuário
+    // Verificar se o usuário é responsável - responsáveis não têm menu hierárquico
+    const usuarioLogado = this.authService.getFuncionarioLogado();
+    if (usuarioLogado && usuarioLogado.tipo === 'responsavel') {
+      console.log('👨‍👩‍👧‍👦 Usuário é responsável - não carregando menu hierárquico');
+      return of([]);
+    }
+
+    // Buscar menu hierárquico do usuário (apenas para funcionários)
     return this.http.get<{ success: boolean, menu: any[] }>(`${this.apiConfig.getBaseUrl()}/auth/menu/${pessoaId}`)
       .pipe(
         map(response => response.menu),

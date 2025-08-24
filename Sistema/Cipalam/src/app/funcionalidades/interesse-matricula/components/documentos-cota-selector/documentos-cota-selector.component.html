@@ -12,7 +12,7 @@
           <h3>{{ doc.nome }}</h3>
           <p *ngIf="doc.descricao">{{ doc.descricao }}</p>
         </ion-label>
-        <ion-toggle slot="end" [formControlName]="doc.id"></ion-toggle>
+        <ion-toggle slot="end" [formControlName]="doc.idTipoDocumento || doc.id"></ion-toggle>
       </ion-item>
     </ion-list>
   </form>

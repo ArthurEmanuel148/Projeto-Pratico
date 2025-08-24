@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, BehaviorSubject } from 'rxjs';
-import { map, tap } from 'rxjs/operators';
+import { Observable, BehaviorSubject, of, throwError } from 'rxjs';
+import { map, tap, catchError, switchMap } from 'rxjs/operators';
 import { ApiConfigService } from './api-config.service';
 
 export interface LoginRequest {
@@ -47,6 +47,56 @@ export class AuthService {
   }
 
   login(usuario: string, senha: string): Observable<LoginResponse> {
+    // Primeiro, tentar autenticar como responsável (usando CPF)
+    return this.loginResponsavel(usuario, senha).pipe(
+      catchError(responsavelError => {
+        console.log('Falha na autenticação de responsável, tentando funcionário...');
+        // Se falhar, tentar como funcionário/admin
+        return this.loginFuncionario(usuario, senha);
+      })
+    );
+  }
+
+  // Método específico para login de responsável
+  private loginResponsavel(cpf: string, senha: string): Observable<LoginResponse> {
+    return this.http.post<any>('http://localhost:8080/api/interesse-matricula/autenticar-responsavel', { cpf, senha })
+      .pipe(
+        switchMap(response => {
+          if (response.autenticado) {
+            // Converter resposta do responsável para formato esperado
+            const normalizedResponse: LoginResponse = {
+              success: true,
+              message: response.message,
+              usuario: cpf,
+              token: '',
+              pessoa: {
+                idPessoa: response.dadosResponsavel.idPessoa || 0,
+                nmPessoa: response.dadosResponsavel.nome || '',
+                cpfPessoa: response.dadosResponsavel.cpf || cpf,
+              },
+              pessoaId: response.dadosResponsavel.idPessoa || 0,
+              usuarioId: response.dadosResponsavel.idPessoa || 0,
+              nomePessoa: response.dadosResponsavel.nome || '',
+              tipo: 'responsavel',
+              funcionalidades: [],
+              permissoes: {}
+            };
+
+            // Salvar usuário logado
+            console.log('Login de responsável realizado com sucesso:', normalizedResponse);
+            localStorage.setItem('usuarioLogado', JSON.stringify(normalizedResponse));
+            this.usuarioLogadoSubject.next(normalizedResponse);
+
+            return of(normalizedResponse);
+          } else {
+            return throwError(new Error(response.message || 'Falha na autenticação de responsável'));
+          }
+        })
+      );
+  }
+
+  // Método específico para login de funcionário/admin  
+  private loginFuncionario(usuario: string, senha: string): Observable<LoginResponse> {
     const loginRequest: LoginRequest = { usuario, senha };
 
     return this.http.post<LoginResponse>(this.apiConfig.getLoginUrl(), loginRequest)
@@ -65,7 +115,7 @@ export class AuthService {
           };
 
           // Salvar usuário logado
-          console.log('Login realizado. Tipo de usuário determinado:', normalizedResponse.tipo);
+          console.log('Login de funcionário realizado. Tipo de usuário determinado:', normalizedResponse.tipo);
           console.log('Permissões do usuário:', normalizedResponse.permissoes);
           localStorage.setItem('usuarioLogado', JSON.stringify(normalizedResponse));
           this.usuarioLogadoSubject.next(normalizedResponse);
@@ -144,6 +194,7 @@ export class AuthService {
           'matriculas': true,
           'declaracoesInteresse': true,
           'configurarDocumentosCota': true,
+          'iniciarMatricula': true,
           'alunos': true,
           'cadastroAluno': true,
           'listaAlunos': true,
@@ -180,6 +231,7 @@ export class AuthService {
           'matriculas': true,
           'declaracoesInteresse': true,
           'configurarDocumentosCota': true,
+          'iniciarMatricula': true,
           'alunos': true,
           'listaAlunos': true,
           'advertencias': true,
@@ -202,6 +254,7 @@ export class AuthService {
           'matriculas': true,
           'declaracoesInteresse': true,
           'configurarDocumentosCota': true,
+          'iniciarMatricula': true,
           'alunos': true,
           'cadastroAluno': true,
           'listaAlunos': true,

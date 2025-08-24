@@ -68,14 +68,10 @@ public class InteresseMatriculaService {
 
         // Atualizar outros campos
         interesse.setTipoCota(interesseAtualizado.getTipoCota());
-        interesse.setRendaFamiliar(interesseAtualizado.getRendaFamiliar());
-        interesse.setRendaPerCapita(interesseAtualizado.getRendaPerCapita());
         interesse.setNumeroIntegrantes(interesseAtualizado.getNumeroIntegrantes());
-        interesse.setEnderecoCompleto(interesseAtualizado.getEnderecoCompleto());
         interesse.setIntegrantesRenda(interesseAtualizado.getIntegrantesRenda());
         interesse.setHorariosSelecionados(interesseAtualizado.getHorariosSelecionados());
-        interesse.setMensagemAdicional(interesseAtualizado.getMensagemAdicional());
-        interesse.setObservacoes(interesseAtualizado.getObservacoes());
+        interesse.setObservacoesResponsavel(interesseAtualizado.getObservacoesResponsavel());
 
         return interesseMatriculaRepository.save(interesse);
     }
@@ -192,8 +188,26 @@ public class InteresseMatriculaService {
             if (loginExistente.isPresent()) {
                 Login login = loginExistente.get();
 
-                // Verificar se a senha informada confere com a senha hasheada do banco
-                if (passwordEncoder.matches(senha, login.getSenha())) {
+                // Verificar se a senha está em texto claro (não começa com $2a$, $2b$ ou $2y$)
+                boolean senhaEmTextoClaro = !login.getSenha().startsWith("$2") && login.getSenha().length() <= 10;
+
+                boolean senhaCorreta = false;
+
+                if (senhaEmTextoClaro) {
+                    // Comparar diretamente e depois criptografar
+                    if (senha.equals(login.getSenha())) {
+                        senhaCorreta = true;
+                        // Criptografar a senha e salvar
+                        String senhaCriptografada = passwordEncoder.encode(senha);
+                        login.setSenha(senhaCriptografada);
+                        loginRepository.save(login);
+                    }
+                } else {
+                    // Verificar usando BCrypt
+                    senhaCorreta = passwordEncoder.matches(senha, login.getSenha());
+                }
+
+                if (senhaCorreta) {
                     Map<String, Object> dadosResponsavel = new HashMap<>();
                     dadosResponsavel.put("nome", pessoa.getNmPessoa());
                     dadosResponsavel.put("cpf", pessoa.getCpfPessoa());

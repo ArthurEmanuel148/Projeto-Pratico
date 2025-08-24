@@ -7,6 +7,7 @@ import com.cipalam.cipalam_sistema.model.Responsavel;
 import com.cipalam.cipalam_sistema.service.TipoDocumentoService;
 import com.cipalam.cipalam_sistema.service.InteresseMatriculaService;
 import com.cipalam.cipalam_sistema.service.DocumentoMatriculaService;
+import com.cipalam.cipalam_sistema.service.MatriculaService;
 import com.cipalam.cipalam_sistema.repository.PessoaRepository;
 import com.cipalam.cipalam_sistema.repository.LoginRepository;
 import com.cipalam.cipalam_sistema.repository.ResponsavelRepository;
@@ -14,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -28,6 +30,8 @@ import java.util.Optional;
 @RequestMapping("/api/matricula")
 @CrossOrigin(origins = { "http://localhost:8100", "http://localhost:4200" })
 public class MatriculaController {
+
+    private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     @Autowired
     private TipoDocumentoService tipoDocumentoService;
@@ -78,7 +82,9 @@ public class MatriculaController {
             // Verificar se já existe login para este email
             Optional<Login> loginExistente = loginRepository.findByUsuario(email);
 
-            String senha = "temp123456";
+            // Extrair os últimos 4 dígitos do CPF para ser a senha do responsável
+            String cpfNumeros = cpfResponsavel.replaceAll("[^0-9]", ""); // Remove pontos e traços
+            String senha = cpfNumeros.substring(cpfNumeros.length() - 4); // Últimos 4 dígitos
             String usuario = email;
 
             if (loginExistente.isEmpty()) {
@@ -107,7 +113,9 @@ public class MatriculaController {
                 // Criar login
                 Login novoLogin = new Login();
                 novoLogin.setUsuario(usuario);
-                novoLogin.setSenha(senha);
+                // Criptografar a senha (últimos 4 dígitos do CPF) usando BCrypt
+                String senhaCriptografada = passwordEncoder.encode(senha);
+                novoLogin.setSenha(senhaCriptografada);
                 novoLogin.setPessoa(pessoaSalva);
 
                 loginRepository.save(novoLogin);
@@ -387,6 +395,114 @@ public class MatriculaController {
             errorResponse.put("success", false);
             errorResponse.put("message", "Erro ao buscar template: " + e.getMessage());
             return ResponseEntity.badRequest().body(errorResponse);
+        }
+    }
+
+    // ===================================================================
+    // NOVOS ENDPOINTS PARA FLUXO DE INICIAR MATRÍCULA
+    // ===================================================================
+
+    @Autowired
+    private MatriculaService matriculaService;
+
+    /**
+     * GET /api/matricula/turmas-disponiveis
+     * Lista turmas com vagas disponíveis
+     */
+    @GetMapping("/turmas-disponiveis")
+    public ResponseEntity<?> listarTurmasDisponiveis() {
+        try {
+            List<com.cipalam.cipalam_sistema.model.Turma> turmas = matriculaService.listarTurmasDisponiveis();
+            return ResponseEntity.ok(turmas);
+        } catch (Exception e) {
+            e.printStackTrace();
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("message", "Erro ao buscar turmas: " + e.getMessage());
+            return ResponseEntity.internalServerError().body(errorResponse);
+        }
+    }
+
+    /**
+     * GET /api/matricula/turmas
+     * Lista todas as turmas ativas
+     */
+    @GetMapping("/turmas")
+    public ResponseEntity<?> listarTodasTurmas() {
+        try {
+            List<com.cipalam.cipalam_sistema.model.Turma> turmas = matriculaService.listarTodasTurmas();
+            return ResponseEntity.ok(turmas);
+        } catch (Exception e) {
+            e.printStackTrace();
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("message", "Erro ao buscar turmas: " + e.getMessage());
+            return ResponseEntity.internalServerError().body(errorResponse);
+        }
+    }
+
+    /**
+     * GET /api/matricula/turma/{id}
+     * Busca turma por ID
+     */
+    @GetMapping("/turma/{id}")
+    public ResponseEntity<?> buscarTurmaPorId(@PathVariable Long id) {
+        try {
+            com.cipalam.cipalam_sistema.model.Turma turma = matriculaService.buscarTurmaPorId(id);
+            if (turma != null) {
+                return ResponseEntity.ok(turma);
+            }
+
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("message", "Turma não encontrada");
+            return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            e.printStackTrace();
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("message", "Erro ao buscar turma: " + e.getMessage());
+            return ResponseEntity.internalServerError().body(errorResponse);
+        }
+    }
+
+    /**
+     * POST /api/matricula/iniciar-procedural
+     * Executa o processo de iniciar matrícula usando a procedure
+     */
+    @PostMapping("/iniciar-procedural")
+    public ResponseEntity<?> iniciarMatriculaProcedural(
+            @RequestBody com.cipalam.cipalam_sistema.DTO.IniciarMatriculaRequest request) {
+        try {
+            // Validar dados obrigatórios
+            if (request.getIdDeclaracao() == null || request.getIdTurma() == null
+                    || request.getIdFuncionario() == null) {
+                Map<String, Object> errorResponse = new HashMap<>();
+                errorResponse.put("success", false);
+                errorResponse.put("message", "Dados obrigatórios não informados");
+                return ResponseEntity.badRequest().body(errorResponse);
+            }
+
+            com.cipalam.cipalam_sistema.DTO.IniciarMatriculaResponse response = matriculaService
+                    .iniciarMatricula(request);
+
+            Map<String, Object> responseMap = new HashMap<>();
+            responseMap.put("success", response.getSucesso());
+            responseMap.put("message", response.getMensagem());
+            responseMap.put("data", response);
+
+            if (response.getSucesso()) {
+                return ResponseEntity.ok(responseMap);
+            } else {
+                return ResponseEntity.badRequest().body(responseMap);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("message", "Erro interno do servidor: " + e.getMessage());
+            return ResponseEntity.internalServerError().body(errorResponse);
         }
     }
 }

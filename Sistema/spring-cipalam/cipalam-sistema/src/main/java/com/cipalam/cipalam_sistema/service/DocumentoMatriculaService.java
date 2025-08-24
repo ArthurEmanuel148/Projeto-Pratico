@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -28,6 +29,7 @@ public class DocumentoMatriculaService {
 
     private final TipoDocumentoRepository tipoDocumentoRepository;
     private final PessoaRepository pessoaRepository;
+    private final JdbcTemplate jdbcTemplate;
 
     private final String UPLOAD_DIR = "uploads/documentos/";
 
@@ -43,48 +45,117 @@ public class DocumentoMatriculaService {
         dashboardData.put("nomeCompleto", pessoa.map(Pessoa::getNmPessoa).orElse("Responsável"));
         dashboardData.put("email", pessoa.map(Pessoa::getEmail).orElse("email@exemplo.com"));
         dashboardData.put("cpf", pessoa.map(Pessoa::getCpfPessoa).orElse("000.000.000-00"));
-        dashboardData.put("protocolo", "PROTO-2024-" + String.format("%03d", usuarioId));
-        dashboardData.put("status", "documentos_pendentes");
-        dashboardData.put("dataEnvio", LocalDateTime.now().minusDays(2));
-        dashboardData.put("dataInicioMatricula", LocalDateTime.now().minusDays(1));
+
+        // Buscar dados reais da matrícula
+        String sqlMatricula = """
+                SELECT
+                    a.matricula,
+                    a.dataMatricula,
+                    a.dataInicioMatricula,
+                    a.protocoloDeclaracao as protocolo,
+                    f.tipoCota
+                FROM tbAluno a
+                INNER JOIN tbFamilia f ON a.tbFamilia_idtbFamilia = f.idtbFamilia
+                INNER JOIN tbResponsavel r ON f.idtbFamilia = r.tbFamilia_idtbFamilia
+                WHERE r.tbPessoa_idPessoa = ?
+                LIMIT 1
+                """;
+
+        List<Map<String, Object>> matriculaResult = jdbcTemplate.queryForList(sqlMatricula, usuarioId);
+
+        if (!matriculaResult.isEmpty()) {
+            Map<String, Object> matricula = matriculaResult.get(0);
+            dashboardData.put("protocolo", matricula.get("protocolo"));
+            dashboardData.put("matricula", matricula.get("matricula"));
+            dashboardData.put("tipoCota", matricula.get("tipoCota"));
+            dashboardData.put("dataMatricula", matricula.get("dataMatricula"));
+            dashboardData.put("dataInicioMatricula", matricula.get("dataInicioMatricula"));
+        } else {
+            dashboardData.put("protocolo", "PROTO-" + String.format("%04d", usuarioId));
+            dashboardData.put("matricula", null);
+            dashboardData.put("tipoCota", "livre");
+            dashboardData.put("dataMatricula", null);
+            dashboardData.put("dataInicioMatricula", LocalDateTime.now());
+        }
 
         // Buscar estatísticas de documentos
         List<Map<String, Object>> documentosPendentes = buscarPendentesPorUsuario(usuarioId);
-        dashboardData.put("totalDocumentosPendentes", documentosPendentes.size());
-        dashboardData.put("totalDocumentosCompletos", 0);
-        dashboardData.put("percentualConclusao", 0);
+        long totalPendentes = documentosPendentes.stream()
+                .filter(doc -> "pendente".equals(doc.get("status")) || "rejeitado".equals(doc.get("status")))
+                .count();
+        long totalCompletos = documentosPendentes.stream()
+                .filter(doc -> "aprovado".equals(doc.get("status")))
+                .count();
+
+        dashboardData.put("totalDocumentosPendentes", (int) totalPendentes);
+        dashboardData.put("totalDocumentosCompletos", (int) totalCompletos);
+        dashboardData.put("totalDocumentos", documentosPendentes.size());
+
+        // Calcular percentual de conclusão
+        if (documentosPendentes.size() > 0) {
+            int percentual = (int) ((totalCompletos * 100) / documentosPendentes.size());
+            dashboardData.put("percentualConclusao", percentual);
+        } else {
+            dashboardData.put("percentualConclusao", 0);
+        }
+
+        // Status baseado nos documentos
+        if (totalPendentes > 0) {
+            dashboardData.put("status", "documentos_pendentes");
+        } else if (totalCompletos == documentosPendentes.size() && documentosPendentes.size() > 0) {
+            dashboardData.put("status", "documentos_completos");
+        } else {
+            dashboardData.put("status", "aguardando_documentos");
+        }
 
         return dashboardData;
     }
 
     /**
      * Busca documentos pendentes para um usuário específico
-     * Por enquanto retorna uma lista mock baseada nos tipos de documentos
+     * Consulta real na tabela tbDocumentoMatricula baseada na cota
      */
     public List<Map<String, Object>> buscarPendentesPorUsuario(Long usuarioId) {
-        // Buscar tipos de documentos disponíveis para gerar lista mock
-        List<TipoDocumento> tiposDocumentos = tipoDocumentoRepository.findAll();
+        String sql = """
+                    SELECT
+                        dm.idDocumentoMatricula,
+                        dm.status,
+                        dm.dataEnvio,
+                        dm.nomeArquivoOriginal,
+                        dm.observacoes,
+                        td.idTipoDocumento,
+                        td.nome as nomeDocumento,
+                        td.descricao,
+                        td.obrigatorio,
+                        td.requerAssinatura,
+                        td.requerAnexo,
+                        td.ordemExibicao,
+                        f.tipoCota,
+                        CASE
+                            WHEN dm.status = 'pendente' THEN 'Pendente de anexo'
+                            WHEN dm.status = 'enviado' THEN 'Documento anexado'
+                            WHEN dm.status = 'aprovado' THEN 'Aprovado'
+                            WHEN dm.status = 'rejeitado' THEN 'Rejeitado - Reenviar'
+                            ELSE dm.status
+                        END as statusDescricao
+                    FROM tbDocumentoMatricula dm
+                    INNER JOIN tbTipoDocumento td ON dm.tbTipoDocumento_idTipoDocumento = td.idTipoDocumento
+                    LEFT JOIN tbAluno a ON dm.tbAluno_idPessoa = a.tbPessoa_idPessoa
+                    LEFT JOIN tbFamilia f ON (a.tbFamilia_idtbFamilia = f.idtbFamilia OR dm.tbFamilia_idtbFamilia = f.idtbFamilia)
+                    INNER JOIN tbResponsavel r ON f.idtbFamilia = r.tbFamilia_idtbFamilia
+                    WHERE r.tbPessoa_idPessoa = ?
+                    ORDER BY
+                        CASE dm.status
+                            WHEN 'pendente' THEN 1
+                            WHEN 'rejeitado' THEN 2
+                            WHEN 'enviado' THEN 3
+                            WHEN 'aprovado' THEN 4
+                            ELSE 5
+                        END,
+                        td.ordemExibicao
+                """;
 
-        return tiposDocumentos.stream()
-                .map(tipo -> {
-                    Map<String, Object> documento = new HashMap<>();
-                    documento.put("idDocumentoMatricula", tipo.getIdTipoDocumento().longValue());
-                    documento.put("status", "pendente");
-                    documento.put("tbInteresseMatricula_id", 1L);
-
-                    Map<String, Object> tipoDocumentoMap = new HashMap<>();
-                    tipoDocumentoMap.put("idTipoDocumento", tipo.getIdTipoDocumento());
-                    tipoDocumentoMap.put("nome", tipo.getNome());
-                    tipoDocumentoMap.put("descricao", tipo.getDescricao());
-                    tipoDocumentoMap.put("obrigatorio", tipo.getObrigatorio());
-                    tipoDocumentoMap.put("requerAssinatura", tipo.getRequerAssinatura());
-                    tipoDocumentoMap.put("requerAnexo", tipo.getRequerAnexo());
-                    tipoDocumentoMap.put("ordemExibicao", tipo.getOrdemExibicao());
-                    documento.put("tipoDocumento", tipoDocumentoMap);
-
-                    return documento;
-                })
-                .collect(java.util.stream.Collectors.toList());
+        return jdbcTemplate.queryForList(sql, usuarioId);
     }
 
     /**

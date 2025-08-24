@@ -371,6 +371,64 @@ CREATE TABLE `tbLogMatricula` (
     CONSTRAINT `fk_tbLogMatricula_usuario` FOREIGN KEY (`usuario_idPessoa`) REFERENCES `tbPessoa` (`idPessoa`) ON DELETE SET NULL ON UPDATE NO ACTION
 ) ENGINE = InnoDB;
 
+-- Inserir pessoa Bina
+INSERT INTO `tbPessoa` (
+    `NmPessoa`,
+    `CpfPessoa`,
+    `dtNascPessoa`,
+    `email`,
+    `telefone`
+) VALUES (
+    'Bina',
+    '333.333.333-33',
+    '1995-01-01',
+    'bina@email.com',
+    '(11) 99999-3333'
+);
+
+-- Inserir login para Bina (senha: 1234)
+INSERT INTO `tblogin` (
+    `usuario`,
+    `senha`,
+    `tbPessoa_idPessoa`
+) VALUES (
+    'Bina',
+    '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',
+    (SELECT idPessoa FROM tbPessoa WHERE NmPessoa = 'Bina' LIMIT 1)
+);
+
+-- Registrar Bina como funcionário
+INSERT INTO `tbFuncionario` (
+    `tbPessoa_idPessoa`,
+    `dataInicio`
+) VALUES (
+    (SELECT idPessoa FROM tbPessoa WHERE NmPessoa = 'Bina' LIMIT 1),
+    '2025-08-14'
+);
+
+-- Dar permissões básicas para Bina (exemplo: acesso ao painel)
+INSERT INTO `tbPermissao` (
+    `tbPessoa_idPessoa`,
+    `tbFuncionalidade_idFuncionalidade`,
+    `temPermissao`
+) VALUES (
+    (SELECT idPessoa FROM tbPessoa WHERE NmPessoa = 'Bina' LIMIT 1),
+    (SELECT idFuncionalidade FROM tbFuncionalidade WHERE chave = 'painel'),
+    TRUE
+);
+
+SELECT * FROM tblogin WHERE usuario = 'Bina';
+
+SELECT l.usuario, l.ativo AS loginAtivo, p.ativo AS pessoaAtiva
+FROM tblogin l
+JOIN tbPessoa p ON l.tbPessoa_idPessoa = p.idPessoa
+WHERE l.usuario = 'Bina';
+
+UPDATE tblogin
+SET senha = '1234'
+WHERE usuario = 'Bina';
+
+SELECT usuario, senha FROM tblogin WHERE usuario = 'Bina';
 -- ===================================================================
 -- INSERÇÃO DE FUNCIONALIDADES (SEM ROTAS)
 -- ===================================================================

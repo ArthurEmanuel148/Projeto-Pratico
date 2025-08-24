@@ -1,11 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService, LoginResponse } from '../../../core/services/auth.service';
+import { IonicModule } from "@ionic/angular";
+import { FuncionarioService } from 'src/app/core/services/funcionario.service';
 
 @Component({
     selector: 'app-lista-funcionarios',
     templateUrl: './lista-funcionarios.page.html',
-    styleUrls: ['./lista-funcionarios.page.scss']
+    styleUrls: ['./lista-funcionarios.page.scss'],
+    standalone: false,
 })
 export class ListaFuncionariosPage implements OnInit {
     funcionarios: any[] = [];
@@ -14,7 +17,8 @@ export class ListaFuncionariosPage implements OnInit {
 
     constructor(
         private authService: AuthService,
-        private router: Router
+        private router: Router,
+        private funcionarioService: FuncionarioService
     ) { }
 
     ngOnInit() {
@@ -31,16 +35,19 @@ export class ListaFuncionariosPage implements OnInit {
 
     carregarFuncionarios() {
         this.loading = true;
-        // Por enquanto, vamos simular uma lista de funcionários
-        // Em uma implementação real, isso viria de um serviço HTTP
-        setTimeout(() => {
-            this.funcionarios = [
-                { id: 1, nome: 'João Silva', cpf: '123.456.789-00', tipo: 'funcionario' },
-                { id: 2, nome: 'Maria Santos', cpf: '987.654.321-00', tipo: 'funcionario' }
-            ];
-            this.loading = false;
-        }, 1000);
+
+        this.funcionarioService.listarFuncionarios().subscribe({
+            next: (dados) => {
+                this.funcionarios = dados;
+                this.loading = false;
+            },
+            error: (erro) => {
+                console.error('Erro ao carregar funcionários:', erro);
+                this.loading = false;
+            }
+        });
     }
+
 
     navegarParaCadastro() {
         this.router.navigate(['/sistema/funcionarios/cadastro']);

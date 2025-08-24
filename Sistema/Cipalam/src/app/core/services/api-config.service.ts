@@ -32,6 +32,10 @@ export class ApiConfigService {
     return `${this.baseUrl}/pessoa/cadastro-funcionario`;
   }
 
+  getListarFuncionarioUrl(): string {
+    return `${this.baseUrl}/pessoa/funcionarios`;
+  }
+
   getFuncionalidadesUrl(): string {
     return `${this.baseUrl}/funcionalidades`;
   }

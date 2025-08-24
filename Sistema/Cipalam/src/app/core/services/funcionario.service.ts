@@ -50,6 +50,10 @@ export class FuncionarioService {
     return this.http.post(this.apiConfig.getCadastroFuncionarioUrl(), dto);
   }
 
+  listarFuncionarios(): Observable<any[]> {
+    return this.http.get<any[]>(this.apiConfig.getListarFuncionarioUrl());
+  }
+
   private convertPermissoesToArray(permissoes: Record<string, boolean>): string[] {
     if (!permissoes) return [];
 

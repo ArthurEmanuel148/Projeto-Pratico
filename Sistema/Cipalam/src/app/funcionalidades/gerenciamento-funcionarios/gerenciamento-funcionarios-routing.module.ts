@@ -4,16 +4,19 @@ import { RouterModule, Routes } from '@angular/router';
 const routes: Routes = [
   {
     path: '',
-    redirectTo: 'cadastro',
+    redirectTo: 'lista',
     pathMatch: 'full'
   },
   {
     path: 'lista',
-    redirectTo: 'cadastro',
-    pathMatch: 'full'
+    loadChildren: () => import('./lista-funcionarios/lista-funcionarios.module').then(m => m.ListaFuncionariosPageModule)
   },
   {
     path: 'cadastro',
+    loadChildren: () => import('./cadastro-funcionario/cadastro-funcionario.module').then(m => m.CadastroFuncionarioPageModule)
+  },
+  {
+    path: 'cadastro/:id',
     loadChildren: () => import('./cadastro-funcionario/cadastro-funcionario.module').then(m => m.CadastroFuncionarioPageModule)
   }
 ];

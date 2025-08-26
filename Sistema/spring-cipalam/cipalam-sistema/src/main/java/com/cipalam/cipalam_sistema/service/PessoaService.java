@@ -145,32 +145,171 @@ public class PessoaService {
     public List<Map<String, Object>> listarFuncionarios() {
         List<Map<String, Object>> funcionarios = new java.util.ArrayList<>();
 
-        // Buscar todas as pessoas que têm login
-        List<Login> logins = loginRepo.findAll();
+        // Buscar apenas as pessoas que estão na tabela tbFuncionario
+        List<Funcionario> funcionariosList = funcionarioRepo.findAll();
 
-        for (Login login : logins) {
-            Pessoa pessoa = login.getPessoa();
-            Map<String, Object> funcionarioInfo = new HashMap<>();
+        for (Funcionario funcionario : funcionariosList) {
+            // Buscar a pessoa pelo ID
+            Optional<Pessoa> pessoaOpt = pessoaRepo.findById(funcionario.getTbPessoaIdPessoa());
+            if (pessoaOpt.isPresent()) {
+                Pessoa pessoa = pessoaOpt.get();
+                Map<String, Object> funcionarioInfo = new HashMap<>();
 
-            funcionarioInfo.put("idPessoa", pessoa.getIdPessoa());
-            funcionarioInfo.put("nome", pessoa.getNmPessoa());
-            funcionarioInfo.put("cpf", pessoa.getCpfPessoa());
-            funcionarioInfo.put("email", pessoa.getEmail());
-            funcionarioInfo.put("telefone", pessoa.getTelefone());
-            funcionarioInfo.put("usuario", login.getUsuario());
+                funcionarioInfo.put("id", pessoa.getIdPessoa());
+                funcionarioInfo.put("idPessoa", pessoa.getIdPessoa());
+                funcionarioInfo.put("nome", pessoa.getNmPessoa());
+                funcionarioInfo.put("nmPessoa", pessoa.getNmPessoa());
+                funcionarioInfo.put("cpf", pessoa.getCpfPessoa());
+                funcionarioInfo.put("cpfPessoa", pessoa.getCpfPessoa());
+                funcionarioInfo.put("email", pessoa.getEmail());
+                funcionarioInfo.put("telefone", pessoa.getTelefone());
+                funcionarioInfo.put("dataNascimento", pessoa.getDtNascPessoa());
+                funcionarioInfo.put("dtNascPessoa", pessoa.getDtNascPessoa());
+                funcionarioInfo.put("dataEntradaInstituto", funcionario.getDataInicio());
+                funcionarioInfo.put("dataInicio", funcionario.getDataInicio());
+                funcionarioInfo.put("tipo", "funcionario");
 
-            // Verificar se está na tabela tbFuncionario
-            boolean isFuncionario = funcionarioRepo.existsByTbPessoaIdPessoa(pessoa.getIdPessoa());
-            funcionarioInfo.put("isFuncionario", isFuncionario);
+                // Buscar informações de login
+                List<Login> logins = loginRepo.findAll();
+                for (Login login : logins) {
+                    if (login.getPessoa().getIdPessoa().equals(pessoa.getIdPessoa())) {
+                        funcionarioInfo.put("usuario", login.getUsuario());
+                        break;
+                    }
+                }
 
-            // Buscar permissões
-            Map<String, Boolean> permissoes = permissaoService.buscarPermissoesPorPessoa(pessoa.getIdPessoa());
-            funcionarioInfo.put("permissoes", permissoes);
+                // Buscar permissões
+                Map<String, Boolean> permissoes = permissaoService.buscarPermissoesPorPessoa(pessoa.getIdPessoa());
+                funcionarioInfo.put("permissoes", permissoes);
 
-            funcionarios.add(funcionarioInfo);
+                funcionarios.add(funcionarioInfo);
+            }
         }
 
         return funcionarios;
+    }
+
+    public Map<String, Object> buscarFuncionarioPorId(Integer id) {
+        // Verificar se a pessoa existe e é um funcionário
+        Optional<Pessoa> pessoaOpt = pessoaRepo.findById(id);
+        if (!pessoaOpt.isPresent()) {
+            return null;
+        }
+
+        Pessoa pessoa = pessoaOpt.get();
+
+        // Verificar se é funcionário
+        boolean isFuncionario = funcionarioRepo.existsByTbPessoaIdPessoa(pessoa.getIdPessoa());
+        if (!isFuncionario) {
+            return null;
+        }
+
+        Map<String, Object> funcionarioInfo = new HashMap<>();
+        funcionarioInfo.put("id", pessoa.getIdPessoa());
+        funcionarioInfo.put("idPessoa", pessoa.getIdPessoa());
+        funcionarioInfo.put("nome", pessoa.getNmPessoa());
+        funcionarioInfo.put("nmPessoa", pessoa.getNmPessoa());
+        funcionarioInfo.put("cpf", pessoa.getCpfPessoa());
+        funcionarioInfo.put("cpfPessoa", pessoa.getCpfPessoa());
+        funcionarioInfo.put("email", pessoa.getEmail());
+        funcionarioInfo.put("telefone", pessoa.getTelefone());
+        funcionarioInfo.put("dataNascimento", pessoa.getDtNascPessoa());
+        funcionarioInfo.put("dtNascPessoa", pessoa.getDtNascPessoa());
+        funcionarioInfo.put("tipo", "funcionario");
+
+        // Buscar informações específicas do funcionário (data de entrada)
+        Optional<Funcionario> funcionarioOpt = funcionarioRepo.findByTbPessoaIdPessoa(pessoa.getIdPessoa());
+        if (funcionarioOpt.isPresent()) {
+            Funcionario funcionario = funcionarioOpt.get();
+            funcionarioInfo.put("dataEntradaInstituto", funcionario.getDataInicio());
+            funcionarioInfo.put("dataInicio", funcionario.getDataInicio());
+        }
+
+        // Buscar informações de login
+        List<Login> logins = loginRepo.findAll();
+        for (Login login : logins) {
+            if (login.getPessoa().getIdPessoa().equals(pessoa.getIdPessoa())) {
+                funcionarioInfo.put("usuario", login.getUsuario());
+                break;
+            }
+        }
+
+        // Buscar permissões
+        Map<String, Boolean> permissoes = permissaoService.buscarPermissoesPorPessoa(pessoa.getIdPessoa());
+        funcionarioInfo.put("permissoes", permissoes);
+
+        return funcionarioInfo;
+    }
+
+    @Transactional
+    public Map<String, Object> atualizarFuncionario(Integer id, PessoaCadastroDTO dto) {
+        try {
+            // Verificar se a pessoa existe e é um funcionário
+            Optional<Pessoa> pessoaOpt = pessoaRepo.findById(id);
+            if (!pessoaOpt.isPresent()) {
+                throw new RuntimeException("Funcionário não encontrado");
+            }
+
+            Pessoa pessoa = pessoaOpt.get();
+
+            // Verificar se é funcionário
+            boolean isFuncionario = funcionarioRepo.existsByTbPessoaIdPessoa(pessoa.getIdPessoa());
+            if (!isFuncionario) {
+                throw new RuntimeException("Pessoa não é um funcionário");
+            }
+
+            // Atualizar dados da pessoa
+            pessoa.setNmPessoa(dto.getPessoa().getNmPessoa());
+            pessoa.setEmail(dto.getPessoa().getEmail());
+            pessoa.setTelefone(dto.getPessoa().getTelefone());
+            if (dto.getPessoa().getCpfPessoa() != null && !dto.getPessoa().getCpfPessoa().isEmpty()) {
+                pessoa.setCpfPessoa(dto.getPessoa().getCpfPessoa());
+            }
+            if (dto.getPessoa().getDtNascPessoa() != null) {
+                pessoa.setDtNascPessoa(dto.getPessoa().getDtNascPessoa());
+            }
+
+            pessoa = pessoaRepo.save(pessoa);
+
+            // Atualizar dados do funcionário (data de entrada)
+            Optional<Funcionario> funcionarioOpt = funcionarioRepo.findByTbPessoaIdPessoa(pessoa.getIdPessoa());
+            if (funcionarioOpt.isPresent()) {
+                // Por enquanto, não vamos alterar a data de entrada para evitar problemas
+                // Se necessário, pode ser implementado depois
+            }
+
+            // Atualizar login se fornecido
+            if (dto.getUsuario() != null && !dto.getUsuario().isEmpty()) {
+                List<Login> logins = loginRepo.findAll();
+                for (Login login : logins) {
+                    if (login.getPessoa().getIdPessoa().equals(pessoa.getIdPessoa())) {
+                        login.setUsuario(dto.getUsuario());
+                        if (dto.getSenha() != null && !dto.getSenha().isEmpty()) {
+                            login.setSenha(dto.getSenha());
+                        }
+                        loginRepo.save(login);
+                        break;
+                    }
+                }
+            }
+
+            // Atualizar permissões
+            if (dto.getPermissoes() != null && !dto.getPermissoes().isEmpty()) {
+                try {
+                    permissaoService.atualizarPermissoesPorChaves(pessoa.getIdPessoa(), dto.getPermissoes());
+                    System.out.println("Permissões atualizadas com sucesso para pessoa ID: " + pessoa.getIdPessoa());
+                } catch (Exception e) {
+                    System.err.println("Erro ao atualizar permissões: " + e.getMessage());
+                    throw new RuntimeException("Erro ao atualizar permissões: " + e.getMessage());
+                }
+            }
+
+            // Retornar dados atualizados
+            return buscarFuncionarioPorId(id);
+
+        } catch (Exception e) {
+            throw new RuntimeException("Erro ao atualizar funcionário: " + e.getMessage());
+        }
     }
 
     @Transactional

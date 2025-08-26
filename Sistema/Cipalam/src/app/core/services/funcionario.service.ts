@@ -50,6 +50,39 @@ export class FuncionarioService {
     return this.http.post(this.apiConfig.getCadastroFuncionarioUrl(), dto);
   }
 
+  listarFuncionarios(): Observable<any[]> {
+    return this.http.get<any[]>(this.apiConfig.getListarFuncionariosUrl());
+  }
+
+  buscarFuncionarioPorId(id: number): Observable<any> {
+    return this.http.get<any>(`${this.apiConfig.getListarFuncionariosUrl()}/${id}`);
+  }
+
+  atualizarFuncionario(id: number, funcionarioData: any): Observable<any> {
+    console.log('Enviando dados para atualização:', funcionarioData);
+    console.log('URL do endpoint:', `${this.apiConfig.getListarFuncionariosUrl()}/${id}`);
+
+    // Transformar os dados do formulário para o formato esperado pelo backend
+    const dto: FuncionarioCadastroDTO = {
+      pessoa: {
+        nmPessoa: funcionarioData.nomeCompleto,
+        email: funcionarioData.email,
+        telefone: funcionarioData.telefone,
+        cpfPessoa: funcionarioData.cpf || '',
+        dtNascPessoa: funcionarioData.dataNascimento,
+        caminhoImagem: undefined,
+        caminhoIdentidadePessoa: undefined
+      },
+      tipo: 'funcionario',
+      usuario: funcionarioData.usuarioSistema,
+      senha: funcionarioData.senhaSistema || '', // Senha pode estar vazia em edição
+      permissoes: this.convertPermissoesToArray(funcionarioData.permissoes)
+    };
+
+    console.log('DTO formatado para backend:', dto);
+    return this.http.put(`${this.apiConfig.getListarFuncionariosUrl()}/${id}`, dto);
+  }
+
   private convertPermissoesToArray(permissoes: Record<string, boolean>): string[] {
     if (!permissoes) return [];
 

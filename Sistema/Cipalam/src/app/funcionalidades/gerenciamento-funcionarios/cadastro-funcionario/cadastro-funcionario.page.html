@@ -4,8 +4,9 @@
     <div class="page-header">
       <div class="header-content">
         <div class="header-info">
-          <h1>Novo Colaborador</h1>
-          <p>Preencha as informações principais do funcionário</p>
+          <h1>{{ isEditMode ? 'Editar Colaborador' : 'Novo Colaborador' }}</h1>
+          <p>{{ isEditMode ? 'Altere as informações do funcionário' : 'Preencha as informações principais do
+            funcionário' }}</p>
         </div>
         <div class="header-illustration">
           <ion-icon name="people-outline"></ion-icon>
@@ -134,7 +135,7 @@
         <ion-button type="button" color="primary" size="large" [disabled]="cadastroForm.invalid"
           (click)="prosseguirParaPermissoes()">
           <ion-icon name="checkmark-outline" slot="start"></ion-icon>
-          Prosseguir
+          {{ isEditMode ? 'Atualizar Permissões' : 'Prosseguir' }}
         </ion-button>
       </div>
     </form>

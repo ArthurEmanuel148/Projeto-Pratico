@@ -26,8 +26,8 @@
             <ion-item *ngFor="let funcionario of funcionarios" button (click)="editarFuncionario(funcionario.id)">
                 <ion-label>
                     <h2>{{ funcionario.nome }}</h2>
-                    <p>CPF: {{ funcionario.cpf }}</p>
-                    <p>Tipo: {{ funcionario.tipo }}</p>
+                    <p>Email: {{ funcionario.email }}</p>
+                    <p>Usuário: {{ funcionario.usuario }}</p>
                 </ion-label>
                 <ion-icon name="chevron-forward" slot="end"></ion-icon>
             </ion-item>

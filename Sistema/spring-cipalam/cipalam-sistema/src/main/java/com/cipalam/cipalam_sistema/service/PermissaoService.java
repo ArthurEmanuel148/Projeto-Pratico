@@ -111,4 +111,50 @@ public class PermissaoService {
             permissaoRepository.save(permissao);
         }
     }
+
+    @Transactional
+    public void atualizarPermissoesPorChaves(Integer pessoaId, List<String> chavesPermissoes) {
+        Pessoa pessoa = pessoaRepository.findById(pessoaId)
+                .orElseThrow(() -> new RuntimeException("Pessoa não encontrada"));
+
+        System.out.println("Atualizando permissões para pessoa ID: " + pessoaId);
+        System.out.println("Chaves das permissões: " + chavesPermissoes);
+
+        // Buscar todas as funcionalidades disponíveis
+        List<Funcionalidade> todasFuncionalidades = funcionalidadeRepository.findAll();
+        System.out.println("Total de funcionalidades no sistema: " + todasFuncionalidades.size());
+
+        // Buscar permissões existentes para esta pessoa
+        List<Permissao> permissoesExistentes = permissaoRepository.findByPessoaId(pessoaId);
+        Map<String, Permissao> permissoesMap = new HashMap<>();
+
+        for (Permissao permissao : permissoesExistentes) {
+            permissoesMap.put(permissao.getFuncionalidade().getChave(), permissao);
+        }
+
+        System.out.println("Permissões existentes: " + permissoesMap.size());
+
+        // Para cada funcionalidade, criar ou atualizar a permissão
+        for (Funcionalidade funcionalidade : todasFuncionalidades) {
+            boolean temPermissao = chavesPermissoes.contains(funcionalidade.getChave());
+
+            if (permissoesMap.containsKey(funcionalidade.getChave())) {
+                // Atualizar permissão existente
+                Permissao permissaoExistente = permissoesMap.get(funcionalidade.getChave());
+                permissaoExistente.setTemPermissao(temPermissao);
+                permissaoRepository.save(permissaoExistente);
+                System.out.println("Atualizada permissão: " + funcionalidade.getChave() + " = " + temPermissao);
+            } else {
+                // Criar nova permissão
+                Permissao novaPermissao = new Permissao();
+                novaPermissao.setPessoa(pessoa);
+                novaPermissao.setFuncionalidade(funcionalidade);
+                novaPermissao.setTemPermissao(temPermissao);
+                permissaoRepository.save(novaPermissao);
+                System.out.println("Criada nova permissão: " + funcionalidade.getChave() + " = " + temPermissao);
+            }
+        }
+
+        System.out.println("Atualização de permissões concluída!");
+    }
 }

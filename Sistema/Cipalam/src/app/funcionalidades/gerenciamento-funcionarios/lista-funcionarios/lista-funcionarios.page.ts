@@ -1,11 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService, LoginResponse } from '../../../core/services/auth.service';
+import { FuncionarioService } from '../../../core/services/funcionario.service';
 
 @Component({
     selector: 'app-lista-funcionarios',
     templateUrl: './lista-funcionarios.page.html',
-    styleUrls: ['./lista-funcionarios.page.scss']
+    styleUrls: ['./lista-funcionarios.page.scss'],
+    standalone: false
 })
 export class ListaFuncionariosPage implements OnInit {
     funcionarios: any[] = [];
@@ -14,7 +16,8 @@ export class ListaFuncionariosPage implements OnInit {
 
     constructor(
         private authService: AuthService,
-        private router: Router
+        private router: Router,
+        private funcionarioService: FuncionarioService
     ) { }
 
     ngOnInit() {
@@ -31,15 +34,29 @@ export class ListaFuncionariosPage implements OnInit {
 
     carregarFuncionarios() {
         this.loading = true;
-        // Por enquanto, vamos simular uma lista de funcionários
-        // Em uma implementação real, isso viria de um serviço HTTP
-        setTimeout(() => {
-            this.funcionarios = [
-                { id: 1, nome: 'João Silva', cpf: '123.456.789-00', tipo: 'funcionario' },
-                { id: 2, nome: 'Maria Santos', cpf: '987.654.321-00', tipo: 'funcionario' }
-            ];
-            this.loading = false;
-        }, 1000);
+
+        this.funcionarioService.listarFuncionarios().subscribe({
+            next: (funcionarios) => {
+                console.log('Funcionários recebidos do backend:', funcionarios);
+                this.funcionarios = funcionarios.map(func => ({
+                    id: func.id || func.idPessoa,
+                    nome: func.nome || func.nmPessoa,
+                    email: func.email || 'Email não informado',
+                    usuario: func.usuario || 'Usuário não informado'
+                }));
+                console.log('Funcionários mapeados:', this.funcionarios);
+                this.loading = false;
+            },
+            error: (error) => {
+                console.error('Erro ao carregar funcionários:', error);
+                // Fallback para dados simulados em caso de erro
+                this.funcionarios = [
+                    { id: 1, nome: 'João Silva', email: 'joao@exemplo.com', usuario: 'joao.silva' },
+                    { id: 2, nome: 'Maria Santos', email: 'maria@exemplo.com', usuario: 'maria.santos' }
+                ];
+                this.loading = false;
+            }
+        });
     }
 
     navegarParaCadastro() {

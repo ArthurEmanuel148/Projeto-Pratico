@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { ToastController, NavController, ModalController } from '@ionic/angular';
 import { Funcionario } from '../models/funcionario.interface';
 import { PermissoesFuncionarioComponent } from '../components/permissoes-funcionario/permissoes-funcionario.component';
@@ -14,12 +14,15 @@ import { FuncionarioService } from '../../../core/services/funcionario.service';
 })
 export class CadastroFuncionarioPage implements OnInit {
   cadastroForm: FormGroup;
-  // isEditMode: boolean = false; // Para futuro modo de edição
-  // funcionarioId: string | number | null = null; // Para futuro modo de edição
+  isEditMode: boolean = false;
+  funcionarioId: number | null = null;
+  funcionarioData: any = null;
+  permissoesOriginais: Record<string, boolean> = {};
 
   constructor(
     private fb: FormBuilder,
     private router: Router,
+    private route: ActivatedRoute,
     private toastCtrl: ToastController,
     private navCtrl: NavController,
     private modalController: ModalController,
@@ -38,7 +41,77 @@ export class CadastroFuncionarioPage implements OnInit {
   }
 
   ngOnInit() {
-    // Lógica para modo de edição viria aqui
+    // Verificar se está em modo de edição
+    this.route.queryParams.subscribe(params => {
+      if (params['id']) {
+        this.funcionarioId = parseInt(params['id']);
+        this.isEditMode = true;
+        this.carregarDadosFuncionario();
+      }
+    });
+  }
+
+  async carregarDadosFuncionario() {
+    if (!this.funcionarioId) return;
+
+    try {
+      this.funcionarioData = await this.funcionarioService.buscarFuncionarioPorId(this.funcionarioId).toPromise();
+
+      if (this.funcionarioData) {
+        console.log('Dados do funcionário carregados:', this.funcionarioData);
+
+        // Preencher o formulário com os dados existentes
+        this.cadastroForm.patchValue({
+          nomeCompleto: this.funcionarioData.nome || this.funcionarioData.nmPessoa,
+          email: this.funcionarioData.email,
+          cpf: this.funcionarioData.cpf || this.funcionarioData.cpfPessoa || '',
+          dataNascimento: this.formatarDataParaInput(this.funcionarioData.dataNascimento || this.funcionarioData.dtNascPessoa),
+          dataEntradaInstituto: this.formatarDataParaInput(this.funcionarioData.dataEntradaInstituto || this.funcionarioData.dataInicio),
+          telefone: this.funcionarioData.telefone,
+          usuarioSistema: this.funcionarioData.usuario || '',
+          senhaSistema: '' // Senha sempre vazia para segurança
+        });
+
+        // Armazenar permissões originais
+        this.permissoesOriginais = this.funcionarioData.permissoes || {};
+
+        // Tornar senha opcional em modo de edição
+        this.cadastroForm.get('senhaSistema')?.setValidators([]);
+        this.cadastroForm.get('senhaSistema')?.updateValueAndValidity();
+      }
+    } catch (error) {
+      console.error('Erro ao carregar dados do funcionário:', error);
+      this.presentToast('Erro ao carregar dados do funcionário');
+    }
+  }
+
+  formatarDataParaInput(data: any): string {
+    if (!data) return '';
+
+    // Se for string, converter para Date
+    let dataObj: Date;
+    if (typeof data === 'string') {
+      dataObj = new Date(data);
+    } else if (data instanceof Date) {
+      dataObj = data;
+    } else if (Array.isArray(data) && data.length >= 3) {
+      // Se for array [ano, mês, dia]
+      dataObj = new Date(data[0], data[1] - 1, data[2]);
+    } else {
+      return '';
+    }
+
+    // Verificar se a data é válida
+    if (isNaN(dataObj.getTime())) {
+      return '';
+    }
+
+    // Formatar para YYYY-MM-DD (formato esperado pelo input date)
+    const ano = dataObj.getFullYear();
+    const mes = String(dataObj.getMonth() + 1).padStart(2, '0');
+    const dia = String(dataObj.getDate()).padStart(2, '0');
+
+    return `${ano}-${mes}-${dia}`;
   }
 
   async prosseguirParaPermissoes() {
@@ -55,9 +128,11 @@ export class CadastroFuncionarioPage implements OnInit {
     const modal = await this.modalController.create({
       component: PermissoesFuncionarioComponent,
       componentProps: {
-        'nomeFuncionario': dadosBasicosFuncionario.nomeCompleto
+        'nomeFuncionario': dadosBasicosFuncionario.nomeCompleto,
+        'permissoesOriginais': this.isEditMode ? this.permissoesOriginais : null,
+        'isEditMode': this.isEditMode
       },
-      cssClass: 'permissoes-modal-css' // Adicione estilos no global.scss ou no scss da página
+      cssClass: 'permissoes-modal-css'
     });
 
     await modal.present();
@@ -66,7 +141,11 @@ export class CadastroFuncionarioPage implements OnInit {
 
     if (role === 'confirmar' && data) {
       const permissoesSelecionadas = data;
-      this.finalizarCadastroCompleto(dadosBasicosFuncionario, permissoesSelecionadas);
+      if (this.isEditMode) {
+        this.finalizarEdicaoCompleta(dadosBasicosFuncionario, permissoesSelecionadas);
+      } else {
+        this.finalizarCadastroCompleto(dadosBasicosFuncionario, permissoesSelecionadas);
+      }
     } else {
       console.log('Configuração de permissões cancelada.');
     }
@@ -100,6 +179,46 @@ export class CadastroFuncionarioPage implements OnInit {
         } else {
           mensagemErro = 'Já existe um funcionário com essas informações.';
         }
+      }
+
+      this.presentToast(mensagemErro);
+    }
+  }
+
+  async finalizarEdicaoCompleta(dadosBasicos: any, permissoes: Record<string, boolean>) {
+    const funcionarioParaAtualizar = {
+      ...dadosBasicos,
+      permissoes: permissoes,
+      tipo: 'funcionario',
+      id: this.funcionarioId
+    };
+
+    console.log('DADOS FINAIS DO FUNCIONÁRIO PARA ATUALIZAR:', funcionarioParaAtualizar);
+    console.log('ID do funcionário:', this.funcionarioId);
+    console.log('Dados básicos:', dadosBasicos);
+    console.log('Permissões:', permissoes);
+
+    try {
+      const resultado = await this.funcionarioService.atualizarFuncionario(this.funcionarioId!, funcionarioParaAtualizar).toPromise();
+      console.log('Resultado da atualização:', resultado);
+      this.presentToast('Funcionário atualizado com sucesso!');
+      this.navCtrl.navigateBack('/sistema/funcionarios/lista');
+    } catch (error: any) {
+      console.error('Erro completo ao atualizar funcionário:', error);
+      console.error('Status do erro:', error.status);
+      console.error('Mensagem do erro:', error.message);
+      console.error('Error body:', error.error);
+
+      let mensagemErro = 'Erro ao atualizar funcionário. Tente novamente.';
+
+      if (error?.error) {
+        if (typeof error.error === 'string') {
+          mensagemErro = error.error;
+        } else if (error.error.message) {
+          mensagemErro = error.error.message;
+        }
+      } else if (error.message) {
+        mensagemErro = error.message;
       }
 
       this.presentToast(mensagemErro);

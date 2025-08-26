@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { MatriculaService } from '../../services/matricula.service';
 import { LoadingController, AlertController, ToastController } from '@ionic/angular';
 import { HttpClient } from '@angular/common/http';
+import { environment } from '../../../../../environments/environment';
 
 @Component({
   selector: 'app-inicio-matricula',
@@ -28,7 +29,7 @@ export class InicioMatriculaPage implements OnInit {
   resultadoMatricula: any = null;
   documentosNecessarios: any[] = [];
 
-  private apiUrl = 'http://localhost:8080/api';
+  private apiUrl = environment.apiUrl;
 
   constructor(
     private matriculaService: MatriculaService,

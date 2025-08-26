@@ -4,7 +4,7 @@
       <ion-icon name="home-outline" color="primary" class="welcome-icon"></ion-icon>
       <h1>Bem-vindo(a), {{ usuarioLogado?.pessoa?.nmPessoa || usuarioLogado?.nomePessoa || 'Responsável' }}!</h1>
       <p>Esta é sua área exclusiva para acompanhar a matrícula do seu filho(a).</p>
-      
+
       <!-- Botão de debug temporário -->
       <ion-button size="small" fill="clear" color="medium" (click)="debugDados()">
         <ion-icon name="bug-outline" slot="start"></ion-icon>
@@ -28,7 +28,7 @@
             <ion-icon name="checkmark-circle-outline"></ion-icon>
             <ion-label>Matrícula Ativa</ion-label>
           </ion-chip>
-          <p>Sessários.</p>
+          <p>Sua matrícula está ativa. Complete o envio dos documentos necessários.</p>
         </div>
       </ion-card-content>
     </ion-card>
@@ -61,8 +61,7 @@
             </h3>
             <ion-list>
               <ion-item *ngFor="let documento of obterDocumentosPorCategoria('familia')">
-                <ion-icon name="document-outline" slot="start"
-                  [color]="obterCorStatus(documento.status)"></ion-icon>
+                <ion-icon name="document-outline" slot="start" [color]="obterCorStatus(documento.status)"></ion-icon>
                 <ion-label>
                   <h2>{{ documento.nomeDocumento }}</h2>
                   <p>{{ documento.descricao }}</p>
@@ -102,8 +101,7 @@
             </h3>
             <ion-list>
               <ion-item *ngFor="let documento of obterDocumentosPorCategoria('aluno')">
-                <ion-icon name="document-outline" slot="start"
-                  [color]="obterCorStatus(documento.status)"></ion-icon>
+                <ion-icon name="document-outline" slot="start" [color]="obterCorStatus(documento.status)"></ion-icon>
                 <ion-label>
                   <h2>{{ documento.nomeDocumento }}</h2>
                   <p>{{ documento.descricao }}</p>
@@ -143,8 +141,7 @@
             </h3>
             <ion-list>
               <ion-item *ngFor="let documento of obterDocumentosPorCategoria('cota')">
-                <ion-icon name="document-outline" slot="start"
-                  [color]="obterCorStatus(documento.status)"></ion-icon>
+                <ion-icon name="document-outline" slot="start" [color]="obterCorStatus(documento.status)"></ion-icon>
                 <ion-label>
                   <h2>{{ documento.nomeDocumento }}</h2>
                   <p>{{ documento.descricao }}</p>
@@ -180,7 +177,8 @@
           <div *ngIf="documentosPendentes.length === 0" class="no-documents">
             <ion-icon name="document-text-outline" color="medium" size="large"></ion-icon>
             <h3>Nenhum documento pendente encontrado</h3>
-            <p>Todos os documentos necessários já foram enviados ou não há documentos configurados para sua matrícula.</p>
+            <p>Todos os documentos necessários já foram enviados ou não há documentos configurados para sua matrícula.
+            </p>
           </div>
         </div>
       </ion-card-content>

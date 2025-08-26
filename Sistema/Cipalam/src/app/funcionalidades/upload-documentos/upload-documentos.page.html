@@ -1,0 +1,153 @@
+<ion-header [translucent]="true">
+    <ion-toolbar>
+        <ion-buttons slot="start">
+            <ion-back-button defaultHref="/painel-responsavel"></ion-back-button>
+        </ion-buttons>
+        <ion-title>Documentos Pendentes</ion-title>
+        <ion-buttons slot="end">
+            <ion-button (click)="carregarDocumentos()">
+                <ion-icon name="refresh"></ion-icon>
+            </ion-button>
+        </ion-buttons>
+    </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+    <div class="container">
+        <ion-card>
+            <ion-card-header>
+                <ion-card-title>
+                    <ion-icon name="document-text" class="header-icon"></ion-icon>
+                    Upload de Documentos
+                </ion-card-title>
+                <ion-card-subtitle>
+                    Envie os documentos necessários para completar sua matrícula
+                </ion-card-subtitle>
+            </ion-card-header>
+        </ion-card>
+
+        <div *ngIf="documentosPendentes.length === 0 && !isLoading" class="empty-state">
+            <ion-icon name="checkmark-circle" color="success"></ion-icon>
+            <h3>Todos os documentos foram enviados!</h3>
+            <p>Aguarde a análise dos documentos pelos funcionários.</p>
+        </div>
+
+        <ion-card *ngFor="let documento of documentosPendentes" class="documento-card">
+            <ion-card-header>
+                <div class="documento-header">
+                    <div class="info">
+                        <ion-icon [name]="obterIconeCategoria(documento.categoria)" class="categoria-icon"></ion-icon>
+                        <div>
+                            <ion-card-title>{{ documento.nomeDocumento }}</ion-card-title>
+                            <ion-card-subtitle>{{ documento.descricao }}</ion-card-subtitle>
+                        </div>
+                    </div>
+                    <div class="status">
+                        <ion-chip [color]="obterCorStatus(documento.status)">
+                            <ion-label>{{ documento.statusDescricao }}</ion-label>
+                        </ion-chip>
+                        <ion-chip *ngIf="documento.obrigatorio" color="danger" fill="outline">
+                            <ion-label>Obrigatório</ion-label>
+                        </ion-chip>
+                    </div>
+                </div>
+            </ion-card-header>
+
+            <ion-card-content>
+                <!-- Documento não anexado -->
+                <div *ngIf="documento.status === 'pendente'" class="upload-area">
+                    <input type="file" #fileInput accept=".pdf,.jpg,.jpeg,.png"
+                        (change)="onArquivoSelecionado($event, documento.idDocumento)" style="display: none">
+
+                    <div class="file-info" *ngIf="arquivosSelecionados[documento.idDocumento]">
+                        <ion-icon name="document" color="primary"></ion-icon>
+                        <span>{{ arquivosSelecionados[documento.idDocumento].name }}</span>
+                        <span class="file-size">
+                            ({{ (arquivosSelecionados[documento.idDocumento].size / 1024 / 1024).toFixed(2) }} MB)
+                        </span>
+                    </div>
+
+                    <div class="upload-buttons">
+                        <ion-button expand="block" fill="outline" (click)="fileInput.click()" [disabled]="isLoading">
+                            <ion-icon name="folder-open" slot="start"></ion-icon>
+                            Selecionar Arquivo
+                        </ion-button>
+
+                        <ion-button expand="block" (click)="anexarDocumento(documento.idDocumento)"
+                            [disabled]="!arquivosSelecionados[documento.idDocumento] || isLoading">
+                            <ion-icon name="cloud-upload" slot="start"></ion-icon>
+                            Enviar Documento
+                        </ion-button>
+                    </div>
+
+                    <div class="upload-info">
+                        <ion-text color="medium">
+                            <small>
+                                <ion-icon name="information-circle"></ion-icon>
+                                Formatos aceitos: PDF, JPG, PNG | Tamanho máximo: 5MB
+                            </small>
+                        </ion-text>
+                    </div>
+                </div>
+
+                <!-- Documento anexado -->
+                <div *ngIf="documento.status !== 'pendente'" class="documento-anexado">
+                    <div class="arquivo-info">
+                        <ion-icon name="document" color="primary"></ion-icon>
+                        <div class="info-detalhes">
+                            <strong>{{ documento.nomeArquivoOriginal }}</strong>
+                            <div class="data-envio" *ngIf="documento.dataAnexo">
+                                <ion-text color="medium">
+                                    <small>Enviado em: {{ documento.dataAnexo | date:'dd/MM/yyyy HH:mm' }}</small>
+                                </ion-text>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="acoes-documento">
+                        <ion-button size="small" fill="outline"
+                            (click)="visualizarDocumento(documento.idDocumento, documento.nomeArquivoOriginal)">
+                            <ion-icon name="download" slot="start"></ion-icon>
+                            Download
+                        </ion-button>
+
+                        <ion-button size="small" fill="outline" color="danger"
+                            (click)="removerDocumento(documento.idDocumento)"
+                            *ngIf="documento.status === 'enviado' || documento.status === 'rejeitado'">
+                            <ion-icon name="trash" slot="start"></ion-icon>
+                            Remover
+                        </ion-button>
+                    </div>
+
+                    <!-- Observações -->
+                    <div *ngIf="documento.observacoes" class="observacoes">
+                        <ion-text color="medium">
+                            <small>
+                                <strong>Observações:</strong><br>
+                                {{ documento.observacoes }}
+                            </small>
+                        </ion-text>
+                    </div>
+                </div>
+            </ion-card-content>
+        </ion-card>
+
+        <!-- Informações gerais -->
+        <ion-card class="info-card">
+            <ion-card-content>
+                <ion-text color="medium">
+                    <h4>
+                        <ion-icon name="help-circle"></ion-icon>
+                        Informações Importantes
+                    </h4>
+                    <ul>
+                        <li>Documentos obrigatórios devem ser enviados para prosseguir com a matrícula</li>
+                        <li>Após o envio, os documentos serão analisados pelos funcionários</li>
+                        <li>Você receberá notificações sobre aprovação ou necessidade de reenvio</li>
+                        <li>Documentos rejeitados podem ser reenviados</li>
+                    </ul>
+                </ion-text>
+            </ion-card-content>
+        </ion-card>
+    </div>
+</ion-content>

@@ -34,6 +34,12 @@ public class InteresseMatricula {
     @Column(name = "emailResponsavel", nullable = false, length = 100)
     private String emailResponsavel;
 
+    @Column(name = "rendaResponsavel")
+    private Double rendaResponsavel;
+
+    @Column(name = "profissaoResponsavel", length = 100)
+    private String profissaoResponsavel;
+
     // DADOS DO ALUNO
     @Column(name = "nomeAluno", nullable = false, length = 100)
     private String nomeAluno;

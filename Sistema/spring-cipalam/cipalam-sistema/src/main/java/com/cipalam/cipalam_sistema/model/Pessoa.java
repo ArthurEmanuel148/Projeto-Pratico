@@ -38,6 +38,12 @@ public class Pessoa {
     @Column(name = "telefone")
     private String telefone;
 
+    @Column(name = "renda")
+    private Double renda;
+
+    @Column(name = "profissao")
+    private String profissao;
+
     @Column(name = "caminhoIdentidadePessoa")
     private String caminhoIdentidadePessoa;
 }

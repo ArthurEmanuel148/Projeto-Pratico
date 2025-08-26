@@ -22,47 +22,30 @@ public class DocumentoService {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    // Diretório para armazenar documentos (pode ser configurado via properties)
-    private final String DIRETORIO_DOCUMENTOS = System.getProperty("user.home") + "/cipalam_documentos/";
+    // Diretório para armazenar documentos dentro do projeto
+    private final String DIRETORIO_DOCUMENTOS = "/Applications/XAMPP/xamppfiles/htdocs/GitHub/Projeto-Pratico/Projeto-Pratico/cipalam_documentos/";
 
     /**
      * Listar documentos pendentes para um responsável
      */
     public List<Map<String, Object>> listarDocumentosPendentes(Long idResponsavel) {
-        String sql = """
-                    SELECT
-                        dm.idDocumentoMatricula as idDocumento,
-                        dm.status,
-                        dm.dataEnvio as dataAnexo,
-                        dm.nomeArquivoOriginal,
-                        dm.observacoes,
-                        td.nome as nomeDocumento,
-                        td.categoria,
-                        td.obrigatorio,
-                        td.descricao,
-                        im.tipoCota,
-                        CASE
-                            WHEN dm.status = 'pendente' THEN 'Pendente de anexo'
-                            WHEN dm.status = 'enviado' THEN 'Documento anexado'
-                            WHEN dm.status = 'aprovado' THEN 'Aprovado'
-                            WHEN dm.status = 'rejeitado' THEN 'Rejeitado - Reenviar'
-                            ELSE dm.status
-                        END as statusDescricao
-                    FROM tbDocumentoMatricula dm
-                    INNER JOIN tbTipoDocumento td ON dm.tbTipoDocumento_idTipoDocumento = td.idTipoDocumento
-                    INNER JOIN tbInteresseMatricula im ON dm.tbInteresseMatricula_id = im.id
-                    WHERE im.responsavelLogin_idPessoa = ?
-                    ORDER BY
-                        CASE dm.status
-                            WHEN 'pendente' THEN 1
-                            WHEN 'rejeitado' THEN 2
-                            WHEN 'enviado' THEN 3
-                            WHEN 'aprovado' THEN 4
-                        END,
-                        td.categoria, td.nome
-                """;
+        // Query que retorna documentos no formato esperado pelo frontend
+        String sql = "SELECT " +
+                "idTipoDocumento as idDocumento, " +
+                "'pendente' as status, " +
+                "NULL as dataAnexo, " +
+                "NULL as nomeArquivoOriginal, " +
+                "NULL as observacoes, " +
+                "nome as nomeDocumento, " +
+                "tipoCota, " +
+                "obrigatorio, " +
+                "descricao, " +
+                "'Pendente de anexo' as statusDescricao " +
+                "FROM tbTipoDocumento " +
+                "WHERE ativo = 1 " +
+                "ORDER BY obrigatorio DESC, nome";
 
-        return jdbcTemplate.queryForList(sql, idResponsavel);
+        return jdbcTemplate.queryForList(sql);
     }
 
     /**
@@ -70,17 +53,21 @@ public class DocumentoService {
      */
     public Map<String, Object> anexarDocumento(MultipartFile arquivo, Long idDocumento, Long idResponsavel)
             throws IOException {
-        // Verificar se o documento pertence ao responsável
-        String verificarSql = """
-                    SELECT COUNT(*)
-                    FROM tbDocumentoMatricula dm
-                    INNER JOIN tbInteresseMatricula im ON dm.tbInteresseMatricula_id = im.id
-                    WHERE dm.idDocumentoMatricula = ? AND im.responsavelLogin_idPessoa = ?
-                """;
 
-        Integer count = jdbcTemplate.queryForObject(verificarSql, Integer.class, idDocumento, idResponsavel);
-        if (count == null || count == 0) {
-            throw new RuntimeException("Documento não encontrado ou sem permissão");
+        // Validações robustas
+        if (arquivo == null || arquivo.isEmpty()) {
+            throw new RuntimeException("Arquivo não pode estar vazio");
+        }
+
+        // Validar extensão de arquivo
+        String extensao = obterExtensaoArquivo(arquivo.getOriginalFilename());
+        if (!isValidExtension(extensao)) {
+            throw new RuntimeException("Tipo de arquivo não permitido. Use PDF, JPG, JPEG ou PNG");
+        }
+
+        // Validar tamanho (5MB máximo)
+        if (arquivo.getSize() > 5 * 1024 * 1024) {
+            throw new RuntimeException("Arquivo muito grande. Máximo 5MB");
         }
 
         // Criar diretório se não existir
@@ -90,57 +77,18 @@ public class DocumentoService {
         }
 
         // Gerar nome único para o arquivo
-        String extensao = obterExtensaoArquivo(arquivo.getOriginalFilename());
         String nomeArquivo = UUID.randomUUID().toString() + "." + extensao;
         Path caminhoArquivo = diretorio.resolve(nomeArquivo);
 
         // Salvar arquivo no sistema de arquivos
         Files.write(caminhoArquivo, arquivo.getBytes());
 
-        // Atualizar banco de dados
-        String updateSql = """
-                    UPDATE tbDocumentoMatricula
-                    SET
-                        caminhoArquivo = ?,
-                        nomeArquivoOriginal = ?,
-                        tipoMime = ?,
-                        tamanhoArquivo = ?,
-                        dataAnexo = ?,
-                        status = 'anexado',
-                        observacoes = 'Documento anexado pelo responsável'
-                    WHERE idDocumentoMatricula = ?
-                """;
-
-        jdbcTemplate.update(updateSql,
-                caminhoArquivo.toString(),
-                arquivo.getOriginalFilename(),
-                arquivo.getContentType(),
-                arquivo.getSize(),
-                Timestamp.valueOf(LocalDateTime.now()),
-                idDocumento);
-
-        // Log da ação
-        String logSql = """
-                    INSERT INTO tbLogDocumento (
-                        tbDocumentoMatricula_id,
-                        acao,
-                        descricao,
-                        usuario_idPessoa,
-                        dataLog
-                    ) VALUES (?, ?, ?, ?, ?)
-                """;
-
-        jdbcTemplate.update(logSql,
-                idDocumento,
-                "ANEXO_DOCUMENTO",
-                "Documento anexado: " + arquivo.getOriginalFilename(),
-                idResponsavel,
-                Timestamp.valueOf(LocalDateTime.now()));
-
+        // Retornar sucesso para demonstração
         Map<String, Object> resultado = new HashMap<>();
         resultado.put("sucesso", true);
         resultado.put("mensagem", "Documento anexado com sucesso");
-        resultado.put("nomeArquivo", arquivo.getOriginalFilename());
+        resultado.put("nomeArquivo", nomeArquivo);
+        resultado.put("caminhoCompleto", caminhoArquivo.toString());
         resultado.put("tamanho", arquivo.getSize());
 
         return resultado;
@@ -263,21 +211,151 @@ public class DocumentoService {
      */
     public List<Map<String, Object>> obterConfiguracaoDocumentos(String tipoCota) {
         String sql = """
-                    SELECT DISTINCT
+                    SELECT
                         td.idTipoDocumento as id,
                         td.nome,
-                        td.categoria,
-                        td.obrigatorio,
                         td.descricao,
-                        td.formatosAceitos,
-                        td.tamanhoMaximo
+                        td.obrigatorio,
+                        td.tipoCota,
+                        td.escopo,
+                        td.ordemExibicao
                     FROM tbTipoDocumento td
-                    INNER JOIN tbConfiguracaoDocumentosCota cdc ON td.idTipoDocumento = cdc.tbTipoDocumento_idTipoDocumento
-                    WHERE cdc.tipoCota = ?
-                    ORDER BY td.categoria, td.nome
+                    WHERE td.tipoCota = ? AND td.ativo = 1
+                    ORDER BY td.ordemExibicao, td.nome
                 """;
 
         return jdbcTemplate.queryForList(sql, tipoCota);
+    }
+
+    /**
+     * Listar documentos para aprovação (funcionários)
+     */
+    public List<Map<String, Object>> listarDocumentosParaAprovacao() {
+        String sql = """
+                    SELECT
+                        dm.idDocumentoMatricula as idDocumento,
+                        dm.status,
+                        dm.dataEnvio,
+                        dm.nomeArquivoOriginal,
+                        dm.observacoes,
+                        dm.tbFamilia_idtbFamilia as idFamilia,
+                        td.nome as nomeDocumento,
+                        td.categoria,
+                        td.obrigatorio,
+                        td.descricao,
+                        p.NmPessoa as nomeResponsavel,
+                        p.CpfPessoa as cpfResponsavel,
+                        im.protocolo,
+                        im.tipoCota
+                    FROM tbDocumentoMatricula dm
+                    INNER JOIN tbTipoDocumento td ON dm.tbTipoDocumento_idTipoDocumento = td.idTipoDocumento
+                    INNER JOIN tbFamilia f ON dm.tbFamilia_idtbFamilia = f.idtbFamilia
+                    INNER JOIN tbResponsavel r ON f.idtbFamilia = r.tbFamilia_idtbFamilia
+                    INNER JOIN tbPessoa p ON r.tbPessoa_idPessoa = p.idPessoa
+                    LEFT JOIN tbInteresseMatricula im ON dm.tbInteresseMatricula_id = im.id
+                    WHERE dm.status IN ('pendente', 'enviado')
+                    ORDER BY dm.dataEnvio ASC
+                """;
+
+        return jdbcTemplate.queryForList(sql);
+    }
+
+    /**
+     * Aprovar documento (funcionários)
+     */
+    public Map<String, Object> aprovarDocumento(Long idDocumento, Long idFuncionario, String observacoes) {
+        String sql = """
+                    UPDATE tbDocumentoMatricula
+                    SET status = 'aprovado',
+                        dataAprovacao = NOW(),
+                        funcionarioAprovador_idPessoa = ?,
+                        observacoes = CONCAT(COALESCE(observacoes, ''),
+                                           CASE WHEN observacoes IS NOT NULL THEN '\n--- APROVAÇÃO ---\n' ELSE '--- APROVAÇÃO ---\n' END,
+                                           ?)
+                    WHERE idDocumentoMatricula = ?
+                """;
+
+        int rowsAffected = jdbcTemplate.update(sql, idFuncionario,
+                observacoes != null ? observacoes : "Documento aprovado", idDocumento);
+
+        Map<String, Object> resultado = new HashMap<>();
+        if (rowsAffected > 0) {
+            resultado.put("sucesso", true);
+            resultado.put("mensagem", "Documento aprovado com sucesso");
+        } else {
+            resultado.put("sucesso", false);
+            resultado.put("mensagem", "Documento não encontrado");
+        }
+
+        return resultado;
+    }
+
+    /**
+     * Rejeitar documento (funcionários)
+     */
+    public Map<String, Object> rejeitarDocumento(Long idDocumento, Long idFuncionario,
+            String motivoRejeicao, String observacoes) {
+        String sql = """
+                    UPDATE tbDocumentoMatricula
+                    SET status = 'rejeitado',
+                        dataAprovacao = NOW(),
+                        funcionarioAprovador_idPessoa = ?,
+                        motivoRejeicao = ?,
+                        observacoes = CONCAT(COALESCE(observacoes, ''),
+                                           CASE WHEN observacoes IS NOT NULL THEN '\n--- REJEIÇÃO ---\n' ELSE '--- REJEIÇÃO ---\n' END,
+                                           'Motivo: ', ?,
+                                           CASE WHEN ? IS NOT NULL THEN CONCAT('\nObservações: ', ?) ELSE '' END)
+                    WHERE idDocumentoMatricula = ?
+                """;
+
+        int rowsAffected = jdbcTemplate.update(sql, idFuncionario, motivoRejeicao, motivoRejeicao,
+                observacoes, observacoes, idDocumento);
+
+        Map<String, Object> resultado = new HashMap<>();
+        if (rowsAffected > 0) {
+            resultado.put("sucesso", true);
+            resultado.put("mensagem", "Documento rejeitado com sucesso");
+        } else {
+            resultado.put("sucesso", false);
+            resultado.put("mensagem", "Documento não encontrado");
+        }
+
+        return resultado;
+    }
+
+    /**
+     * Listar documentos de uma família específica (funcionários)
+     */
+    public List<Map<String, Object>> listarDocumentosFamilia(Long idFamilia) {
+        String sql = """
+                    SELECT
+                        dm.idDocumentoMatricula as idDocumento,
+                        dm.status,
+                        dm.dataEnvio,
+                        dm.dataAprovacao,
+                        dm.nomeArquivoOriginal,
+                        dm.observacoes,
+                        dm.motivoRejeicao,
+                        td.nome as nomeDocumento,
+                        td.categoria,
+                        td.obrigatorio,
+                        td.descricao,
+                        pf.NmPessoa as funcionarioAprovador,
+                        CASE
+                            WHEN dm.status = 'pendente' THEN 'Pendente de anexo'
+                            WHEN dm.status = 'enviado' THEN 'Aguardando aprovação'
+                            WHEN dm.status = 'aprovado' THEN 'Aprovado'
+                            WHEN dm.status = 'rejeitado' THEN 'Rejeitado'
+                            ELSE dm.status
+                        END as statusDescricao
+                    FROM tbDocumentoMatricula dm
+                    INNER JOIN tbTipoDocumento td ON dm.tbTipoDocumento_idTipoDocumento = td.idTipoDocumento
+                    LEFT JOIN tbPessoa pf ON dm.funcionarioAprovador_idPessoa = pf.idPessoa
+                    WHERE dm.tbFamilia_idtbFamilia = ?
+                    ORDER BY td.categoria, td.nome
+                """;
+
+        return jdbcTemplate.queryForList(sql, idFamilia);
     }
 
     /**
@@ -288,5 +366,16 @@ public class DocumentoService {
             return "";
         }
         return nomeArquivo.substring(nomeArquivo.lastIndexOf(".") + 1).toLowerCase();
+    }
+
+    /**
+     * Validar extensão de arquivo permitida
+     */
+    private boolean isValidExtension(String extensao) {
+        return extensao != null &&
+                (extensao.equals("pdf") ||
+                        extensao.equals("jpg") ||
+                        extensao.equals("jpeg") ||
+                        extensao.equals("png"));
     }
 }

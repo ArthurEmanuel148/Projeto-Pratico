@@ -2,12 +2,13 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
+import { environment } from '../../../../environments/environment';
 import { InteresseMatricula } from '../models/interesse-matricula.interface';
 import { ApiConfigService } from '../../../core/services/api-config.service';
 
 @Injectable()
 export class InteresseMatriculaService {
-  private apiUrl = 'http://localhost:8080/api/interesse-matricula';
+  private apiUrl = `${environment.apiUrl}/interesse-matricula`;
   private readonly STORAGE_KEY = 'usuarioLogado';
 
   constructor(
@@ -312,7 +313,7 @@ export class InteresseMatriculaService {
 
   // Método para buscar tipos de documentos
   getTiposDocumento(): Observable<any[]> {
-    return this.http.get<any[]>('http://localhost:8080/api/tipos-documento').pipe(
+    return this.http.get<any[]>(`${environment.apiUrl}/tipos-documento`).pipe(
       catchError(error => {
         console.error('Erro ao buscar tipos de documento:', error);
         throw error;

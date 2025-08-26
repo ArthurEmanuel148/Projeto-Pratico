@@ -90,6 +90,10 @@ public class InteresseMatriculaService {
                     novoResponsavel.setNmPessoa(interesse.getNomeResponsavel());
                     novoResponsavel.setCpfPessoa(interesse.getCpfResponsavel());
                     novoResponsavel.setDtNascPessoa(java.sql.Date.valueOf(interesse.getDataNascimentoResponsavel()));
+                    novoResponsavel.setEmail(interesse.getEmailResponsavel());
+                    novoResponsavel.setTelefone(interesse.getTelefoneResponsavel());
+                    novoResponsavel.setRenda(interesse.getRendaResponsavel());
+                    novoResponsavel.setProfissao(interesse.getProfissaoResponsavel());
                     return pessoaRepository.save(novoResponsavel);
                 });
 

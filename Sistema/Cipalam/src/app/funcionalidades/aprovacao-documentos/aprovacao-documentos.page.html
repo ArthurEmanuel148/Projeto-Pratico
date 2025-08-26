@@ -1,0 +1,141 @@
+<ion-header [translucent]="true">
+    <ion-toolbar>
+        <ion-title>Aprovação de Documentos</ion-title>
+        <ion-buttons slot="end">
+            <ion-button (click)="carregarDocumentos()">
+                <ion-icon name="refresh"></ion-icon>
+            </ion-button>
+        </ion-buttons>
+    </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+    <ion-header collapse="condense">
+        <ion-toolbar>
+            <ion-title size="large">Aprovação de Documentos</ion-title>
+        </ion-toolbar>
+    </ion-header>
+
+    <!-- Filtros -->
+    <ion-card>
+        <ion-card-content>
+            <ion-grid>
+                <ion-row>
+                    <ion-col size="12" size-md="4">
+                        <ion-item>
+                            <ion-label position="stacked">Status</ion-label>
+                            <ion-select [(ngModel)]="filtros.status" (ionChange)="aplicarFiltros()">
+                                <ion-select-option value="todos">Todos</ion-select-option>
+                                <ion-select-option value="pendente">Pendente</ion-select-option>
+                                <ion-select-option value="aprovado">Aprovado</ion-select-option>
+                                <ion-select-option value="rejeitado">Rejeitado</ion-select-option>
+                            </ion-select>
+                        </ion-item>
+                    </ion-col>
+                    <ion-col size="12" size-md="4">
+                        <ion-item>
+                            <ion-label position="stacked">Tipo de Cota</ion-label>
+                            <ion-select [(ngModel)]="filtros.tipoCota" (ionChange)="aplicarFiltros()">
+                                <ion-select-option value="todos">Todos</ion-select-option>
+                                <ion-select-option value="FUNCIONARIO">Funcionário</ion-select-option>
+                                <ion-select-option value="LIVRE">Livre</ion-select-option>
+                                <ion-select-option value="ECONOMICA">Econômica</ion-select-option>
+                            </ion-select>
+                        </ion-item>
+                    </ion-col>
+                    <ion-col size="12" size-md="4">
+                        <ion-searchbar [(ngModel)]="filtros.busca" (ionInput)="aplicarFiltros()"
+                            placeholder="Buscar por nome, CPF ou protocolo" debounce="500">
+                        </ion-searchbar>
+                    </ion-col>
+                </ion-row>
+            </ion-grid>
+        </ion-card-content>
+    </ion-card>
+
+    <!-- Lista de Documentos -->
+    <div *ngIf="!isLoading && documentosFiltrados.length === 0" class="empty-state">
+        <ion-icon name="document-outline" size="large"></ion-icon>
+        <h2>Nenhum documento encontrado</h2>
+        <p>Não há documentos para aprovação com os filtros selecionados.</p>
+    </div>
+
+    <div *ngFor="let documento of documentosFiltrados" class="documento-card">
+        <ion-card>
+            <ion-card-header>
+                <ion-card-subtitle>
+                    <div class="header-info">
+                        <div>
+                            <ion-chip [color]="obterCorStatus(documento.status)">
+                                <ion-label>{{ documento.status | uppercase }}</ion-label>
+                            </ion-chip>
+                            <ion-chip color="primary">
+                                <ion-label>{{ documento.tipoCota }}</ion-label>
+                            </ion-chip>
+                        </div>
+                        <div class="data-envio">
+                            {{ documento.dataEnvio | date:'dd/MM/yyyy HH:mm' }}
+                        </div>
+                    </div>
+                </ion-card-subtitle>
+                <ion-card-title>{{ documento.nomeResponsavel }}</ion-card-title>
+            </ion-card-header>
+
+            <ion-card-content>
+                <div class="documento-info">
+                    <div class="info-row">
+                        <ion-icon name="person-outline"></ion-icon>
+                        <span>CPF: {{ documento.cpfResponsavel }}</span>
+                    </div>
+                    <div class="info-row">
+                        <ion-icon name="receipt-outline"></ion-icon>
+                        <span>Protocolo: {{ documento.protocolo }}</span>
+                    </div>
+                    <div class="info-row">
+                        <ion-icon [name]="obterIconeCategoria(documento.categoria)"></ion-icon>
+                        <span>{{ documento.nomeDocumento }}</span>
+                        <ion-chip *ngIf="documento.obrigatorio" color="warning" size="small">
+                            <ion-label>Obrigatório</ion-label>
+                        </ion-chip>
+                    </div>
+                    <div class="info-row" *ngIf="documento.observacoes">
+                        <ion-icon name="chatbubble-outline"></ion-icon>
+                        <span>{{ documento.observacoes }}</span>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <ion-button fill="outline" size="small"
+                        (click)="visualizarDocumento(documento.idDocumento, documento.nomeArquivo)">
+                        <ion-icon name="eye" slot="start"></ion-icon>
+                        Visualizar
+                    </ion-button>
+
+                    <ion-button fill="outline" size="small" color="medium" (click)="verDetalhes(documento)">
+                        <ion-icon name="information-circle" slot="start"></ion-icon>
+                        Detalhes
+                    </ion-button>
+
+                    <div *ngIf="documento.status === 'pendente'" class="approval-buttons">
+                        <ion-button size="small" color="success" (click)="aprovarDocumento(documento)">
+                            <ion-icon name="checkmark" slot="start"></ion-icon>
+                            Aprovar
+                        </ion-button>
+
+                        <ion-button size="small" color="danger" (click)="rejeitarDocumento(documento)">
+                            <ion-icon name="close" slot="start"></ion-icon>
+                            Rejeitar
+                        </ion-button>
+                    </div>
+                </div>
+            </ion-card-content>
+        </ion-card>
+    </div>
+
+    <!-- Loading -->
+    <div *ngIf="isLoading" class="loading-container">
+        <ion-spinner name="crescent"></ion-spinner>
+        <p>Carregando documentos...</p>
+    </div>
+
+</ion-content>

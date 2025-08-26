@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, BehaviorSubject, of, throwError } from 'rxjs';
 import { map, tap, catchError, switchMap } from 'rxjs/operators';
+import { environment } from '../../../environments/environment';
 import { ApiConfigService } from './api-config.service';
 
 export interface LoginRequest {
@@ -59,7 +60,7 @@ export class AuthService {
 
   // Método específico para login de responsável
   private loginResponsavel(cpf: string, senha: string): Observable<LoginResponse> {
-    return this.http.post<any>('http://localhost:8080/api/interesse-matricula/autenticar-responsavel', { cpf, senha })
+    return this.http.post<any>(`${environment.apiUrl}/interesse-matricula/autenticar-responsavel`, { cpf, senha })
       .pipe(
         switchMap(response => {
           if (response.autenticado) {

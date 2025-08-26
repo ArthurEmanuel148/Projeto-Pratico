@@ -151,6 +151,81 @@ public class DocumentoController {
     }
 
     /**
+     * Listar documentos para aprovação (funcionários)
+     */
+    @GetMapping("/para-aprovacao")
+    public ResponseEntity<?> listarDocumentosParaAprovacao() {
+        try {
+            List<Map<String, Object>> documentos = documentoService.listarDocumentosParaAprovacao();
+            return ResponseEntity.ok(documentos);
+        } catch (Exception e) {
+            Map<String, Object> error = new HashMap<>();
+            error.put("erro", "Erro ao buscar documentos para aprovação");
+            error.put("detalhes", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
+        }
+    }
+
+    /**
+     * Aprovar documento (funcionários)
+     */
+    @PostMapping("/aprovar/{idDocumento}")
+    public ResponseEntity<?> aprovarDocumento(
+            @PathVariable Long idDocumento,
+            @RequestParam Long idFuncionario,
+            @RequestParam(required = false) String observacoes) {
+
+        try {
+            Map<String, Object> resultado = documentoService.aprovarDocumento(
+                    idDocumento, idFuncionario, observacoes);
+            return ResponseEntity.ok(resultado);
+        } catch (Exception e) {
+            Map<String, Object> error = new HashMap<>();
+            error.put("erro", "Erro ao aprovar documento");
+            error.put("detalhes", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
+        }
+    }
+
+    /**
+     * Rejeitar documento (funcionários)
+     */
+    @PostMapping("/rejeitar/{idDocumento}")
+    public ResponseEntity<?> rejeitarDocumento(
+            @PathVariable Long idDocumento,
+            @RequestParam Long idFuncionario,
+            @RequestParam String motivoRejeicao,
+            @RequestParam(required = false) String observacoes) {
+
+        try {
+            Map<String, Object> resultado = documentoService.rejeitarDocumento(
+                    idDocumento, idFuncionario, motivoRejeicao, observacoes);
+            return ResponseEntity.ok(resultado);
+        } catch (Exception e) {
+            Map<String, Object> error = new HashMap<>();
+            error.put("erro", "Erro ao rejeitar documento");
+            error.put("detalhes", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
+        }
+    }
+
+    /**
+     * Listar documentos de uma família específica (funcionários)
+     */
+    @GetMapping("/familia/{idFamilia}")
+    public ResponseEntity<?> listarDocumentosFamilia(@PathVariable Long idFamilia) {
+        try {
+            List<Map<String, Object>> documentos = documentoService.listarDocumentosFamilia(idFamilia);
+            return ResponseEntity.ok(documentos);
+        } catch (Exception e) {
+            Map<String, Object> error = new HashMap<>();
+            error.put("erro", "Erro ao buscar documentos da família");
+            error.put("detalhes", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
+        }
+    }
+
+    /**
      * Validar tipos de arquivo permitidos
      */
     private boolean isValidFileType(String tipoMime) {

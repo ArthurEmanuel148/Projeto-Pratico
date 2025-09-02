@@ -107,18 +107,18 @@ export class CadastroFuncionarioPage implements OnInit {
    */
   private formatarDataParaBackend(data: string): string {
     if (!data) return '';
-    
+
     // Se já está no formato YYYY-MM-DD, retorna como está
     if (data.match(/^\d{4}-\d{2}-\d{2}$/)) {
       return data;
     }
-    
+
     // Se está no formato DD/MM/AAAA, converte
     if (data.match(/^\d{2}\/\d{2}\/\d{4}$/)) {
       const [dia, mes, ano] = data.split('/');
       return `${ano}-${mes}-${dia}`;
     }
-    
+
     return '';
   }
 
@@ -318,7 +318,7 @@ export class CadastroFuncionarioPage implements OnInit {
   onCpfBlur(event: any) {
     const target = event.target;
     const ionItem = target.closest('ion-item');
-    
+
     if (!target.value) {
       target.placeholder = '';
       if (ionItem) {
@@ -347,7 +347,7 @@ export class CadastroFuncionarioPage implements OnInit {
   onPhoneBlur(event: any) {
     const target = event.target;
     const ionItem = target.closest('ion-item');
-    
+
     if (!target.value) {
       target.placeholder = '';
       if (ionItem) {
@@ -367,7 +367,7 @@ export class CadastroFuncionarioPage implements OnInit {
   onDateInput(event: any) {
     const input = event.target;
     const maskedValue = this.maskService.applyDateMask(input.value);
-    
+
     // Encontra o control do formulário
     const controlName = input.getAttribute('formControlName');
     if (controlName && this.cadastroForm.get(controlName)) {
@@ -379,7 +379,7 @@ export class CadastroFuncionarioPage implements OnInit {
     const target = event.target;
     // Só adiciona o placeholder quando o usuário clica
     target.placeholder = 'DD/MM/AAAA';
-    
+
     // Força o label a subir imediatamente
     const ionItem = event.target.closest('ion-item');
     if (ionItem) {
@@ -390,7 +390,7 @@ export class CadastroFuncionarioPage implements OnInit {
   onDateBlur(event: any) {
     const target = event.target;
     const ionItem = event.target.closest('ion-item');
-    
+
     if (!target.value) {
       target.placeholder = '';
       if (ionItem) {
@@ -412,7 +412,7 @@ export class CadastroFuncionarioPage implements OnInit {
     input.type = 'date';
     input.style.visibility = 'hidden';
     input.style.position = 'absolute';
-    
+
     // Se já tem valor no campo, converte para formato date
     const currentValue = this.cadastroForm.get(fieldName)?.value;
     if (currentValue) {
@@ -423,9 +423,9 @@ export class CadastroFuncionarioPage implements OnInit {
         input.value = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
       }
     }
-    
+
     document.body.appendChild(input);
-    
+
     input.addEventListener('change', (event: any) => {
       const selectedDate = event.target.value;
       if (selectedDate) {
@@ -433,7 +433,7 @@ export class CadastroFuncionarioPage implements OnInit {
         const [year, month, day] = selectedDate.split('-');
         const formattedDate = `${day}/${month}/${year}`;
         this.cadastroForm.get(fieldName)?.setValue(formattedDate);
-        
+
         // Força o label a ficar flutuando
         setTimeout(() => {
           const ionInput = document.querySelector(`ion-input[formControlName="${fieldName}"]`);
@@ -447,7 +447,7 @@ export class CadastroFuncionarioPage implements OnInit {
       }
       document.body.removeChild(input);
     });
-    
+
     input.click();
   }
 

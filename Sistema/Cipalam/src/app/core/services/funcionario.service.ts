@@ -46,7 +46,7 @@ export class FuncionarioService {
       senha: funcionarioData.senhaSistema,
       permissoes: this.convertPermissoesToArray(funcionarioData.permissoes)
     };
-    
+
     console.log('DTO enviado para o backend:', dto);
     return this.http.post(this.apiConfig.getCadastroFuncionarioUrl(), dto);
   }

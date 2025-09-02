@@ -22,19 +22,30 @@ public class TipoDocumentoService {
     /**
      * Lista todos os tipos de documentos com paginação e filtros
      */
-    public Page<TipoDocumento> listarTiposDocumentos(int page, int size, String nome, 
-                                                   TipoDocumento.TipoCota tipoCota, 
-                                                   TipoDocumento.EscopoDocumento escopo, 
-                                                   Boolean ativo) {
+    public Page<TipoDocumento> listarTiposDocumentos(int page, int size, String nome,
+            TipoDocumento.TipoProcessamento tipoProcessamento,
+            TipoDocumento.EscopoDocumento escopo,
+            Boolean ativo) {
         Pageable pageable = PageRequest.of(page, size);
-        return tipoDocumentoRepository.findWithFilters(nome, tipoCota, escopo, ativo, pageable);
+        return tipoDocumentoRepository.findWithFilters(nome, tipoProcessamento, escopo, ativo, pageable);
     }
 
     /**
      * Lista todos os tipos de documentos ativos
      */
     public List<TipoDocumento> listarTiposDocumentosAtivos() {
-        return tipoDocumentoRepository.findByAtivoTrueOrderByOrdemExibicaoAsc();
+        return tipoDocumentoRepository.findByAtivoTrueOrderByNomeAsc();
+    }
+
+    /**
+     * Lista documentos organizados por escopo para a interface
+     */
+    public DocumentosOrganizados listarDocumentosOrganizados() {
+        return new DocumentosOrganizados(
+                tipoDocumentoRepository.findByEscopoAndAtivoTrueOrderByNomeAsc(TipoDocumento.EscopoDocumento.FAMILIA),
+                tipoDocumentoRepository.findByEscopoAndAtivoTrueOrderByNomeAsc(TipoDocumento.EscopoDocumento.ALUNO),
+                tipoDocumentoRepository
+                        .findByEscopoAndAtivoTrueOrderByNomeAsc(TipoDocumento.EscopoDocumento.TODOS_INTEGRANTES));
     }
 
     /**
@@ -48,14 +59,9 @@ public class TipoDocumentoService {
      * Cria um novo tipo de documento
      */
     public TipoDocumento criarTipoDocumento(TipoDocumento tipoDocumento) {
-        // Se não foi definida ordem de exibição, pega a próxima disponível
-        if (tipoDocumento.getOrdemExibicao() == null || tipoDocumento.getOrdemExibicao() == 0) {
-            tipoDocumento.setOrdemExibicao(tipoDocumentoRepository.findProximaOrdemExibicao());
-        }
-        
         // Validações
         validarTipoDocumento(tipoDocumento);
-        
+
         return tipoDocumentoRepository.save(tipoDocumento);
     }
 
@@ -69,14 +75,9 @@ public class TipoDocumentoService {
         // Atualiza os campos
         tipoDocumentoExistente.setNome(tipoDocumentoAtualizado.getNome());
         tipoDocumentoExistente.setDescricao(tipoDocumentoAtualizado.getDescricao());
-        tipoDocumentoExistente.setObrigatorio(tipoDocumentoAtualizado.getObrigatorio());
-        tipoDocumentoExistente.setRequerAssinatura(tipoDocumentoAtualizado.getRequerAssinatura());
-        tipoDocumentoExistente.setRequerAnexo(tipoDocumentoAtualizado.getRequerAnexo());
-        tipoDocumentoExistente.setTipoCota(tipoDocumentoAtualizado.getTipoCota());
+        tipoDocumentoExistente.setTipoProcessamento(tipoDocumentoAtualizado.getTipoProcessamento());
         tipoDocumentoExistente.setEscopo(tipoDocumentoAtualizado.getEscopo());
         tipoDocumentoExistente.setAtivo(tipoDocumentoAtualizado.getAtivo());
-        tipoDocumentoExistente.setOrdemExibicao(tipoDocumentoAtualizado.getOrdemExibicao());
-        tipoDocumentoExistente.setTemplateDocumento(tipoDocumentoAtualizado.getTemplateDocumento());
 
         // Validações
         validarTipoDocumento(tipoDocumentoExistente);
@@ -85,7 +86,18 @@ public class TipoDocumentoService {
     }
 
     /**
-     * Remove um tipo de documento
+     * Remove um tipo de documento (soft delete)
+     */
+    public void desativarTipoDocumento(Long id) {
+        TipoDocumento tipoDocumento = tipoDocumentoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Tipo de documento não encontrado com ID: " + id));
+
+        tipoDocumento.setAtivo(false);
+        tipoDocumentoRepository.save(tipoDocumento);
+    }
+
+    /**
+     * Remove permanentemente um tipo de documento
      */
     public void removerTipoDocumento(Long id) {
         TipoDocumento tipoDocumento = tipoDocumentoRepository.findById(id)
@@ -93,174 +105,101 @@ public class TipoDocumentoService {
 
         // Verifica se pode ser removido
         if (!tipoDocumentoRepository.podeRemoverTipoDocumento(id)) {
-            throw new RuntimeException("Este tipo de documento não pode ser removido pois está sendo utilizado em matrículas");
+            throw new RuntimeException(
+                    "Este tipo de documento não pode ser removido pois está sendo utilizado em matrículas");
         }
 
         tipoDocumentoRepository.delete(tipoDocumento);
     }
 
     /**
-     * Alterna o status ativo/inativo de um tipo de documento
+     * Busca documentos por tipo de processamento
      */
-    public TipoDocumento alternarStatus(Long id) {
-        TipoDocumento tipoDocumento = tipoDocumentoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Tipo de documento não encontrado com ID: " + id));
-
-        tipoDocumento.setAtivo(!tipoDocumento.getAtivo());
-        return tipoDocumentoRepository.save(tipoDocumento);
+    public List<TipoDocumento> buscarPorTipoProcessamento(TipoDocumento.TipoProcessamento tipoProcessamento) {
+        return tipoDocumentoRepository.findByTipoProcessamentoAndAtivoTrueOrderByNomeAsc(tipoProcessamento);
     }
 
     /**
-     * Lista tipos de documentos para uma cota específica
+     * Busca documentos por escopo
      */
-    public List<TipoDocumento> listarPorCota(TipoDocumento.TipoCota tipoCota) {
-        return tipoDocumentoRepository.findDocumentosParaCota(tipoCota);
+    public List<TipoDocumento> buscarPorEscopo(TipoDocumento.EscopoDocumento escopo) {
+        return tipoDocumentoRepository.findByEscopoAndAtivoTrueOrderByNomeAsc(escopo);
     }
 
     /**
-     * Lista tipos de documentos para um escopo específico
-     */
-    public List<TipoDocumento> listarPorEscopo(TipoDocumento.EscopoDocumento escopo) {
-        return tipoDocumentoRepository.findDocumentosParaEscopo(escopo);
-    }
-
-    /**
-     * Lista documentos obrigatórios para uma cota
-     */
-    public List<TipoDocumento> listarObrigatoriosPorCota(TipoDocumento.TipoCota tipoCota) {
-        return tipoDocumentoRepository.findDocumentosObrigatoriosParaCota(tipoCota);
-    }
-
-    /**
-     * Lista documentos que requerem assinatura
-     */
-    public List<TipoDocumento> listarQueRequeremAssinatura() {
-        return tipoDocumentoRepository.findByRequerAssinaturaAndAtivoTrueOrderByOrdemExibicaoAsc(true);
-    }
-
-    /**
-     * Lista documentos que requerem anexo
-     */
-    public List<TipoDocumento> listarQueRequeremAnexo() {
-        return tipoDocumentoRepository.findByRequerAnexoAndAtivoTrueOrderByOrdemExibicaoAsc(true);
-    }
-
-    /**
-     * Verifica se um tipo de documento pode ser removido
-     */
-    public boolean podeRemover(Long id) {
-        return tipoDocumentoRepository.podeRemoverTipoDocumento(id);
-    }
-
-    /**
-     * Busca tipos de documentos por nome
+     * Busca documentos por nome
      */
     public List<TipoDocumento> buscarPorNome(String nome) {
-        return tipoDocumentoRepository.findByNomeContainingIgnoreCaseOrderByOrdemExibicaoAsc(nome);
+        return tipoDocumentoRepository.findByNomeContainingIgnoreCaseAndAtivoTrueOrderByNomeAsc(nome);
     }
 
     /**
-     * Reordena tipos de documentos
-     */
-    public void reordenarTiposDocumentos(List<Long> idsOrdenados) {
-        for (int i = 0; i < idsOrdenados.size(); i++) {
-            Long id = idsOrdenados.get(i);
-            Optional<TipoDocumento> optTipoDocumento = tipoDocumentoRepository.findById(id);
-            if (optTipoDocumento.isPresent()) {
-                TipoDocumento tipoDocumento = optTipoDocumento.get();
-                tipoDocumento.setOrdemExibicao(i + 1);
-                tipoDocumentoRepository.save(tipoDocumento);
-            }
-        }
-    }
-
-    /**
-     * Valida os dados de um tipo de documento
+     * Valida um tipo de documento
      */
     private void validarTipoDocumento(TipoDocumento tipoDocumento) {
         if (tipoDocumento.getNome() == null || tipoDocumento.getNome().trim().isEmpty()) {
             throw new RuntimeException("Nome do tipo de documento é obrigatório");
         }
 
-        if (tipoDocumento.getNome().length() > 100) {
-            throw new RuntimeException("Nome do tipo de documento não pode ter mais de 100 caracteres");
+        if (tipoDocumento.getTipoProcessamento() == null) {
+            throw new RuntimeException("Tipo de processamento é obrigatório");
         }
 
         if (tipoDocumento.getEscopo() == null) {
-            throw new RuntimeException("Escopo do tipo de documento é obrigatório");
+            throw new RuntimeException("Escopo é obrigatório");
         }
 
-        if (tipoDocumento.getOrdemExibicao() == null || tipoDocumento.getOrdemExibicao() < 1) {
-            throw new RuntimeException("Ordem de exibição deve ser um número positivo");
-        }
+        // Verificar se já existe outro tipo com o mesmo nome (considerando apenas
+        // ativos)
+        List<TipoDocumento> tiposExistentes = tipoDocumentoRepository
+                .findByNomeContainingIgnoreCaseAndAtivoTrueOrderByNomeAsc(tipoDocumento.getNome().trim());
+        boolean nomeJaExiste = tiposExistentes.stream()
+                .anyMatch(td -> td.getNome().equalsIgnoreCase(tipoDocumento.getNome().trim())
+                        && !td.getIdTipoDocumento().equals(tipoDocumento.getIdTipoDocumento()));
 
-        // Se não requer assinatura nem anexo, deve ser pelo menos declarativo
-        if (!tipoDocumento.getRequerAssinatura() && !tipoDocumento.getRequerAnexo()) {
-            // Pode ser um documento puramente declarativo - permitido
-        }
-
-        // Verifica se já existe outro documento com a mesma ordem (exceto ele mesmo)
-        if (tipoDocumento.getIdTipoDocumento() != null) {
-            boolean existeOutroComMesmaOrdem = tipoDocumentoRepository
-                    .existsByOrdemExibicaoAndIdTipoDocumentoNot(
-                            tipoDocumento.getOrdemExibicao(), 
-                            tipoDocumento.getIdTipoDocumento()
-                    );
-            if (existeOutroComMesmaOrdem) {
-                throw new RuntimeException("Já existe outro tipo de documento com a ordem de exibição: " + 
-                                           tipoDocumento.getOrdemExibicao());
-            }
+        if (nomeJaExiste) {
+            throw new RuntimeException("Já existe um tipo de documento com esse nome");
         }
     }
 
     /**
-     * Método para compatibilidade com configuração por cota (legado)
+     * Classe para organizar documentos por escopo
      */
-    public List<TipoDocumento> listarPorCotaString(String tipoCota) {
-        if (tipoCota == null) {
-            return listarTiposDocumentosAtivos();
+    public static class DocumentosOrganizados {
+        private List<TipoDocumento> documentosFamilia;
+        private List<TipoDocumento> documentosAluno;
+        private List<TipoDocumento> documentosTodosIntegrantes;
+
+        public DocumentosOrganizados(List<TipoDocumento> documentosFamilia,
+                List<TipoDocumento> documentosAluno,
+                List<TipoDocumento> documentosTodosIntegrantes) {
+            this.documentosFamilia = documentosFamilia;
+            this.documentosAluno = documentosAluno;
+            this.documentosTodosIntegrantes = documentosTodosIntegrantes;
         }
-        
-        TipoDocumento.TipoCota tipoCotaEnum;
-        try {
-            tipoCotaEnum = TipoDocumento.TipoCota.valueOf(tipoCota);
-        } catch (IllegalArgumentException e) {
-            return listarTiposDocumentosAtivos();
+
+        // Getters
+        public List<TipoDocumento> getDocumentosFamilia() {
+            return documentosFamilia;
         }
-        
-        return listarPorCota(tipoCotaEnum);
+
+        public List<TipoDocumento> getDocumentosAluno() {
+            return documentosAluno;
+        }
+
+        public List<TipoDocumento> getDocumentosTodosIntegrantes() {
+            return documentosTodosIntegrantes;
+        }
     }
 
-    // Métodos para compatibilidade com versão anterior
+    // Métodos de compatibilidade com versão anterior (deprecated)
+    @Deprecated
+    public List<TipoDocumento> listarPorCota(String tipoCota) {
+        return listarTiposDocumentosAtivos(); // Por enquanto retorna todos os ativos
+    }
+
+    @Deprecated
     public List<TipoDocumento> listarTodos() {
         return tipoDocumentoRepository.findAll();
-    }
-
-    public List<TipoDocumento> listarAtivos() {
-        return listarTiposDocumentosAtivos();
-    }
-
-    public List<TipoDocumento> listarPorCota(String tipoCota) {
-        return listarPorCotaString(tipoCota);
-    }
-
-    public List<TipoDocumento> buscarPorTipoCota(String tipoCota) {
-        return listarPorCotaString(tipoCota);
-    }
-
-    public Optional<TipoDocumento> buscarPorId(Integer id) {
-        return buscarPorId(id.longValue());
-    }
-
-    public TipoDocumento salvar(TipoDocumento tipoDocumento) {
-        return criarTipoDocumento(tipoDocumento);
-    }
-
-    public TipoDocumento atualizar(Integer id, TipoDocumento tipoDocumentoAtualizado) {
-        return atualizarTipoDocumento(id.longValue(), tipoDocumentoAtualizado);
-    }
-
-    public void deletar(Integer id) {
-        removerTipoDocumento(id.longValue());
     }
 }

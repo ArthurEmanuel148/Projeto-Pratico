@@ -1120,6 +1120,64 @@ VALUES
     'turmas',
     'acao',
     32
+),
+
+-- Tipos de Documentos (menu principal)
+(
+    'tiposDocumento',
+    'Tipos de Documento',
+    'Gerenciar tipos de documento do sistema',
+    'document-outline',
+    NULL,
+    'menu',
+    7
+),
+
+-- Ações de tipos de documento
+(
+    'listarTiposDocumento',
+    'Listar Tipos de Documento',
+    'Visualizar todos os tipos de documento',
+    'list-outline',
+    'tiposDocumento',
+    'acao',
+    71
+),
+(
+    'cadastroTipoDocumento',
+    'Cadastro de Tipo de Documento',
+    'Cadastrar novo tipo de documento',
+    'add-circle-outline',
+    'tiposDocumento',
+    'acao',
+    72
+),
+(
+    'editarTipoDocumento',
+    'Editar Tipo de Documento',
+    'Editar tipo de documento existente',
+    'create-outline',
+    'tiposDocumento',
+    'acao',
+    73
+),
+(
+    'excluirTipoDocumento',
+    'Excluir Tipo de Documento',
+    'Excluir tipo de documento',
+    'trash-outline',
+    'tiposDocumento',
+    'acao',
+    74
+),
+(
+    'organizarTiposDocumento',
+    'Organizar Tipos de Documento',
+    'Visualizar documentos organizados por escopo',
+    'file-tray-stacked-outline',
+    'tiposDocumento',
+    'acao',
+    75
 );
 
 -- ===================================================================

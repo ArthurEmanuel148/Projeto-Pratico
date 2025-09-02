@@ -280,21 +280,34 @@ p, span, div, a {
     color: var(--ion-text-color) !important;
 }
 
-// Força aplicação específica em popovers
+// Força aplicação específica em popovers com fundo escuro
 ion-popover {
     .popover-content {
-        --background: var(--ion-background-color) !important;
-        --color: var(--ion-text-color) !important;
-        background-color: var(--ion-background-color) !important;
-        color: var(--ion-text-color) !important;
+        --background: var(--ion-color-dark) !important;
+        --color: white !important;
+        background-color: var(--ion-color-dark) !important;
+        color: white !important;
     }
 
     ion-list,
     ion-item {
-        --background: var(--ion-item-background) !important;
-        --color: var(--ion-text-color) !important;
-        background-color: var(--ion-item-background) !important;
-        color: var(--ion-text-color) !important;
+        --background: var(--ion-color-dark) !important;
+        --color: white !important;
+        background-color: var(--ion-color-dark) !important;
+        color: white !important;
+        
+        &:hover {
+            --background: rgba(255, 255, 255, 0.1) !important;
+            background: rgba(255, 255, 255, 0.1) !important;
+        }
+    }
+    
+    ion-label {
+        color: white !important;
+    }
+    
+    ion-icon {
+        color: rgba(255, 255, 255, 0.7) !important;
     }
 }
 
@@ -371,4 +384,172 @@ ion-modal {
 .loading-text {
     margin-top: 12px;
     color: var(--ion-color-medium);
+}
+
+/* FORÇA MENU VERMELHO - MÁXIMA PRIORIDADE */
+ion-popover.popover-desktop,
+ion-popover.popover-tablet,
+ion-popover.popover-mobile,
+ion-popover {
+    --background: #dc2626 !important;
+    background: #dc2626 !important;
+}
+
+ion-popover .popover-content,
+ion-popover .popover-wrapper,
+ion-popover ion-content,
+ion-popover ion-list,
+ion-popover ion-item {
+    --background: #dc2626 !important;
+    background: #dc2626 !important;
+    background-color: #dc2626 !important;
+    --color: white !important;
+    color: white !important;
+}
+
+ion-popover ion-label,
+ion-popover ion-icon,
+ion-popover .item-native {
+    color: white !important;
+    --color: white !important;
+}
+
+ion-popover ion-item:hover {
+    --background: rgba(255, 255, 255, 0.1) !important;
+    background: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* FORÇA O CABEÇALHO "MENU PRINCIPAL" - MÁXIMA PRIORIDADE */
+ion-popover .popover-header,
+ion-popover ion-header,
+ion-popover ion-toolbar,
+ion-popover .toolbar,
+ion-popover .header {
+    --background: #dc2626 !important;
+    background: #dc2626 !important;
+    background-color: #dc2626 !important;
+    --color: white !important;
+    color: white !important;
+}
+
+ion-popover ion-title,
+ion-popover .popover-title,
+ion-popover .menu-title,
+ion-popover h1, 
+ion-popover h2, 
+ion-popover h3, 
+ion-popover h4, 
+ion-popover h5, 
+ion-popover h6 {
+    color: white !important;
+    --color: white !important;
+    background: transparent !important;
+}
+
+/* REMOVE FUNDOS BRANCOS DOS CONTAINERS */
+ion-popover .popover-viewport,
+ion-popover .popover-content,
+ion-popover .popover-wrapper,
+ion-popover .popover-arrow::before,
+ion-popover .popover-arrow::after {
+    --background: #dc2626 !important;
+    background: #dc2626 !important;
+    background-color: #dc2626 !important;
+}
+
+/* FORÇA TODOS OS TEXTOS A SEREM BRANCOS */
+ion-popover * {
+    color: white !important;
+    --color: white !important;
+}
+
+/* FORÇA CLASSE ESPECÍFICA DO POPOVER DO MENU */
+.top-menu-popover {
+    --background: #dc2626 !important;
+    background: #dc2626 !important;
+    
+    .popover-content {
+        --background: #dc2626 !important;
+        background: #dc2626 !important;
+        background-color: #dc2626 !important;
+    }
+    
+    .popover-header,
+    .popover-title {
+        --background: #dc2626 !important;
+        background: #dc2626 !important;
+        background-color: #dc2626 !important;
+        color: white !important;
+        --color: white !important;
+    }
+    
+    ion-list,
+    ion-item {
+        --background: #dc2626 !important;
+        background: #dc2626 !important;
+        background-color: #dc2626 !important;
+        color: white !important;
+        --color: white !important;
+    }
+    
+    ion-label,
+    ion-icon {
+        color: white !important;
+        --color: white !important;
+    }
+    
+    ion-item:hover {
+        --background: rgba(255, 255, 255, 0.1) !important;
+        background: rgba(255, 255, 255, 0.1) !important;
+    }
+}
+
+/* FORÇA REMOÇÃO COMPLETA DE FUNDOS BRANCOS NOS POPOVERS */
+ion-popover.popover-desktop .popover-wrapper,
+ion-popover.popover-tablet .popover-wrapper,
+ion-popover.popover-mobile .popover-wrapper,
+.top-menu-popover .popover-wrapper,
+.top-menu-popover .popover-content,
+.top-menu-popover .popover-viewport {
+    --background: #dc2626 !important;
+    background: #dc2626 !important;
+    background-color: #dc2626 !important;
+}
+
+/* FORÇA TÍTULO "MENU PRINCIPAL" A SER BRANCO */
+.top-menu-popover .popover-header *,
+.top-menu-popover .popover-title *,
+.top-menu-popover h1,
+.top-menu-popover h2,
+.top-menu-popover h3 {
+    color: white !important;
+    background: transparent !important;
+}
+
+/* FORÇA TODOS OS ELEMENTOS DO POPOVER - SOLUÇÃO FINAL */
+.popover-desktop .popover-content,
+.popover-tablet .popover-content,
+.popover-mobile .popover-content,
+ion-popover-controller ion-popover .popover-content {
+    --background: #dc2626 !important;
+    background: #dc2626 !important;
+    background-color: #dc2626 !important;
+}
+
+/* REMOVE QUALQUER VESTÍGIO DE BRANCO NO POPOVER */
+.popover-md .popover-content,
+.popover-ios .popover-content {
+    --background: #dc2626 !important;
+    background: #dc2626 !important;
+    background-color: #dc2626 !important;
+    color: white !important;
+}
+
+/* FORÇA OVERRIDE TOTAL DOS ELEMENTOS BRANCOS */
+ion-popover::part(content),
+ion-popover::part(backdrop),
+.top-menu-popover::part(content) {
+    --background: #dc2626 !important;
+    background: #dc2626 !important;
+    background-color: #dc2626 !important;
 }

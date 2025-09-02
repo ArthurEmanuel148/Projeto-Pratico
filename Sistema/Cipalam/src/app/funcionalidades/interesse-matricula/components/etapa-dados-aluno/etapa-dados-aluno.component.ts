@@ -2,6 +2,7 @@ import { Component, EventEmitter, Input, OnInit, Output, OnDestroy } from '@angu
 import { FormGroup, AbstractControl } from '@angular/forms';
 import { AlertController, ToastController } from '@ionic/angular';
 import { Subscription } from 'rxjs';
+import { MaskService } from '../../../../core/services/mask.service';
 
 // Importe o tipo EtapaFormulario da página pai
 import { EtapaFormulario } from '../../pages/declaracao-interesse/declaracao-interesse.page';
@@ -25,7 +26,8 @@ export class EtapaDadosAlunoComponent implements OnInit, OnDestroy {
 
   constructor(
     private alertCtrl: AlertController,
-    private toastCtrl: ToastController
+    private toastCtrl: ToastController,
+    private maskService: MaskService
   ) { }
 
   ngOnInit() {
@@ -140,5 +142,14 @@ export class EtapaDadosAlunoComponent implements OnInit, OnDestroy {
   async presentToast(message: string, color: 'warning' | 'danger' = 'warning') {
     const toast = await this.toastCtrl.create({ message, duration: 3000, position: 'bottom', color });
     toast.present();
+  }
+
+  /**
+   * Aplica máscara de CPF no campo
+   */
+  onCpfInput(event: any) {
+    const value = event.target.value;
+    const maskedValue = this.maskService.applyCpfMask(value);
+    this.form.get('cpfAluno')?.setValue(maskedValue);
   }
 }

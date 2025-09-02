@@ -4,35 +4,33 @@
       <ion-label>Dados do Aluno(a)</ion-label>
     </ion-item-divider>
 
-    <ion-item>
-      <ion-label position="floating">Nome Completo do Aluno(a) <ion-text color="danger">*</ion-text></ion-label>
-      <ion-input type="text" formControlName="nomeAluno" required></ion-input>
-    </ion-item>
-    <div *ngIf="form.get('nomeAluno')?.invalid && form.get('nomeAluno')?.touched" class="error-message">
-      <small *ngIf="form.get('nomeAluno')?.errors?.['required']">Nome do aluno(a) é obrigatório.</small>
+    <div class="input-container">
+      <label class="field-label">Nome Completo do Aluno(a) <span class="required">*</span></label>
+      <ion-item>
+        <ion-input type="text" formControlName="nomeAluno" placeholder="Digite o nome completo do aluno" required></ion-input>
+      </ion-item>
     </div>
 
-    <ion-item>
-      <ion-label position="floating">Data de Nascimento do Aluno(a) <ion-text color="danger">*</ion-text></ion-label>
-      <ion-input type="date" formControlName="dataNascimentoAluno" required></ion-input>
-    </ion-item>
-    <div *ngIf="form.get('dataNascimentoAluno')?.invalid && form.get('dataNascimentoAluno')?.touched"
-      class="error-message">
-      <small *ngIf="form.get('dataNascimentoAluno')?.errors?.['required']">Data de nascimento é obrigatória.</small>
-      <small *ngIf="form.get('dataNascimentoAluno')?.errors?.['idadeInvalida']">Idade fora do permitido (6-10
-        anos).</small>
-      <small *ngIf="form.get('dataNascimentoAluno')?.errors?.['dataFutura']">Data não pode ser no futuro.</small>
-      <small *ngIf="form.get('dataNascimentoAluno')?.errors?.['dataInvalida']">Data inválida.</small>
+    <div class="input-container">
+      <label class="field-label">Data de Nascimento do Aluno(a) <span class="required">*</span></label>
+      <ion-item>
+        <ion-input type="date" formControlName="dataNascimentoAluno" required></ion-input>
+      </ion-item>
     </div>
 
-    <ion-item>
-      <ion-label position="floating">CPF do Aluno(a) (Opcional)</ion-label>
-      <ion-input type="text" formControlName="cpfAluno" placeholder="000.000.000-00"></ion-input>
-      <!-- Adicionar validador de CPF se necessário -->
-    </ion-item>
-    <!-- <div *ngIf="form.get('cpfAluno')?.invalid && form.get('cpfAluno')?.touched" class="error-message">
-      <small *ngIf="form.get('cpfAluno')?.errors?.['cpfInvalido']">CPF inválido.</small>
-    </div> -->
+    <div class="input-container">
+      <label class="field-label">Escola do Aluno(a) <span class="required">*</span></label>
+      <ion-item>
+        <ion-input type="text" formControlName="escola" placeholder="Digite o nome da escola" required></ion-input>
+      </ion-item>
+    </div>
+
+    <div class="input-container">
+      <label class="field-label">CPF do Aluno(a)</label>
+      <ion-item>
+        <ion-input type="text" formControlName="cpfAluno" placeholder="000.000.000-00" (ionInput)="onCpfInput($event)"></ion-input>
+      </ion-item>
+    </div>
   </ion-list>
 
   <ion-button expand="block" (click)="proximo()" class="ion-margin-top" [disabled]="form.invalid">

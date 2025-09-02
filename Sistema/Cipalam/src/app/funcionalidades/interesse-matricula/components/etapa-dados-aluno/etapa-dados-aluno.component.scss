@@ -1,6 +1,5 @@
 // src/app/funcionalidades/interesse-matricula/components/etapa-dados-aluno/etapa-dados-aluno.component.scss
 
-// Força aplicação do tema no componente
 :host {
     --background: var(--ion-background-color) !important;
     --color: var(--ion-text-color) !important;
@@ -8,56 +7,63 @@
     color: var(--ion-text-color) !important;
 }
 
-// Aplica tema na lista e itens
 ion-list {
-    --background: var(--ion-background-color) !important;
-    background-color: var(--ion-background-color) !important;
-}
-
-ion-item {
-    --background: var(--ion-item-background) !important;
-    --color: var(--ion-text-color) !important;
-    background-color: var(--ion-item-background) !important;
-    color: var(--ion-text-color) !important;
+    background: transparent;
 }
 
 ion-item-divider {
-    --background: var(--ion-item-background) !important;
-    --color: var(--ion-text-color) !important;
-    background-color: var(--ion-item-background) !important;
+    --background: var(--ion-color-primary);
+    --color: white;
+    font-weight: bold;
+    margin-bottom: 1rem;
+}
 
-    ion-label {
+.input-container {
+    margin-bottom: 1.5rem;
+
+    .field-label {
+        display: block;
+        color: var(--ion-color-primary);
         font-weight: 500;
-        color: var(--ion-text-color) !important;
+        margin-bottom: 0.4rem;
+        font-size: 0.9rem;
+        padding-left: 16px;
+
+        .required {
+            color: var(--ion-color-danger);
+        }
+    }
+
+    ion-item {
+        --border-width: 0 0 1px 0;
+        --border-color: var(--ion-color-medium);
+        --highlight-color-focused: var(--ion-color-primary);
+        --background: transparent;
+        transition: all 0.3s ease;
+
+        &.item-has-focus {
+            --border-color: var(--ion-color-primary);
+            --highlight-color-focused: var(--ion-color-primary);
+        }
+
+        &.item-has-value {
+            --border-color: var(--ion-color-success);
+        }
+
+        ion-input {
+            --color: var(--ion-color-dark);
+            --placeholder-color: var(--ion-color-medium);
+            font-size: 1rem;
+            padding-top: 8px;
+            padding-bottom: 8px;
+        }
     }
 }
 
-// Força aplicação do tema em labels e inputs
-ion-label {
-    color: var(--ion-text-color) !important;
-}
-
-ion-input {
-    --background: var(--ion-item-background) !important;
-    --color: var(--ion-text-color) !important;
-    --placeholder-color: var(--ion-color-medium) !important;
-}
-
-// Textos de erro
-.error-message {
-    color: var(--ion-color-danger) !important;
-    font-size: 0.8em;
-    padding-left: 16px;
-    padding-top: 2px;
-    min-height: 1.2em;
-}
-
-.error-message-placeholder {
-    // Garante espaço mesmo sem erro, para evitar pulos
-    min-height: 1.2em;
-}
-
-// Botão aplicando classe global
 ion-button {
-    margin-top: 16px;
+    --border-radius: 8px;
+    height: 48px;
+    font-weight: 600;
+    text-transform: none;
+    margin-top: 2rem;
 }

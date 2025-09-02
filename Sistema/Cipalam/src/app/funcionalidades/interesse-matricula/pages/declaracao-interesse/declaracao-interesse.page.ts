@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 import { InteresseMatriculaService } from '../../services/interesse-matricula.service';
 import { InteresseMatricula } from '../../models/interesse-matricula.interface';
 import { EnderecoService, Endereco } from '../../../../core/services/endereco.service';
+import { CustomValidators } from '../../../../core/validators/custom-validators';
 
 export type EtapaFormulario =
   | 'dadosResponsavel'
@@ -78,17 +79,17 @@ export class DeclaracaoInteressePage implements OnInit {
     return this.fb.group({
       dadosResponsavel: this.fb.group({
         nome: ['', [Validators.required, Validators.minLength(2)]],
-        cpf: ['', [Validators.required, Validators.pattern(/^(\d{3}\.\d{3}\.\d{3}-\d{2}|\d{11})$/)]],
+        cpf: ['', [Validators.required, CustomValidators.cpfValidator()]],
         dataNascimento: ['', Validators.required],
         email: ['', [Validators.required, Validators.email]],
-        telefone: ['', [Validators.required, Validators.pattern(/^\(\d{2}\)\s?\d{4,5}-\d{4}$/)]],
+        telefone: ['', [Validators.required, CustomValidators.phoneValidator()]],
       }),
       verificacaoResponsavel: this.fb.group({
         senha: ['', Validators.required]
       }),
       dadosAluno: this.fb.group({
         nome: ['', [Validators.required, Validators.minLength(2)]],
-        cpf: ['', [Validators.required, Validators.pattern(/^(\d{3}\.\d{3}\.\d{3}-\d{2}|\d{11})$/)]],
+        cpf: ['', [Validators.required, CustomValidators.cpfValidator()]],
         dataNascimento: ['', Validators.required],
         escola: ['', Validators.required],
         codigoInep: ['']
@@ -99,7 +100,7 @@ export class DeclaracaoInteressePage implements OnInit {
         integrantesRenda: this.fb.array([])
       }),
       endereco: this.fb.group({
-        cep: ['', [Validators.required, Validators.pattern(/^\d{5}-?\d{3}$/)]],
+        cep: ['', [Validators.required, CustomValidators.cepValidator()]],
         logradouro: ['', Validators.required],
         numero: ['', Validators.required],
         complemento: [''],

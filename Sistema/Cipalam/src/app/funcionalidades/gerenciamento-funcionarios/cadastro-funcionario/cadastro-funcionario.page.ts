@@ -5,6 +5,8 @@ import { ToastController, NavController, ModalController } from '@ionic/angular'
 import { Funcionario } from '../models/funcionario.interface';
 import { PermissoesFuncionarioComponent } from '../components/permissoes-funcionario/permissoes-funcionario.component';
 import { FuncionarioService } from '../../../core/services/funcionario.service';
+import { MaskService } from '../../../core/services/mask.service';
+import { CustomValidators } from '../../../core/validators/custom-validators';
 
 @Component({
   selector: 'app-cadastro-funcionario',
@@ -26,15 +28,16 @@ export class CadastroFuncionarioPage implements OnInit {
     private toastCtrl: ToastController,
     private navCtrl: NavController,
     private modalController: ModalController,
-    private funcionarioService: FuncionarioService
+    private funcionarioService: FuncionarioService,
+    private maskService: MaskService
   ) {
     this.cadastroForm = this.fb.group({
       nomeCompleto: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
-      cpf: [''], // CPF opcional para funcionários
+      cpf: ['', [CustomValidators.cpfValidator()]], // CPF opcional mas se preenchido deve ser válido
       dataNascimento: ['', Validators.required],
       dataEntradaInstituto: ['', Validators.required],
-      telefone: ['', Validators.required],
+      telefone: ['', [Validators.required, CustomValidators.phoneValidator()]],
       usuarioSistema: ['', Validators.required],
       senhaSistema: ['', Validators.required]
     });
@@ -232,5 +235,196 @@ export class CadastroFuncionarioPage implements OnInit {
       position: 'bottom'
     });
     toast.present();
+  }
+
+  /**
+   * Aplica máscara de CPF no campo
+   */
+  onCpfInput(event: any) {
+    const value = event.target.value;
+    const maskedValue = this.maskService.applyCpfMask(value);
+    this.cadastroForm.get('cpf')?.setValue(maskedValue);
+  }
+
+  /**
+   * Aplica máscara de telefone no campo
+   */
+  onPhoneInput(event: any) {
+    const value = event.target.value;
+    const maskedValue = this.maskService.applyPhoneMask(value);
+    this.cadastroForm.get('telefone')?.setValue(maskedValue);
+  }
+
+  /**
+   * Controle de placeholder para CPF
+   */
+  onCpfFocus(event: any) {
+    event.target.placeholder = '000.000.000-00';
+    // Força o label a subir imediatamente
+    const ionItem = event.target.closest('ion-item');
+    if (ionItem) {
+      ionItem.classList.add('item-has-focus');
+    }
+  }
+
+  onCpfBlur(event: any) {
+    const target = event.target;
+    const ionItem = target.closest('ion-item');
+    
+    if (!target.value) {
+      target.placeholder = '';
+      if (ionItem) {
+        ionItem.classList.remove('item-has-focus', 'item-has-value');
+      }
+    } else {
+      if (ionItem) {
+        ionItem.classList.add('item-has-value');
+        ionItem.classList.remove('item-has-focus');
+      }
+    }
+  }
+
+  /**
+   * Controle de placeholder para Telefone
+   */
+  onPhoneFocus(event: any) {
+    event.target.placeholder = '(00) 00000-0000';
+    // Força o label a subir imediatamente
+    const ionItem = event.target.closest('ion-item');
+    if (ionItem) {
+      ionItem.classList.add('item-has-focus');
+    }
+  }
+
+  onPhoneBlur(event: any) {
+    const target = event.target;
+    const ionItem = target.closest('ion-item');
+    
+    if (!target.value) {
+      target.placeholder = '';
+      if (ionItem) {
+        ionItem.classList.remove('item-has-focus', 'item-has-value');
+      }
+    } else {
+      if (ionItem) {
+        ionItem.classList.add('item-has-value');
+        ionItem.classList.remove('item-has-focus');
+      }
+    }
+  }
+
+  /**
+   * Controle de foco para campos de data
+   */
+  onDateInput(event: any) {
+    const input = event.target;
+    const maskedValue = this.maskService.applyDateMask(input.value);
+    
+    // Encontra o control do formulário
+    const controlName = input.getAttribute('formControlName');
+    if (controlName && this.cadastroForm.get(controlName)) {
+      this.cadastroForm.get(controlName)?.setValue(maskedValue, { emitEvent: false });
+    }
+  }
+
+  onDateFocus(event: any) {
+    const target = event.target;
+    // Só adiciona o placeholder quando o usuário clica
+    target.placeholder = 'DD/MM/AAAA';
+    
+    // Força o label a subir imediatamente
+    const ionItem = event.target.closest('ion-item');
+    if (ionItem) {
+      ionItem.classList.add('item-has-focus');
+    }
+  }
+
+  onDateBlur(event: any) {
+    const target = event.target;
+    const ionItem = event.target.closest('ion-item');
+    
+    if (!target.value) {
+      target.placeholder = '';
+      if (ionItem) {
+        ionItem.classList.remove('item-has-focus', 'item-has-value');
+      }
+    } else {
+      if (ionItem) {
+        ionItem.classList.add('item-has-value');
+        ionItem.classList.remove('item-has-focus');
+      }
+    }
+  }
+
+  /**
+   * Abre o seletor de data
+   */
+  async openDatePicker(fieldName: string) {
+    const input = document.createElement('input');
+    input.type = 'date';
+    input.style.visibility = 'hidden';
+    input.style.position = 'absolute';
+    
+    // Se já tem valor no campo, converte para formato date
+    const currentValue = this.cadastroForm.get(fieldName)?.value;
+    if (currentValue) {
+      // Converte DD/MM/AAAA para AAAA-MM-DD
+      const dateParts = currentValue.split('/');
+      if (dateParts.length === 3) {
+        const [day, month, year] = dateParts;
+        input.value = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+      }
+    }
+    
+    document.body.appendChild(input);
+    
+    input.addEventListener('change', (event: any) => {
+      const selectedDate = event.target.value;
+      if (selectedDate) {
+        // Converte AAAA-MM-DD para DD/MM/AAAA
+        const [year, month, day] = selectedDate.split('-');
+        const formattedDate = `${day}/${month}/${year}`;
+        this.cadastroForm.get(fieldName)?.setValue(formattedDate);
+        
+        // Força o label a ficar flutuando
+        setTimeout(() => {
+          const ionInput = document.querySelector(`ion-input[formControlName="${fieldName}"]`);
+          if (ionInput) {
+            const ionItem = ionInput.closest('ion-item');
+            if (ionItem) {
+              ionItem.classList.add('item-has-value');
+            }
+          }
+        }, 100);
+      }
+      document.body.removeChild(input);
+    });
+    
+    input.click();
+  }
+
+  /**
+   * Força o label a flutuar quando o campo recebe foco
+   */
+  onInputFocus(event: any) {
+    const ionItem = event.target.closest('ion-item');
+    if (ionItem) {
+      ionItem.classList.add('item-has-focus');
+    }
+  }
+
+  /**
+   * Remove a classe de foco quando o campo perde foco
+   */
+  onInputBlur(event: any) {
+    const ionItem = event.target.closest('ion-item');
+    if (ionItem) {
+      if (event.target.value) {
+        ionItem.classList.add('item-has-value');
+        ionItem.classList.remove('item-has-focus');
+      } else {
+        ionItem.classList.remove('item-has-focus', 'item-has-value');
+      }
+    }
   }
 }

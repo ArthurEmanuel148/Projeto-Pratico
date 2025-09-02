@@ -317,6 +317,7 @@ ion-item {
         opacity: 0;
         transform: translateY(-8px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -324,12 +325,16 @@ ion-item {
 }
 
 @keyframes shake {
-    0%, 100% {
+
+    0%,
+    100% {
         transform: translateX(0);
     }
+
     25% {
         transform: translateX(-2px);
     }
+
     75% {
         transform: translateX(2px);
     }
@@ -392,6 +397,645 @@ app-cadastro-turma,
     }
 
     ion-item.item-invalid {
+        border: 3px solid #dc2626 !important;
+        background: rgba(220, 38, 38, 0.08) !important;
+        box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.15) !important;
+        animation: shake 0.3s ease-in-out !important;
+
+        ion-label {
+            color: #dc2626 !important;
+            font-weight: 600 !important;
+        }
+    }
+}
+
+// Wrapper do formulário
+.form-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 20px; // Reduzir o gap para layout mais compacto
+}
+
+// Seções do formulário
+.form-section {
+    background: white;
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-md);
+    overflow: hidden;
+    border: 1px solid #e2e8f0;
+
+    .section-header {
+        background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+        padding: 16px 20px; // Reduzir padding
+        border-bottom: 1px solid #e2e8f0;
+        display: flex;
+        align-items: center;
+        gap: 12px; // Reduzir gap
+
+        .section-icon {
+            width: 40px; // Reduzir tamanho
+            height: 40px;
+            background: var(--gradient-primary);
+            border-radius: 10px; // Reduzir border-radius
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+
+            ion-icon {
+                font-size: 20px; // Reduzir tamanho do ícone
+                color: white;
+            }
+        }
+
+        .section-title {
+            flex: 1;
+
+            h2 {
+                font-size: 18px; // Reduzir tamanho da fonte
+                font-weight: 600;
+                margin: 0 0 3px 0; // Reduzir margem
+                color: var(--cipalam-dark);
+            }
+
+            p {
+                font-size: 13px; // Reduzir tamanho da fonte
+                color: var(--cipalam-secondary);
+                margin: 0;
+                opacity: 0.8;
+            }
+        }
+    }
+
+    .form-group {
+        padding: 20px; // Reduzir padding
+        display: flex;
+        flex-direction: column;
+        gap: 16px; // Reduzir gap
+    }
+}
+
+// Itens do formulário
+ion-item {
+    --border-radius: var(--border-radius);
+    --border-width: 2px;
+    --border-color: #e2e8f0;
+    --background: white;
+    --color: var(--cipalam-dark);
+    --highlight-color-focused: var(--cipalam-primary);
+    --padding-start: 16px;
+    --padding-end: 16px;
+    --min-height: 56px;
+    border-radius: var(--border-radius);
+    margin-bottom: 4px;
+    box-shadow: var(--shadow-sm);
+    transition: all 0.3s ease;
+
+    &:hover {
+        --border-color: #cbd5e1;
+        box-shadow: var(--shadow-md);
+    }
+
+    &.item-has-focus {
+        --border-color: var(--cipalam-primary);
+        --border-width: 2px;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    }
+
+    // Estados de validação FORÇADOS com especificidade máxima
+    ion-content.cadastro-content ion-item.item-valid,
+    .cadastro-content ion-item.item-valid,
+    app-cadastro-turma ion-item.item-valid {
+        --border-color: #059669 !important;
+        --border-width: 3px !important;
+        border: 3px solid #059669 !important;
+        background: rgba(5, 150, 105, 0.08) !important;
+        box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.15) !important;
+
+        ion-label {
+            --color: #059669 !important;
+            color: #059669 !important;
+            font-weight: 600 !important;
+        }
+    }
+
+    ion-content.cadastro-content ion-item.item-invalid,
+    .cadastro-content ion-item.item-invalid,
+    app-cadastro-turma ion-item.item-invalid {
+        --border-color: #dc2626 !important;
+        --border-width: 3px !important;
+        border: 3px solid #dc2626 !important;
+        background: rgba(220, 38, 38, 0.08) !important;
+        box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.15) !important;
+        animation: shake 0.3s ease-in-out !important;
+
+        ion-label {
+            --color: #dc2626 !important;
+            color: #dc2626 !important;
+            font-weight: 600 !important;
+        }
+    }
+
+    ion-label {
+        --color: var(--cipalam-secondary);
+        font-weight: 500;
+
+        &.label-floating {
+            transform: translateY(0);
+            font-size: 14px;
+        }
+    }
+
+    ion-input,
+    ion-textarea {
+        --color: var(--cipalam-dark);
+        --placeholder-color: #94a3b8;
+        font-size: 16px;
+    }
+
+    // Grid para horários
+    .horarios-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px; // Reduzir gap
+
+        @media (max-width: 600px) {
+            // Ajustar breakpoint
+            grid-template-columns: 1fr;
+            gap: 8px;
+        }
+    }
+
+    // Mensagens de validação
+    .validation-message {
+        margin-top: 8px;
+        padding-left: 16px;
+        animation: slideDown 0.3s ease;
+
+        ion-text {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+
+            &::before {
+                content: '⚠';
+                font-size: 12px;
+            }
+        }
+    }
+
+    // Container do checkbox
+    .checkbox-container {
+        margin-top: 8px;
+
+        .checkbox-item {
+            --background: transparent;
+            --border-style: none;
+            --padding-start: 0;
+            --padding-end: 0;
+            --min-height: auto;
+            box-shadow: none;
+            margin-bottom: 0;
+
+            ion-checkbox {
+                margin-right: 16px;
+                --size: 20px;
+                --checkbox-background-checked: var(--cipalam-success);
+                --border-color-checked: var(--cipalam-success);
+                --checkmark-color: white;
+            }
+
+            .checkbox-label {
+                flex: 1;
+
+                h3 {
+                    font-size: 16px;
+                    font-weight: 600;
+                    margin: 0 0 4px 0;
+                    color: var(--cipalam-dark);
+                }
+
+                p {
+                    font-size: 14px;
+                    color: var(--cipalam-secondary);
+                    margin: 0;
+                    line-height: 1.4;
+                }
+            }
+        }
+    }
+
+    // Ações do formulário
+    .form-actions {
+        background: white;
+        border-radius: var(--border-radius-lg);
+        padding: 24px;
+        box-shadow: var(--shadow-md);
+        border: 1px solid #e2e8f0;
+        margin-top: 24px;
+
+        .actions-container {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+            justify-content: center; // Centralizar os botões como no cadastro de funcionários
+            flex-wrap: wrap;
+
+            @media (max-width: 768px) {
+                flex-direction: column;
+
+                ion-button {
+                    width: 100%;
+                    order: 2; // Botão de cancelar por último no mobile
+
+                    &.submit-button {
+                        order: 1; // Botão principal primeiro no mobile
+                    }
+                }
+            }
+        }
+
+        .cancel-button {
+            --color: var(--cipalam-secondary);
+            --border-color: #e2e8f0;
+            --border-width: 2px;
+            --border-style: solid;
+            --border-radius: var(--border-radius);
+            --padding-top: 12px;
+            --padding-bottom: 12px;
+            --padding-start: 24px;
+            --padding-end: 24px;
+            font-weight: 600;
+            min-width: 140px;
+            height: 48px;
+
+            &:hover {
+                --color: var(--cipalam-dark);
+                --border-color: #cbd5e1;
+            }
+        }
+
+        .submit-button {
+            --background: var(--gradient-success);
+            --color: white;
+            --border-radius: var(--border-radius);
+            --padding-top: 12px;
+            --padding-bottom: 12px;
+            --padding-start: 32px;
+            --padding-end: 32px;
+            font-weight: 600;
+            min-width: 180px;
+            height: 48px;
+            box-shadow: var(--shadow-md);
+
+            &:hover:not([disabled]) {
+                --background: linear-gradient(135deg, #047857 0%, #059669 100%);
+                transform: translateY(-1px);
+                box-shadow: var(--shadow-lg);
+            }
+
+            &[disabled] {
+                --background: #94a3b8;
+                --color: #64748b;
+                opacity: 0.6;
+            }
+        }
+
+        .danger-actions {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #f1f5f9;
+            text-align: center;
+
+            ion-button {
+                --color: var(--cipalam-danger);
+                font-weight: 500;
+
+                &:hover {
+                    --background: rgba(220, 38, 38, 0.1);
+                }
+            }
+        }
+    }
+
+    // Animações
+    @keyframes slideDown {
+        from {
+            opacity: 0;
+            transform: translateY(-8px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes shake {
+
+        0%,
+        100% {
+            transform: translateX(0);
+        }
+
+        25% {
+            transform: translateX(-2px);
+        }
+
+        75% {
+            transform: translateX(2px);
+        }
+    }
+
+    // Responsividade
+    @media (max-width: 768px) {
+        .cadastro-content {
+            padding: 16px;
+
+            .form-container {
+                padding: 0 8px;
+            }
+        }
+
+        .page-header .header-content {
+            padding: 20px 16px;
+            flex-direction: column;
+            text-align: center;
+            gap: 12px;
+
+            .header-illustration {
+                margin-top: 8px;
+
+                ion-icon {
+                    font-size: 40px;
+                }
+            }
+
+            .header-info h1 {
+                font-size: 22px;
+            }
+        }
+
+        .form-section {
+            .section-header {
+                padding: 14px 16px;
+                flex-direction: column;
+                text-align: center;
+                gap: 10px;
+            }
+
+            .form-group {
+                padding: 16px;
+            }
+        }
+
+        .form-actions {
+            padding: 20px 16px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .page-header .header-content .header-info h1 {
+            font-size: 20px;
+        }
+
+        .form-section .section-header .section-title h2 {
+            font-size: 16px;
+        }
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+        }
+
+        to {
+            opacity: 1;
+        }
+    }
+
+    @keyframes slideInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    // Aplicar animações aos elementos
+    .form-section {
+        animation: slideInUp 0.4s ease-out;
+    }
+
+    .page-header {
+        animation: slideInUp 0.3s ease-out;
+    }
+
+    .form-actions {
+        animation: slideInUp 0.5s ease-out;
+    }
+
+    // =============================================================================
+    // RESPONSIVIDADE AVANÇADA
+    // =============================================================================
+
+    @media (max-width: 1200px) {
+        .form-container {
+            max-width: 800px;
+        }
+    }
+
+    @media (max-width: 992px) {
+        .form-container {
+            max-width: 700px;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .form-container {
+            max-width: 100%;
+            padding: 12px;
+        }
+
+        .form-section .form-group {
+            padding: 20px 16px;
+        }
+
+        .page-header .header-content {
+            padding: 20px 16px;
+        }
+
+        .form-actions {
+            padding: 20px 16px;
+        }
+
+        ion-item,
+        .form-item {
+            --min-height: 56px;
+            margin-bottom: 12px;
+        }
+    }
+
+    // =============================================================================
+    // ESTILOS ESPECIAIS PARA TIPOS DE CAMPO
+    // =============================================================================
+
+    // Campos de tempo com fonte melhorada
+    ion-input[type="time"] {
+        font-family: 'SF Pro Text', -apple-system, BlinkMacSystemFont, sans-serif;
+        font-weight: 500;
+    }
+
+    // Textarea com altura dinâmica
+    ion-textarea {
+        min-height: 80px;
+
+        &:focus-within {
+            min-height: 100px;
+        }
+    }
+
+    // Efeitos de foco aprimorados
+    ion-item:focus-within {
+
+        ion-input,
+        ion-textarea {
+            --placeholder-opacity: 0.5;
+        }
+    }
+
+    // Estilo especial para campos numéricos
+    ion-input[type="number"] {
+        text-align: center;
+        font-weight: 600;
+        font-size: 1.1rem;
+    }
+
+    // =============================================================================
+    // OVERRIDE PARA GARANTIR VALIDAÇÕES VISUAIS
+    // =============================================================================
+
+    // Força as validações visuais nos ion-items
+    .form-item.item-valid,
+    ion-item.item-valid {
+        border: 3px solid #4CAF50 !important;
+        background: rgba(76, 175, 80, 0.1) !important;
+        box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2) !important;
+
+        ion-label {
+            color: #4CAF50 !important;
+            font-weight: bold !important;
+        }
+    }
+
+    .form-item.item-invalid,
+    ion-item.item-invalid {
+        border: 3px solid #f04438 !important;
+        background: rgba(240, 68, 56, 0.1) !important;
+        box-shadow: 0 0 0 2px rgba(240, 68, 56, 0.2) !important;
+
+        ion-label {
+            color: #f04438 !important;
+            font-weight: bold !important;
+        }
+    }
+
+    // Estilo adicional para todos os ion-items
+    .cadastro-content ion-item {
+        border: 2px solid #E0E0E0;
+        border-radius: 10px;
+        margin-bottom: 16px;
+        transition: all 0.3s ease;
+
+        &:hover {
+            border-color: rgba(76, 175, 80, 0.5);
+            box-shadow: 0 2px 8px rgba(76, 175, 80, 0.1);
+        }
+    }
+
+    // =============================================================================
+    // ESTILO ULTRA ESPECÍFICO PARA FORÇAR APLICAÇÃO
+    // =============================================================================
+
+    // Usando seletores muito específicos para forçar a aplicação
+    app-cadastro-turma .cadastro-content .form-container .form-section .form-group ion-item {
+        border: 2px solid #E0E0E0 !important;
+        border-radius: 12px !important;
+        margin-bottom: 16px !important;
+        background: white !important;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
+    }
+
+    app-cadastro-turma .cadastro-content .form-container .form-section .form-group ion-item.item-valid {
+        border: 3px solid #4CAF50 !important;
+        background: rgba(76, 175, 80, 0.08) !important;
+        box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.25) !important;
+    }
+
+    app-cadastro-turma .cadastro-content .form-container .form-section .form-group ion-item.item-invalid {
+        border: 3px solid #f04438 !important;
+        background: rgba(240, 68, 56, 0.08) !important;
+        box-shadow: 0 0 0 3px rgba(240, 68, 56, 0.25) !important;
+    }
+
+    // Para garantir que o background da página seja aplicado
+    app-cadastro-turma ion-content {
+        --background: linear-gradient(135deg, #E8F5E8 0%, #F1F8E9 100%) !important;
+    }
+
+    app-cadastro-turma .form-container {
+        max-width: 600px !important; // Limitar largura máxima
+        width: 100% !important;
+        margin: 0 auto !important;
+        padding: 0 !important;
+    }
+
+    app-cadastro-turma .cadastro-content {
+        padding: 20px !important;
+        display: flex !important;
+        justify-content: center !important;
+        align-items: flex-start !important;
+    }
+
+    // =============================================================================
+    // FORÇA APLICAÇÃO DOS ESTILOS - ÚLTIMA PRIORIDADE
+    // =============================================================================
+
+    // Estilo base para todos os ion-items
+    app-cadastro-turma ion-item,
+    .cadastro-content ion-item {
+        border: 2px solid #e2e8f0 !important;
+        border-radius: 12px !important;
+        margin-bottom: 16px !important;
+        background: white !important;
+        box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05) !important;
+        transition: all 0.3s ease !important;
+
+        &:hover {
+            border-color: #cbd5e1 !important;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
+        }
+    }
+
+    // FORÇA VALIDAÇÃO VISUAL - MÁXIMA PRIORIDADE
+    app-cadastro-turma ion-item.item-valid,
+    .cadastro-content ion-item.item-valid {
+        border: 3px solid #059669 !important;
+        background: rgba(5, 150, 105, 0.08) !important;
+        box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.15) !important;
+
+        ion-label {
+            color: #059669 !important;
+            font-weight: 600 !important;
+        }
+    }
+
+    app-cadastro-turma ion-item.item-invalid,
+    .cadastro-content ion-item.item-invalid {
         border: 3px solid #dc2626 !important;
         background: rgba(220, 38, 38, 0.08) !important;
         box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.15) !important;

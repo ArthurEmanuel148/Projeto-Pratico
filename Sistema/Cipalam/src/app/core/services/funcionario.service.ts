@@ -35,9 +35,9 @@ export class FuncionarioService {
       pessoa: {
         nmPessoa: funcionarioData.nomeCompleto,
         email: funcionarioData.email,
-        telefone: funcionarioData.telefone,
-        cpfPessoa: funcionarioData.cpf || '', // CPF opcional para funcionários
-        dtNascPessoa: funcionarioData.dataNascimento,
+        telefone: funcionarioData.telefone, // Já deve vir limpo (sem máscara)
+        cpfPessoa: funcionarioData.cpf || '', // Já deve vir limpo (sem máscara)
+        dtNascPessoa: funcionarioData.dataNascimento, // Já deve vir no formato YYYY-MM-DD
         caminhoImagem: undefined,
         caminhoIdentidadePessoa: undefined
       },
@@ -46,7 +46,8 @@ export class FuncionarioService {
       senha: funcionarioData.senhaSistema,
       permissoes: this.convertPermissoesToArray(funcionarioData.permissoes)
     };
-
+    
+    console.log('DTO enviado para o backend:', dto);
     return this.http.post(this.apiConfig.getCadastroFuncionarioUrl(), dto);
   }
 
@@ -67,9 +68,9 @@ export class FuncionarioService {
       pessoa: {
         nmPessoa: funcionarioData.nomeCompleto,
         email: funcionarioData.email,
-        telefone: funcionarioData.telefone,
-        cpfPessoa: funcionarioData.cpf || '',
-        dtNascPessoa: funcionarioData.dataNascimento,
+        telefone: funcionarioData.telefone, // Já deve vir limpo (sem máscara)
+        cpfPessoa: funcionarioData.cpf || '', // Já deve vir limpo (sem máscara)
+        dtNascPessoa: funcionarioData.dataNascimento, // Já deve vir no formato YYYY-MM-DD
         caminhoImagem: undefined,
         caminhoIdentidadePessoa: undefined
       },

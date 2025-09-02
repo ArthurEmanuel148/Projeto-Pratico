@@ -131,4 +131,33 @@ public class InteresseMatriculaController {
             return ResponseEntity.notFound().build();
         }
     }
+
+    /**
+     * Endpoints para configuração de documentos por cota
+     */
+    @GetMapping("/configuracao-documentos")
+    public ResponseEntity<?> getConfiguracaoDocumentos() {
+        try {
+            Map<String, Object> configuracao = interesseMatriculaService.getConfiguracaoDocumentos();
+            return ResponseEntity.ok(configuracao);
+        } catch (Exception e) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("message", "Erro ao buscar configuração: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+        }
+    }
+
+    @PostMapping("/configuracao-documentos")
+    public ResponseEntity<?> salvarConfiguracaoDocumentos(@RequestBody Map<String, Object> configuracao) {
+        try {
+            Map<String, Object> resultado = interesseMatriculaService.salvarConfiguracaoDocumentos(configuracao);
+            return ResponseEntity.ok(resultado);
+        } catch (Exception e) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("message", "Erro ao salvar configuração: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+        }
+    }
 }

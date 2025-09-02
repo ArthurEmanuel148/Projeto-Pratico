@@ -1,0 +1,284 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>Gerenciamento de Documentos</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <!-- Tabs de navegação -->
+  <ion-segment [(ngModel)]="currentTab" mode="md">
+    <ion-segment-button value="aprovacao">
+      <ion-label>Aprovação</ion-label>
+      <ion-icon name="checkmark-circle"></ion-icon>
+    </ion-segment-button>
+    <ion-segment-button value="tipos">
+      <ion-label>Tipos de Documento</ion-label>
+      <ion-icon name="document-text"></ion-icon>
+    </ion-segment-button>
+    <ion-segment-button value="configuracao">
+      <ion-label>Configuração</ion-label>
+      <ion-icon name="settings"></ion-icon>
+    </ion-segment-button>
+  </ion-segment>
+
+  <!-- Tab: Aprovação de Documentos -->
+  <div *ngIf="currentTab === 'aprovacao'">
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Documentos para Aprovação</ion-card-title>
+      </ion-card-header>
+
+      <ion-card-content>
+        <!-- Filtros -->
+        <ion-grid>
+          <ion-row>
+            <ion-col size="12" size-md="4">
+              <ion-item>
+                <ion-select [(ngModel)]="filtros.status" (ionChange)="aplicarFiltros()">
+                  <ion-select-option value="todos">Todos os Status</ion-select-option>
+                  <ion-select-option value="pendente">Pendente</ion-select-option>
+                  <ion-select-option value="enviado">Enviado</ion-select-option>
+                  <ion-select-option value="aprovado">Aprovado</ion-select-option>
+                  <ion-select-option value="rejeitado">Rejeitado</ion-select-option>
+                </ion-select>
+              </ion-item>
+            </ion-col>
+            <ion-col size="12" size-md="4">
+              <ion-item>
+                <ion-select [(ngModel)]="filtros.tipoCota" (ionChange)="aplicarFiltros()">
+                  <ion-select-option value="todos">Todas as Cotas</ion-select-option>
+                  <ion-select-option value="livre">Ampla Concorrência</ion-select-option>
+                  <ion-select-option value="economica">Econômica</ion-select-option>
+                  <ion-select-option value="funcionario">Funcionário</ion-select-option>
+                </ion-select>
+              </ion-item>
+            </ion-col>
+            <ion-col size="12" size-md="4">
+              <ion-item>
+                <ion-input [(ngModel)]="filtros.busca" (ionInput)="aplicarFiltros()"
+                  placeholder="Buscar por nome, CPF ou protocolo">
+                </ion-input>
+                <ion-icon name="search" slot="start"></ion-icon>
+              </ion-item>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+
+        <!-- Lista de documentos -->
+        <div *ngIf="!isLoading">
+          <ion-card *ngFor="let documento of documentosFiltrados" class="documento-card">
+            <ion-card-header>
+              <ion-card-title>
+                <ion-icon [name]="getCategoriaIcon(documento.categoria)"></ion-icon>
+                {{ documento.nomeDocumento }}
+              </ion-card-title>
+              <ion-card-subtitle>
+                Protocolo: {{ documento.protocolo }} |
+                {{ documento.nomeResponsavel }} ({{ documento.cpfResponsavel }})
+              </ion-card-subtitle>
+            </ion-card-header>
+
+            <ion-card-content>
+              <ion-grid>
+                <ion-row>
+                  <ion-col size="12" size-md="6">
+                    <ion-chip [color]="getStatusColor(documento.status)">
+                      <ion-label>{{ documento.status | uppercase }}</ion-label>
+                    </ion-chip>
+                    <ion-chip color="medium">
+                      <ion-label>{{ documento.tipoCota | uppercase }}</ion-label>
+                    </ion-chip>
+                  </ion-col>
+                  <ion-col size="12" size-md="6" class="ion-text-end">
+                    <ion-button *ngIf="documento.status === 'enviado'" (click)="aprovarDocumento(documento)"
+                      color="success" size="small">
+                      <ion-icon name="checkmark" slot="start"></ion-icon>
+                      Aprovar
+                    </ion-button>
+                    <ion-button *ngIf="documento.status === 'enviado'" (click)="rejeitarDocumento(documento)"
+                      color="danger" size="small">
+                      <ion-icon name="close" slot="start"></ion-icon>
+                      Rejeitar
+                    </ion-button>
+                  </ion-col>
+                </ion-row>
+                <ion-row *ngIf="documento.observacoes">
+                  <ion-col size="12">
+                    <ion-text color="medium">
+                      <p><strong>Observações:</strong> {{ documento.observacoes }}</p>
+                    </ion-text>
+                  </ion-col>
+                </ion-row>
+              </ion-grid>
+            </ion-card-content>
+          </ion-card>
+
+          <ion-card *ngIf="documentosFiltrados.length === 0">
+            <ion-card-content class="ion-text-center">
+              <ion-icon name="document-outline" size="large" color="medium"></ion-icon>
+              <h3>Nenhum documento encontrado</h3>
+              <p>Não há documentos que correspondam aos filtros selecionados.</p>
+            </ion-card-content>
+          </ion-card>
+        </div>
+
+        <div *ngIf="isLoading" class="ion-text-center ion-padding">
+          <ion-spinner></ion-spinner>
+          <p>Carregando documentos...</p>
+        </div>
+      </ion-card-content>
+    </ion-card>
+  </div>
+
+  <!-- Tab: Tipos de Documento -->
+  <div *ngIf="currentTab === 'tipos'">
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Cadastro de Tipos de Documento</ion-card-title>
+      </ion-card-header>
+
+      <ion-card-content>
+        <!-- Formulário -->
+        <ion-grid>
+          <ion-row>
+            <ion-col size="12" size-md="6">
+              <ion-item>
+                <ion-input [(ngModel)]="tipoDocumentoForm.nome" placeholder="Nome do Documento" label="Nome *"
+                  labelPlacement="stacked">
+                </ion-input>
+              </ion-item>
+            </ion-col>
+            <ion-col size="12" size-md="6">
+              <ion-item>
+                <ion-select [(ngModel)]="tipoDocumentoForm.categoria" label="Categoria" labelPlacement="stacked">
+                  <ion-select-option value="responsavel">Responsável</ion-select-option>
+                  <ion-select-option value="familia">Família</ion-select-option>
+                  <ion-select-option value="aluno">Aluno</ion-select-option>
+                  <ion-select-option value="cota">Cota Específica</ion-select-option>
+                </ion-select>
+              </ion-item>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col size="12">
+              <ion-item>
+                <ion-textarea [(ngModel)]="tipoDocumentoForm.descricao" placeholder="Descrição do documento"
+                  label="Descrição" labelPlacement="stacked">
+                </ion-textarea>
+              </ion-item>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col size="12" size-md="6">
+              <ion-item>
+                <ion-checkbox [(ngModel)]="tipoDocumentoForm.obrigatorio">
+                </ion-checkbox>
+                <ion-label class="ion-margin-start">Documento Obrigatório</ion-label>
+              </ion-item>
+            </ion-col>
+            <ion-col size="12" size-md="6">
+              <ion-item>
+                <ion-checkbox [(ngModel)]="tipoDocumentoForm.ativo">
+                </ion-checkbox>
+                <ion-label class="ion-margin-start">Ativo</ion-label>
+              </ion-item>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col size="12" class="ion-text-end">
+              <ion-button (click)="salvarTipoDocumento()" color="primary">
+                <ion-icon name="save" slot="start"></ion-icon>
+                {{ tipoDocumentoForm.id ? 'Atualizar' : 'Salvar' }}
+              </ion-button>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Lista de tipos existentes -->
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Tipos de Documento Cadastrados</ion-card-title>
+      </ion-card-header>
+
+      <ion-card-content>
+        <ion-list>
+          <ion-item *ngFor="let tipo of tiposDocumento">
+            <ion-icon [name]="getCategoriaIcon(tipo.categoria)" slot="start"></ion-icon>
+            <ion-label>
+              <h3>{{ tipo.nome }}</h3>
+              <p>{{ tipo.categoria | titlecase }} - {{ tipo.descricao }}</p>
+              <div>
+                <ion-chip [color]="tipo.obrigatorio ? 'danger' : 'medium'">
+                  <ion-label>{{ tipo.obrigatorio ? 'Obrigatório' : 'Opcional' }}</ion-label>
+                </ion-chip>
+                <ion-chip [color]="tipo.ativo ? 'success' : 'medium'">
+                  <ion-label>{{ tipo.ativo ? 'Ativo' : 'Inativo' }}</ion-label>
+                </ion-chip>
+              </div>
+            </ion-label>
+            <ion-button (click)="editarTipoDocumento(tipo)" fill="clear" color="primary" slot="end">
+              <ion-icon name="create"></ion-icon>
+            </ion-button>
+            <ion-button (click)="excluirTipoDocumento(tipo)" fill="clear" color="danger" slot="end">
+              <ion-icon name="trash"></ion-icon>
+            </ion-button>
+          </ion-item>
+        </ion-list>
+      </ion-card-content>
+    </ion-card>
+  </div>
+
+  <!-- Tab: Configuração por Cota -->
+  <div *ngIf="currentTab === 'configuracao'">
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Configuração de Documentos por Cota</ion-card-title>
+        <ion-card-subtitle>Configure quais documentos são necessários para cada tipo de cota</ion-card-subtitle>
+      </ion-card-header>
+
+      <ion-card-content>
+        <!-- Tabs por tipo de cota -->
+        <ion-segment [(ngModel)]="cotaAtiva" (ionChange)="onCotaChange()">
+          <ion-segment-button value="livre">
+            <ion-label>Ampla Concorrência</ion-label>
+          </ion-segment-button>
+          <ion-segment-button value="economica">
+            <ion-label>Econômica</ion-label>
+          </ion-segment-button>
+          <ion-segment-button value="funcionario">
+            <ion-label>Funcionário</ion-label>
+          </ion-segment-button>
+        </ion-segment>
+
+        <!-- Lista de documentos com checkboxes -->
+        <div class="ion-margin-top">
+          <h5>Selecione os documentos obrigatórios para {{ getCotaNome(cotaAtiva) }}:</h5>
+
+          <ion-list>
+            <ion-item *ngFor="let tipo of tiposDocumento">
+              <ion-checkbox [(ngModel)]="configuracaoDocumentos[cotaAtiva][tipo.idTipoDocumento]"
+                (ionChange)="salvarConfiguracaoCota()" slot="start">
+              </ion-checkbox>
+              <ion-label class="ion-margin-start">
+                <h3>{{ tipo.nome }}</h3>
+                <p>{{ tipo.descricao }}</p>
+                <ion-chip [color]="tipo.obrigatorio ? 'warning' : 'medium'">
+                  <ion-label>{{ tipo.obrigatorio ? 'Obrigatório por Padrão' : 'Opcional por Padrão' }}</ion-label>
+                </ion-chip>
+              </ion-label>
+            </ion-item>
+          </ion-list>
+
+          <div class="ion-text-center ion-margin-top">
+            <ion-button color="success" (click)="salvarConfiguracaoCota()">
+              <ion-icon name="save" slot="start"></ion-icon>
+              Salvar Configuração
+            </ion-button>
+          </div>
+        </div>
+      </ion-card-content>
+    </ion-card>
+  </div>
+</ion-content>

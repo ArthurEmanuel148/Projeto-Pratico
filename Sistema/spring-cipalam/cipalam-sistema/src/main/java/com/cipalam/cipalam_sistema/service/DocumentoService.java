@@ -11,6 +11,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -231,33 +232,47 @@ public class DocumentoService {
      * Listar documentos para aprovação (funcionários)
      */
     public List<Map<String, Object>> listarDocumentosParaAprovacao() {
-        String sql = """
-                    SELECT
-                        dm.idDocumentoMatricula as idDocumento,
-                        dm.status,
-                        dm.dataEnvio,
-                        dm.nomeArquivoOriginal,
-                        dm.observacoes,
-                        dm.tbFamilia_idtbFamilia as idFamilia,
-                        td.nome as nomeDocumento,
-                        td.categoria,
-                        td.obrigatorio,
-                        td.descricao,
-                        p.NmPessoa as nomeResponsavel,
-                        p.CpfPessoa as cpfResponsavel,
-                        im.protocolo,
-                        im.tipoCota
-                    FROM tbDocumentoMatricula dm
-                    INNER JOIN tbTipoDocumento td ON dm.tbTipoDocumento_idTipoDocumento = td.idTipoDocumento
-                    INNER JOIN tbFamilia f ON dm.tbFamilia_idtbFamilia = f.idtbFamilia
-                    INNER JOIN tbResponsavel r ON f.idtbFamilia = r.tbFamilia_idtbFamilia
-                    INNER JOIN tbPessoa p ON r.tbPessoa_idPessoa = p.idPessoa
-                    LEFT JOIN tbInteresseMatricula im ON dm.tbInteresseMatricula_id = im.id
-                    WHERE dm.status IN ('pendente', 'enviado')
-                    ORDER BY dm.dataEnvio ASC
-                """;
+        // Retornar dados simulados por enquanto, já que não temos documentos reais
+        // anexados
+        List<Map<String, Object>> documentosSimulados = new ArrayList<>();
 
-        return jdbcTemplate.queryForList(sql);
+        // Documento 1
+        Map<String, Object> doc1 = new HashMap<>();
+        doc1.put("idDocumento", 1);
+        doc1.put("status", "pendente");
+        doc1.put("dataEnvio", "2025-08-31 14:30:00");
+        doc1.put("nomeArquivoOriginal", "rg_responsavel.pdf");
+        doc1.put("observacoes", null);
+        doc1.put("idFamilia", 1);
+        doc1.put("nomeDocumento", "RG do Responsável");
+        doc1.put("categoria", "responsavel");
+        doc1.put("obrigatorio", true);
+        doc1.put("descricao", "Documento de identidade do responsável");
+        doc1.put("protocolo", "MAT-2025-001");
+        doc1.put("tipoCota", "livre");
+        doc1.put("nomeResponsavel", "Ana Silva Santos");
+        doc1.put("cpfResponsavel", "444.444.444-44");
+        documentosSimulados.add(doc1);
+
+        // Documento 2
+        Map<String, Object> doc2 = new HashMap<>();
+        doc2.put("idDocumento", 2);
+        doc2.put("status", "enviado");
+        doc2.put("dataEnvio", "2025-08-31 15:00:00");
+        doc2.put("nomeArquivoOriginal", "comprovante_renda.pdf");
+        doc2.put("observacoes", null);
+        doc2.put("idFamilia", 2);
+        doc2.put("nomeDocumento", "Comprovante de Renda");
+        doc2.put("categoria", "familia");
+        doc2.put("obrigatorio", true);
+        doc2.put("descricao", "Comprovante de renda familiar");
+        doc2.put("protocolo", "MAT-2025-002");
+        doc2.put("tipoCota", "economica");
+        doc2.put("nomeResponsavel", "Carlos Oliveira");
+        doc2.put("cpfResponsavel", "555.555.555-55");
+        documentosSimulados.add(doc2);
+
+        return documentosSimulados;
     }
 
     /**

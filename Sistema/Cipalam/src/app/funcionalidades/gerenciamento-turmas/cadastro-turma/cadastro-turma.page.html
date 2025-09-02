@@ -1,0 +1,179 @@
+<ion-content [fullscreen]="true" class="cadastro-content">
+    <div class="form-container">
+        <!-- Header da página com estilo melhorado -->
+        <div class="page-header">
+            <div class="header-content">
+                <div class="header-info">
+                    <h1>{{ isEditMode ? 'Editar Turma' : 'Nova Turma' }}</h1>
+                    <p>{{ isEditMode ? 'Altere as informações da turma' : 'Preencha as informações principais da turma'
+                        }}</p>
+                </div>
+                <div class="header-illustration">
+                    <ion-icon name="school-outline"></ion-icon>
+                </div>
+            </div>
+        </div>
+
+        <!-- Formulário -->
+        <form [formGroup]="cadastroForm" class="form-wrapper">
+
+            <!-- Seção: Dados da Turma -->
+            <div class="form-section">
+                <div class="section-header">
+                    <div class="section-icon">
+                        <ion-icon name="library-outline"></ion-icon>
+                    </div>
+                    <div class="section-title">
+                        <h2>Dados da Turma</h2>
+                        <p>Informações básicas da turma</p>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <ion-item fill="outline" [class.item-valid]="isFieldValid('nomeTurma')"
+                        [class.item-invalid]="isFieldInvalid('nomeTurma')"
+                        [style.border]="isFieldValid('nomeTurma') ? '3px solid #059669' : isFieldInvalid('nomeTurma') ? '3px solid #dc2626' : '2px solid #e2e8f0'"
+                        [style.background]="isFieldValid('nomeTurma') ? 'rgba(5, 150, 105, 0.08)' : isFieldInvalid('nomeTurma') ? 'rgba(220, 38, 38, 0.08)' : 'white'"
+                        [style.border-radius]="'12px'" [style.margin-bottom]="'16px'">
+                        <ion-label position="floating"
+                            [style.color]="isFieldValid('nomeTurma') ? '#059669' : isFieldInvalid('nomeTurma') ? '#dc2626' : '#64748b'">Nome
+                            da Turma *</ion-label>
+                        <ion-input type="text" formControlName="nomeTurma" placeholder="Ex: Turma A - Fundamental I"
+                            clearInput="true">
+                        </ion-input>
+                    </ion-item>
+                    <div class="validation-message" *ngIf="isFieldInvalid('nomeTurma')">
+                        <ion-text color="danger">
+                            <small>{{ getFieldError('nomeTurma') }}</small>
+                        </ion-text>
+                    </div>
+
+                    <ion-item fill="outline" [class.item-valid]="isFieldValid('capacidadeMaxima')"
+                        [class.item-invalid]="isFieldInvalid('capacidadeMaxima')"
+                        [style.border]="isFieldValid('capacidadeMaxima') ? '3px solid #059669' : isFieldInvalid('capacidadeMaxima') ? '3px solid #dc2626' : '2px solid #e2e8f0'"
+                        [style.background]="isFieldValid('capacidadeMaxima') ? 'rgba(5, 150, 105, 0.08)' : isFieldInvalid('capacidadeMaxima') ? 'rgba(220, 38, 38, 0.08)' : 'white'"
+                        [style.border-radius]="'12px'" [style.margin-bottom]="'16px'">
+                        <ion-label position="floating"
+                            [style.color]="isFieldValid('capacidadeMaxima') ? '#059669' : isFieldInvalid('capacidadeMaxima') ? '#dc2626' : '#64748b'">Capacidade
+                            Máxima *</ion-label>
+                        <ion-input type="number" formControlName="capacidadeMaxima" placeholder="20" min="1" max="50"
+                            clearInput="true">
+                        </ion-input>
+                    </ion-item>
+                    <div class="validation-message" *ngIf="isFieldInvalid('capacidadeMaxima')">
+                        <ion-text color="danger">
+                            <small>{{ getFieldError('capacidadeMaxima') }}</small>
+                        </ion-text>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Seção: Horários -->
+            <div class="form-section">
+                <div class="section-header">
+                    <div class="section-icon">
+                        <ion-icon name="time-outline"></ion-icon>
+                    </div>
+                    <div class="section-title">
+                        <h2>Horários de Funcionamento</h2>
+                        <p>Defina os horários de início e fim das aulas</p>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="horarios-grid">
+                        <ion-item fill="outline" [class.item-valid]="isFieldValid('horarioInicio')"
+                            [class.item-invalid]="isFieldInvalid('horarioInicio')"
+                            [style.border]="isFieldValid('horarioInicio') ? '3px solid #059669' : isFieldInvalid('horarioInicio') ? '3px solid #dc2626' : '2px solid #e2e8f0'"
+                            [style.background]="isFieldValid('horarioInicio') ? 'rgba(5, 150, 105, 0.08)' : isFieldInvalid('horarioInicio') ? 'rgba(220, 38, 38, 0.08)' : 'white'"
+                            [style.border-radius]="'12px'" [style.margin-bottom]="'16px'">
+                            <ion-label position="floating"
+                                [style.color]="isFieldValid('horarioInicio') ? '#059669' : isFieldInvalid('horarioInicio') ? '#dc2626' : '#64748b'">Horário
+                                de Início *</ion-label>
+                            <ion-input type="time" formControlName="horarioInicio" placeholder="08:00">
+                            </ion-input>
+                        </ion-item>
+
+                        <ion-item fill="outline" [class.item-valid]="isFieldValid('horarioFim')"
+                            [class.item-invalid]="isFieldInvalid('horarioFim')"
+                            [style.border]="isFieldValid('horarioFim') ? '3px solid #059669' : isFieldInvalid('horarioFim') ? '3px solid #dc2626' : '2px solid #e2e8f0'"
+                            [style.background]="isFieldValid('horarioFim') ? 'rgba(5, 150, 105, 0.08)' : isFieldInvalid('horarioFim') ? 'rgba(220, 38, 38, 0.08)' : 'white'"
+                            [style.border-radius]="'12px'" [style.margin-bottom]="'16px'">
+                            <ion-label position="floating"
+                                [style.color]="isFieldValid('horarioFim') ? '#059669' : isFieldInvalid('horarioFim') ? '#dc2626' : '#64748b'">Horário
+                                de Fim *</ion-label>
+                            <ion-input type="time" formControlName="horarioFim" placeholder="12:00">
+                            </ion-input>
+                        </ion-item>
+                    </div>
+
+                    <div class="validation-message"
+                        *ngIf="isFieldInvalid('horarioInicio') || isFieldInvalid('horarioFim')">
+                        <ion-text color="danger">
+                            <small *ngIf="isFieldInvalid('horarioInicio')">{{ getFieldError('horarioInicio') }}</small>
+                            <small *ngIf="isFieldInvalid('horarioFim')">{{ getFieldError('horarioFim') }}</small>
+                        </ion-text>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Seção: Informações Adicionais -->
+            <div class="form-section">
+                <div class="section-header">
+                    <div class="section-icon">
+                        <ion-icon name="information-circle-outline"></ion-icon>
+                    </div>
+                    <div class="section-title">
+                        <h2>Informações Adicionais</h2>
+                        <p>Observações e configurações da turma</p>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <ion-item fill="outline">
+                        <ion-label position="floating">Observações</ion-label>
+                        <ion-textarea formControlName="observacoes"
+                            placeholder="Observações adicionais sobre a turma (opcional)" rows="3" autoGrow="true"
+                            clearInput="true">
+                        </ion-textarea>
+                    </ion-item>
+
+                    <!-- Status Ativo -->
+                    <div class="checkbox-container">
+                        <ion-item lines="none" class="checkbox-item">
+                            <ion-checkbox formControlName="ativo" color="success"></ion-checkbox>
+                            <ion-label class="checkbox-label">
+                                <h3>Turma Ativa</h3>
+                                <p>Marque se a turma estará disponível para matrículas</p>
+                            </ion-label>
+                        </ion-item>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Botões de Ação -->
+            <div class="form-actions">
+                <div class="actions-container">
+                    <ion-button fill="clear" color="medium" size="large" class="cancel-button" (click)="cancelar()">
+                        <ion-icon name="close-outline" slot="start"></ion-icon>
+                        Cancelar
+                    </ion-button>
+
+                    <ion-button type="button" color="success" size="large" class="submit-button"
+                        [disabled]="cadastroForm.invalid" (click)="onSubmit()">
+                        <ion-icon name="checkmark-outline" slot="start"></ion-icon>
+                        {{ isEditMode ? 'Atualizar Turma' : 'Cadastrar Turma' }}
+                    </ion-button>
+                </div>
+
+                <!-- Botão de Exclusão (apenas no modo edição) -->
+                <div *ngIf="isEditMode" class="danger-actions">
+                    <ion-button fill="clear" color="danger" size="small" (click)="confirmarExclusao()">
+                        <ion-icon name="trash-outline" slot="start"></ion-icon>
+                        Excluir Turma
+                    </ion-button>
+                </div>
+            </div>
+        </form>
+    </div>
+</ion-content>

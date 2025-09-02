@@ -182,4 +182,55 @@ export class DocumentoService {
   listarDocumentosFamilia(idFamilia: number): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/familia/${idFamilia}`);
   }
+
+  // ===== CRUD TIPOS DE DOCUMENTO =====
+
+  /**
+   * Listar todos os tipos de documento
+   */
+  listarTiposDocumento(): Observable<any[]> {
+    return this.http.get<any[]>(`${environment.apiUrl}/tipos-documento`);
+  }
+
+  /**
+   * Listar tipos de documento ativos
+   */
+  listarTiposDocumentoAtivos(): Observable<any[]> {
+    return this.http.get<any[]>(`${environment.apiUrl}/tipos-documento/ativos`);
+  }
+
+  /**
+   * Buscar tipo de documento por ID
+   */
+  buscarTipoDocumentoPorId(id: number): Observable<any> {
+    return this.http.get(`${environment.apiUrl}/tipos-documento/${id}`);
+  }
+
+  /**
+   * Criar novo tipo de documento
+   */
+  criarTipoDocumento(tipoDocumento: any): Observable<any> {
+    return this.http.post(`${environment.apiUrl}/tipos-documento`, tipoDocumento);
+  }
+
+  /**
+   * Atualizar tipo de documento
+   */
+  atualizarTipoDocumento(id: number, tipoDocumento: any): Observable<any> {
+    return this.http.put(`${environment.apiUrl}/tipos-documento/${id}`, tipoDocumento);
+  }
+
+  /**
+   * Excluir tipo de documento
+   */
+  excluirTipoDocumento(id: number): Observable<any> {
+    return this.http.delete(`${environment.apiUrl}/tipos-documento/${id}`);
+  }
+
+  /**
+   * Listar tipos de documento por cota
+   */
+  listarTiposDocumentoPorCota(tipoCota: string): Observable<any[]> {
+    return this.http.get<any[]>(`${environment.apiUrl}/tipos-documento/cota/${tipoCota}`);
+  }
 }

@@ -72,7 +72,9 @@ public class MatriculaService {
             String loginResponsavel = (String) resultado.get("loginResponsavel");
             String senhaTemporaria = (String) resultado.get("senhaTemporaria");
 
-            // TODO: Implementar criptografia de senha em processo separado
+            // Criptografar senha se necessário
+            this.criptografarSenhaSeNecessario(loginResponsavel, senhaTemporaria);
+
             return new IniciarMatriculaResponse(
                     idFamilia, idResponsavel, idAluno,
                     matricula, loginResponsavel, senhaTemporaria);
@@ -94,7 +96,7 @@ public class MatriculaService {
      * Lista todas as turmas ativas
      */
     public List<Turma> listarTodasTurmas() {
-        return turmaRepository.findByAtivoTrueOrderByPeriodoAscNomeTurmaAsc();
+        return turmaRepository.findTurmasAtivas();
     }
 
     /**

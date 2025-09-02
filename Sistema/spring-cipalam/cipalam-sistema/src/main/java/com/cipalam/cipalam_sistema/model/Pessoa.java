@@ -46,4 +46,10 @@ public class Pessoa {
 
     @Column(name = "caminhoIdentidadePessoa")
     private String caminhoIdentidadePessoa;
+
+    @Column(name = "ativo")
+    private Boolean ativo = true;
+
+    @Column(name = "dataCriacao")
+    private java.sql.Timestamp dataCriacao;
 }

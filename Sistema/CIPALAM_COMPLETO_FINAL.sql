@@ -99,26 +99,20 @@ CREATE TABLE `tbFamilia` (
 ) ENGINE = InnoDB;
 
 -- -----------------------------------------------------
--- Table `Cipalam`.`tbTurma` - ATUALIZADA COM MAIS INFORMAÇÕES
+-- Table `Cipalam`.`tbTurma` - ATUALIZADA SEM CAMPO PERÍODO E ANO LETIVO
 -- -----------------------------------------------------
 CREATE TABLE `tbTurma` (
     `idtbTurma` INT NOT NULL AUTO_INCREMENT,
     `nomeTurma` VARCHAR(50) NOT NULL,
     `capacidadeMaxima` INT DEFAULT 20,
     `capacidadeAtual` INT DEFAULT 0,
-    `anoLetivo` YEAR NOT NULL,
-    `periodo` ENUM(
-        'manha',
-        'tarde',
-        'integral',
-        'noite'
-    ) NOT NULL,
+    `horarioInicio` TIME NULL,
+    `horarioFim` TIME NULL,
     `ativo` BOOLEAN DEFAULT TRUE,
     `observacoes` TEXT NULL,
     `dataCriacao` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (`idtbTurma`),
-    INDEX `idx_ativo` (`ativo`),
-    INDEX `idx_ano_periodo` (`anoLetivo`, `periodo`)
+    INDEX `idx_ativo` (`ativo`)
 ) ENGINE = InnoDB;
 
 -- -----------------------------------------------------
@@ -210,7 +204,8 @@ CREATE TABLE `tbFuncionalidade` (
     `categoria` ENUM(
         'menu',
         'acao',
-        'configuracao'
+        'configuracao',
+        'permissao'
     ) DEFAULT 'menu',
     `ativo` BOOLEAN DEFAULT TRUE,
     `ordemExibicao` INT DEFAULT 0,
@@ -439,29 +434,33 @@ CREATE TABLE `tbHistoricoEtapaMatricula` (
 ) ENGINE = InnoDB;
 
 -- -----------------------------------------------------
--- Table `Cipalam`.`tbTipoDocumento` - ATUALIZADA COM ESCOPO
+-- Table `Cipalam`.`tbTipoDocumento` - ATUALIZADA COM ENUMS E CAMPOS ADICIONAIS
 -- -----------------------------------------------------
 CREATE TABLE `tbTipoDocumento` (
-    `idTipoDocumento` INT NOT NULL AUTO_INCREMENT,
+    `idTipoDocumento` BIGINT NOT NULL AUTO_INCREMENT,
     `nome` VARCHAR(100) NOT NULL,
     `descricao` TEXT NULL,
     `obrigatorio` BOOLEAN DEFAULT TRUE,
     `requerAssinatura` BOOLEAN DEFAULT FALSE,
     `requerAnexo` BOOLEAN DEFAULT TRUE,
     `tipoCota` ENUM(
-        'livre',
-        'economica',
-        'funcionario'
+        'LIVRE',
+        'ECONOMICA',
+        'FUNCIONARIO'
     ) NULL,
-    -- NOVO CAMPO: Define se o documento é da família ou do aluno
-    `escopo` ENUM('familia', 'aluno', 'ambos') DEFAULT 'ambos',
+    -- Define se o documento é da família ou do aluno
+    `escopo` ENUM('FAMILIA', 'ALUNO', 'AMBOS') DEFAULT 'AMBOS',
     `ativo` BOOLEAN DEFAULT TRUE,
     `ordemExibicao` INT DEFAULT 0,
     `templateDocumento` TEXT NULL,
+    `dataCriacao` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    `dataAtualizacao` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (`idTipoDocumento`),
     INDEX `idx_tipoCota` (`tipoCota`),
     INDEX `idx_escopo` (`escopo`),
-    INDEX `idx_ativo` (`ativo`)
+    INDEX `idx_ativo` (`ativo`),
+    INDEX `idx_ordem` (`ordemExibicao`),
+    UNIQUE KEY `unique_ordem_ativa` (`ordemExibicao`, `ativo`)
 ) ENGINE = InnoDB;
 
 -- -----------------------------------------------------
@@ -470,9 +469,9 @@ CREATE TABLE `tbTipoDocumento` (
 CREATE TABLE `tbConfiguracaoDocumentosCota` (
     `id` INT NOT NULL AUTO_INCREMENT,
     `tipoCota` ENUM(
-        'livre',
-        'economica',
-        'funcionario'
+        'LIVRE',
+        'ECONOMICA',
+        'FUNCIONARIO'
     ) NOT NULL,
     `documentosObrigatorios` JSON NOT NULL,
     `dataAtualizacao` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -1018,7 +1017,7 @@ VALUES
         'school-outline',
         NULL,
         'menu',
-        3
+        4
     ),
     (
         'alunos',
@@ -1027,7 +1026,7 @@ VALUES
         'people-circle-outline',
         NULL,
         'menu',
-        4
+        5
     ),
     (
         'administracao',
@@ -1038,6 +1037,17 @@ VALUES
         'menu',
         9
     ),
+
+-- Documentos (menu principal)
+(
+    'aprovacaoDocumentos',
+    'Documentos',
+    'Gerenciar e aprovar documentos enviados',
+    'document-text-outline',
+    NULL,
+    'menu',
+    6
+),
 
 -- Ações de funcionários
 (
@@ -1067,7 +1077,7 @@ VALUES
     'document-text-outline',
     'matriculas',
     'acao',
-    31
+    40
 ),
 (
     'declaracaoInteresse',
@@ -1076,7 +1086,7 @@ VALUES
     'add-circle-outline',
     'matriculas',
     'acao',
-    33
+    41
 ),
 
 -- Configurações
@@ -1087,12 +1097,45 @@ VALUES
     'settings-outline',
     'matriculas',
     'configuracao',
+    42
+),
+
+-- Menu principal de Turmas
+(
+    'turmas',
+    'Turmas',
+    'Menu de gerenciamento de turmas',
+    'library-outline',
+    NULL,
+    'menu',
+    3
+),
+
+-- Ações de turmas
+(
+    'listarTurmas',
+    'Lista de Turmas',
+    'Visualizar e gerenciar turmas cadastradas',
+    'list-outline',
+    'turmas',
+    'acao',
+    31
+),
+(
+    'cadastroTurma',
+    'Cadastro de Turma',
+    'Cadastrar nova turma',
+    'add-circle-outline',
+    'turmas',
+    'acao',
     32
 );
 
 -- ===================================================================
--- INSERÇÃO DE TIPOS DE DOCUMENTOS
+-- INSERÇÃO DE TIPOS DE DOCUMENTOS ATUALIZADOS COM ENUMS
 -- ===================================================================
+
+DELETE FROM `tbTipoDocumento`;
 
 INSERT INTO
     `tbTipoDocumento` (
@@ -1106,25 +1149,25 @@ INSERT INTO
         `ordemExibicao`
     )
 VALUES
-    -- Documentos da FAMÍLIA
+    -- Documentos da FAMÍLIA (Aplicáveis a todas as cotas)
     (
         'RG ou CNH do Responsável',
-        'Documento de identidade com foto do responsável',
+        'Documento de identidade com foto do responsável pela matrícula',
         TRUE,
         FALSE,
         TRUE,
         NULL,
-        'familia',
+        'FAMILIA',
         1
     ),
     (
         'CPF do Responsável',
-        'CPF do responsável pela matrícula',
+        'Documento CPF do responsável pela matrícula',
         TRUE,
         FALSE,
         TRUE,
         NULL,
-        'familia',
+        'FAMILIA',
         2
     ),
     (
@@ -1134,83 +1177,179 @@ VALUES
         FALSE,
         TRUE,
         NULL,
-        'familia',
+        'FAMILIA',
         3
     ),
+    (
+        'Termo de Responsabilidade',
+        'Termo de responsabilidade assinado pelo responsável',
+        TRUE,
+        TRUE,
+        FALSE,
+        NULL,
+        'FAMILIA',
+        4
+    ),
 
--- Documentos do ALUNO
-(
-    'Certidão de Nascimento do Aluno',
-    'Certidão de nascimento do aluno',
-    TRUE,
-    FALSE,
-    TRUE,
-    NULL,
-    'aluno',
-    4
-),
-(
-    'Foto 3x4 do Aluno',
-    'Foto 3x4 recente do aluno',
-    TRUE,
-    FALSE,
-    TRUE,
-    NULL,
-    'aluno',
-    5
-),
+    -- Documentos do ALUNO (Aplicáveis a todas as cotas)
+    (
+        'Certidão de Nascimento do Aluno',
+        'Certidão de nascimento original ou cópia autenticada do aluno',
+        TRUE,
+        FALSE,
+        TRUE,
+        NULL,
+        'ALUNO',
+        5
+    ),
+    (
+        'Foto 3x4 do Aluno',
+        'Foto 3x4 recente do aluno para documentação escolar',
+        TRUE,
+        FALSE,
+        TRUE,
+        NULL,
+        'ALUNO',
+        6
+    ),
+    (
+        'Cartão de Vacinação',
+        'Cartão de vacinação atualizado do aluno',
+        TRUE,
+        FALSE,
+        TRUE,
+        NULL,
+        'ALUNO',
+        7
+    ),
 
--- Documentos para cota econômica (FAMÍLIA)
-(
-    'Comprovante de Renda Familiar',
-    'Comprovante de renda familiar (últimos 3 meses)',
-    TRUE,
-    FALSE,
-    TRUE,
-    'economica',
-    'familia',
-    10
-),
-(
-    'Declaração de Dependentes',
-    'Declaração de todos os dependentes da família',
-    TRUE,
-    FALSE,
-    TRUE,
-    'economica',
-    'familia',
-    11
-),
-(
-    'Comprovante de Benefícios Sociais',
-    'Comprovante de auxílios governamentais (se houver)',
-    FALSE,
-    FALSE,
-    TRUE,
-    'economica',
-    'familia',
-    12
-),
+    -- Documentos ESPECÍFICOS para COTA ECONÔMICA (Família)
+    (
+        'Comprovante de Renda Familiar',
+        'Comprovante de renda familiar completa dos últimos 3 meses',
+        TRUE,
+        FALSE,
+        TRUE,
+        'ECONOMICA',
+        'FAMILIA',
+        10
+    ),
+    (
+        'Declaração de Dependentes',
+        'Declaração completa de todos os dependentes da família',
+        TRUE,
+        FALSE,
+        TRUE,
+        'ECONOMICA',
+        'FAMILIA',
+        11
+    ),
+    (
+        'Comprovante de Benefícios Sociais',
+        'Comprovante de auxílios governamentais ou programas sociais (se aplicável)',
+        FALSE,
+        FALSE,
+        TRUE,
+        'ECONOMICA',
+        'FAMILIA',
+        12
+    ),
+    (
+        'Declaração de Hipossuficiência',
+        'Declaração de situação socioeconômica familiar assinada',
+        TRUE,
+        TRUE,
+        FALSE,
+        'ECONOMICA',
+        'FAMILIA',
+        13
+    ),
 
--- Documentos para cota de funcionário (FAMÍLIA)
-(
-    'Comprovante de Vínculo Empregatício',
-    'Comprovante de vínculo com a instituição',
-    TRUE,
-    FALSE,
-    TRUE,
-    'funcionario',
-    'familia',
-    20
-),
-(
-    'Declaração de Parentesco',
-    'Declaração de parentesco entre funcionário e aluno',
-    TRUE,
-    FALSE,
-    TRUE,
-    'funcionario',
-    'familia',
+    -- Documentos ESPECÍFICOS para COTA DE FUNCIONÁRIO (Família)
+    (
+        'Comprovante de Vínculo Empregatício',
+        'Comprovante de vínculo empregatício com a instituição de ensino',
+        TRUE,
+        FALSE,
+        TRUE,
+        'FUNCIONARIO',
+        'FAMILIA',
+        20
+    ),
+    (
+        'Declaração de Parentesco',
+        'Declaração oficial de parentesco entre funcionário e aluno',
+        TRUE,
+        FALSE,
+        TRUE,
+        'FUNCIONARIO',
+        'FAMILIA',
+        21
+    ),
+    (
+        'Termo de Conhecimento da Legislação',
+        'Termo de ciência das regras para cota de funcionário',
+        TRUE,
+        TRUE,
+        FALSE,
+        'FUNCIONARIO',
+        'FAMILIA',
+        22
+    ),
+
+    -- Documentos OPCIONAIS/COMPLEMENTARES (Ambos)
+    (
+        'Histórico Escolar',
+        'Histórico escolar do aluno (para transferências)',
+        FALSE,
+        FALSE,
+        TRUE,
+        NULL,
+        'ALUNO',
+        30
+    ),
+    (
+        'Declaração de Escolaridade',
+        'Declaração de escolaridade anterior do aluno',
+        FALSE,
+        FALSE,
+        TRUE,
+        NULL,
+        'ALUNO',
+        31
+    ),
+    (
+        'Atestado Médico Especial',
+        'Atestado médico para necessidades especiais (se aplicável)',
+        FALSE,
+        FALSE,
+        TRUE,
+        NULL,
+        'ALUNO',
+        32
+    ),
+
+    -- Documentos para IDENTIDADE DIGITAL (Ambos)
+    (
+        'RG do Aluno',
+        'Documento de identidade do aluno (se possuir)',
+        FALSE,
+        FALSE,
+        TRUE,
+        NULL,
+        'ALUNO',
+        40
+    ),
+    (
+        'CPF do Aluno',
+        'Documento CPF do aluno (se possuir)',
+        FALSE,
+        FALSE,
+        TRUE,
+        NULL,
+        'ALUNO',
+        41
+    );
     21
 ),
 (
@@ -1347,14 +1486,14 @@ VALUES (
 -- INSERÇÃO DE DADOS BÁSICOS
 -- ===================================================================
 
--- TURMAS DISPONÍVEIS
+-- TURMAS DISPONÍVEIS - DADOS SIMPLIFICADOS SEM PERÍODO
 INSERT INTO
     `tbTurma` (
         `nomeTurma`,
         `capacidadeMaxima`,
         `capacidadeAtual`,
-        `anoLetivo`,
-        `periodo`,
+        `horarioInicio`,
+        `horarioFim`,
         `ativo`,
         `observacoes`
     )
@@ -1362,55 +1501,28 @@ VALUES (
         'Turma A - Manhã',
         25,
         0,
-        2025,
-        'manha',
+        '08:00:00',
+        '12:00:00',
         TRUE,
-        'Turma matutina - 8h às 12h'
-    ),
-    (
-        'Turma B - Manhã',
-        25,
-        0,
-        2025,
-        'manha',
-        TRUE,
-        'Turma matutina - 8h às 12h'
-    ),
-    (
-        'Turma A - Tarde',
-        25,
-        0,
-        2025,
-        'tarde',
-        TRUE,
-        'Turma vespertina - 13h às 17h'
+        'Turma matutina'
     ),
     (
         'Turma B - Tarde',
         25,
         0,
-        2025,
-        'tarde',
+        '13:00:00',
+        '17:00:00',
         TRUE,
-        'Turma vespertina - 13h às 17h'
+        'Turma vespertina'
     ),
     (
         'Turma Integral',
         20,
         0,
-        2025,
-        'integral',
+        '08:00:00',
+        '17:00:00',
         TRUE,
-        'Turma integral - 8h às 17h'
-    ),
-    (
-        'Turma Sábado',
-        30,
-        0,
-        2025,
-        'manha',
-        TRUE,
-        'Turma aos sábados - 8h às 12h'
+        'Turma integral'
     );
 
 -- Administrador do Sistema
@@ -1570,6 +1682,47 @@ VALUES (
             FROM tbFuncionalidade
             WHERE
                 chave = 'declaracaoInteresse'
+        ),
+        TRUE
+    ),
+    (
+        2,
+        (
+            SELECT idFuncionalidade
+            FROM tbFuncionalidade
+            WHERE
+                chave = 'aprovacaoDocumentos'
+        ),
+        TRUE
+    ),
+    -- Permissões para Turmas
+    (
+        2,
+        (
+            SELECT idFuncionalidade
+            FROM tbFuncionalidade
+            WHERE
+                chave = 'turmas'
+        ),
+        TRUE
+    ),
+    (
+        2,
+        (
+            SELECT idFuncionalidade
+            FROM tbFuncionalidade
+            WHERE
+                chave = 'listarTurmas'
+        ),
+        TRUE
+    ),
+    (
+        2,
+        (
+            SELECT idFuncionalidade
+            FROM tbFuncionalidade
+            WHERE
+                chave = 'cadastroTurma'
         ),
         TRUE
     );
@@ -2084,7 +2237,7 @@ ORDER BY
     tipoDocumento,
     nomeDocumento;
 
--- View para turmas disponíveis
+-- View para turmas disponíveis - CORRIGIDA SEM PERÍODO
 CREATE VIEW vw_turmas_disponiveis AS
 SELECT
     t.idtbTurma,
@@ -2094,14 +2247,18 @@ SELECT
     (
         t.capacidadeMaxima - t.capacidadeAtual
     ) as vagasDisponiveis,
-    t.anoLetivo,
-    t.periodo,
+    t.horarioInicio,
+    t.horarioFim,
     CASE
-        WHEN t.periodo = 'manha' THEN 'Manhã'
-        WHEN t.periodo = 'tarde' THEN 'Tarde'
-        WHEN t.periodo = 'integral' THEN 'Integral'
-        WHEN t.periodo = 'noite' THEN 'Noite'
-        ELSE t.periodo
+        WHEN TIME(t.horarioInicio) >= '06:00:00'
+        AND TIME(t.horarioInicio) < '12:00:00' THEN 'Manhã'
+        WHEN TIME(t.horarioInicio) >= '12:00:00'
+        AND TIME(t.horarioInicio) < '18:00:00' THEN 'Tarde'
+        WHEN TIME(t.horarioInicio) >= '18:00:00'
+        OR TIME(t.horarioInicio) < '06:00:00' THEN 'Noite'
+        WHEN TIME(t.horarioInicio) >= '06:00:00'
+        AND TIME(t.horarioFim) >= '17:00:00' THEN 'Integral'
+        ELSE 'Não definido'
     END as periodoFormatado,
     t.ativo,
     t.observacoes,
@@ -2114,7 +2271,7 @@ SELECT
 FROM tbTurma t
 WHERE
     t.ativo = TRUE
-ORDER BY t.periodo, t.nomeTurma;
+ORDER BY t.horarioInicio, t.nomeTurma;
 
 -- View para declarações completas
 CREATE VIEW vw_declaracoes_completas AS
@@ -2249,13 +2406,13 @@ WHERE
 -- VIEWS E PROCEDURES ADICIONAIS PARA INICIAR MATRÍCULA
 -- ===================================================================
 
--- View para turmas disponíveis com seleção
+-- View para turmas disponíveis com seleção - CORRIGIDA SEM PERÍODO
 CREATE VIEW vw_turmas_para_selecao AS
 SELECT
     t.idtbTurma,
     t.nomeTurma,
-    t.periodo,
-    t.anoLetivo,
+    t.horarioInicio,
+    t.horarioFim,
     t.capacidadeMaxima,
     t.capacidadeAtual,
     (
@@ -2268,11 +2425,16 @@ SELECT
     CONCAT(
         t.nomeTurma,
         ' - ',
-        CASE t.periodo
-            WHEN 'manha' THEN 'Manhã'
-            WHEN 'tarde' THEN 'Tarde'
-            WHEN 'noite' THEN 'Noite'
-            ELSE 'Integral'
+        CASE
+            WHEN TIME(t.horarioInicio) >= '06:00:00'
+            AND TIME(t.horarioInicio) < '12:00:00' THEN 'Manhã'
+            WHEN TIME(t.horarioInicio) >= '12:00:00'
+            AND TIME(t.horarioInicio) < '18:00:00' THEN 'Tarde'
+            WHEN TIME(t.horarioInicio) >= '18:00:00'
+            OR TIME(t.horarioInicio) < '06:00:00' THEN 'Noite'
+            WHEN TIME(t.horarioInicio) >= '06:00:00'
+            AND TIME(t.horarioFim) >= '17:00:00' THEN 'Integral'
+            ELSE 'Não definido'
         END,
         ' (',
         (
@@ -2283,7 +2445,7 @@ SELECT
 FROM tbTurma t
 WHERE
     t.ativo = TRUE
-ORDER BY t.periodo, t.nomeTurma;
+ORDER BY t.horarioInicio, t.nomeTurma;
 
 -- View para declarações prontas para iniciar matrícula
 CREATE VIEW vw_declaracoes_para_matricula AS
@@ -2457,54 +2619,24 @@ END$$
 DELIMITER;
 
 -- ===================================================================
--- DADOS DE TESTE ADICIONAIS PARA TURMAS
+-- DADOS DE TESTE REMOVIDOS - TURMAS SERÃO CRIADAS VIA INTERFACE
 -- ===================================================================
 
--- Inserir turmas adicionais para teste
-INSERT INTO
-    tbTurma (
-        nomeTurma,
-        capacidadeMaxima,
-        capacidadeAtual,
-        anoLetivo,
-        periodo,
-        observacoes
-    )
-VALUES (
-        'Turma B - Manhã',
-        25,
-        0,
-        2025,
-        'manha',
-        'Turma adicional do período matutino'
-    ),
-    (
-        'Turma A - Tarde',
-        20,
-        0,
-        2025,
-        'tarde',
-        'Turma do período vespertino'
-    ),
-    (
-        'Turma B - Tarde',
-        25,
-        0,
-        2025,
-        'tarde',
-        'Segunda turma do período vespertino'
-    ),
-    (
-        'Turma A - Noite',
-        30,
-        0,
-        2025,
-        'noite',
-        'Turma do período noturno'
-    )
-ON DUPLICATE KEY UPDATE
-    nomeTurma = nomeTurma;
--- Evita duplicações se já existirem
+-- NOTA: Todas as inserções de dados de teste para turmas foram removidas.
+-- As turmas agora devem ser criadas através da interface web, garantindo
+-- compatibilidade total com a estrutura da tabela tbTurma sem campos
+-- 'periodo' e 'anoLetivo'.
+
+-- Estrutura atual da tbTurma:
+-- - idtbTurma (INT, AUTO_INCREMENT, PRIMARY KEY)
+-- - nomeTurma (VARCHAR(50), NOT NULL)
+-- - capacidadeMaxima (INT, DEFAULT 20)
+-- - capacidadeAtual (INT, DEFAULT 0)
+-- - horarioInicio (TIME, NULL)
+-- - horarioFim (TIME, NULL)
+-- - ativo (BOOLEAN, DEFAULT TRUE)
+-- - observacoes (TEXT, NULL)
+-- - dataCriacao (TIMESTAMP, DEFAULT CURRENT_TIMESTAMP)
 
 -- ===================================================================
 -- CONFIGURAÇÕES FINAIS

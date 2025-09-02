@@ -6,12 +6,12 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { GerenciamentoTiposDocumentosRoutingModule } from './gerenciamento-tipos-documentos-routing.module';
 
 @NgModule({
-  imports: [
-    CommonModule,
-    IonicModule,
-    FormsModule,
-    ReactiveFormsModule,
-    GerenciamentoTiposDocumentosRoutingModule
-  ]
+    imports: [
+        CommonModule,
+        IonicModule,
+        FormsModule,
+        ReactiveFormsModule,
+        GerenciamentoTiposDocumentosRoutingModule
+    ]
 })
-export class GerenciamentoTiposDocumentosModule {}
+export class GerenciamentoTiposDocumentosModule { }

@@ -52,7 +52,7 @@ export class ListaTiposDocumentosPage implements OnInit {
 
     async carregarTiposDocumentos() {
         this.loading = true;
-        
+
         try {
             this.tiposDocumentos = await this.tipoDocumentoService.listarTiposDocumentos().toPromise() || [];
             this.aplicarFiltros();
@@ -67,16 +67,16 @@ export class ListaTiposDocumentosPage implements OnInit {
 
     aplicarFiltros() {
         this.tiposDocumentosFiltrados = this.tiposDocumentos.filter(tipo => {
-            const nomeMatch = !this.filtros.nome || 
+            const nomeMatch = !this.filtros.nome ||
                 tipo.nome.toLowerCase().includes(this.filtros.nome.toLowerCase());
-            
-            const tipoCotaMatch = !this.filtros.tipoCota || 
+
+            const tipoCotaMatch = !this.filtros.tipoCota ||
                 tipo.tipoCota === this.filtros.tipoCota;
-            
-            const escopoMatch = !this.filtros.escopo || 
+
+            const escopoMatch = !this.filtros.escopo ||
                 tipo.escopo === this.filtros.escopo;
-            
-            const ativoMatch = this.filtros.ativo === undefined || 
+
+            const ativoMatch = this.filtros.ativo === undefined ||
                 tipo.ativo === this.filtros.ativo;
 
             return nomeMatch && tipoCotaMatch && escopoMatch && ativoMatch;
@@ -98,8 +98,8 @@ export class ListaTiposDocumentosPage implements OnInit {
     }
 
     editarTipoDocumento(id: number) {
-        this.router.navigate(['/sistema/tipos-documentos/cadastro'], { 
-            queryParams: { id } 
+        this.router.navigate(['/sistema/tipos-documentos/cadastro'], {
+            queryParams: { id }
         });
     }
 
@@ -113,10 +113,10 @@ export class ListaTiposDocumentosPage implements OnInit {
             await this.tipoDocumentoService.alternarStatusTipoDocumento(
                 tipoDocumento.idTipoDocumento!
             ).toPromise();
-            
+
             tipoDocumento.ativo = !tipoDocumento.ativo;
             this.aplicarFiltros();
-            
+
             await this.apresentarToast(
                 `Tipo de documento ${tipoDocumento.ativo ? 'ativado' : 'desativado'} com sucesso!`,
                 'success'
@@ -176,12 +176,12 @@ export class ListaTiposDocumentosPage implements OnInit {
             await this.tipoDocumentoService.removerTipoDocumento(
                 tipoDocumento.idTipoDocumento!
             ).toPromise();
-            
+
             this.tiposDocumentos = this.tiposDocumentos.filter(
                 t => t.idTipoDocumento !== tipoDocumento.idTipoDocumento
             );
             this.aplicarFiltros();
-            
+
             await this.apresentarToast('Tipo de documento removido com sucesso!', 'success');
         } catch (error) {
             console.error('Erro ao remover tipo de documento:', error);

@@ -78,7 +78,7 @@ export class CadastroTipoDocumentoPage implements OnInit {
 
         try {
             const tipoDocumento = await this.tipoDocumentoService.buscarTipoDocumentoPorId(this.tipoDocumentoId).toPromise();
-            
+
             if (tipoDocumento) {
                 this.tipoDocumentoForm.patchValue({
                     nome: tipoDocumento.nome,

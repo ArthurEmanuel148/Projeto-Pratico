@@ -3,9 +3,9 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
-import { 
-    TipoDocumento, 
-    TipoDocumentoCreateRequest, 
+import {
+    TipoDocumento,
+    TipoDocumentoCreateRequest,
     TipoDocumentoUpdateRequest,
     TipoDocumentoListResponse,
     TipoCota,
@@ -398,7 +398,7 @@ export class TipoDocumentoService {
      */
     isDocumentoIdentidade(nomeDocumento: string): boolean {
         const documentosIdentidade = ['rg', 'cnh', 'identidade', 'carteira'];
-        return documentosIdentidade.some(termo => 
+        return documentosIdentidade.some(termo =>
             nomeDocumento.toLowerCase().includes(termo)
         );
     }

@@ -1191,166 +1191,167 @@ VALUES
         4
     ),
 
-    -- Documentos do ALUNO (Aplicáveis a todas as cotas)
-    (
-        'Certidão de Nascimento do Aluno',
-        'Certidão de nascimento original ou cópia autenticada do aluno',
-        TRUE,
-        FALSE,
-        TRUE,
-        NULL,
-        'ALUNO',
-        5
-    ),
-    (
-        'Foto 3x4 do Aluno',
-        'Foto 3x4 recente do aluno para documentação escolar',
-        TRUE,
-        FALSE,
-        TRUE,
-        NULL,
-        'ALUNO',
-        6
-    ),
-    (
-        'Cartão de Vacinação',
-        'Cartão de vacinação atualizado do aluno',
-        TRUE,
-        FALSE,
-        TRUE,
-        NULL,
-        'ALUNO',
-        7
-    ),
+-- Documentos do ALUNO (Aplicáveis a todas as cotas)
+(
+    'Certidão de Nascimento do Aluno',
+    'Certidão de nascimento original ou cópia autenticada do aluno',
+    TRUE,
+    FALSE,
+    TRUE,
+    NULL,
+    'ALUNO',
+    5
+),
+(
+    'Foto 3x4 do Aluno',
+    'Foto 3x4 recente do aluno para documentação escolar',
+    TRUE,
+    FALSE,
+    TRUE,
+    NULL,
+    'ALUNO',
+    6
+),
+(
+    'Cartão de Vacinação',
+    'Cartão de vacinação atualizado do aluno',
+    TRUE,
+    FALSE,
+    TRUE,
+    NULL,
+    'ALUNO',
+    7
+),
 
-    -- Documentos ESPECÍFICOS para COTA ECONÔMICA (Família)
-    (
-        'Comprovante de Renda Familiar',
-        'Comprovante de renda familiar completa dos últimos 3 meses',
-        TRUE,
-        FALSE,
-        TRUE,
-        'ECONOMICA',
-        'FAMILIA',
-        10
-    ),
-    (
-        'Declaração de Dependentes',
-        'Declaração completa de todos os dependentes da família',
-        TRUE,
-        FALSE,
-        TRUE,
-        'ECONOMICA',
-        'FAMILIA',
-        11
-    ),
-    (
-        'Comprovante de Benefícios Sociais',
-        'Comprovante de auxílios governamentais ou programas sociais (se aplicável)',
-        FALSE,
-        FALSE,
-        TRUE,
-        'ECONOMICA',
-        'FAMILIA',
-        12
-    ),
-    (
-        'Declaração de Hipossuficiência',
-        'Declaração de situação socioeconômica familiar assinada',
-        TRUE,
-        TRUE,
-        FALSE,
-        'ECONOMICA',
-        'FAMILIA',
-        13
-    ),
+-- Documentos ESPECÍFICOS para COTA ECONÔMICA (Família)
+(
+    'Comprovante de Renda Familiar',
+    'Comprovante de renda familiar completa dos últimos 3 meses',
+    TRUE,
+    FALSE,
+    TRUE,
+    'ECONOMICA',
+    'FAMILIA',
+    10
+),
+(
+    'Declaração de Dependentes',
+    'Declaração completa de todos os dependentes da família',
+    TRUE,
+    FALSE,
+    TRUE,
+    'ECONOMICA',
+    'FAMILIA',
+    11
+),
+(
+    'Comprovante de Benefícios Sociais',
+    'Comprovante de auxílios governamentais ou programas sociais (se aplicável)',
+    FALSE,
+    FALSE,
+    TRUE,
+    'ECONOMICA',
+    'FAMILIA',
+    12
+),
+(
+    'Declaração de Hipossuficiência',
+    'Declaração de situação socioeconômica familiar assinada',
+    TRUE,
+    TRUE,
+    FALSE,
+    'ECONOMICA',
+    'FAMILIA',
+    13
+),
 
-    -- Documentos ESPECÍFICOS para COTA DE FUNCIONÁRIO (Família)
-    (
-        'Comprovante de Vínculo Empregatício',
-        'Comprovante de vínculo empregatício com a instituição de ensino',
-        TRUE,
-        FALSE,
-        TRUE,
-        'FUNCIONARIO',
-        'FAMILIA',
-        20
-    ),
-    (
-        'Declaração de Parentesco',
-        'Declaração oficial de parentesco entre funcionário e aluno',
-        TRUE,
-        FALSE,
-        TRUE,
-        'FUNCIONARIO',
-        'FAMILIA',
-        21
-    ),
-    (
-        'Termo de Conhecimento da Legislação',
-        'Termo de ciência das regras para cota de funcionário',
-        TRUE,
-        TRUE,
-        FALSE,
-        'FUNCIONARIO',
-        'FAMILIA',
-        22
-    ),
-
-    -- Documentos OPCIONAIS/COMPLEMENTARES (Ambos)
-    (
-        'Histórico Escolar',
-        'Histórico escolar do aluno (para transferências)',
-        FALSE,
-        FALSE,
-        TRUE,
-        NULL,
-        'ALUNO',
-        30
-    ),
-    (
-        'Declaração de Escolaridade',
-        'Declaração de escolaridade anterior do aluno',
-        FALSE,
-        FALSE,
-        TRUE,
-        NULL,
-        'ALUNO',
-        31
-    ),
-    (
-        'Atestado Médico Especial',
-        'Atestado médico para necessidades especiais (se aplicável)',
-        FALSE,
-        FALSE,
-        TRUE,
-        NULL,
-        'ALUNO',
-        32
-    ),
-
-    -- Documentos para IDENTIDADE DIGITAL (Ambos)
-    (
-        'RG do Aluno',
-        'Documento de identidade do aluno (se possuir)',
-        FALSE,
-        FALSE,
-        TRUE,
-        NULL,
-        'ALUNO',
-        40
-    ),
-    (
-        'CPF do Aluno',
-        'Documento CPF do aluno (se possuir)',
-        FALSE,
-        FALSE,
-        TRUE,
-        NULL,
-        'ALUNO',
-        41
-    );
+-- Documentos ESPECÍFICOS para COTA DE FUNCIONÁRIO (Família)
+(
+    'Comprovante de Vínculo Empregatício',
+    'Comprovante de vínculo empregatício com a instituição de ensino',
+    TRUE,
+    FALSE,
+    TRUE,
+    'FUNCIONARIO',
+    'FAMILIA',
+    20
+),
+(
+    'Declaração de Parentesco',
+    'Declaração oficial de parentesco entre funcionário e aluno',
+    TRUE,
+    FALSE,
+    TRUE,
+    'FUNCIONARIO',
+    'FAMILIA',
     21
+),
+(
+    'Termo de Conhecimento da Legislação',
+    'Termo de ciência das regras para cota de funcionário',
+    TRUE,
+    TRUE,
+    FALSE,
+    'FUNCIONARIO',
+    'FAMILIA',
+    22
+),
+
+-- Documentos OPCIONAIS/COMPLEMENTARES (Ambos)
+(
+    'Histórico Escolar',
+    'Histórico escolar do aluno (para transferências)',
+    FALSE,
+    FALSE,
+    TRUE,
+    NULL,
+    'ALUNO',
+    30
+),
+(
+    'Declaração de Escolaridade',
+    'Declaração de escolaridade anterior do aluno',
+    FALSE,
+    FALSE,
+    TRUE,
+    NULL,
+    'ALUNO',
+    31
+),
+(
+    'Atestado Médico Especial',
+    'Atestado médico para necessidades especiais (se aplicável)',
+    FALSE,
+    FALSE,
+    TRUE,
+    NULL,
+    'ALUNO',
+    32
+),
+
+-- Documentos para IDENTIDADE DIGITAL (Ambos)
+(
+    'RG do Aluno',
+    'Documento de identidade do aluno (se possuir)',
+    FALSE,
+    FALSE,
+    TRUE,
+    NULL,
+    'ALUNO',
+    40
+),
+(
+    'CPF do Aluno',
+    'Documento CPF do aluno (se possuir)',
+    FALSE,
+    FALSE,
+    TRUE,
+    NULL,
+    'ALUNO',
+    41
+);
+
+21
 ),
 (
     'Contracheque',

@@ -88,12 +88,50 @@ export class CadastroFuncionarioPage implements OnInit {
     }
   }
 
+  /**
+   * Remove máscara do CPF deixando apenas números
+   */
+  private limparCpf(cpf: string): string {
+    return cpf ? cpf.replace(/\D/g, '') : '';
+  }
+
+  /**
+   * Remove máscara do telefone deixando apenas números
+   */
+  private limparTelefone(telefone: string): string {
+    return telefone ? telefone.replace(/\D/g, '') : '';
+  }
+
+  /**
+   * Converte data do formato DD/MM/AAAA para AAAA-MM-DD
+   */
+  private formatarDataParaBackend(data: string): string {
+    if (!data) return '';
+    
+    // Se já está no formato YYYY-MM-DD, retorna como está
+    if (data.match(/^\d{4}-\d{2}-\d{2}$/)) {
+      return data;
+    }
+    
+    // Se está no formato DD/MM/AAAA, converte
+    if (data.match(/^\d{2}\/\d{2}\/\d{4}$/)) {
+      const [dia, mes, ano] = data.split('/');
+      return `${ano}-${mes}-${dia}`;
+    }
+    
+    return '';
+  }
+
   formatarDataParaInput(data: any): string {
     if (!data) return '';
 
     // Se for string, converter para Date
     let dataObj: Date;
     if (typeof data === 'string') {
+      // Se já está no formato YYYY-MM-DD, usar diretamente
+      if (data.match(/^\d{4}-\d{2}-\d{2}$/)) {
+        return data;
+      }
       dataObj = new Date(data);
     } else if (data instanceof Date) {
       dataObj = data;
@@ -155,8 +193,13 @@ export class CadastroFuncionarioPage implements OnInit {
   }
 
   async finalizarCadastroCompleto(dadosBasicos: any, permissoes: Record<string, boolean>) {
+    // Limpar e formatar dados antes de enviar
     const funcionarioParaSalvar = {
       ...dadosBasicos,
+      cpf: this.limparCpf(dadosBasicos.cpf || ''),
+      telefone: this.limparTelefone(dadosBasicos.telefone),
+      dataNascimento: this.formatarDataParaBackend(dadosBasicos.dataNascimento),
+      dataEntradaInstituto: this.formatarDataParaBackend(dadosBasicos.dataEntradaInstituto),
       permissoes: permissoes,
       tipo: 'funcionario'
     };
@@ -189,8 +232,13 @@ export class CadastroFuncionarioPage implements OnInit {
   }
 
   async finalizarEdicaoCompleta(dadosBasicos: any, permissoes: Record<string, boolean>) {
+    // Limpar e formatar dados antes de enviar
     const funcionarioParaAtualizar = {
       ...dadosBasicos,
+      cpf: this.limparCpf(dadosBasicos.cpf || ''),
+      telefone: this.limparTelefone(dadosBasicos.telefone),
+      dataNascimento: this.formatarDataParaBackend(dadosBasicos.dataNascimento),
+      dataEntradaInstituto: this.formatarDataParaBackend(dadosBasicos.dataEntradaInstituto),
       permissoes: permissoes,
       tipo: 'funcionario',
       id: this.funcionarioId

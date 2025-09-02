@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
+import { environment } from '../../../../environments/environment';
 import {
   Turma,
   TurmaDisponivel,
@@ -13,7 +14,7 @@ import {
   providedIn: 'root'
 })
 export class MatriculaService {
-  private readonly API_BASE_URL = 'http://localhost:8080/api/matricula';
+  private readonly API_BASE_URL = `${environment.apiUrl}/matricula`;
 
   private httpOptions = {
     headers: new HttpHeaders({
@@ -61,7 +62,7 @@ export class MatriculaService {
     };
 
     // Criar declaração de interesse primeiro
-    return this.http.post<any>(`http://localhost:8080/api/interesse-matricula`, declaracaoInteresse, this.httpOptions)
+    return this.http.post<any>(`${environment.apiUrl}/interesse-matricula`, declaracaoInteresse, this.httpOptions)
       .pipe(
         switchMap(declaracaoResponse => {
           console.log('Declaração criada:', declaracaoResponse);

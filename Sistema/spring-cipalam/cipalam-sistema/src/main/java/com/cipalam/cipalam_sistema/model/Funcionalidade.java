@@ -38,6 +38,6 @@ public class Funcionalidade {
     private Integer ordemExibicao = 0;
 
     public enum CategoriaFuncionalidade {
-        menu, acao, configuracao
+        menu, acao, configuracao, permissao
     }
 }

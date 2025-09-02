@@ -4,50 +4,39 @@
       <ion-label>Dados do Responsável</ion-label>
     </ion-item-divider>
 
-    <ion-item>
-      <ion-label position="floating">Nome Completo <ion-text color="danger">*</ion-text></ion-label>
-      <ion-input type="text" formControlName="nomeResponsavel" required></ion-input>
-    </ion-item>
-    <div *ngIf="form.get('nomeResponsavel')?.invalid && form.get('nomeResponsavel')?.touched" class="error-message">
-      <small *ngIf="form.get('nomeResponsavel')?.errors?.['required']">Nome do responsável é obrigatório.</small>
+    <div class="input-container">
+      <label class="field-label">Nome Completo <span class="required">*</span></label>
+      <ion-item>
+        <ion-input type="text" formControlName="nomeResponsavel" placeholder="Digite o nome completo" required></ion-input>
+      </ion-item>
     </div>
 
-    <ion-item>
-      <ion-label position="floating">CPF <ion-text color="danger">*</ion-text></ion-label>
-      <ion-input type="text" formControlName="cpfResponsavel" required placeholder="000.000.000-00"></ion-input>
-      <!-- TODO: Adicionar máscara e validador de CPF -->
-    </ion-item>
-    <div *ngIf="form.get('cpfResponsavel')?.invalid && form.get('cpfResponsavel')?.touched" class="error-message">
-      <small *ngIf="form.get('cpfResponsavel')?.errors?.['required']">CPF é obrigatório.</small>
-      <!-- <small *ngIf="form.get('cpfResponsavel')?.errors?.['cpfInvalido']">CPF inválido.</small> -->
+    <div class="input-container">
+      <label class="field-label">CPF <span class="required">*</span></label>
+      <ion-item>
+        <ion-input type="text" formControlName="cpfResponsavel" required placeholder="000.000.000-00" (ionInput)="onCpfInput($event)"></ion-input>
+      </ion-item>
     </div>
 
-    <ion-item>
-      <ion-label position="floating">Data de Nascimento <ion-text color="danger">*</ion-text></ion-label>
-      <ion-input type="date" formControlName="dataNascimentoResponsavel" required></ion-input>
-    </ion-item>
-    <div *ngIf="form.get('dataNascimentoResponsavel')?.invalid && form.get('dataNascimentoResponsavel')?.touched"
-      class="error-message">
-      <small>Data de nascimento é obrigatória.</small>
+    <div class="input-container">
+      <label class="field-label">Data de Nascimento <span class="required">*</span></label>
+      <ion-item>
+        <ion-input type="date" formControlName="dataNascimentoResponsavel" required></ion-input>
+      </ion-item>
     </div>
 
-    <ion-item>
-      <ion-label position="floating">E-mail <ion-text color="danger">*</ion-text></ion-label>
-      <ion-input type="email" formControlName="emailResponsavel" required email></ion-input>
-    </ion-item>
-    <div *ngIf="form.get('emailResponsavel')?.invalid && form.get('emailResponsavel')?.touched" class="error-message">
-      <small *ngIf="form.get('emailResponsavel')?.errors?.['required']">E-mail é obrigatório.</small>
-      <small *ngIf="form.get('emailResponsavel')?.errors?.['email']">Formato de e-mail inválido.</small>
+    <div class="input-container">
+      <label class="field-label">E-mail <span class="required">*</span></label>
+      <ion-item>
+        <ion-input type="email" formControlName="emailResponsavel" placeholder="Digite o e-mail" required email></ion-input>
+      </ion-item>
     </div>
 
-    <ion-item>
-      <ion-label position="floating">Telefone <ion-text color="danger">*</ion-text></ion-label>
-      <ion-input type="tel" formControlName="telefoneResponsavel" required placeholder="(XX) XXXXX-XXXX"></ion-input>
-      <!-- TODO: Adicionar máscara de telefone -->
-    </ion-item>
-    <div *ngIf="form.get('telefoneResponsavel')?.invalid && form.get('telefoneResponsavel')?.touched"
-      class="error-message">
-      <small>Telefone é obrigatório.</small>
+    <div class="input-container">
+      <label class="field-label">Telefone <span class="required">*</span></label>
+      <ion-item>
+        <ion-input type="tel" formControlName="telefoneResponsavel" required placeholder="(00) 00000-0000" (ionInput)="onPhoneInput($event)"></ion-input>
+      </ion-item>
     </div>
   </ion-list>
 

@@ -12,13 +12,7 @@
 ion-list {
     --background: var(--ion-background-color) !important;
     background-color: var(--ion-background-color) !important;
-}
-
-ion-item {
-    --background: var(--ion-item-background) !important;
-    --color: var(--ion-text-color) !important;
-    background-color: var(--ion-item-background) !important;
-    color: var(--ion-text-color) !important;
+    padding: 1rem;
 }
 
 ion-item-divider {
@@ -32,25 +26,77 @@ ion-item-divider {
     }
 }
 
-// Força aplicação do tema em labels e inputs
-ion-label {
-    color: var(--ion-text-color) !important;
+// Container para cada input com seu label (igual ao cadastro de funcionário)
+.input-container {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 1.5rem;
 }
 
+// Labels externos (em cima dos campos)
+.field-label {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--ion-color-primary);
+    margin-bottom: 0.4rem;
+    padding-left: 16px;
+    
+    .required {
+        color: var(--ion-color-danger);
+        font-weight: 600;
+        margin-left: 2px;
+    }
+}
+
+// Itens sem labels internos
+ion-item {
+    --background: var(--ion-item-background) !important;
+    --color: var(--ion-text-color) !important;
+    --border-color: var(--ion-color-medium) !important;
+    --border-width: 0 0 1px 0;
+    --highlight-color-focused: var(--ion-color-primary);
+    background-color: transparent !important;
+    color: var(--ion-text-color) !important;
+    
+    transition: all 0.3s ease;
+    margin-bottom: 0;
+    
+    // Estado de foco (comportamento da declaração)
+    &.item-has-focus {
+        --border-color: var(--ion-color-primary) !important;
+        --highlight-color-focused: var(--ion-color-primary) !important;
+    }
+    
+    // Estado com valor preenchido (comportamento da declaração)
+    &.item-has-value {
+        --border-color: var(--ion-color-success) !important;
+    }
+
+    ion-input {
+        --color: var(--ion-color-dark);
+        --placeholder-color: var(--ion-color-medium);
+        font-size: 1rem;
+        padding-top: 8px;
+        padding-bottom: 8px;
+    }
+}
+
+// Quando o campo tem foco, o label também fica azul
+.input-container:has(ion-item.item-has-focus) .field-label {
+    color: var(--ion-color-primary);
+}
+
+// Quando o campo tem valor, o label fica verde
+.input-container:has(ion-item.item-has-value) .field-label {
+    color: var(--ion-color-success);
+}
+
+// Força aplicação do tema em inputs
 ion-input,
 ion-select {
     --background: var(--ion-item-background) !important;
     --color: var(--ion-text-color) !important;
     --placeholder-color: var(--ion-color-medium) !important;
-}
-
-// Textos de erro
-.error-message {
-    color: var(--ion-color-danger) !important;
-    font-size: 0.8em;
-    padding-left: 16px; // Alinha com o texto do input
-    padding-top: 2px;
-    min-height: 1.2em; // Para evitar que o layout pule muito
 }
 
 // Botões aplicando classes globais

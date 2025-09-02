@@ -4,8 +4,9 @@
     <div class="page-header">
       <div class="header-content">
         <div class="header-info">
-          <h1>Novo Colaborador</h1>
-          <p>Preencha as informações principais do funcionário</p>
+          <h1>{{ isEditMode ? 'Editar Colaborador' : 'Novo Colaborador' }}</h1>
+          <p>{{ isEditMode ? 'Altere as informações do funcionário' : 'Preencha as informações principais do
+            funcionário' }}</p>
         </div>
         <div class="header-illustration">
           <ion-icon name="people-outline"></ion-icon>
@@ -29,29 +30,24 @@
         </div>
 
         <div class="form-group">
-          <ion-item fill="outline">
-            <ion-label position="floating">Nome Completo *</ion-label>
-            <ion-input type="text" formControlName="nomeCompleto" placeholder="Digite o nome completo"
-              clearInput="true">
-            </ion-input>
+          <ion-item>
+            <ion-label position="floating">Nome Completo <ion-text color="danger">*</ion-text></ion-label>
+            <ion-input type="text" formControlName="nomeCompleto" (ionFocus)="onInputFocus($event)" (ionBlur)="onInputBlur($event)" required></ion-input>
           </ion-item>
 
-          <ion-item fill="outline">
-            <ion-label position="floating">E-mail *</ion-label>
-            <ion-input type="email" formControlName="email" placeholder="Digite o e-mail" clearInput="true">
-            </ion-input>
+          <ion-item>
+            <ion-label position="floating">E-mail <ion-text color="danger">*</ion-text></ion-label>
+            <ion-input type="email" formControlName="email" (ionFocus)="onInputFocus($event)" (ionBlur)="onInputBlur($event)" required></ion-input>
           </ion-item>
 
-          <ion-item fill="outline">
-            <ion-label position="floating">CPF (opcional)</ion-label>
-            <ion-input type="text" formControlName="cpf" placeholder="000.000.000-00" clearInput="true">
-            </ion-input>
+          <ion-item>
+            <ion-label position="floating">CPF</ion-label>
+            <ion-input type="text" formControlName="cpf" (ionInput)="onCpfInput($event)" (ionFocus)="onCpfFocus($event)" (ionBlur)="onCpfBlur($event)"></ion-input>
           </ion-item>
 
-          <ion-item fill="outline">
-            <ion-label position="floating">Telefone *</ion-label>
-            <ion-input type="tel" formControlName="telefone" placeholder="(00) 00000-0000" clearInput="true">
-            </ion-input>
+          <ion-item>
+            <ion-label position="floating">Telefone <ion-text color="danger">*</ion-text></ion-label>
+            <ion-input type="tel" formControlName="telefone" (ionInput)="onPhoneInput($event)" (ionFocus)="onPhoneFocus($event)" (ionBlur)="onPhoneBlur($event)" required></ion-input>
           </ion-item>
         </div>
       </div>
@@ -69,18 +65,20 @@
         </div>
 
         <div class="form-group">
-          <div>
-            <ion-label position="floating">Data de Nascimento *</ion-label>
-            <ion-datetime formControlName="dataNascimento" presentation="date" displayFormat="DD/MM/YYYY"
-              placeholder="Selecione a data">
-            </ion-datetime>
-          </div>
-          <div>
-            <ion-label position="floating">Data de Entrada *</ion-label>
-            <ion-datetime formControlName="dataEntradaInstituto" presentation="date" displayFormat="DD/MM/YYYY"
-              placeholder="Selecione a data">
-            </ion-datetime>
-          </div>
+          <ion-item>
+            <ion-label position="floating">Data de Nascimento <ion-text color="danger">*</ion-text></ion-label>
+            <ion-input type="text" formControlName="dataNascimento" (ionInput)="onDateInput($event)" (ionFocus)="onDateFocus($event)" (ionBlur)="onDateBlur($event)" required></ion-input>
+            <ion-button fill="clear" slot="end" (click)="openDatePicker('dataNascimento')">
+              <ion-icon name="calendar-outline"></ion-icon>
+            </ion-button>
+          </ion-item>
+          <ion-item>
+            <ion-label position="floating">Data de Entrada <ion-text color="danger">*</ion-text></ion-label>
+            <ion-input type="text" formControlName="dataEntradaInstituto" (ionInput)="onDateInput($event)" (ionFocus)="onDateFocus($event)" (ionBlur)="onDateBlur($event)" required></ion-input>
+            <ion-button fill="clear" slot="end" (click)="openDatePicker('dataEntradaInstituto')">
+              <ion-icon name="calendar-outline"></ion-icon>
+            </ion-button>
+          </ion-item>
         </div>
       </div>
 
@@ -97,30 +95,15 @@
         </div>
 
         <div class="form-group">
-          <ion-item fill="outline">
-            <ion-label position="floating">Usuário do Sistema *</ion-label>
-            <ion-input type="text" formControlName="usuarioSistema" placeholder="Digite o nome de usuário"
-              clearInput="true">
-            </ion-input>
+          <ion-item>
+            <ion-label position="floating">Usuário do Sistema <ion-text color="danger">*</ion-text></ion-label>
+            <ion-input type="text" formControlName="usuarioSistema" required (ionFocus)="onInputFocus($event)" (ionBlur)="onInputBlur($event)"></ion-input>
           </ion-item>
-          <div class="validation-message"
-            *ngIf="cadastroForm.get('usuarioSistema')?.invalid && cadastroForm.get('usuarioSistema')?.touched">
-            <ion-text color="danger">
-              <small>Nome de usuário é obrigatório e deve ser único</small>
-            </ion-text>
-          </div>
 
-          <ion-item fill="outline">
-            <ion-label position="floating">Senha do Sistema *</ion-label>
-            <ion-input type="password" formControlName="senhaSistema" placeholder="Digite a senha" clearInput="true">
-            </ion-input>
+          <ion-item>
+            <ion-label position="floating">Senha do Sistema <ion-text color="danger">*</ion-text></ion-label>
+            <ion-input type="password" formControlName="senhaSistema" required (ionFocus)="onInputFocus($event)" (ionBlur)="onInputBlur($event)"></ion-input>
           </ion-item>
-          <div class="validation-message"
-            *ngIf="cadastroForm.get('senhaSistema')?.invalid && cadastroForm.get('senhaSistema')?.touched">
-            <ion-text color="danger">
-              <small>Senha é obrigatória</small>
-            </ion-text>
-          </div>
         </div>
       </div>
 
@@ -134,7 +117,7 @@
         <ion-button type="button" color="primary" size="large" [disabled]="cadastroForm.invalid"
           (click)="prosseguirParaPermissoes()">
           <ion-icon name="checkmark-outline" slot="start"></ion-icon>
-          Prosseguir
+          {{ isEditMode ? 'Atualizar Permissões' : 'Prosseguir' }}
         </ion-button>
       </div>
     </form>

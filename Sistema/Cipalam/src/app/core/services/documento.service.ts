@@ -40,16 +40,23 @@ export class DocumentoService {
   }
 
   /**
-   * Remover documento
+   * Remover documento anexado
    */
   removerDocumento(idDocumento: number, idResponsavel: number): Observable<any> {
-    return this.http.delete(`${this.apiUrl}/remover/${idDocumento}`, {
-      params: { idResponsavel: idResponsavel.toString() }
+    return this.http.delete(`${this.apiUrl}/remover/${idDocumento}?idResponsavel=${idResponsavel}`);
+  }
+
+  /**
+   * Download de documento anexado
+   */
+  downloadDocumento(idDocumento: number): Observable<Blob> {
+    return this.http.get(`${this.apiUrl}/download/${idDocumento}`, {
+      responseType: 'blob'
     });
   }
 
   /**
-   * Obter configuração de documentos por cota
+   * Obter configuração de documentos por tipo de cota
    */
   obterConfiguracaoDocumentos(tipoCota: string): Observable<any> {
     return this.http.get(`${this.apiUrl}/configuracao/${tipoCota}`);
@@ -127,5 +134,103 @@ export class DocumentoService {
       default:
         return 'medium';
     }
+  }
+
+  /**
+   * Listar documentos para aprovação (funcionários)
+   */
+  listarDocumentosParaAprovacao(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/para-aprovacao`);
+  }
+
+  /**
+   * Aprovar documento (funcionários)
+   */
+  aprovarDocumento(idDocumento: number, idFuncionario: number, observacoes?: string): Observable<any> {
+    const params: any = {
+      idFuncionario: idFuncionario.toString()
+    };
+    if (observacoes) {
+      params.observacoes = observacoes;
+    }
+
+    return this.http.post(`${this.apiUrl}/aprovar/${idDocumento}`, null, {
+      params: params
+    });
+  }
+
+  /**
+   * Rejeitar documento (funcionários)
+   */
+  rejeitarDocumento(idDocumento: number, idFuncionario: number, motivoRejeicao: string, observacoes?: string): Observable<any> {
+    const params: any = {
+      idFuncionario: idFuncionario.toString(),
+      motivoRejeicao: motivoRejeicao
+    };
+    if (observacoes) {
+      params.observacoes = observacoes;
+    }
+
+    return this.http.post(`${this.apiUrl}/rejeitar/${idDocumento}`, null, {
+      params: params
+    });
+  }
+
+  /**
+   * Listar documentos de uma família específica (funcionários)
+   */
+  listarDocumentosFamilia(idFamilia: number): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/familia/${idFamilia}`);
+  }
+
+  // ===== CRUD TIPOS DE DOCUMENTO =====
+
+  /**
+   * Listar todos os tipos de documento
+   */
+  listarTiposDocumento(): Observable<any[]> {
+    return this.http.get<any[]>(`${environment.apiUrl}/tipos-documento`);
+  }
+
+  /**
+   * Listar tipos de documento ativos
+   */
+  listarTiposDocumentoAtivos(): Observable<any[]> {
+    return this.http.get<any[]>(`${environment.apiUrl}/tipos-documento/ativos`);
+  }
+
+  /**
+   * Buscar tipo de documento por ID
+   */
+  buscarTipoDocumentoPorId(id: number): Observable<any> {
+    return this.http.get(`${environment.apiUrl}/tipos-documento/${id}`);
+  }
+
+  /**
+   * Criar novo tipo de documento
+   */
+  criarTipoDocumento(tipoDocumento: any): Observable<any> {
+    return this.http.post(`${environment.apiUrl}/tipos-documento`, tipoDocumento);
+  }
+
+  /**
+   * Atualizar tipo de documento
+   */
+  atualizarTipoDocumento(id: number, tipoDocumento: any): Observable<any> {
+    return this.http.put(`${environment.apiUrl}/tipos-documento/${id}`, tipoDocumento);
+  }
+
+  /**
+   * Excluir tipo de documento
+   */
+  excluirTipoDocumento(id: number): Observable<any> {
+    return this.http.delete(`${environment.apiUrl}/tipos-documento/${id}`);
+  }
+
+  /**
+   * Listar tipos de documento por cota
+   */
+  listarTiposDocumentoPorCota(tipoCota: string): Observable<any[]> {
+    return this.http.get<any[]>(`${environment.apiUrl}/tipos-documento/cota/${tipoCota}`);
   }
 }

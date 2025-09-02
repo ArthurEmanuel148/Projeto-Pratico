@@ -2,11 +2,12 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
+import { environment } from '../../../../environments/environment';
 import { DocumentoMatricula } from '../models/documento-matricula.interface';
 
 @Injectable({ providedIn: 'root' })
 export class MatriculaService {
-  private apiUrl = 'http://localhost:8080/api/matricula';
+  private apiUrl = `${environment.apiUrl}/matricula`;
 
   // Simulação de configuração de documentos por cota como fallback
   private configuracaoDocumentos: Record<string, DocumentoMatricula[]> = {

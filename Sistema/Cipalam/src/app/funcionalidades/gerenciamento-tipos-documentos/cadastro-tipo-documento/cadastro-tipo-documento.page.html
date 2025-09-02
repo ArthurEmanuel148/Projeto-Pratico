@@ -1,0 +1,213 @@
+<ion-header [translucent]="true">
+    <ion-toolbar>
+        <ion-buttons slot="start">
+            <ion-back-button defaultHref="/sistema/tipos-documentos"></ion-back-button>
+        </ion-buttons>
+        <ion-title>{{ isEditMode ? 'Editar' : 'Novo' }} Tipo de Documento</ion-title>
+    </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="cadastro-content">
+
+    <div class="form-container">
+        <!-- Header da página -->
+        <div class="page-header">
+            <div class="header-content">
+                <div class="header-info">
+                    <h1>{{ isEditMode ? 'Editar Tipo de Documento' : 'Novo Tipo de Documento' }}</h1>
+                    <p>{{ isEditMode ? 'Atualize as informações do tipo de documento' : 'Configure um novo tipo de
+                        documento para o sistema' }}</p>
+                </div>
+                <div class="header-illustration">
+                    <ion-icon name="document-text-outline"></ion-icon>
+                </div>
+            </div>
+        </div>
+
+        <form [formGroup]="tipoDocumentoForm" (ngSubmit)="salvarTipoDocumento()">
+
+            <!-- Seção: Informações Básicas -->
+            <div class="form-section">
+                <div class="section-header">
+                    <div class="section-icon">
+                        <ion-icon name="information-circle-outline"></ion-icon>
+                    </div>
+                    <div class="section-title">
+                        <h2>Informações Básicas</h2>
+                        <p>Dados fundamentais do tipo de documento</p>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <ion-item [class.item-valid]="isFieldValid('nome')" [class.item-invalid]="isFieldInvalid('nome')">
+                        <ion-label position="stacked">Nome do Documento *</ion-label>
+                        <ion-input formControlName="nome" placeholder="Ex: Certidão de Nascimento" maxlength="100">
+                        </ion-input>
+                    </ion-item>
+                    <div *ngIf="isFieldInvalid('nome')" class="validation-message">
+                        <ion-text color="danger">
+                            {{ getFieldError('nome') }}
+                        </ion-text>
+                    </div>
+
+                    <ion-item>
+                        <ion-label position="stacked">Descrição</ion-label>
+                        <ion-textarea formControlName="descricao"
+                            placeholder="Descreva o propósito e quando este documento é necessário" rows="3"
+                            maxlength="500">
+                        </ion-textarea>
+                    </ion-item>
+
+                    <ion-item [class.item-valid]="isFieldValid('ordemExibicao')"
+                        [class.item-invalid]="isFieldInvalid('ordemExibicao')">
+                        <ion-label position="stacked">Ordem de Exibição *</ion-label>
+                        <ion-input formControlName="ordemExibicao" type="number" placeholder="1" min="1" max="999">
+                        </ion-input>
+                    </ion-item>
+                    <div *ngIf="isFieldInvalid('ordemExibicao')" class="validation-message">
+                        <ion-text color="danger">
+                            {{ getFieldError('ordemExibicao') }}
+                        </ion-text>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Seção: Configurações -->
+            <div class="form-section">
+                <div class="section-header">
+                    <div class="section-icon">
+                        <ion-icon name="settings-outline"></ion-icon>
+                    </div>
+                    <div class="section-title">
+                        <h2>Configurações</h2>
+                        <p>Defina como o documento deve se comportar no sistema</p>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <ion-item [class.item-valid]="isFieldValid('tipoCota')"
+                        [class.item-invalid]="isFieldInvalid('tipoCota')">
+                        <ion-label position="stacked">Tipo de Cota</ion-label>
+                        <ion-select formControlName="tipoCota" (ionChange)="onTipoCotaChange()"
+                            placeholder="Selecione o tipo de cota">
+                            <ion-select-option *ngFor="let tipo of tiposCota" [value]="tipo.value">
+                                {{ tipo.label }}
+                            </ion-select-option>
+                        </ion-select>
+                    </ion-item>
+
+                    <ion-item [class.item-valid]="isFieldValid('escopo')"
+                        [class.item-invalid]="isFieldInvalid('escopo')">
+                        <ion-label position="stacked">Escopo do Documento *</ion-label>
+                        <ion-select formControlName="escopo" (ionChange)="onEscopoChange()"
+                            placeholder="Selecione o escopo">
+                            <ion-select-option *ngFor="let escopo of escopos" [value]="escopo.value">
+                                {{ escopo.label }}
+                            </ion-select-option>
+                        </ion-select>
+                    </ion-item>
+                    <div *ngIf="isFieldInvalid('escopo')" class="validation-message">
+                        <ion-text color="danger">
+                            {{ getFieldError('escopo') }}
+                        </ion-text>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Seção: Opções Avançadas -->
+            <div class="form-section">
+                <div class="section-header">
+                    <div class="section-icon">
+                        <ion-icon name="options-outline"></ion-icon>
+                    </div>
+                    <div class="section-title">
+                        <h2>Opções Avançadas</h2>
+                        <p>Configurações específicas do documento</p>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="toggle-group">
+                        <ion-item>
+                            <ion-checkbox formControlName="obrigatorio" slot="start"></ion-checkbox>
+                            <ion-label>
+                                <h3>Documento Obrigatório</h3>
+                                <p>Este documento é obrigatório para o processo de matrícula</p>
+                            </ion-label>
+                        </ion-item>
+
+                        <ion-item>
+                            <ion-checkbox formControlName="requerAssinatura" slot="start"></ion-checkbox>
+                            <ion-label>
+                                <h3>Requer Assinatura Digital</h3>
+                                <p>O documento deve ser assinado digitalmente</p>
+                            </ion-label>
+                        </ion-item>
+
+                        <ion-item>
+                            <ion-checkbox formControlName="requerAnexo" slot="start"></ion-checkbox>
+                            <ion-label>
+                                <h3>Requer Anexo</h3>
+                                <p>É necessário anexar arquivo para este documento</p>
+                            </ion-label>
+                        </ion-item>
+
+                        <ion-item>
+                            <ion-checkbox formControlName="ativo" slot="start"></ion-checkbox>
+                            <ion-label>
+                                <h3>Documento Ativo</h3>
+                                <p>O documento está disponível para uso no sistema</p>
+                            </ion-label>
+                        </ion-item>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Seção: Template (Opcional) -->
+            <div class="form-section">
+                <div class="section-header">
+                    <div class="section-icon">
+                        <ion-icon name="document-outline"></ion-icon>
+                    </div>
+                    <div class="section-title">
+                        <h2>Template do Documento</h2>
+                        <p>Modelo ou instruções para preenchimento (opcional)</p>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <ion-item>
+                        <ion-label position="stacked">Template/Instruções</ion-label>
+                        <ion-textarea formControlName="templateDocumento"
+                            placeholder="Digite instruções ou template para este documento..." rows="5">
+                        </ion-textarea>
+                    </ion-item>
+
+                    <div class="template-actions" *ngIf="tipoDocumentoForm.get('templateDocumento')?.value">
+                        <ion-button fill="outline" size="small" (click)="previewTemplate()">
+                            <ion-icon name="eye-outline" slot="start"></ion-icon>
+                            Visualizar
+                        </ion-button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ações do formulário -->
+            <div class="form-actions">
+                <div class="actions-container">
+                    <ion-button type="button" fill="outline" class="cancel-button" (click)="confirmarCancelamento()">
+                        <ion-icon name="close-outline" slot="start"></ion-icon>
+                        Cancelar
+                    </ion-button>
+
+                    <ion-button type="submit" class="submit-button" [disabled]="tipoDocumentoForm.invalid || loading">
+                        <ion-icon name="checkmark-outline" slot="start"></ion-icon>
+                        {{ isEditMode ? 'Atualizar' : 'Criar' }} Tipo de Documento
+                    </ion-button>
+                </div>
+            </div>
+
+        </form>
+    </div>
+
+</ion-content>

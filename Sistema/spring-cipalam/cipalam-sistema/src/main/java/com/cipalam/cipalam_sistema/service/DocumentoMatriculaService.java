@@ -156,7 +156,7 @@ public class DocumentoMatriculaService {
      * Busca template de documento por tipo
      */
     public byte[] buscarTemplatePorTipo(Long tipoDocumentoId) {
-        Optional<TipoDocumento> tipoOpt = tipoDocumentoRepository.findById(tipoDocumentoId.intValue());
+        Optional<TipoDocumento> tipoOpt = tipoDocumentoRepository.findById(tipoDocumentoId);
 
         if (tipoOpt.isPresent() && tipoOpt.get().getTemplateDocumento() != null) {
             return tipoOpt.get().getTemplateDocumento().getBytes();
@@ -246,7 +246,7 @@ public class DocumentoMatriculaService {
     public Map<String, Object> getTemplateDocumento(Long tipoDocumentoId) {
         log.info("Buscando template do documento tipo {}", tipoDocumentoId);
 
-        Optional<TipoDocumento> tipoOpt = tipoDocumentoRepository.findById(tipoDocumentoId.intValue());
+        Optional<TipoDocumento> tipoOpt = tipoDocumentoRepository.findById(tipoDocumentoId);
 
         String template;
         if (tipoOpt.isPresent() && tipoOpt.get().getTemplateDocumento() != null) {

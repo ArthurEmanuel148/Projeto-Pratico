@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 @Entity
 @Table(name = "tbTurma")
@@ -29,12 +30,11 @@ public class Turma {
     @Column(name = "capacidadeAtual")
     private Integer capacidadeAtual = 0;
 
-    @Column(name = "anoLetivo", nullable = false)
-    private Integer anoLetivo;
+    @Column(name = "horarioInicio")
+    private LocalTime horarioInicio;
 
-    @Column(name = "periodo", nullable = false)
-    @Convert(converter = com.cipalam.cipalam_sistema.converter.PeriodoEnumConverter.class)
-    private PeriodoEnum periodo;
+    @Column(name = "horarioFim")
+    private LocalTime horarioFim;
 
     @Column(name = "ativo")
     private Boolean ativo = true;
@@ -59,53 +59,30 @@ public class Turma {
         return getVagasDisponiveis() > 0;
     }
 
-    // Getter para período formatado
+    // Getter para período formatado baseado no horário
     public String getPeriodoFormatado() {
-        if (periodo == null)
-            return "";
+        if (horarioInicio == null)
+            return "Não definido";
 
-        return switch (periodo) {
-            case MANHA -> "Manhã";
-            case TARDE -> "Tarde";
-            case INTEGRAL -> "Integral";
-            case NOITE -> "Noite";
-        };
+        int hora = horarioInicio.getHour();
+
+        if (hora >= 6 && hora < 12) {
+            return "Manhã";
+        } else if (hora >= 12 && hora < 18) {
+            return "Tarde";
+        } else if (hora >= 18 || hora < 6) {
+            return "Noite";
+        } else if (hora >= 6 && horarioFim != null && horarioFim.getHour() >= 17) {
+            return "Integral";
+        }
+
+        return "Não definido";
     }
 
     @PrePersist
     protected void onCreate() {
         if (dataCriacao == null) {
             dataCriacao = LocalDateTime.now();
-        }
-        if (anoLetivo == null) {
-            anoLetivo = LocalDateTime.now().getYear();
-        }
-    }
-
-    public enum PeriodoEnum {
-        MANHA("manha"),
-        TARDE("tarde"),
-        INTEGRAL("integral"),
-        NOITE("noite");
-
-        private final String valor;
-
-        PeriodoEnum(String valor) {
-            this.valor = valor;
-        }
-
-        public String getValor() {
-            return valor;
-        }
-
-        // Método para buscar enum pelo valor do banco
-        public static PeriodoEnum fromValor(String valor) {
-            for (PeriodoEnum periodo : values()) {
-                if (periodo.valor.equals(valor)) {
-                    return periodo;
-                }
-            }
-            throw new IllegalArgumentException("Período inválido: " + valor);
         }
     }
 }

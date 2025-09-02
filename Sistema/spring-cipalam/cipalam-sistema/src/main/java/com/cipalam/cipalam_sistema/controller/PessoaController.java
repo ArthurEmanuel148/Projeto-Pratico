@@ -97,6 +97,30 @@ public class PessoaController {
         }
     }
 
+    @GetMapping("/funcionarios/{id}")
+    public ResponseEntity<?> buscarFuncionarioPorId(@PathVariable Integer id) {
+        try {
+            Map<String, Object> funcionario = pessoaService.buscarFuncionarioPorId(id);
+            if (funcionario != null) {
+                return ResponseEntity.ok(funcionario);
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
+    @PutMapping("/funcionarios/{id}")
+    public ResponseEntity<?> atualizarFuncionario(@PathVariable Integer id, @RequestBody PessoaCadastroDTO dto) {
+        try {
+            Map<String, Object> funcionarioAtualizado = pessoaService.atualizarFuncionario(id, dto);
+            return ResponseEntity.ok(funcionarioAtualizado);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+
     @PostMapping("/corrigir-funcionarios")
     public ResponseEntity<?> corrigirFuncionarios() {
         try {

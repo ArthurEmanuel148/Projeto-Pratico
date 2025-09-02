@@ -1,14 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService, LoginResponse } from '../../../core/services/auth.service';
-import { IonicModule } from "@ionic/angular";
-import { FuncionarioService } from 'src/app/core/services/funcionario.service';
+import { FuncionarioService } from '../../../core/services/funcionario.service';
 
 @Component({
     selector: 'app-lista-funcionarios',
     templateUrl: './lista-funcionarios.page.html',
     styleUrls: ['./lista-funcionarios.page.scss'],
-    standalone: false,
+    standalone: false
 })
 export class ListaFuncionariosPage implements OnInit {
     funcionarios: any[] = [];
@@ -37,17 +36,28 @@ export class ListaFuncionariosPage implements OnInit {
         this.loading = true;
 
         this.funcionarioService.listarFuncionarios().subscribe({
-            next: (dados) => {
-                this.funcionarios = dados;
+            next: (funcionarios) => {
+                console.log('Funcionários recebidos do backend:', funcionarios);
+                this.funcionarios = funcionarios.map(func => ({
+                    id: func.id || func.idPessoa,
+                    nome: func.nome || func.nmPessoa,
+                    email: func.email || 'Email não informado',
+                    usuario: func.usuario || 'Usuário não informado'
+                }));
+                console.log('Funcionários mapeados:', this.funcionarios);
                 this.loading = false;
             },
-            error: (erro) => {
-                console.error('Erro ao carregar funcionários:', erro);
+            error: (error) => {
+                console.error('Erro ao carregar funcionários:', error);
+                // Fallback para dados simulados em caso de erro
+                this.funcionarios = [
+                    { id: 1, nome: 'João Silva', email: 'joao@exemplo.com', usuario: 'joao.silva' },
+                    { id: 2, nome: 'Maria Santos', email: 'maria@exemplo.com', usuario: 'maria.santos' }
+                ];
                 this.loading = false;
             }
         });
     }
-
 
     navegarParaCadastro() {
         this.router.navigate(['/sistema/funcionarios/cadastro']);

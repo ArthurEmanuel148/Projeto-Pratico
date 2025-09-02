@@ -35,9 +35,9 @@ export class FuncionarioService {
       pessoa: {
         nmPessoa: funcionarioData.nomeCompleto,
         email: funcionarioData.email,
-        telefone: funcionarioData.telefone,
-        cpfPessoa: funcionarioData.cpf || '', // CPF opcional para funcionários
-        dtNascPessoa: funcionarioData.dataNascimento,
+        telefone: funcionarioData.telefone, // Já deve vir limpo (sem máscara)
+        cpfPessoa: funcionarioData.cpf || '', // Já deve vir limpo (sem máscara)
+        dtNascPessoa: funcionarioData.dataNascimento, // Já deve vir no formato YYYY-MM-DD
         caminhoImagem: undefined,
         caminhoIdentidadePessoa: undefined
       },
@@ -46,12 +46,42 @@ export class FuncionarioService {
       senha: funcionarioData.senhaSistema,
       permissoes: this.convertPermissoesToArray(funcionarioData.permissoes)
     };
-
+    
+    console.log('DTO enviado para o backend:', dto);
     return this.http.post(this.apiConfig.getCadastroFuncionarioUrl(), dto);
   }
 
   listarFuncionarios(): Observable<any[]> {
-    return this.http.get<any[]>(this.apiConfig.getListarFuncionarioUrl());
+    return this.http.get<any[]>(this.apiConfig.getListarFuncionariosUrl());
+  }
+
+  buscarFuncionarioPorId(id: number): Observable<any> {
+    return this.http.get<any>(`${this.apiConfig.getListarFuncionariosUrl()}/${id}`);
+  }
+
+  atualizarFuncionario(id: number, funcionarioData: any): Observable<any> {
+    console.log('Enviando dados para atualização:', funcionarioData);
+    console.log('URL do endpoint:', `${this.apiConfig.getListarFuncionariosUrl()}/${id}`);
+
+    // Transformar os dados do formulário para o formato esperado pelo backend
+    const dto: FuncionarioCadastroDTO = {
+      pessoa: {
+        nmPessoa: funcionarioData.nomeCompleto,
+        email: funcionarioData.email,
+        telefone: funcionarioData.telefone, // Já deve vir limpo (sem máscara)
+        cpfPessoa: funcionarioData.cpf || '', // Já deve vir limpo (sem máscara)
+        dtNascPessoa: funcionarioData.dataNascimento, // Já deve vir no formato YYYY-MM-DD
+        caminhoImagem: undefined,
+        caminhoIdentidadePessoa: undefined
+      },
+      tipo: 'funcionario',
+      usuario: funcionarioData.usuarioSistema,
+      senha: funcionarioData.senhaSistema || '', // Senha pode estar vazia em edição
+      permissoes: this.convertPermissoesToArray(funcionarioData.permissoes)
+    };
+
+    console.log('DTO formatado para backend:', dto);
+    return this.http.put(`${this.apiConfig.getListarFuncionariosUrl()}/${id}`, dto);
   }
 
   private convertPermissoesToArray(permissoes: Record<string, boolean>): string[] {

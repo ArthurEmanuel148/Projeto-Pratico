@@ -21,32 +21,25 @@
           </ion-button>
         </ion-item>
 
-        <ion-item>
-          <ion-label position="floating">Nome Completo <ion-text color="danger">*</ion-text></ion-label>
-          <ion-input type="text" formControlName="nome" required></ion-input>
-        </ion-item>
-        <div *ngIf="integranteCtrl.get('nome')?.invalid && integranteCtrl.get('nome')?.touched" class="error-message">
-          <small>Nome do integrante é obrigatório.</small>
+        <div class="input-container">
+          <label class="field-label">Nome Completo <span class="required">*</span></label>
+          <ion-item>
+            <ion-input type="text" formControlName="nome" placeholder="Digite o nome completo" required></ion-input>
+          </ion-item>
         </div>
 
-        <ion-item>
-          <ion-label position="floating">Parentesco com o Responsável <ion-text color="danger">*</ion-text></ion-label>
-          <ion-input type="text" formControlName="parentesco" required></ion-input>
-        </ion-item>
-        <div *ngIf="integranteCtrl.get('parentesco')?.invalid && integranteCtrl.get('parentesco')?.touched"
-          class="error-message">
-          <small>Parentesco é obrigatório.</small>
+        <div class="input-container">
+          <label class="field-label">Parentesco com o Responsável <span class="required">*</span></label>
+          <ion-item>
+            <ion-input type="text" formControlName="parentesco" placeholder="Ex: Pai, Mãe, Filho(a)" required></ion-input>
+          </ion-item>
         </div>
 
-        <ion-item>
-          <ion-label position="floating">Renda Mensal Bruta (R$) <ion-text color="danger">*</ion-text></ion-label>
-          <ion-input type="number" inputmode="decimal" formControlName="rendaMensal" required min="0"
-            placeholder="Ex: 1200.00"></ion-input>
-        </ion-item>
-        <div *ngIf="integranteCtrl.get('rendaMensal')?.invalid && integranteCtrl.get('rendaMensal')?.touched"
-          class="error-message">
-          <small *ngIf="integranteCtrl.get('rendaMensal')?.errors?.['required']">Renda é obrigatória.</small>
-          <small *ngIf="integranteCtrl.get('rendaMensal')?.errors?.['min']">Renda não pode ser negativa.</small>
+        <div class="input-container">
+          <label class="field-label">Renda Mensal Bruta (R$) <span class="required">*</span></label>
+          <ion-item>
+            <ion-input type="number" inputmode="decimal" formControlName="rendaMensal" required min="0" placeholder="Ex: 1200.00"></ion-input>
+          </ion-item>
         </div>
         <!-- Futuro campo para upload de comprovante de renda do integrante -->
         <!--
@@ -77,14 +70,12 @@
     <ion-item-divider color="light" class="ion-margin-top">
       <ion-label>Endereço Residencial</ion-label>
     </ion-item-divider>
-    <ion-item>
-      <ion-label position="floating">Endereço Completo (Rua, Nº, Bairro, Cidade, CEP) <ion-text
-          color="danger">*</ion-text></ion-label>
-      <ion-textarea formControlName="enderecoCompleto" required rows="3"
-        placeholder="Digite o endereço completo..."></ion-textarea>
-    </ion-item>
-    <div *ngIf="form.get('enderecoCompleto')?.invalid && form.get('enderecoCompleto')?.touched" class="error-message">
-      <small>Endereço completo é obrigatório.</small>
+    
+    <div class="input-container">
+      <label class="field-label">Endereço Completo (Rua, Nº, Bairro, Cidade, CEP) <span class="required">*</span></label>
+      <ion-item>
+        <ion-textarea formControlName="enderecoCompleto" required rows="3" placeholder="Digite o endereço completo..."></ion-textarea>
+      </ion-item>
     </div>
     <!-- Futuro campo para upload de comprovante de endereço -->
     <!--
@@ -104,4 +95,3 @@
     Próximo <ion-icon slot="end" name="arrow-forward-outline"></ion-icon>
   </ion-button>
 </div>
-<div class="error-message-placeholder"></div>

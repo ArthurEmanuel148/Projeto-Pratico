@@ -26,6 +26,14 @@ const routes: Routes = [
   {
     path: 'declaracao-publica', // Rota completamente pública para declaração
     loadChildren: () => import('./funcionalidades/interesse-matricula/pages/declaracao-interesse/declaracao-interesse.module').then(m => m.DeclaracaoInteressePageModule)
+  },
+  {
+    path: 'upload-documentos',
+    loadComponent: () => import('./funcionalidades/upload-documentos/upload-documentos.page').then(m => m.UploadDocumentosPage)
+  },
+  {
+    path: 'aprovacao-documentos',
+    loadComponent: () => import('./funcionalidades/aprovacao-documentos/aprovacao-documentos.page').then(m => m.AprovacaoDocumentosPage)
   }
 ];
 

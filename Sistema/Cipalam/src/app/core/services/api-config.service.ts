@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ApiConfigService {
-  private readonly baseUrl = 'http://localhost:8080/api';
+  private readonly baseUrl = environment.apiUrl;
 
   constructor() { }
 
@@ -32,7 +33,7 @@ export class ApiConfigService {
     return `${this.baseUrl}/pessoa/cadastro-funcionario`;
   }
 
-  getListarFuncionarioUrl(): string {
+  getListarFuncionariosUrl(): string {
     return `${this.baseUrl}/pessoa/funcionarios`;
   }
 

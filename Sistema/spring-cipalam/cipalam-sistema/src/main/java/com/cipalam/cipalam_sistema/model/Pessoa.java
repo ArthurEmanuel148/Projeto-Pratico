@@ -38,6 +38,18 @@ public class Pessoa {
     @Column(name = "telefone")
     private String telefone;
 
+    @Column(name = "renda")
+    private Double renda;
+
+    @Column(name = "profissao")
+    private String profissao;
+
     @Column(name = "caminhoIdentidadePessoa")
     private String caminhoIdentidadePessoa;
+
+    @Column(name = "ativo")
+    private Boolean ativo = true;
+
+    @Column(name = "dataCriacao")
+    private java.sql.Timestamp dataCriacao;
 }

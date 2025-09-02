@@ -12,11 +12,12 @@ import { FuncionalidadesSistemaService } from '../../../../core/services/funcion
 })
 export class PermissoesFuncionarioComponent implements OnInit {
   @Input() nomeFuncionario: string = '';
-  // @Input() permissoesAtuais: Record<string, boolean> = {}; // Descomente e use para modo de edição
+  @Input() permissoesOriginais: Record<string, boolean> = {};
+  @Input() isEditMode: boolean = false;
 
   permissoesForm!: FormGroup;
   todasAsFuncionalidades: FuncionalidadeSistema[] = [];
-  isLoading: boolean = true; // Para mostrar um spinner enquanto carrega
+  isLoading: boolean = true;
 
   constructor(
     private modalCtrl: ModalController,
@@ -44,17 +45,21 @@ export class PermissoesFuncionarioComponent implements OnInit {
         this.modalCtrl.dismiss(null, 'error');
       }
     );
-  
+
   }
 
   criarFormularioDePermissoes() {
     const group: { [key: string]: FormControl } = {};
     if (this.todasAsFuncionalidades && this.todasAsFuncionalidades.length > 0) {
       this.todasAsFuncionalidades.forEach(func => {
-        // No futuro, para edição, você usaria:
-        // const valorInicial = (this.permissoesAtuais && typeof this.permissoesAtuais[func.chave] !== 'undefined') ? this.permissoesAtuais[func.chave] : true;
-        // Por enquanto, todas vêm ativadas por padrão para cadastro
-        group[func.chave] = this.fb.control(true);
+        let valorInicial = true; // Padrão para novo cadastro
+
+        // Se estiver em modo de edição, usar as permissões originais
+        if (this.isEditMode && this.permissoesOriginais && typeof this.permissoesOriginais[func.chave] !== 'undefined') {
+          valorInicial = this.permissoesOriginais[func.chave];
+        }
+
+        group[func.chave] = this.fb.control(valorInicial);
       });
     }
     this.permissoesForm = this.fb.group(group);

@@ -492,7 +492,7 @@ CREATE TABLE `tbConfiguracaoDocumentosCota` (
 CREATE TABLE `tbDocumentoMatricula` (
     `idDocumentoMatricula` INT NOT NULL AUTO_INCREMENT,
     `tbInteresseMatricula_id` INT NULL, -- NULL quando matrícula já foi iniciada
-    `tbTipoDocumento_idTipoDocumento` INT NOT NULL,
+    `tbTipoDocumento_idTipoDocumento` BIGINT NOT NULL,
     -- NOVOS CAMPOS: Para documentos específicos após matrícula iniciada
     `tbFamilia_idtbFamilia` INT NULL,
     `tbAluno_idPessoa` INT NULL, -- Para documentos específicos do aluno
@@ -534,7 +534,7 @@ CREATE TABLE `tbDocumentoMatricula` (
         `funcionarioAprovador_idPessoa`
     ) REFERENCES `tbPessoa` (`idPessoa`) ON DELETE SET NULL ON UPDATE NO ACTION,
     CONSTRAINT `fk_tbDocumentoMatricula_familia` FOREIGN KEY (`tbFamilia_idtbFamilia`) REFERENCES `tbFamilia` (`idtbFamilia`) ON DELETE CASCADE ON UPDATE NO ACTION,
-    CONSTRAINT `fk_tbDocumentoMatricula_aluno` FOREIGN KEY (`tbAluno_idPessoa`) REFERENCES `tbAluno` (`tbPessoa_idPessoa`) ON DELETE CASCADE ON UPDATE NO ACTION
+    CONSTRAINT `fk_tbDocumentoMatricula_aluno` FOREIGN KEY (`tbAluno_idPessoa`) REFERENCES `tbPessoa` (`idPessoa`) ON DELETE CASCADE ON UPDATE NO ACTION
 ) ENGINE = InnoDB;
 
 -- -----------------------------------------------------
@@ -1137,7 +1137,7 @@ VALUES
 
 DELETE FROM `tbTipoDocumento`;
 
-INSERT INTO
+REPLACE INTO
     `tbTipoDocumento` (
         `nome`,
         `descricao`,
@@ -1349,9 +1349,6 @@ VALUES
     NULL,
     'ALUNO',
     41
-);
-
-21
 ),
 (
     'Contracheque',

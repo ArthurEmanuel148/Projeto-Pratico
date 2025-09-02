@@ -10,17 +10,14 @@ import java.util.List;
 @Repository
 public interface TurmaRepository extends JpaRepository<Turma, Long> {
 
-    // Buscar turmas ativas
-    List<Turma> findByAtivoTrueOrderByPeriodoAscNomeTurmaAsc();
+    // Buscar turmas ativas ordenadas por horário
+    List<Turma> findByAtivoTrueOrderByHorarioInicioAscNomeTurmaAsc();
 
     // Buscar turmas com vagas disponíveis
-    @Query("SELECT t FROM Turma t WHERE t.ativo = true AND (t.capacidadeMaxima - t.capacidadeAtual) > 0 ORDER BY t.periodo ASC, t.nomeTurma ASC")
+    @Query("SELECT t FROM Turma t WHERE t.ativo = true AND (t.capacidadeMaxima - t.capacidadeAtual) > 0 ORDER BY t.horarioInicio ASC, t.nomeTurma ASC")
     List<Turma> findTurmasComVagas();
 
-    // Buscar turmas por período
-    List<Turma> findByPeriodoAndAtivoTrueOrderByNomeTurmaAsc(Turma.PeriodoEnum periodo);
-
-    // Buscar turmas do ano letivo atual
-    @Query("SELECT t FROM Turma t WHERE t.anoLetivo = YEAR(CURRENT_DATE) AND t.ativo = true ORDER BY t.periodo ASC, t.nomeTurma ASC")
-    List<Turma> findTurmasAnoAtual();
+    // Buscar turmas ativas ordenadas por horário
+    @Query("SELECT t FROM Turma t WHERE t.ativo = true ORDER BY t.horarioInicio ASC, t.nomeTurma ASC")
+    List<Turma> findTurmasAtivas();
 }

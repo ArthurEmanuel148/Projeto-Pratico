@@ -370,6 +370,40 @@ export class PainelLayoutComponent implements OnInit {
       });
     }
 
+    // Menu de Turmas
+    if (permissoes['turmas'] || this.userInfo?.tipo === 'admin' || this.userInfo?.tipo === 'funcionario') {
+      const turmasSubmenus = [];
+
+      if (permissoes['listarTurmas'] || this.userInfo?.tipo === 'admin' || this.userInfo?.tipo === 'funcionario') {
+        turmasSubmenus.push({
+          chave: 'listarTurmas',
+          nomeAmigavel: 'Lista de Turmas',
+          rota: '/sistema/turmas/lista',
+          icone: 'list-outline'
+        });
+      }
+
+      if (permissoes['cadastroTurma'] || this.userInfo?.tipo === 'admin' || this.userInfo?.tipo === 'funcionario') {
+        turmasSubmenus.push({
+          chave: 'cadastroTurma',
+          nomeAmigavel: 'Cadastro de Turma',
+          rota: '/sistema/turmas/cadastro',
+          icone: 'add-circle-outline'
+        });
+      }
+
+      if (turmasSubmenus.length > 0) {
+        menuItems.push({
+          chave: 'turmas',
+          nomeAmigavel: 'Turmas',
+          rota: '',
+          icone: 'library-outline',
+          submenus: turmasSubmenus,
+          open: false
+        });
+      }
+    }
+
     if (permissoes['matriculas']) {
       const matriculasSubmenus = [];
       if (permissoes['declaracoesInteresse']) {
@@ -533,16 +567,44 @@ export class PainelLayoutComponent implements OnInit {
   onFuncionalidadeClick(funcionalidade: any): void {
     console.log('🚀 [DEBUG] Clique na funcionalidade:', funcionalidade);
     console.log('🚀 [DEBUG] Rota da funcionalidade:', funcionalidade.rota);
+    console.log('🚀 [DEBUG] Chave da funcionalidade:', funcionalidade.chave);
 
-    this.funcionalidadesUsosService.registrarAcesso(funcionalidade);
+    // Mapeamento direto para evitar problemas
+    let targetRoute = funcionalidade.rota;
 
-    // Se a funcionalidade tem rota, navegar para ela
-    if (funcionalidade.rota) {
-      console.log('🚀 [DEBUG] Navegando para:', funcionalidade.rota);
-      this.router.navigateByUrl(funcionalidade.rota);
-    } else {
-      console.warn('⚠️ [DEBUG] Funcionalidade sem rota definida:', funcionalidade.chave);
+    if (!targetRoute) {
+      // Fallback baseado na chave
+      switch (funcionalidade.chave) {
+        case 'listarTurmas':
+          targetRoute = '/sistema/turmas/lista';
+          break;
+        case 'cadastroTurma':
+          targetRoute = '/sistema/turmas/cadastro';
+          break;
+        default:
+          console.warn('⚠️ Funcionalidade sem rota:', funcionalidade.chave);
+          return;
+      }
     }
+
+    console.log('🚀 [DEBUG] Navegando para:', targetRoute);
+
+    // Navegação direta
+    this.router.navigateByUrl(targetRoute).then(success => {
+      if (success) {
+        console.log('✅ [DEBUG] Navegação bem sucedida para:', targetRoute);
+        // Registrar acesso após navegação bem sucedida
+        try {
+          this.funcionalidadesUsosService.registrarAcesso(funcionalidade);
+        } catch (error) {
+          console.warn('Erro ao registrar acesso:', error);
+        }
+      } else {
+        console.error('❌ [DEBUG] Falha na navegação para:', targetRoute);
+      }
+    }).catch(error => {
+      console.error('❌ [DEBUG] Erro na navegação:', error);
+    });
   }
 
   // OTIMIZAÇÃO: Métodos para gerenciar cache
@@ -630,6 +692,10 @@ export class PainelLayoutComponent implements OnInit {
     // Mapear URLs para permissões
     const urlPermissionMap: { [key: string]: string } = {
       'gerenciamento-funcionarios': 'gerenciamentoFuncionarios',
+      'gerenciamento-turmas': 'turmas',
+      'turmas': 'turmas',
+      'lista-turmas': 'listarTurmas',
+      'cadastro-turma': 'cadastroTurma',
       'interesse-matricula': 'declaracoesInteresse',
       'tipos-documento': 'tiposDocumento',
       // Adicionar mais mapeamentos conforme necessário
@@ -644,6 +710,7 @@ export class PainelLayoutComponent implements OnInit {
           this.navigationService.redirectToHomePage();
           return;
         }
+        break; // Sair do loop quando encontrar a correspondência
       }
     }
   }

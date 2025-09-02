@@ -1,0 +1,109 @@
+.documento-card {
+  margin-bottom: 1rem;
+  border-left: 4px solid var(--ion-color-primary);
+}
+
+.documento-card.aprovado {
+  border-left-color: var(--ion-color-success);
+}
+
+.documento-card.rejeitado {
+  border-left-color: var(--ion-color-danger);
+}
+
+.documento-card.pendente {
+  border-left-color: var(--ion-color-warning);
+}
+
+ion-segment {
+  margin-bottom: 1rem;
+}
+
+ion-chip {
+  margin-right: 0.5rem;
+}
+
+.ion-text-end ion-button {
+  margin-left: 0.5rem;
+}
+
+ion-card-title ion-icon {
+  margin-right: 0.5rem;
+  vertical-align: middle;
+}
+
+.status-badge {
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+ion-list ion-item {
+  --padding-start: 1rem;
+}
+
+ion-textarea {
+  min-height: 80px;
+}
+
+.filtros-container {
+  background: var(--ion-color-light);
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 2rem;
+  color: var(--ion-color-medium);
+}
+
+.empty-state ion-icon {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.configuracao-cota {
+  margin-bottom: 2rem;
+  padding: 1rem;
+  background: var(--ion-color-light);
+  border-radius: 8px;
+}
+
+.configuracao-cota h4 {
+  margin-bottom: 1rem;
+  color: var(--ion-color-primary);
+}
+
+.tipo-documento-item {
+  border: 1px solid var(--ion-color-light);
+  border-radius: 8px;
+  margin-bottom: 0.5rem;
+}
+
+.form-section {
+  background: var(--ion-color-light);
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+@media (max-width: 768px) {
+  .ion-text-end {
+    text-align: left !important;
+  }
+
+  .ion-text-end ion-button {
+    margin: 0.25rem 0;
+    display: block;
+    width: 100%;
+  }
+}

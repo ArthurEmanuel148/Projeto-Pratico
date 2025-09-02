@@ -1,0 +1,234 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>Tipos de Documentos</ion-title>
+    <ion-buttons slot="end" *ngIf="podeGerenciarTiposDocumentos">
+      <ion-button (click)="navegarParaCadastro()" fill="clear">
+        <ion-icon name="add" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="lista-content">
+  
+  <!-- Header da página -->
+  <div class="page-header">
+    <div class="header-content">
+      <div class="header-info">
+        <h1>Gestão de Tipos de Documentos</h1>
+        <p>Configure os tipos de documentos necessários para o processo de matrícula</p>
+      </div>
+      <div class="header-illustration">
+        <ion-icon name="document-text-outline"></ion-icon>
+      </div>
+    </div>
+  </div>
+
+  <!-- Seção de filtros -->
+  <div class="filter-section">
+    <div class="section-header">
+      <div class="section-icon">
+        <ion-icon name="funnel-outline"></ion-icon>
+      </div>
+      <div class="section-title">
+        <h2>Filtros</h2>
+        <p>Refine sua busca pelos tipos de documentos</p>
+      </div>
+    </div>
+    
+    <div class="filter-content">
+      <div class="filter-row">
+        <ion-item>
+          <ion-label position="stacked">Nome do Documento</ion-label>
+          <ion-input 
+            [(ngModel)]="filtros.nome" 
+            (ionInput)="aplicarFiltros()"
+            placeholder="Digite o nome do documento">
+          </ion-input>
+        </ion-item>
+      </div>
+
+      <div class="filter-row">
+        <ion-item>
+          <ion-label position="stacked">Tipo de Cota</ion-label>
+          <ion-select 
+            [(ngModel)]="filtros.tipoCota" 
+            (ionChange)="aplicarFiltros()"
+            placeholder="Selecione o tipo de cota">
+            <ion-select-option value="">Todas</ion-select-option>
+            <ion-select-option value="livre">Livre</ion-select-option>
+            <ion-select-option value="economica">Econômica</ion-select-option>
+            <ion-select-option value="funcionario">Funcionário</ion-select-option>
+          </ion-select>
+        </ion-item>
+
+        <ion-item>
+          <ion-label position="stacked">Escopo</ion-label>
+          <ion-select 
+            [(ngModel)]="filtros.escopo" 
+            (ionChange)="aplicarFiltros()"
+            placeholder="Selecione o escopo">
+            <ion-select-option value="">Todos</ion-select-option>
+            <ion-select-option value="familia">Família</ion-select-option>
+            <ion-select-option value="aluno">Aluno</ion-select-option>
+            <ion-select-option value="ambos">Ambos</ion-select-option>
+          </ion-select>
+        </ion-item>
+      </div>
+
+      <div class="filter-actions">
+        <ion-button fill="outline" (click)="limparFiltros()">
+          <ion-icon name="refresh-outline" slot="start"></ion-icon>
+          Limpar Filtros
+        </ion-button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Seção de resultados -->
+  <div class="results-section">
+    <div class="section-header">
+      <div class="section-icon">
+        <ion-icon name="list-outline"></ion-icon>
+      </div>
+      <div class="section-title">
+        <h2>Tipos de Documentos</h2>
+        <p>{{ tiposDocumentosFiltrados.length }} tipo(s) encontrado(s)</p>
+      </div>
+      <div class="section-actions" *ngIf="podeGerenciarTiposDocumentos">
+        <ion-button (click)="navegarParaCadastro()" size="small">
+          <ion-icon name="add" slot="start"></ion-icon>
+          Novo Tipo
+        </ion-button>
+      </div>
+    </div>
+
+    <!-- Loading -->
+    <div *ngIf="loading" class="loading-container">
+      <ion-spinner name="crescent"></ion-spinner>
+      <p>Carregando tipos de documentos...</p>
+    </div>
+
+    <!-- Lista de tipos de documentos -->
+    <div *ngIf="!loading && tiposDocumentosFiltrados.length > 0" class="tipos-grid">
+      <div 
+        *ngFor="let tipo of tiposDocumentosFiltrados" 
+        class="tipo-card"
+        [class.inativo]="!tipo.ativo">
+        
+        <!-- Header do card -->
+        <div class="card-header">
+          <div class="card-title">
+            <h3>{{ tipo.nome }}</h3>
+            <div class="status-badge" [class]="tipo.ativo ? 'ativo' : 'inativo'">
+              {{ tipo.ativo ? 'Ativo' : 'Inativo' }}
+            </div>
+          </div>
+          
+          <div class="card-actions" *ngIf="podeGerenciarTiposDocumentos">
+            <ion-button 
+              fill="clear" 
+              size="small" 
+              (click)="editarTipoDocumento(tipo.idTipoDocumento!)">
+              <ion-icon name="create-outline" slot="icon-only"></ion-icon>
+            </ion-button>
+            
+            <ion-button 
+              fill="clear" 
+              size="small" 
+              [color]="tipo.ativo ? 'warning' : 'success'"
+              (click)="alternarStatus(tipo)">
+              <ion-icon 
+                [name]="tipo.ativo ? 'eye-off-outline' : 'eye-outline'" 
+                slot="icon-only">
+              </ion-icon>
+            </ion-button>
+            
+            <ion-button 
+              fill="clear" 
+              size="small" 
+              color="danger"
+              (click)="confirmarRemocao(tipo)">
+              <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
+            </ion-button>
+          </div>
+        </div>
+
+        <!-- Conteúdo do card -->
+        <div class="card-content">
+          <p class="description" *ngIf="tipo.descricao">{{ tipo.descricao }}</p>
+          
+          <div class="card-tags">
+            <ion-chip 
+              *ngIf="tipo.tipoCota" 
+              [color]="getTipoCotaColor(tipo.tipoCota)"
+              size="small">
+              <ion-icon name="pricetag-outline"></ion-icon>
+              <ion-label>{{ getTipoCotaLabel(tipo.tipoCota) }}</ion-label>
+            </ion-chip>
+            
+            <ion-chip 
+              [color]="getEscopoColor(tipo.escopo)"
+              size="small">
+              <ion-icon name="people-outline"></ion-icon>
+              <ion-label>{{ getEscopoLabel(tipo.escopo) }}</ion-label>
+            </ion-chip>
+          </div>
+
+          <div class="card-features">
+            <div class="feature" [class.active]="tipo.obrigatorio">
+              <ion-icon name="checkmark-circle-outline"></ion-icon>
+              <span>Obrigatório</span>
+            </div>
+            
+            <div class="feature" [class.active]="tipo.requerAssinatura">
+              <ion-icon name="create-outline"></ion-icon>
+              <span>Requer Assinatura</span>
+            </div>
+            
+            <div class="feature" [class.active]="tipo.requerAnexo">
+              <ion-icon name="attach-outline"></ion-icon>
+              <span>Requer Anexo</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Footer do card -->
+        <div class="card-footer">
+          <span class="ordem">Ordem: {{ tipo.ordemExibicao }}</span>
+          <ion-button 
+            *ngIf="podeGerenciarTiposDocumentos"
+            fill="clear" 
+            size="small"
+            (click)="editarTipoDocumento(tipo.idTipoDocumento!)">
+            <ion-icon name="settings-outline" slot="start"></ion-icon>
+            Configurar
+          </ion-button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Estado vazio -->
+    <div *ngIf="!loading && tiposDocumentosFiltrados.length === 0" class="empty-state">
+      <div class="empty-illustration">
+        <ion-icon name="document-outline"></ion-icon>
+      </div>
+      <h3>Nenhum tipo de documento encontrado</h3>
+      <p>Não foram encontrados tipos de documentos com os filtros aplicados.</p>
+      <ion-button 
+        *ngIf="podeGerenciarTiposDocumentos && tiposDocumentos.length === 0"
+        (click)="navegarParaCadastro()">
+        <ion-icon name="add" slot="start"></ion-icon>
+        Criar Primeiro Tipo
+      </ion-button>
+      <ion-button 
+        *ngIf="tiposDocumentos.length > 0"
+        fill="outline" 
+        (click)="limparFiltros()">
+        <ion-icon name="refresh-outline" slot="start"></ion-icon>
+        Limpar Filtros
+      </ion-button>
+    </div>
+  </div>
+
+</ion-content>

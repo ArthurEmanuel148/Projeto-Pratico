@@ -34,6 +34,12 @@ const routes: Routes = [
         data: { requiredPermission: 'gerenciamentoFuncionarios' }
       },
       {
+        path: 'turmas',
+        loadChildren: () => import('../funcionalidades/gerenciamento-turmas/gerenciamento-turmas.module').then(m => m.GerenciamentoTurmasModule),
+        canActivate: [RoleGuard],
+        data: { requiredPermission: 'turmas' }
+      },
+      {
         path: 'matriculas',
         loadChildren: () => import('../funcionalidades/interesse-matricula/interesse-matricula.module').then(m => m.InteresseMatriculaModule),
         canActivate: [RoleGuard],
@@ -44,6 +50,12 @@ const routes: Routes = [
         loadChildren: () => import('../funcionalidades/iniciar-matricula/iniciar-matricula.module').then(m => m.IniciarMatriculaModule),
         canActivate: [RoleGuard],
         data: { requiredRole: ['admin', 'funcionario'] }
+      },
+      {
+        path: 'documentos',
+        loadComponent: () => import('../funcionalidades/gerenciamento-documentos/gerenciamento-documentos.page').then(m => m.GerenciamentoDocumentosPage),
+        canActivate: [RoleGuard],
+        data: { requiredPermission: 'aprovacaoDocumentos' }
       }
     ]
   }

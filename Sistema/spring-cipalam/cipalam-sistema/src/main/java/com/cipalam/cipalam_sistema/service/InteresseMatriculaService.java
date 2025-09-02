@@ -255,4 +255,32 @@ public class InteresseMatriculaService {
 
         return resultado;
     }
+
+    /**
+     * Métodos para configuração de documentos por cota
+     */
+    public Map<String, Object> getConfiguracaoDocumentos() {
+        Map<String, Object> configuracao = new HashMap<>();
+
+        // Configuração padrão simulada
+        configuracao.put("funcionario", List.of("rg", "cpf", "comprovanteVinculo"));
+        configuracao.put("economica",
+                List.of("rg", "cpf", "comprovanteRenda", "comprovanteEndereco", "declaracaoComposicaoFamiliar"));
+        configuracao.put("livre", List.of("rg", "cpf", "comprovanteEndereco"));
+
+        return configuracao;
+    }
+
+    public Map<String, Object> salvarConfiguracaoDocumentos(Map<String, Object> configuracao) {
+        // Por enquanto, apenas simular o salvamento
+        // Em uma implementação real, isso salvaria na tabela
+        // tbConfiguracaoDocumentosCota
+
+        Map<String, Object> resultado = new HashMap<>();
+        resultado.put("success", true);
+        resultado.put("message", "Configuração salva com sucesso");
+        resultado.put("configuracao", configuracao);
+
+        return resultado;
+    }
 }

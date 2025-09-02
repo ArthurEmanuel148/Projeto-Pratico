@@ -14,6 +14,12 @@
   - ✅ Views e triggers
   - ✅ **NOVO**: Seção de validação automática integrada
   - ✅ **NOVO**: Testes de funcionalidades incluídos
+  - ✅ **ATUALIZADO**: Campo período removido da tbTurma (01/09/2025)
+
+### ✅ **CIPALAM_UPDATE_REMOVE_PERIODO.sql** 
+- **Função**: Script de atualização para remover campo período
+- **Quando usar**: Para atualizar banco existente removendo campo período da tbTurma
+- **Data**: 01/09/2025
 
 ## 🗂️ **ESTRUTURA DO BANCO**
 

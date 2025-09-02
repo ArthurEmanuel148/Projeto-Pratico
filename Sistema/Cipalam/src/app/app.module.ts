@@ -7,6 +7,7 @@ import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
 
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
+import { TurmaService } from './core/services/turma.service';
 
 @NgModule({
   declarations: [AppComponent],
@@ -18,7 +19,8 @@ import { AppRoutingModule } from './app-routing.module';
   ],
   providers: [
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
-    { provide: LOCALE_ID, useValue: 'pt-BR' }
+    { provide: LOCALE_ID, useValue: 'pt-BR' },
+    TurmaService
   ],
   bootstrap: [AppComponent],
 })

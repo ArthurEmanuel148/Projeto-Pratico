@@ -1,0 +1,180 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-title>Configuração de Documentos por Cota</ion-title>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/sistema"></ion-back-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="configuracao-content">
+  <div class="content-container">
+
+    <!-- Header com informações -->
+    <div class="header-section">
+      <h2>Configuração de Documentos por Cota</h2>
+      <p>Selecione quais documentos serão obrigatórios para cada tipo de cota de inscrição.</p>
+
+      <!-- Debug info -->
+      <div style="background: #f0f0f0; padding: 10px; margin: 10px 0; border-radius: 5px;">
+        <small>
+          <strong>Debug:</strong> Total de documentos carregados: {{ tiposDocumentos?.length || 0 }}<br>
+          Loading: {{ loading }}<br>
+          Tipos de documentos válidos: {{ (tiposDocumentos && Array.isArray(tiposDocumentos)) ? 'Sim' : 'Não' }}
+        </small>
+      </div>
+    </div>
+
+    <!-- Loading -->
+    <div *ngIf="loading" class="loading-container">
+      <ion-spinner name="crescent"></ion-spinner>
+      <p>Carregando configurações...</p>
+    </div>
+
+    <!-- Configurações -->
+    <div *ngIf="!loading" class="configuracoes-container">
+
+      <!-- Cota Livre -->
+      <div class="cota-section">
+        <div class="cota-header">
+          <h3>
+            <ion-icon name="people-outline"></ion-icon>
+            Cota Livre
+          </h3>
+          <div class="cota-actions">
+            <ion-button fill="clear" size="small" color="medium" (click)="resetarConfiguracao(TipoCota.LIVRE)">
+              <ion-icon name="refresh-outline" slot="start"></ion-icon>
+              Resetar
+            </ion-button>
+            <ion-button fill="solid" size="small" color="primary" (click)="salvarConfiguracao(TipoCota.LIVRE)">
+              <ion-icon name="save-outline" slot="start"></ion-icon>
+              Salvar
+            </ion-button>
+          </div>
+        </div>
+
+        <div class="documentos-grid">
+          <div *ngFor="let documento of (tiposDocumentos && Array.isArray(tiposDocumentos) ? tiposDocumentos : [])"
+            class="documento-item" [class.selecionado]="isDocumentoSelecionado(documento, TipoCota.LIVRE)"
+            (click)="toggleDocumento(documento, TipoCota.LIVRE)">
+            <div class="documento-checkbox">
+              <ion-checkbox [checked]="isDocumentoSelecionado(documento, TipoCota.LIVRE)"
+                (ionChange)="toggleDocumento(documento, TipoCota.LIVRE)" color="primary">
+              </ion-checkbox>
+            </div>
+            <div class="documento-info">
+              <h4>{{ documento.nome }}</h4>
+              <p>{{ documento.descricao }}</p>
+              <div class="documento-badges">
+                <span class="badge modalidade" [class]="documento.modalidadeEntrega?.toLowerCase()">
+                  {{ documento.modalidadeEntrega === 'ASSINADO' ? 'Assinado' : 'Anexado' }}
+                </span>
+                <span class="badge fornecedor" [class]="documento.quemDeveFornencer?.toLowerCase()">
+                  {{ documento.quemDeveFornencer?.replace('_', ' ') }}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Cota Econômica -->
+      <div class="cota-section">
+        <div class="cota-header">
+          <h3>
+            <ion-icon name="cash-outline"></ion-icon>
+            Cota Econômica
+          </h3>
+          <div class="cota-actions">
+            <ion-button fill="clear" size="small" color="medium" (click)="resetarConfiguracao(TipoCota.ECONOMICA)">
+              <ion-icon name="refresh-outline" slot="start"></ion-icon>
+              Resetar
+            </ion-button>
+            <ion-button fill="solid" size="small" color="secondary" (click)="salvarConfiguracao(TipoCota.ECONOMICA)">
+              <ion-icon name="save-outline" slot="start"></ion-icon>
+              Salvar
+            </ion-button>
+          </div>
+        </div>
+
+        <div class="documentos-grid">
+          <div *ngFor="let documento of (tiposDocumentos && Array.isArray(tiposDocumentos) ? tiposDocumentos : [])"
+            class="documento-item" [class.selecionado]="isDocumentoSelecionado(documento, TipoCota.ECONOMICA)"
+            (click)="toggleDocumento(documento, TipoCota.ECONOMICA)">
+            <div class="documento-checkbox">
+              <ion-checkbox [checked]="isDocumentoSelecionado(documento, TipoCota.ECONOMICA)"
+                (ionChange)="toggleDocumento(documento, TipoCota.ECONOMICA)" color="secondary">
+              </ion-checkbox>
+            </div>
+            <div class="documento-info">
+              <h4>{{ documento.nome }}</h4>
+              <p>{{ documento.descricao }}</p>
+              <div class="documento-badges">
+                <span class="badge modalidade" [class]="documento.modalidadeEntrega?.toLowerCase()">
+                  {{ documento.modalidadeEntrega === 'ASSINADO' ? 'Assinado' : 'Anexado' }}
+                </span>
+                <span class="badge fornecedor" [class]="documento.quemDeveFornencer?.toLowerCase()">
+                  {{ documento.quemDeveFornencer?.replace('_', ' ') }}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Cota Funcionário -->
+      <div class="cota-section">
+        <div class="cota-header">
+          <h3>
+            <ion-icon name="briefcase-outline"></ion-icon>
+            Cota Funcionário
+          </h3>
+          <div class="cota-actions">
+            <ion-button fill="clear" size="small" color="medium" (click)="resetarConfiguracao(TipoCota.FUNCIONARIO)">
+              <ion-icon name="refresh-outline" slot="start"></ion-icon>
+              Resetar
+            </ion-button>
+            <ion-button fill="solid" size="small" color="tertiary" (click)="salvarConfiguracao(TipoCota.FUNCIONARIO)">
+              <ion-icon name="save-outline" slot="start"></ion-icon>
+              Salvar
+            </ion-button>
+          </div>
+        </div>
+
+        <div class="documentos-grid">
+          <div *ngFor="let documento of (tiposDocumentos && Array.isArray(tiposDocumentos) ? tiposDocumentos : [])"
+            class="documento-item" [class.selecionado]="isDocumentoSelecionado(documento, TipoCota.FUNCIONARIO)"
+            (click)="toggleDocumento(documento, TipoCota.FUNCIONARIO)">
+            <div class="documento-checkbox">
+              <ion-checkbox [checked]="isDocumentoSelecionado(documento, TipoCota.FUNCIONARIO)"
+                (ionChange)="toggleDocumento(documento, TipoCota.FUNCIONARIO)" color="tertiary">
+              </ion-checkbox>
+            </div>
+            <div class="documento-info">
+              <h4>{{ documento.nome }}</h4>
+              <p>{{ documento.descricao }}</p>
+              <div class="documento-badges">
+                <span class="badge modalidade" [class]="documento.modalidadeEntrega?.toLowerCase()">
+                  {{ documento.modalidadeEntrega === 'ASSINADO' ? 'Assinado' : 'Anexado' }}
+                </span>
+                <span class="badge fornecedor" [class]="documento.quemDeveFornencer?.toLowerCase()">
+                  {{ documento.quemDeveFornencer?.replace('_', ' ') }}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Botões de ação globais -->
+    <div class="global-actions" *ngIf="!loading">
+      <ion-button expand="block" fill="solid" color="success" size="large" (click)="salvarTodasConfiguracoes()">
+        <ion-icon name="save-outline" slot="start"></ion-icon>
+        Salvar Todas as Configurações
+      </ion-button>
+    </div>
+
+  </div>
+</ion-content>

@@ -434,33 +434,27 @@ CREATE TABLE `tbHistoricoEtapaMatricula` (
 ) ENGINE = InnoDB;
 
 -- -----------------------------------------------------
--- Table `Cipalam`.`tbTipoDocumento` - ATUALIZADA COM ENUMS E CAMPOS ADICIONAIS
+-- Table `Cipalam`.`tbTipoDocumento` - ATUALIZADA COM ESTRUTURA SIMPLIFICADA
 -- -----------------------------------------------------
 CREATE TABLE `tbTipoDocumento` (
     `idTipoDocumento` BIGINT NOT NULL AUTO_INCREMENT,
     `nome` VARCHAR(100) NOT NULL,
     `descricao` TEXT NULL,
-    `obrigatorio` BOOLEAN DEFAULT TRUE,
-    `requerAssinatura` BOOLEAN DEFAULT FALSE,
-    `requerAnexo` BOOLEAN DEFAULT TRUE,
-    `tipoCota` ENUM(
-        'LIVRE',
-        'ECONOMICA',
-        'FUNCIONARIO'
-    ) NULL,
-    -- Define se o documento é da família ou do aluno
-    `escopo` ENUM('FAMILIA', 'ALUNO', 'AMBOS') DEFAULT 'AMBOS',
+    `modalidadeEntrega` ENUM('ASSINADO', 'ANEXADO') NOT NULL DEFAULT 'ANEXADO',
+    `quemDeveFornencer` ENUM(
+        'RESPONSAVEL',
+        'ALUNO',
+        'TODOS_INTEGRANTES',
+        'FAMILIA'
+    ) NOT NULL DEFAULT 'RESPONSAVEL',
     `ativo` BOOLEAN DEFAULT TRUE,
-    `ordemExibicao` INT DEFAULT 0,
-    `templateDocumento` TEXT NULL,
     `dataCriacao` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     `dataAtualizacao` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (`idTipoDocumento`),
-    INDEX `idx_tipoCota` (`tipoCota`),
-    INDEX `idx_escopo` (`escopo`),
+    INDEX `idx_modalidadeEntrega` (`modalidadeEntrega`),
+    INDEX `idx_quemDeveFornencer` (`quemDeveFornencer`),
     INDEX `idx_ativo` (`ativo`),
-    INDEX `idx_ordem` (`ordemExibicao`),
-    UNIQUE KEY `unique_ordem_ativa` (`ordemExibicao`, `ativo`)
+    UNIQUE KEY `unique_nome_ativo` (`nome`, `ativo`)
 ) ENGINE = InnoDB;
 
 -- -----------------------------------------------------
@@ -1012,8 +1006,7 @@ BEGIN
         'pendente'
     FROM tbTipoDocumento td
     WHERE td.ativo = TRUE 
-    AND td.escopo IN ('familia', 'ambos')
-    AND (td.tipoCota IS NULL OR td.tipoCota = v_tipoCota);
+    AND td.quemDeveFornencer IN ('FAMILIA', 'TODOS_INTEGRANTES');
     
     -- Criar documentos do ALUNO (escopo 'aluno' ou 'ambos')
     INSERT INTO tbDocumentoMatricula (
@@ -1027,8 +1020,7 @@ BEGIN
         'pendente'
     FROM tbTipoDocumento td
     WHERE td.ativo = TRUE 
-    AND td.escopo IN ('aluno', 'ambos')
-    AND (td.tipoCota IS NULL OR td.tipoCota = v_tipoCota);
+    AND td.quemDeveFornencer = 'ALUNO';
     
 END$$
 
@@ -1187,269 +1179,141 @@ VALUES
     'turmas',
     'acao',
     32
+),
+
+-- Tipos de Documentos (menu principal)
+(
+    'tiposDocumento',
+    'Tipos de Documento',
+    'Gerenciar tipos de documento do sistema',
+    'document-outline',
+    NULL,
+    'menu',
+    7
+),
+
+-- Ações de tipos de documento
+(
+    'listarTiposDocumento',
+    'Lista de Tipos de Documento',
+    'Visualizar e gerenciar tipos de documento',
+    'list-outline',
+    'tiposDocumento',
+    'acao',
+    71
+),
+(
+    'cadastroTipoDocumento',
+    'Cadastro de Tipo de Documento',
+    'Cadastrar novo tipo de documento',
+    'add-circle-outline',
+    'tiposDocumento',
+    'acao',
+    72
 );
 
 -- ===================================================================
--- INSERÇÃO DE TIPOS DE DOCUMENTOS ATUALIZADOS COM ENUMS
+-- INSERÇÃO DE TIPOS DE DOCUMENTOS COM NOVA ESTRUTURA
 -- ===================================================================
 
 DELETE FROM `tbTipoDocumento`;
 
-REPLACE INTO
+INSERT INTO
     `tbTipoDocumento` (
         `nome`,
         `descricao`,
-        `obrigatorio`,
-        `requerAssinatura`,
-        `requerAnexo`,
-        `tipoCota`,
-        `escopo`,
-        `ordemExibicao`
+        `modalidadeEntrega`,
+        `quemDeveFornencer`
     )
 VALUES
-    -- Documentos da FAMÍLIA (Aplicáveis a todas as cotas)
-    (
-        'RG ou CNH do Responsável',
-        'Documento de identidade com foto do responsável pela matrícula',
-        TRUE,
-        FALSE,
-        TRUE,
-        NULL,
-        'FAMILIA',
-        1
-    ),
-    (
-        'CPF do Responsável',
-        'Documento CPF do responsável pela matrícula',
-        TRUE,
-        FALSE,
-        TRUE,
-        NULL,
-        'FAMILIA',
-        2
-    ),
+    -- Documentos da FAMÍLIA
     (
         'Comprovante de Residência',
-        'Comprovante de residência atualizado (máximo 3 meses)',
-        TRUE,
-        FALSE,
-        TRUE,
-        NULL,
-        'FAMILIA',
-        3
+        'Comprovante de endereço atualizado da família',
+        'ANEXADO',
+        'FAMILIA'
     ),
     (
         'Termo de Responsabilidade',
-        'Termo de responsabilidade assinado pelo responsável',
-        TRUE,
-        TRUE,
-        FALSE,
-        NULL,
-        'FAMILIA',
-        4
+        'Termo de responsabilidade do responsável',
+        'ASSINADO',
+        'RESPONSAVEL'
     ),
-
--- Documentos do ALUNO (Aplicáveis a todas as cotas)
-(
-    'Certidão de Nascimento do Aluno',
-    'Certidão de nascimento original ou cópia autenticada do aluno',
-    TRUE,
-    FALSE,
-    TRUE,
-    NULL,
-    'ALUNO',
-    5
-),
-(
-    'Foto 3x4 do Aluno',
-    'Foto 3x4 recente do aluno para documentação escolar',
-    TRUE,
-    FALSE,
-    TRUE,
-    NULL,
-    'ALUNO',
-    6
-),
-(
-    'Cartão de Vacinação',
-    'Cartão de vacinação atualizado do aluno',
-    TRUE,
-    FALSE,
-    TRUE,
-    NULL,
-    'ALUNO',
-    7
-),
-
--- Documentos ESPECÍFICOS para COTA ECONÔMICA (Família)
-(
-    'Comprovante de Renda Familiar',
-    'Comprovante de renda familiar completa dos últimos 3 meses',
-    TRUE,
-    FALSE,
-    TRUE,
-    'ECONOMICA',
-    'FAMILIA',
-    10
-),
-(
-    'Declaração de Dependentes',
-    'Declaração completa de todos os dependentes da família',
-    TRUE,
-    FALSE,
-    TRUE,
-    'ECONOMICA',
-    'FAMILIA',
-    11
-),
-(
-    'Comprovante de Benefícios Sociais',
-    'Comprovante de auxílios governamentais ou programas sociais (se aplicável)',
-    FALSE,
-    FALSE,
-    TRUE,
-    'ECONOMICA',
-    'FAMILIA',
-    12
-),
-(
-    'Declaração de Hipossuficiência',
-    'Declaração de situação socioeconômica familiar assinada',
-    TRUE,
-    TRUE,
-    FALSE,
-    'ECONOMICA',
-    'FAMILIA',
-    13
-),
-
--- Documentos ESPECÍFICOS para COTA DE FUNCIONÁRIO (Família)
-(
-    'Comprovante de Vínculo Empregatício',
-    'Comprovante de vínculo empregatício com a instituição de ensino',
-    TRUE,
-    FALSE,
-    TRUE,
-    'FUNCIONARIO',
-    'FAMILIA',
-    20
-),
-(
-    'Declaração de Parentesco',
-    'Declaração oficial de parentesco entre funcionário e aluno',
-    TRUE,
-    FALSE,
-    TRUE,
-    'FUNCIONARIO',
-    'FAMILIA',
-    21
-),
-(
-    'Termo de Conhecimento da Legislação',
-    'Termo de ciência das regras para cota de funcionário',
-    TRUE,
-    TRUE,
-    FALSE,
-    'FUNCIONARIO',
-    'FAMILIA',
-    22
-),
-
--- Documentos OPCIONAIS/COMPLEMENTARES (Ambos)
-(
-    'Histórico Escolar',
-    'Histórico escolar do aluno (para transferências)',
-    FALSE,
-    FALSE,
-    TRUE,
-    NULL,
-    'ALUNO',
-    30
-),
-(
-    'Declaração de Escolaridade',
-    'Declaração de escolaridade anterior do aluno',
-    FALSE,
-    FALSE,
-    TRUE,
-    NULL,
-    'ALUNO',
-    31
-),
-(
-    'Atestado Médico Especial',
-    'Atestado médico para necessidades especiais (se aplicável)',
-    FALSE,
-    FALSE,
-    TRUE,
-    NULL,
-    'ALUNO',
-    32
-),
-
--- Documentos para IDENTIDADE DIGITAL (Ambos)
-(
-    'RG do Aluno',
-    'Documento de identidade do aluno (se possuir)',
-    FALSE,
-    FALSE,
-    TRUE,
-    NULL,
-    'ALUNO',
-    40
-),
-(
-    'CPF do Aluno',
-    'Documento CPF do aluno (se possuir)',
-    FALSE,
-    FALSE,
-    TRUE,
-    NULL,
-    'ALUNO',
-    41
-),
-(
-    'Contracheque',
-    'Contracheque dos últimos 3 meses',
-    TRUE,
-    FALSE,
-    TRUE,
-    'funcionario',
-    'familia',
-    22
-),
-
--- Documentos com assinatura (AMBOS)
-(
-    'Termo de Compromisso',
-    'Termo de compromisso com as normas da instituição',
-    TRUE,
-    TRUE,
-    FALSE,
-    NULL,
-    'ambos',
-    50
-),
-(
-    'Autorização de Uso de Imagem',
-    'Autorização para uso de imagem do aluno',
-    FALSE,
-    TRUE,
-    FALSE,
-    NULL,
-    'ambos',
-    51
-),
-(
-    'Declaração de Veracidade',
-    'Declaração de veracidade das informações',
-    TRUE,
-    TRUE,
-    FALSE,
-    NULL,
-    'ambos',
-    52
-);
+    (
+        'Declaração de Veracidade',
+        'Declaração de veracidade das informações prestadas',
+        'ASSINADO',
+        'RESPONSAVEL'
+    ),
+    -- Documentos do ALUNO específico
+    (
+        'Certidão de Nascimento',
+        'Certidão de nascimento do aluno',
+        'ANEXADO',
+        'ALUNO'
+    ),
+    (
+        'Foto 3x4',
+        'Foto recente 3x4 do aluno',
+        'ANEXADO',
+        'ALUNO'
+    ),
+    (
+        'Cartão de Vacinação',
+        'Cartão de vacinação atualizado do aluno',
+        'ANEXADO',
+        'ALUNO'
+    ),
+    (
+        'Histórico Escolar',
+        'Histórico escolar do aluno (se aplicável)',
+        'ANEXADO',
+        'ALUNO'
+    ),
+    (
+        'Atestado Médico',
+        'Atestado médico do aluno (se necessário)',
+        'ANEXADO',
+        'ALUNO'
+    ),
+    -- Documentos de TODOS OS INTEGRANTES da família (cada pessoa precisa fornecer)
+    (
+        'RG ou CNH',
+        'Documento de identidade com foto de cada integrante',
+        'ANEXADO',
+        'TODOS_INTEGRANTES'
+    ),
+    (
+        'CPF',
+        'Cadastro de Pessoa Física de cada integrante',
+        'ANEXADO',
+        'TODOS_INTEGRANTES'
+    ),
+    (
+        'Comprovante de Renda',
+        'Comprovante de renda individual de cada integrante que trabalha',
+        'ANEXADO',
+        'TODOS_INTEGRANTES'
+    ),
+    -- Documentos gerais de assinatura
+    (
+        'Termo de Compromisso',
+        'Termo de compromisso com as normas da instituição',
+        'ASSINADO',
+        'FAMILIA'
+    ),
+    (
+        'Autorização de Uso de Imagem',
+        'Autorização para uso de imagem do aluno',
+        'ASSINADO',
+        'RESPONSAVEL'
+    ),
+    (
+        'Declaração de Hipossuficiência',
+        'Declaração de situação socioeconômica familiar',
+        'ASSINADO',
+        'RESPONSAVEL'
+    );
 
 -- ===================================================================
 -- CONFIGURAÇÕES DE DOCUMENTOS POR COTA
@@ -2171,11 +2035,8 @@ SELECT
     td.idTipoDocumento,
     td.nome as nomeDocumento,
     td.descricao,
-    td.obrigatorio,
-    td.requerAssinatura,
-    td.requerAnexo,
-    td.tipoCota,
-    td.escopo,
+    td.modalidadeEntrega,
+    td.quemDeveFornencer,
     dm.status,
     dm.caminhoArquivo,
     dm.dataEnvio,
@@ -2194,7 +2055,7 @@ FROM
     INNER JOIN tbPessoa p ON r.tbPessoa_idPessoa = p.idPessoa
 WHERE
     dm.tbFamilia_idtbFamilia IS NOT NULL
-ORDER BY td.ordemExibicao;
+ORDER BY td.nome;
 
 -- View para documentos pendentes do aluno (individuais)
 CREATE VIEW vw_documentos_aluno AS
@@ -2204,11 +2065,8 @@ SELECT
     td.idTipoDocumento,
     td.nome as nomeDocumento,
     td.descricao,
-    td.obrigatorio,
-    td.requerAssinatura,
-    td.requerAnexo,
-    td.tipoCota,
-    td.escopo,
+    td.modalidadeEntrega,
+    td.quemDeveFornencer,
     dm.status,
     dm.caminhoArquivo,
     dm.dataEnvio,
@@ -2233,7 +2091,7 @@ FROM
     INNER JOIN tbPessoa pr ON r.tbPessoa_idPessoa = pr.idPessoa
 WHERE
     dm.tbAluno_idPessoa IS NOT NULL
-ORDER BY td.ordemExibicao;
+ORDER BY td.nome;
 
 -- View consolidada: Todos os documentos por responsável
 CREATE VIEW vw_documentos_responsavel AS
@@ -2244,7 +2102,7 @@ SELECT
     NULL as idAluno,
     td.nome as nomeDocumento,
     td.descricao,
-    td.escopo,
+    td.quemDeveFornencer,
     dm.status,
     dm.dataEnvio,
     dm.dataAprovacao,
@@ -2269,7 +2127,7 @@ SELECT
     a.tbPessoa_idPessoa as idAluno,
     td.nome as nomeDocumento,
     td.descricao,
-    td.escopo,
+    td.quemDeveFornencer,
     dm.status,
     dm.dataEnvio,
     dm.dataAprovacao,
@@ -2557,9 +2415,8 @@ BEGIN
         dm.idDocumentoMatricula,
         td.nome as nomeDocumento,
         td.descricao,
-        td.obrigatorio,
-        td.requerAssinatura,
-        td.requerAnexo,
+        td.modalidadeEntrega,
+        td.quemDeveFornencer,
         dm.status,
         dm.caminhoArquivo,
         dm.dataEnvio,
@@ -2583,9 +2440,8 @@ BEGIN
         dm.idDocumentoMatricula,
         td.nome as nomeDocumento,
         td.descricao,
-        td.obrigatorio,
-        td.requerAssinatura,
-        td.requerAnexo,
+        td.modalidadeEntrega,
+        td.quemDeveFornencer,
         dm.status,
         dm.caminhoArquivo,
         dm.dataEnvio,

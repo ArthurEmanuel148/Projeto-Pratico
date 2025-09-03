@@ -31,15 +31,4 @@
       </ion-card-content>
     </ion-card>
   </div>
-
-  <ion-button
-    *ngIf="!carregando"
-    expand="block"
-    color="primary"
-    (click)="salvarConfiguracao()"
-    class="salvar-btn"
-    [disabled]="salvando">
-    <ion-spinner *ngIf="salvando" name="dots" slot="start"></ion-spinner>
-    {{ salvando ? 'Salvando...' : 'Salvar Configuração' }}
-  </ion-button>
 </ion-content>

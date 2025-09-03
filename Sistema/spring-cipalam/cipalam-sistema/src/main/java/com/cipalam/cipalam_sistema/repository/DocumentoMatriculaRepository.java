@@ -13,27 +13,27 @@ import java.util.Optional;
 @Repository
 public interface DocumentoMatriculaRepository extends JpaRepository<DocumentoMatricula, Long> {
 
-    List<DocumentoMatricula> findByInteresseMatricula(InteresseMatricula interesseMatricula);
+        List<DocumentoMatricula> findByInteresseMatricula(InteresseMatricula interesseMatricula);
 
-    List<DocumentoMatricula> findByInteresseMatriculaOrderByTipoDocumentoOrdemExibicao(
-            InteresseMatricula interesseMatricula);
+        List<DocumentoMatricula> findByInteresseMatriculaOrderByTipoDocumentoNome(
+                        InteresseMatricula interesseMatricula);
 
-    @Query("SELECT dm FROM DocumentoMatricula dm WHERE dm.interesseMatricula.id = :interesseId ORDER BY dm.tipoDocumento.ordemExibicao")
-    List<DocumentoMatricula> findByInteresseMatriculaIdOrderByTipoDocumentoOrdemExibicao(
-            @Param("interesseId") Long interesseId);
+        @Query("SELECT dm FROM DocumentoMatricula dm WHERE dm.interesseMatricula.id = :interesseId ORDER BY dm.tipoDocumento.nome")
+        List<DocumentoMatricula> findByInteresseMatriculaIdOrderByTipoDocumentoNome(
+                        @Param("interesseId") Long interesseId);
 
-    @Query("SELECT dm FROM DocumentoMatricula dm WHERE dm.interesseMatricula.id = :interesseId AND dm.tipoDocumento.id = :tipoDocumentoId")
-    Optional<DocumentoMatricula> findByInteresseMatriculaIdAndTipoDocumentoId(
-            @Param("interesseId") Long interesseId,
-            @Param("tipoDocumentoId") Long tipoDocumentoId);
+        @Query("SELECT dm FROM DocumentoMatricula dm WHERE dm.interesseMatricula.id = :interesseId AND dm.tipoDocumento.id = :tipoDocumentoId")
+        Optional<DocumentoMatricula> findByInteresseMatriculaIdAndTipoDocumentoId(
+                        @Param("interesseId") Long interesseId,
+                        @Param("tipoDocumentoId") Long tipoDocumentoId);
 
-    @Query("SELECT dm FROM DocumentoMatricula dm WHERE dm.interesseMatricula.id = :interesseId AND dm.status = :status ORDER BY dm.tipoDocumento.ordemExibicao")
-    List<DocumentoMatricula> findByInteresseMatriculaIdAndStatusOrderByTipoDocumentoOrdemExibicao(
-            @Param("interesseId") Long interesseId,
-            @Param("status") String status);
+        @Query("SELECT dm FROM DocumentoMatricula dm WHERE dm.interesseMatricula.id = :interesseId AND dm.status = :status ORDER BY dm.tipoDocumento.nome")
+        List<DocumentoMatricula> findByInteresseMatriculaIdAndStatusOrderByTipoDocumentoNome(
+                        @Param("interesseId") Long interesseId,
+                        @Param("status") String status);
 
-    /**
-     * Busca documentos por status
-     */
-    List<DocumentoMatricula> findByStatus(String status);
+        /**
+         * Busca documentos por status
+         */
+        List<DocumentoMatricula> findByStatus(String status);
 }

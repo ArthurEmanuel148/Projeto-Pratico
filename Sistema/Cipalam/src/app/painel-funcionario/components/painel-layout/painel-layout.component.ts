@@ -581,6 +581,12 @@ export class PainelLayoutComponent implements OnInit {
         case 'cadastroTurma':
           targetRoute = '/sistema/turmas/cadastro';
           break;
+        case 'listarTiposDocumento':
+          targetRoute = '/sistema/tipos-documento/lista';
+          break;
+        case 'cadastroTipoDocumento':
+          targetRoute = '/sistema/tipos-documento/cadastro';
+          break;
         default:
           console.warn('⚠️ Funcionalidade sem rota:', funcionalidade.chave);
           return;
@@ -588,6 +594,12 @@ export class PainelLayoutComponent implements OnInit {
     }
 
     console.log('🚀 [DEBUG] Navegando para:', targetRoute);
+
+    // Verificar permissões antes da navegação
+    const permissions = this.authService.getPermissoesFuncionario();
+    console.log('🔐 [DEBUG] Permissões do usuário:', permissions);
+    console.log('🔐 [DEBUG] Permissão necessária:', funcionalidade.chave);
+    console.log('🔐 [DEBUG] Tem permissão?', permissions[funcionalidade.chave]);
 
     // Navegação direta
     this.router.navigateByUrl(targetRoute).then(success => {
@@ -601,6 +613,7 @@ export class PainelLayoutComponent implements OnInit {
         }
       } else {
         console.error('❌ [DEBUG] Falha na navegação para:', targetRoute);
+        console.error('❌ [DEBUG] Possível problema de permissão ou rota não encontrada');
       }
     }).catch(error => {
       console.error('❌ [DEBUG] Erro na navegação:', error);

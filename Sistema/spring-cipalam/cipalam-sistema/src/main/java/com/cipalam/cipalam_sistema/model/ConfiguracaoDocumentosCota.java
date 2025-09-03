@@ -35,6 +35,6 @@ public class ConfiguracaoDocumentosCota {
     }
 
     public enum TipoCota {
-        livre, economica, funcionario
+        LIVRE, ECONOMICA, FUNCIONARIO
     }
 }

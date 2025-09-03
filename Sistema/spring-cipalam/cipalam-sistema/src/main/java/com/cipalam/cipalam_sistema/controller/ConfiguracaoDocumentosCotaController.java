@@ -2,6 +2,8 @@ package com.cipalam.cipalam_sistema.controller;
 
 import com.cipalam.cipalam_sistema.model.ConfiguracaoDocumentosCota;
 import com.cipalam.cipalam_sistema.service.ConfiguracaoDocumentosCotaService;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.core.type.TypeReference;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,18 +18,25 @@ public class ConfiguracaoDocumentosCotaController {
     @Autowired
     private ConfiguracaoDocumentosCotaService configuracaoService;
 
+    private final ObjectMapper objectMapper = new ObjectMapper();
+
     @GetMapping
     public ResponseEntity<?> listarTodas(@RequestParam(required = false) String format) {
         if ("frontend".equals(format)) {
-            // Retornar no formato esperado pelo frontend: Record<string, string[]>
+            // Retornar no formato esperado pelo frontend: Record<string, number[]>
             List<ConfiguracaoDocumentosCota> configuracoes = configuracaoService.listarTodas();
-            Map<String, List<String>> result = new HashMap<>();
+            Map<String, List<Integer>> result = new HashMap<>();
 
             for (ConfiguracaoDocumentosCota config : configuracoes) {
-                List<String> documentos = config.getDocumentosObrigatorios() != null
-                        ? Arrays.asList(config.getDocumentosObrigatorios().split(","))
-                        : new ArrayList<>();
-                result.put(config.getTipoCota().toString(), documentos);
+                try {
+                    List<Integer> documentos = objectMapper.readValue(
+                        config.getDocumentosObrigatorios(), 
+                        new TypeReference<List<Integer>>() {}
+                    );
+                    result.put(config.getTipoCota().toString(), documentos);
+                } catch (Exception e) {
+                    result.put(config.getTipoCota().toString(), new ArrayList<>());
+                }
             }
 
             return ResponseEntity.ok(result);
@@ -53,6 +62,44 @@ public class ConfiguracaoDocumentosCotaController {
             Integer funcionarioId = (Integer) request.get("funcionarioId");
 
             Map<String, Object> response = configuracaoService.salvarConfiguracao(tipoCota, documentos, funcionarioId);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of(
+                    "success", false,
+                    "message", "Erro ao processar requisição: " + e.getMessage()));
+        }
+    }
+
+    @PostMapping("/batch")
+    public ResponseEntity<Map<String, Object>> salvarConfiguracaoCompleta(@RequestBody Map<String, List<Integer>> configuracoes) {
+        try {
+            Map<String, Object> response = new HashMap<>();
+            List<String> sucessos = new ArrayList<>();
+            List<String> erros = new ArrayList<>();
+
+            for (Map.Entry<String, List<Integer>> entry : configuracoes.entrySet()) {
+                String tipoCota = entry.getKey();
+                List<Integer> documentos = entry.getValue();
+
+                try {
+                    Map<String, Object> resultado = configuracaoService.salvarConfiguracao(tipoCota, documentos, null);
+                    if ((Boolean) resultado.get("success")) {
+                        sucessos.add(tipoCota);
+                    } else {
+                        erros.add(tipoCota + ": " + resultado.get("message"));
+                    }
+                } catch (Exception e) {
+                    erros.add(tipoCota + ": " + e.getMessage());
+                }
+            }
+
+            response.put("success", erros.isEmpty());
+            response.put("sucessos", sucessos);
+            response.put("erros", erros);
+            response.put("message", erros.isEmpty() ? 
+                "Todas as configurações foram salvas com sucesso!" : 
+                "Algumas configurações falharam: " + String.join(", ", erros));
+
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(Map.of(

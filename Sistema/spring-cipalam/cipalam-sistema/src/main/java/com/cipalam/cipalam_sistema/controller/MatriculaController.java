@@ -357,7 +357,7 @@ public class MatriculaController {
     @GetMapping("/responsavel/template-documento/{tipoDocumentoId}")
     public ResponseEntity<?> buscarTemplateDocumento(@PathVariable Long tipoDocumentoId) {
         try {
-            Optional<TipoDocumento> tipoOpt = tipoDocumentoService.buscarPorId(tipoDocumentoId.intValue());
+            Optional<TipoDocumento> tipoOpt = tipoDocumentoService.buscarPorId(tipoDocumentoId);
 
             String template;
             if (tipoOpt.isPresent() && tipoOpt.get().getTemplateDocumento() != null) {

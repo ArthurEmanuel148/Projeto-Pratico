@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { RoleGuard } from '../../core/services/role.guard';
 
 const routes: Routes = [
     {
@@ -9,11 +10,21 @@ const routes: Routes = [
     },
     {
         path: 'lista',
-        loadChildren: () => import('./lista-tipos-documentos/lista-tipos-documentos.module').then(m => m.ListaTiposDocumentosPageModule)
+        loadComponent: () => import('./lista-tipos-documentos/lista-tipos-documentos.page').then(m => m.ListaTiposDocumentosPage),
+        canActivate: [RoleGuard],
+        data: { requiredPermission: 'listarTiposDocumento' }
     },
     {
         path: 'cadastro',
-        loadChildren: () => import('./cadastro-tipo-documento/cadastro-tipo-documento.module').then(m => m.CadastroTipoDocumentoPageModule)
+        loadComponent: () => import('./cadastro-tipo-documento/cadastro-tipo-documento.page').then(m => m.CadastroTipoDocumentoPage),
+        canActivate: [RoleGuard],
+        data: { requiredPermission: 'cadastroTipoDocumento' }
+    },
+    {
+        path: 'editar/:id',
+        loadComponent: () => import('./cadastro-tipo-documento/cadastro-tipo-documento.page').then(m => m.CadastroTipoDocumentoPage),
+        canActivate: [RoleGuard],
+        data: { requiredPermission: 'cadastroTipoDocumento' }
     }
 ];
 

@@ -303,17 +303,17 @@ export class InteresseMatriculaService {
     );
   }
 
-  salvarConfiguracaoDocumentos(configuracao: Record<string, string[]>): Observable<any> {
-    return this.http.post(`${this.apiUrl}/configuracao-documentos`, configuracao);
+  salvarConfiguracaoDocumentos(configuracao: Record<string, number[]>): Observable<any> {
+    return this.http.post(`${environment.apiUrl}/configuracao-documentos/batch`, configuracao);
   }
 
-  getConfiguracaoDocumentos(): Observable<Record<string, string[]>> {
-    return this.http.get<Record<string, string[]>>(`${this.apiUrl}/configuracao-documentos`);
+  getConfiguracaoDocumentos(): Observable<Record<string, number[]>> {
+    return this.http.get<Record<string, number[]>>(`${environment.apiUrl}/configuracao-documentos?format=frontend`);
   }
 
   // Método para buscar tipos de documentos
   getTiposDocumento(): Observable<any[]> {
-    return this.http.get<any[]>(`${environment.apiUrl}/tipos-documento`).pipe(
+    return this.http.get<any[]>(`${environment.apiUrl}/tipos-documento/ativos`).pipe(
       catchError(error => {
         console.error('Erro ao buscar tipos de documento:', error);
         throw error;

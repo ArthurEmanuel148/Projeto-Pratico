@@ -56,6 +56,18 @@ const routes: Routes = [
         loadComponent: () => import('../funcionalidades/gerenciamento-documentos/gerenciamento-documentos.page').then(m => m.GerenciamentoDocumentosPage),
         canActivate: [RoleGuard],
         data: { requiredPermission: 'aprovacaoDocumentos' }
+      },
+      {
+        path: 'tipos-documento',
+        loadChildren: () => import('../funcionalidades/gerenciamento-tipos-documentos/gerenciamento-tipos-documentos-routing.module').then(m => m.GerenciamentoTiposDocumentosRoutingModule),
+        canActivate: [RoleGuard],
+        data: { requiredPermission: 'tiposDocumento' }
+      },
+      {
+        path: 'configuracao-documentos-cota',
+        loadChildren: () => import('../funcionalidades/configuracao-documentos-cota/configuracao-documentos-cota.module').then(m => m.ConfiguracaoDocumentosCotaModule),
+        canActivate: [RoleGuard],
+        data: { requiredPermission: 'configuracaoDocumentos' }
       }
     ]
   }

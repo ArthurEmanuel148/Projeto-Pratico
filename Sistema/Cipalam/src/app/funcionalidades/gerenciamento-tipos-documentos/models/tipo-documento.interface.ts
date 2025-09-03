@@ -1,42 +1,38 @@
-export enum TipoCota {
-    LIVRE = 'LIVRE',
-    ECONOMICA = 'ECONOMICA',
-    FUNCIONARIO = 'FUNCIONARIO'
+export enum TipoProcessamento {
+    ANEXACAO = 'ANEXACAO',
+    ASSINATURA = 'ASSINATURA'
 }
 
 export enum EscopoDocumento {
     FAMILIA = 'FAMILIA',
     ALUNO = 'ALUNO',
-    AMBOS = 'AMBOS'
+    TODOS_INTEGRANTES = 'TODOS_INTEGRANTES'
 }
 
 export interface TipoDocumento {
     idTipoDocumento?: number;
     nome: string;
     descricao?: string;
-    obrigatorio: boolean;
-    requerAssinatura: boolean;
-    requerAnexo: boolean;
-    tipoCota?: TipoCota | null;
+    tipoProcessamento: TipoProcessamento;
     escopo: EscopoDocumento;
     ativo: boolean;
-    ordemExibicao: number;
+    dataCriacao?: string;
+    dataAtualizacao?: string;
+
+    // Métodos calculados para compatibilidade
+    requerAssinatura?: boolean;
+    requerAnexo?: boolean;
+    obrigatorio?: boolean;
+    ordemExibicao?: number;
     templateDocumento?: string;
-    dataCriacao?: Date;
-    dataAtualizacao?: Date;
+    documentoIdentidade?: boolean;
 }
 
 export interface TipoDocumentoCreateRequest {
     nome: string;
     descricao?: string;
-    obrigatorio: boolean;
-    requerAssinatura: boolean;
-    requerAnexo: boolean;
-    tipoCota?: TipoCota | null;
+    tipoProcessamento: TipoProcessamento;
     escopo: EscopoDocumento;
-    ativo: boolean;
-    ordemExibicao: number;
-    templateDocumento?: string;
 }
 
 export interface TipoDocumentoUpdateRequest extends TipoDocumentoCreateRequest {
@@ -48,12 +44,20 @@ export interface TipoDocumentoListResponse {
     totalElements: number;
     totalPages: number;
     size: number;
-    number: number;
+    pageNumber: number;
+    first: boolean;
+    last: boolean;
 }
 
-export interface TipoDocumentoFilter {
+export interface DocumentosOrganizados {
+    documentosFamilia: TipoDocumento[];
+    documentosAluno: TipoDocumento[];
+    documentosTodosIntegrantes: TipoDocumento[];
+}
+
+export interface TipoDocumentoFilters {
     nome?: string;
-    tipoCota?: TipoCota;
+    tipoProcessamento?: TipoProcessamento;
     escopo?: EscopoDocumento;
     ativo?: boolean;
 }

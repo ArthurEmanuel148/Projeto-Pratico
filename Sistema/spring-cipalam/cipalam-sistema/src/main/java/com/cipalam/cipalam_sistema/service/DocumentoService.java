@@ -218,11 +218,10 @@ public class DocumentoService {
                         td.descricao,
                         td.obrigatorio,
                         td.tipoCota,
-                        td.escopo,
-                        td.ordemExibicao
+                        td.escopo
                     FROM tbTipoDocumento td
                     WHERE td.tipoCota = ? AND td.ativo = 1
-                    ORDER BY td.ordemExibicao, td.nome
+                    ORDER BY td.nome
                 """;
 
         return jdbcTemplate.queryForList(sql, tipoCota);

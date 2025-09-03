@@ -1,14 +1,13 @@
 <ion-header [translucent]="true">
     <ion-toolbar>
         <ion-buttons slot="start">
-            <ion-back-button defaultHref="/sistema/tipos-documentos"></ion-back-button>
+            <ion-back-button defaultHref="/sistema/tipos-documento/lista"></ion-back-button>
         </ion-buttons>
         <ion-title>{{ isEditMode ? 'Editar' : 'Novo' }} Tipo de Documento</ion-title>
     </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true" class="cadastro-content">
-
+<ion-content [fullscreen]="true" class="cadastro-content" [scrollY]="true">
     <div class="form-container">
         <!-- Header da página -->
         <div class="page-header">
@@ -24,8 +23,7 @@
             </div>
         </div>
 
-        <form [formGroup]="tipoDocumentoForm" (ngSubmit)="salvarTipoDocumento()">
-
+        <form [formGroup]="tipoDocumentoForm" (ngSubmit)="salvar()">
             <!-- Seção: Informações Básicas -->
             <div class="form-section">
                 <div class="section-header">
@@ -39,14 +37,17 @@
                 </div>
 
                 <div class="form-group">
-                    <ion-item [class.item-valid]="isFieldValid('nome')" [class.item-invalid]="isFieldInvalid('nome')">
+                    <ion-item [class.item-valid]="nome?.valid && nome?.touched"
+                        [class.item-invalid]="nome?.invalid && nome?.touched">
                         <ion-label position="stacked">Nome do Documento *</ion-label>
                         <ion-input formControlName="nome" placeholder="Ex: Certidão de Nascimento" maxlength="100">
                         </ion-input>
                     </ion-item>
-                    <div *ngIf="isFieldInvalid('nome')" class="validation-message">
+                    <div *ngIf="nome?.invalid && nome?.touched" class="validation-message">
                         <ion-text color="danger">
-                            {{ getFieldError('nome') }}
+                            <span *ngIf="nome?.errors?.['required']">Nome é obrigatório</span>
+                            <span *ngIf="nome?.errors?.['minlength']">Nome deve ter pelo menos 3 caracteres</span>
+                            <span *ngIf="nome?.errors?.['maxlength']">Nome não pode ter mais de 100 caracteres</span>
                         </ion-text>
                     </div>
 
@@ -57,16 +58,10 @@
                             maxlength="500">
                         </ion-textarea>
                     </ion-item>
-
-                    <ion-item [class.item-valid]="isFieldValid('ordemExibicao')"
-                        [class.item-invalid]="isFieldInvalid('ordemExibicao')">
-                        <ion-label position="stacked">Ordem de Exibição *</ion-label>
-                        <ion-input formControlName="ordemExibicao" type="number" placeholder="1" min="1" max="999">
-                        </ion-input>
-                    </ion-item>
-                    <div *ngIf="isFieldInvalid('ordemExibicao')" class="validation-message">
+                    <div *ngIf="descricao?.invalid && descricao?.touched" class="validation-message">
                         <ion-text color="danger">
-                            {{ getFieldError('ordemExibicao') }}
+                            <span *ngIf="descricao?.errors?.['maxlength']">Descrição não pode ter mais de 500
+                                caracteres</span>
                         </ion-text>
                     </div>
                 </div>
@@ -85,129 +80,145 @@
                 </div>
 
                 <div class="form-group">
-                    <ion-item [class.item-valid]="isFieldValid('tipoCota')"
-                        [class.item-invalid]="isFieldInvalid('tipoCota')">
-                        <ion-label position="stacked">Tipo de Cota</ion-label>
-                        <ion-select formControlName="tipoCota" (ionChange)="onTipoCotaChange()"
-                            placeholder="Selecione o tipo de cota">
-                            <ion-select-option *ngFor="let tipo of tiposCota" [value]="tipo.value">
-                                {{ tipo.label }}
-                            </ion-select-option>
-                        </ion-select>
-                    </ion-item>
+                    <div class="field-header">
+                        <h3>Modalidade de Entrega *</h3>
+                        <p>Como o documento será entregue</p>
+                    </div>
 
-                    <ion-item [class.item-valid]="isFieldValid('escopo')"
-                        [class.item-invalid]="isFieldInvalid('escopo')">
-                        <ion-label position="stacked">Escopo do Documento *</ion-label>
-                        <ion-select formControlName="escopo" (ionChange)="onEscopoChange()"
-                            placeholder="Selecione o escopo">
-                            <ion-select-option *ngFor="let escopo of escopos" [value]="escopo.value">
-                                {{ escopo.label }}
-                            </ion-select-option>
-                        </ion-select>
-                    </ion-item>
-                    <div *ngIf="isFieldInvalid('escopo')" class="validation-message">
+                    <div class="button-options">
+                        <ion-button [fill]="modalidadeSelecionada === 'ASSINADO' ? 'solid' : 'outline'"
+                            [color]="modalidadeSelecionada === 'ASSINADO' ? 'success' : 'light'"
+                            (click)="selecionarModalidade('ASSINADO')" class="option-button">
+                            <ion-icon name="document-text-outline"></ion-icon>
+                            <div class="button-content">
+                                <div class="button-title">Assinado</div>
+                                <div class="button-subtitle">Documento assinado digitalmente</div>
+                            </div>
+                        </ion-button>
+
+                        <ion-button [fill]="modalidadeSelecionada === 'ANEXADO' ? 'solid' : 'outline'"
+                            [color]="modalidadeSelecionada === 'ANEXADO' ? 'success' : 'light'"
+                            (click)="selecionarModalidade('ANEXADO')" class="option-button">
+                            <ion-icon name="attach-outline"></ion-icon>
+                            <div class="button-content">
+                                <div class="button-title">Anexado</div>
+                                <div class="button-subtitle">Arquivo enviado pelo usuário</div>
+                            </div>
+                        </ion-button>
+                    </div>
+
+                    <!-- Campo hidden para o FormControl -->
+                    <input type="hidden" formControlName="modalidadeEntrega" />
+
+                    <div *ngIf="modalidadeEntrega?.invalid && modalidadeEntrega?.touched" class="validation-message">
                         <ion-text color="danger">
-                            {{ getFieldError('escopo') }}
+                            <span *ngIf="modalidadeEntrega?.errors?.['required']">Modalidade de entrega é
+                                obrigatória</span>
+                        </ion-text>
+                    </div>
+
+                    <div class="field-header" style="margin-top: 24px;">
+                        <h3>Quem Deve Fornecer *</h3>
+                        <p>Quem deve fornecer este documento</p>
+                    </div>
+
+                    <div class="button-options">
+                        <ion-button [fill]="quemForneceSelecionado === 'RESPONSAVEL' ? 'solid' : 'outline'"
+                            [color]="quemForneceSelecionado === 'RESPONSAVEL' ? 'success' : 'light'"
+                            (click)="selecionarQuemFornece('RESPONSAVEL')" class="option-button">
+                            <ion-icon name="person-outline"></ion-icon>
+                            <div class="button-content">
+                                <div class="button-title">Responsável</div>
+                                <div class="button-subtitle">Apenas o responsável</div>
+                            </div>
+                        </ion-button>
+
+                        <ion-button [fill]="quemForneceSelecionado === 'ALUNO' ? 'solid' : 'outline'"
+                            [color]="quemForneceSelecionado === 'ALUNO' ? 'success' : 'light'"
+                            (click)="selecionarQuemFornece('ALUNO')" class="option-button">
+                            <ion-icon name="school-outline"></ion-icon>
+                            <div class="button-content">
+                                <div class="button-title">Aluno</div>
+                                <div class="button-subtitle">Apenas o aluno</div>
+                            </div>
+                        </ion-button>
+
+                        <ion-button [fill]="quemForneceSelecionado === 'TODOS_INTEGRANTES' ? 'solid' : 'outline'"
+                            [color]="quemForneceSelecionado === 'TODOS_INTEGRANTES' ? 'success' : 'light'"
+                            (click)="selecionarQuemFornece('TODOS_INTEGRANTES')" class="option-button">
+                            <ion-icon name="people-outline"></ion-icon>
+                            <div class="button-content">
+                                <div class="button-title">Todos os Integrantes</div>
+                                <div class="button-subtitle">Todos da família</div>
+                            </div>
+                        </ion-button>
+
+                        <ion-button [fill]="quemForneceSelecionado === 'FAMILIA' ? 'solid' : 'outline'"
+                            [color]="quemForneceSelecionado === 'FAMILIA' ? 'success' : 'light'"
+                            (click)="selecionarQuemFornece('FAMILIA')" class="option-button">
+                            <ion-icon name="home-outline"></ion-icon>
+                            <div class="button-content">
+                                <div class="button-title">Família</div>
+                                <div class="button-subtitle">Documento da família</div>
+                            </div>
+                        </ion-button>
+                    </div>
+
+                    <!-- Campo hidden para o FormControl -->
+                    <input type="hidden" formControlName="quemDeveFornencer" />
+
+                    <div *ngIf="quemDeveFornencer?.invalid && quemDeveFornencer?.touched" class="validation-message">
+                        <ion-text color="danger">
+                            <span *ngIf="quemDeveFornencer?.errors?.['required']">Definir quem deve fornecer é
+                                obrigatório</span>
                         </ion-text>
                     </div>
                 </div>
             </div>
 
-            <!-- Seção: Opções Avançadas -->
+            <!-- Seção: Status -->
             <div class="form-section">
                 <div class="section-header">
                     <div class="section-icon">
-                        <ion-icon name="options-outline"></ion-icon>
+                        <ion-icon name="toggle-outline"></ion-icon>
                     </div>
                     <div class="section-title">
-                        <h2>Opções Avançadas</h2>
-                        <p>Configurações específicas do documento</p>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <div class="toggle-group">
-                        <ion-item>
-                            <ion-checkbox formControlName="obrigatorio" slot="start"></ion-checkbox>
-                            <ion-label>
-                                <h3>Documento Obrigatório</h3>
-                                <p>Este documento é obrigatório para o processo de matrícula</p>
-                            </ion-label>
-                        </ion-item>
-
-                        <ion-item>
-                            <ion-checkbox formControlName="requerAssinatura" slot="start"></ion-checkbox>
-                            <ion-label>
-                                <h3>Requer Assinatura Digital</h3>
-                                <p>O documento deve ser assinado digitalmente</p>
-                            </ion-label>
-                        </ion-item>
-
-                        <ion-item>
-                            <ion-checkbox formControlName="requerAnexo" slot="start"></ion-checkbox>
-                            <ion-label>
-                                <h3>Requer Anexo</h3>
-                                <p>É necessário anexar arquivo para este documento</p>
-                            </ion-label>
-                        </ion-item>
-
-                        <ion-item>
-                            <ion-checkbox formControlName="ativo" slot="start"></ion-checkbox>
-                            <ion-label>
-                                <h3>Documento Ativo</h3>
-                                <p>O documento está disponível para uso no sistema</p>
-                            </ion-label>
-                        </ion-item>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Seção: Template (Opcional) -->
-            <div class="form-section">
-                <div class="section-header">
-                    <div class="section-icon">
-                        <ion-icon name="document-outline"></ion-icon>
-                    </div>
-                    <div class="section-title">
-                        <h2>Template do Documento</h2>
-                        <p>Modelo ou instruções para preenchimento (opcional)</p>
+                        <h2>Status</h2>
+                        <p>Controle de disponibilidade do documento</p>
                     </div>
                 </div>
 
                 <div class="form-group">
                     <ion-item>
-                        <ion-label position="stacked">Template/Instruções</ion-label>
-                        <ion-textarea formControlName="templateDocumento"
-                            placeholder="Digite instruções ou template para este documento..." rows="5">
-                        </ion-textarea>
+                        <ion-checkbox formControlName="ativo" slot="start"></ion-checkbox>
+                        <ion-label>
+                            <h3>Documento Ativo</h3>
+                            <p>O documento está disponível para uso no sistema</p>
+                        </ion-label>
                     </ion-item>
-
-                    <div class="template-actions" *ngIf="tipoDocumentoForm.get('templateDocumento')?.value">
-                        <ion-button fill="outline" size="small" (click)="previewTemplate()">
-                            <ion-icon name="eye-outline" slot="start"></ion-icon>
-                            Visualizar
-                        </ion-button>
-                    </div>
                 </div>
             </div>
 
             <!-- Ações do formulário -->
             <div class="form-actions">
                 <div class="actions-container">
-                    <ion-button type="button" fill="outline" class="cancel-button" (click)="confirmarCancelamento()">
+                    <ion-button type="button" fill="outline" class="cancel-button" (click)="cancelar()">
                         <ion-icon name="close-outline" slot="start"></ion-icon>
                         Cancelar
                     </ion-button>
 
-                    <ion-button type="submit" class="submit-button" [disabled]="tipoDocumentoForm.invalid || loading">
+                    <ion-button *ngIf="isEditMode" type="button" fill="outline" color="danger"
+                        (click)="confirmarExclusao()">
+                        <ion-icon name="trash-outline" slot="start"></ion-icon>
+                        Excluir
+                    </ion-button>
+
+                    <ion-button type="submit" class="submit-button" [disabled]="tipoDocumentoForm.invalid">
                         <ion-icon name="checkmark-outline" slot="start"></ion-icon>
-                        {{ isEditMode ? 'Atualizar' : 'Criar' }} Tipo de Documento
+                        {{ isEditMode ? 'Atualizar' : 'Criar' }}
                     </ion-button>
                 </div>
             </div>
-
         </form>
     </div>
-
 </ion-content>

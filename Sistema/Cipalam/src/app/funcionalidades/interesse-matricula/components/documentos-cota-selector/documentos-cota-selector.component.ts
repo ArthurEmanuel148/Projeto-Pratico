@@ -21,30 +21,30 @@ export class DocumentosCotaSelectorComponent implements OnInit {
   salvando = false;
 
   constructor(
-    private modalCtrl: ModalController, 
+    private modalCtrl: ModalController,
     private fb: FormBuilder,
     private loadingCtrl: LoadingController,
     private toastCtrl: ToastController,
     private interesseService: InteresseMatriculaService
-  ) {}
+  ) { }
 
   ngOnInit() {
     const group: any = {};
-    
+
     // Verificação de segurança para evitar erro se documentosDisponiveis for undefined
     if (this.documentosDisponiveis && Array.isArray(this.documentosDisponiveis)) {
       this.documentosDisponiveis.forEach((doc) => {
         const docId = doc.idTipoDocumento;
         if (docId) {
           // Garantir que estamos comparando números com números
-          const estaSelecionado = this.documentosSelecionados && 
+          const estaSelecionado = this.documentosSelecionados &&
             this.documentosSelecionados.some(selectedId => Number(selectedId) === Number(docId));
-          
+
           group[`doc_${docId}`] = [estaSelecionado];
         }
       });
     }
-    
+
     this.form = this.fb.group(group);
   }
 
@@ -73,7 +73,7 @@ export class DocumentosCotaSelectorComponent implements OnInit {
       this.interesseService.getConfiguracaoDocumentos().subscribe({
         next: async (configuracaoAtual) => {
           console.log('Configuração atual do banco:', configuracaoAtual);
-          
+
           // Preparar configuração atualizada mantendo as outras cotas
           const configuracaoAtualizada = {
             FUNCIONARIO: configuracaoAtual['FUNCIONARIO'] || [],
@@ -84,7 +84,7 @@ export class DocumentosCotaSelectorComponent implements OnInit {
           // Atualizar apenas a cota específica
           const chaveBackend = this.chaveCota.toUpperCase();
           console.log('Chave backend:', chaveBackend);
-          
+
           if (chaveBackend === 'FUNCIONARIO') {
             configuracaoAtualizada.FUNCIONARIO = selecionados;
           } else if (chaveBackend === 'ECONOMICA') {
@@ -120,7 +120,7 @@ export class DocumentosCotaSelectorComponent implements OnInit {
               console.error('Status:', error.status);
               console.error('Mensagem:', error.message);
               console.error('Body:', error.error);
-              
+
               await loading.dismiss();
               this.salvando = false;
 
@@ -137,7 +137,7 @@ export class DocumentosCotaSelectorComponent implements OnInit {
         error: async (error) => {
           console.log('=== ERRO AO CARREGAR CONFIGURAÇÃO ===');
           console.error('Erro ao carregar configuração:', error);
-          
+
           await loading.dismiss();
           this.salvando = false;
 

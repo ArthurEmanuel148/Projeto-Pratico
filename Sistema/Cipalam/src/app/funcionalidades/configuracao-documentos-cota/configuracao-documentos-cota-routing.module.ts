@@ -3,14 +3,14 @@ import { RouterModule, Routes } from '@angular/router';
 import { ConfiguracaoDocumentosCotaPage } from './configuracao-documentos-cota.page';
 
 const routes: Routes = [
-  {
-    path: '',
-    component: ConfiguracaoDocumentosCotaPage
-  }
+    {
+        path: '',
+        component: ConfiguracaoDocumentosCotaPage
+    }
 ];
 
 @NgModule({
-  imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+    imports: [RouterModule.forChild(routes)],
+    exports: [RouterModule]
 })
 export class ConfiguracaoDocumentosCotaRoutingModule { }

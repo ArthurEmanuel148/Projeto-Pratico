@@ -3,10 +3,10 @@ import { LoadingController, ToastController, AlertController } from '@ionic/angu
 import { TipoDocumentoService } from '../../core/services/tipo-documento.service';
 import { ConfiguracaoDocumentosCotaService } from './services/configuracao-documentos-cota.service';
 import { TipoDocumento } from '../../core/models/tipo-documento.interface';
-import { 
-  ConfiguracaoDocumentosCota, 
+import {
+  ConfiguracaoDocumentosCota,
   TipoCota,
-  ConfiguracaoDocumentosCotaRequest 
+  ConfiguracaoDocumentosCotaRequest
 } from './models/configuracao-documentos-cota.interface';
 
 @Component({
@@ -16,7 +16,7 @@ import {
   standalone: false
 })
 export class ConfiguracaoDocumentosCotaPage implements OnInit {
-  
+
   tiposDocumentos: TipoDocumento[] = [];
   configuracoes: ConfiguracaoDocumentosCota[] = [];
   loading = false;
@@ -62,7 +62,7 @@ export class ConfiguracaoDocumentosCotaPage implements OnInit {
       // Carregar configurações existentes
       const configResponse = await this.configuracaoService.listarConfiguracoesFrontend().toPromise();
       console.log('Resposta configurações:', configResponse);
-      
+
       if (configResponse) {
         this.cotaLivre = configResponse['LIVRE'] || [];
         this.cotaEconomica = configResponse['ECONOMICA'] || [];
@@ -94,7 +94,7 @@ export class ConfiguracaoDocumentosCotaPage implements OnInit {
 
   toggleDocumento(tipoDocumento: TipoDocumento, tipoCota: TipoCota) {
     const documentoId = tipoDocumento.idTipoDocumento!;
-    
+
     switch (tipoCota) {
       case TipoCota.LIVRE:
         if (this.cotaLivre.includes(documentoId)) {
@@ -128,7 +128,7 @@ export class ConfiguracaoDocumentosCotaPage implements OnInit {
 
     try {
       let documentos: number[] = [];
-      
+
       switch (tipoCota) {
         case TipoCota.LIVRE:
           documentos = [...this.cotaLivre];
@@ -147,7 +147,7 @@ export class ConfiguracaoDocumentosCotaPage implements OnInit {
       };
 
       const response = await this.configuracaoService.salvarConfiguracao(request).toPromise();
-      
+
       if (response?.success) {
         await this.showToast(`Configuração da cota ${tipoCota} salva com sucesso!`, 'success');
       } else {

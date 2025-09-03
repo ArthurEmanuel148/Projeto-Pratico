@@ -7,13 +7,13 @@ import { ConfiguracaoDocumentosCotaRoutingModule } from './configuracao-document
 import { ConfiguracaoDocumentosCotaPage } from './configuracao-documentos-cota.page';
 
 @NgModule({
-  imports: [
-    CommonModule,
-    FormsModule,
-    ReactiveFormsModule,
-    IonicModule,
-    ConfiguracaoDocumentosCotaRoutingModule
-  ],
-  declarations: [ConfiguracaoDocumentosCotaPage]
+    imports: [
+        CommonModule,
+        FormsModule,
+        ReactiveFormsModule,
+        IonicModule,
+        ConfiguracaoDocumentosCotaRoutingModule
+    ],
+    declarations: [ConfiguracaoDocumentosCotaPage]
 })
 export class ConfiguracaoDocumentosCotaModule { }

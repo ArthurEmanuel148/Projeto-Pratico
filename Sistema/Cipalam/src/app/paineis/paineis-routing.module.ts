@@ -62,6 +62,12 @@ const routes: Routes = [
         loadChildren: () => import('../funcionalidades/gerenciamento-tipos-documentos/gerenciamento-tipos-documentos-routing.module').then(m => m.GerenciamentoTiposDocumentosRoutingModule),
         canActivate: [RoleGuard],
         data: { requiredPermission: 'tiposDocumento' }
+      },
+      {
+        path: 'configuracao-documentos-cota',
+        loadChildren: () => import('../funcionalidades/configuracao-documentos-cota/configuracao-documentos-cota.module').then(m => m.ConfiguracaoDocumentosCotaModule),
+        canActivate: [RoleGuard],
+        data: { requiredPermission: 'configuracaoDocumentos' }
       }
     ]
   }

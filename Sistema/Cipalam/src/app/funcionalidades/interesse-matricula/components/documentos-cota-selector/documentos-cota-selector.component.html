@@ -5,26 +5,34 @@
 </ion-header>
 
 <ion-content>
-  <form [formGroup]="form">
+  <form [formGroup]="form" *ngIf="form">
     <ion-list>
-      <ion-item *ngFor="let doc of documentosDisponiveis">
+      <ion-item *ngFor="let doc of (documentosDisponiveis && Array.isArray(documentosDisponiveis) ? documentosDisponiveis : [])">
         <ion-label>
           <h3>{{ doc.nome }}</h3>
           <p *ngIf="doc.descricao">{{ doc.descricao }}</p>
         </ion-label>
-        <ion-toggle slot="end" [formControlName]="doc.id"></ion-toggle>
+        <ion-toggle slot="end" [formControlName]="'doc_' + doc.idTipoDocumento"></ion-toggle>
       </ion-item>
     </ion-list>
   </form>
+  
+  <div *ngIf="!form" class="loading-message">
+    <ion-spinner></ion-spinner>
+    <p>Carregando formulário...</p>
+  </div>
 </ion-content>
 
 <ion-footer>
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-button (click)="cancelar()" color="medium">Cancelar</ion-button>
+      <ion-button (click)="cancelar()" color="medium" [disabled]="salvando">Cancelar</ion-button>
     </ion-buttons>
     <ion-buttons slot="end">
-      <ion-button (click)="confirmar()" color="success">Confirmar</ion-button>
+      <ion-button (click)="confirmar()" color="success" [disabled]="salvando">
+        <ion-spinner *ngIf="salvando" name="dots" slot="start"></ion-spinner>
+        {{ salvando ? 'Salvando...' : 'Salvar' }}
+      </ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-footer>

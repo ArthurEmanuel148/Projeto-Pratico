@@ -32,7 +32,7 @@ export class ConfiguracaoDocumentosPage implements OnInit {
     private toastCtrl: ToastController,
     private interesseService: InteresseMatriculaService,
     private cdr: ChangeDetectorRef
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.carregarDados();
@@ -47,19 +47,19 @@ export class ConfiguracaoDocumentosPage implements OnInit {
         next: (documentos: TipoDocumento[]) => {
           console.log('Documentos carregados do backend:', documentos);
           this.todosDocumentos = documentos;
-          
+
           // Depois carrega configuração existente do banco de dados
           this.interesseService.getConfiguracaoDocumentos().subscribe({
             next: (configuracao) => {
               console.log('Configuração carregada do backend:', configuracao);
-              
+
               // Converte as chaves para minúsculas para compatibilidade
               this.documentosPorCota = {
                 funcionario: configuracao['FUNCIONARIO'] || [],
                 economica: configuracao['ECONOMICA'] || [],
                 livre: configuracao['LIVRE'] || []
               };
-              
+
               console.log('Documentos por cota após carregamento:', this.documentosPorCota);
               this.carregando = false;
             },
@@ -91,7 +91,7 @@ export class ConfiguracaoDocumentosPage implements OnInit {
     console.log('Abrindo seleção para cota:', cota);
     console.log('Todos os documentos disponíveis:', this.todosDocumentos);
     console.log('Documentos da cota:', this.documentosPorCota[cota.chave]);
-    
+
     const modal = await this.modalCtrl.create({
       component: DocumentosCotaSelectorComponent,
       componentProps: {
@@ -106,7 +106,7 @@ export class ConfiguracaoDocumentosPage implements OnInit {
       console.log('Modal fechado com resultado:', result);
       console.log('Role:', result?.role);
       console.log('Data:', result?.data);
-      
+
       if (result?.role === 'confirmar') {
         console.log('Documentos foram salvos, aguardando e recarregando configurações');
         // Aguardar um pouco para garantir que o backend processou
@@ -121,24 +121,24 @@ export class ConfiguracaoDocumentosPage implements OnInit {
 
   recarregarConfiguracoes() {
     console.log('=== RECARREGANDO CONFIGURAÇÕES ===');
-    
+
     // Recarrega apenas a configuração, sem recarregar documentos disponíveis
     this.interesseService.getConfiguracaoDocumentos().subscribe({
       next: (configuracao) => {
         console.log('Configuração recarregada do banco:', configuracao);
-        
+
         // Converte as chaves para minúsculas para compatibilidade
         this.documentosPorCota = {
           funcionario: configuracao['FUNCIONARIO'] || [],
           economica: configuracao['ECONOMICA'] || [],
           livre: configuracao['LIVRE'] || []
         };
-        
+
         console.log('Documentos por cota após recarregamento:', this.documentosPorCota);
-        
+
         // Forçar detecção de mudanças na interface
         this.cdr.detectChanges();
-        
+
         console.log('Interface atualizada após recarregamento');
       },
       error: (error) => {

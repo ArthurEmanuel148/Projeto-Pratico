@@ -30,9 +30,9 @@ public class ConfiguracaoDocumentosCotaController {
             for (ConfiguracaoDocumentosCota config : configuracoes) {
                 try {
                     List<Integer> documentos = objectMapper.readValue(
-                        config.getDocumentosObrigatorios(), 
-                        new TypeReference<List<Integer>>() {}
-                    );
+                            config.getDocumentosObrigatorios(),
+                            new TypeReference<List<Integer>>() {
+                            });
                     result.put(config.getTipoCota().toString(), documentos);
                 } catch (Exception e) {
                     result.put(config.getTipoCota().toString(), new ArrayList<>());
@@ -71,7 +71,8 @@ public class ConfiguracaoDocumentosCotaController {
     }
 
     @PostMapping("/batch")
-    public ResponseEntity<Map<String, Object>> salvarConfiguracaoCompleta(@RequestBody Map<String, List<Integer>> configuracoes) {
+    public ResponseEntity<Map<String, Object>> salvarConfiguracaoCompleta(
+            @RequestBody Map<String, List<Integer>> configuracoes) {
         try {
             Map<String, Object> response = new HashMap<>();
             List<String> sucessos = new ArrayList<>();
@@ -96,9 +97,8 @@ public class ConfiguracaoDocumentosCotaController {
             response.put("success", erros.isEmpty());
             response.put("sucessos", sucessos);
             response.put("erros", erros);
-            response.put("message", erros.isEmpty() ? 
-                "Todas as configurações foram salvas com sucesso!" : 
-                "Algumas configurações falharam: " + String.join(", ", erros));
+            response.put("message", erros.isEmpty() ? "Todas as configurações foram salvas com sucesso!"
+                    : "Algumas configurações falharam: " + String.join(", ", erros));
 
             return ResponseEntity.ok(response);
         } catch (Exception e) {

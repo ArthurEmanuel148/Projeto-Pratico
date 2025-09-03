@@ -9,12 +9,12 @@
 
 <ion-content [fullscreen]="true" class="configuracao-content">
   <div class="content-container">
-    
+
     <!-- Header com informações -->
     <div class="header-section">
       <h2>Configuração de Documentos por Cota</h2>
       <p>Selecione quais documentos serão obrigatórios para cada tipo de cota de inscrição.</p>
-      
+
       <!-- Debug info -->
       <div style="background: #f0f0f0; padding: 10px; margin: 10px 0; border-radius: 5px;">
         <small>
@@ -33,7 +33,7 @@
 
     <!-- Configurações -->
     <div *ngIf="!loading" class="configuracoes-container">
-      
+
       <!-- Cota Livre -->
       <div class="cota-section">
         <div class="cota-header">
@@ -54,17 +54,12 @@
         </div>
 
         <div class="documentos-grid">
-          <div 
-            *ngFor="let documento of (tiposDocumentos && Array.isArray(tiposDocumentos) ? tiposDocumentos : [])"
-            class="documento-item"
-            [class.selecionado]="isDocumentoSelecionado(documento, TipoCota.LIVRE)"
-            (click)="toggleDocumento(documento, TipoCota.LIVRE)"
-          >
+          <div *ngFor="let documento of (tiposDocumentos && Array.isArray(tiposDocumentos) ? tiposDocumentos : [])"
+            class="documento-item" [class.selecionado]="isDocumentoSelecionado(documento, TipoCota.LIVRE)"
+            (click)="toggleDocumento(documento, TipoCota.LIVRE)">
             <div class="documento-checkbox">
-              <ion-checkbox 
-                [checked]="isDocumentoSelecionado(documento, TipoCota.LIVRE)"
-                (ionChange)="toggleDocumento(documento, TipoCota.LIVRE)"
-                color="primary">
+              <ion-checkbox [checked]="isDocumentoSelecionado(documento, TipoCota.LIVRE)"
+                (ionChange)="toggleDocumento(documento, TipoCota.LIVRE)" color="primary">
               </ion-checkbox>
             </div>
             <div class="documento-info">
@@ -103,17 +98,12 @@
         </div>
 
         <div class="documentos-grid">
-          <div 
-            *ngFor="let documento of (tiposDocumentos && Array.isArray(tiposDocumentos) ? tiposDocumentos : [])"
-            class="documento-item"
-            [class.selecionado]="isDocumentoSelecionado(documento, TipoCota.ECONOMICA)"
-            (click)="toggleDocumento(documento, TipoCota.ECONOMICA)"
-          >
+          <div *ngFor="let documento of (tiposDocumentos && Array.isArray(tiposDocumentos) ? tiposDocumentos : [])"
+            class="documento-item" [class.selecionado]="isDocumentoSelecionado(documento, TipoCota.ECONOMICA)"
+            (click)="toggleDocumento(documento, TipoCota.ECONOMICA)">
             <div class="documento-checkbox">
-              <ion-checkbox 
-                [checked]="isDocumentoSelecionado(documento, TipoCota.ECONOMICA)"
-                (ionChange)="toggleDocumento(documento, TipoCota.ECONOMICA)"
-                color="secondary">
+              <ion-checkbox [checked]="isDocumentoSelecionado(documento, TipoCota.ECONOMICA)"
+                (ionChange)="toggleDocumento(documento, TipoCota.ECONOMICA)" color="secondary">
               </ion-checkbox>
             </div>
             <div class="documento-info">
@@ -152,17 +142,12 @@
         </div>
 
         <div class="documentos-grid">
-          <div 
-            *ngFor="let documento of (tiposDocumentos && Array.isArray(tiposDocumentos) ? tiposDocumentos : [])"
-            class="documento-item"
-            [class.selecionado]="isDocumentoSelecionado(documento, TipoCota.FUNCIONARIO)"
-            (click)="toggleDocumento(documento, TipoCota.FUNCIONARIO)"
-          >
+          <div *ngFor="let documento of (tiposDocumentos && Array.isArray(tiposDocumentos) ? tiposDocumentos : [])"
+            class="documento-item" [class.selecionado]="isDocumentoSelecionado(documento, TipoCota.FUNCIONARIO)"
+            (click)="toggleDocumento(documento, TipoCota.FUNCIONARIO)">
             <div class="documento-checkbox">
-              <ion-checkbox 
-                [checked]="isDocumentoSelecionado(documento, TipoCota.FUNCIONARIO)"
-                (ionChange)="toggleDocumento(documento, TipoCota.FUNCIONARIO)"
-                color="tertiary">
+              <ion-checkbox [checked]="isDocumentoSelecionado(documento, TipoCota.FUNCIONARIO)"
+                (ionChange)="toggleDocumento(documento, TipoCota.FUNCIONARIO)" color="tertiary">
               </ion-checkbox>
             </div>
             <div class="documento-info">
@@ -185,12 +170,7 @@
 
     <!-- Botões de ação globais -->
     <div class="global-actions" *ngIf="!loading">
-      <ion-button 
-        expand="block" 
-        fill="solid" 
-        color="success" 
-        size="large"
-        (click)="salvarTodasConfiguracoes()">
+      <ion-button expand="block" fill="solid" color="success" size="large" (click)="salvarTodasConfiguracoes()">
         <ion-icon name="save-outline" slot="start"></ion-icon>
         Salvar Todas as Configurações
       </ion-button>

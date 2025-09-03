@@ -7,7 +7,8 @@
 <ion-content>
   <form [formGroup]="form" *ngIf="form">
     <ion-list>
-      <ion-item *ngFor="let doc of (documentosDisponiveis && Array.isArray(documentosDisponiveis) ? documentosDisponiveis : [])">
+      <ion-item
+        *ngFor="let doc of (documentosDisponiveis && Array.isArray(documentosDisponiveis) ? documentosDisponiveis : [])">
         <ion-label>
           <h3>{{ doc.nome }}</h3>
           <p *ngIf="doc.descricao">{{ doc.descricao }}</p>
@@ -16,7 +17,7 @@
       </ion-item>
     </ion-list>
   </form>
-  
+
   <div *ngIf="!form" class="loading-message">
     <ion-spinner></ion-spinner>
     <p>Carregando formulário...</p>

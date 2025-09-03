@@ -29,12 +29,12 @@ public class TipoDocumentoController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(required = false) String nome,
-            @RequestParam(required = false) TipoDocumento.TipoProcessamento tipoProcessamento,
-            @RequestParam(required = false) TipoDocumento.EscopoDocumento escopo,
+            @RequestParam(required = false) TipoDocumento.ModalidadeEntrega modalidadeEntrega,
+            @RequestParam(required = false) TipoDocumento.QuemDeveFornencer quemDeveFornencer,
             @RequestParam(required = false) Boolean ativo) {
 
         Page<TipoDocumento> tipos = tipoDocumentoService.listarTiposDocumentos(
-                page, size, nome, tipoProcessamento, escopo, ativo);
+                page, size, nome, modalidadeEntrega, quemDeveFornencer, ativo);
         return ResponseEntity.ok(tipos);
     }
 
@@ -121,22 +121,22 @@ public class TipoDocumentoController {
     }
 
     /**
-     * Busca documentos por tipo de processamento
+     * Busca documentos por modalidade de entrega
      */
-    @GetMapping("/tipo-processamento/{tipoProcessamento}")
-    public ResponseEntity<List<TipoDocumento>> buscarPorTipoProcessamento(
-            @PathVariable TipoDocumento.TipoProcessamento tipoProcessamento) {
-        List<TipoDocumento> tipos = tipoDocumentoService.buscarPorTipoProcessamento(tipoProcessamento);
+    @GetMapping("/modalidade-entrega/{modalidadeEntrega}")
+    public ResponseEntity<List<TipoDocumento>> buscarPorModalidadeEntrega(
+            @PathVariable TipoDocumento.ModalidadeEntrega modalidadeEntrega) {
+        List<TipoDocumento> tipos = tipoDocumentoService.buscarPorModalidadeEntrega(modalidadeEntrega);
         return ResponseEntity.ok(tipos);
     }
 
     /**
-     * Busca documentos por escopo
+     * Busca documentos por quem deve fornecer
      */
-    @GetMapping("/escopo/{escopo}")
-    public ResponseEntity<List<TipoDocumento>> buscarPorEscopo(
-            @PathVariable TipoDocumento.EscopoDocumento escopo) {
-        List<TipoDocumento> tipos = tipoDocumentoService.buscarPorEscopo(escopo);
+    @GetMapping("/quem-deve-fornencer/{quemDeveFornencer}")
+    public ResponseEntity<List<TipoDocumento>> buscarPorQuemDeveFornencer(
+            @PathVariable TipoDocumento.QuemDeveFornencer quemDeveFornencer) {
+        List<TipoDocumento> tipos = tipoDocumentoService.buscarPorQuemDeveFornencer(quemDeveFornencer);
         return ResponseEntity.ok(tipos);
     }
 

@@ -31,6 +31,11 @@ export class RotasConfigService {
         ['gerenciamentoDocumentos', '/sistema/documentos'],
         ['documentos', '/sistema/documentos'],
 
+        // Tipos de Documento
+        ['tiposDocumento', '/sistema/tipos-documento'],
+        ['listarTiposDocumento', '/sistema/tipos-documento/lista'],
+        ['cadastroTipoDocumento', '/sistema/tipos-documento/cadastro'],
+
         // Alunos (futuras implementações)
         ['listaAlunos', '/sistema/alunos/lista'],
         ['cadastroAluno', '/sistema/alunos/cadastro'],

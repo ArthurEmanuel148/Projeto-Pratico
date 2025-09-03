@@ -440,18 +440,19 @@ CREATE TABLE `tbTipoDocumento` (
     `idTipoDocumento` BIGINT NOT NULL AUTO_INCREMENT,
     `nome` VARCHAR(100) NOT NULL,
     `descricao` TEXT NULL,
-    `tipoProcessamento` ENUM('ANEXACAO', 'ASSINATURA') NOT NULL DEFAULT 'ANEXACAO',
-    `escopo` ENUM(
-        'FAMILIA',
+    `modalidadeEntrega` ENUM('ASSINADO', 'ANEXADO') NOT NULL DEFAULT 'ANEXADO',
+    `quemDeveFornencer` ENUM(
+        'RESPONSAVEL',
         'ALUNO',
-        'TODOS_INTEGRANTES'
-    ) NOT NULL DEFAULT 'FAMILIA',
+        'TODOS_INTEGRANTES',
+        'FAMILIA'
+    ) NOT NULL DEFAULT 'RESPONSAVEL',
     `ativo` BOOLEAN DEFAULT TRUE,
     `dataCriacao` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     `dataAtualizacao` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (`idTipoDocumento`),
-    INDEX `idx_tipoProcessamento` (`tipoProcessamento`),
-    INDEX `idx_escopo` (`escopo`),
+    INDEX `idx_modalidadeEntrega` (`modalidadeEntrega`),
+    INDEX `idx_quemDeveFornencer` (`quemDeveFornencer`),
     INDEX `idx_ativo` (`ativo`),
     UNIQUE KEY `unique_nome_ativo` (`nome`, `ativo`)
 ) ENGINE = InnoDB;
@@ -947,7 +948,7 @@ BEGIN
         'pendente'
     FROM tbTipoDocumento td
     WHERE td.ativo = TRUE 
-    AND td.escopo IN ('FAMILIA', 'TODOS_INTEGRANTES');
+    AND td.quemDeveFornencer IN ('FAMILIA', 'TODOS_INTEGRANTES');
     
     -- Criar documentos do ALUNO (escopo 'aluno' ou 'ambos')
     INSERT INTO tbDocumentoMatricula (
@@ -961,7 +962,7 @@ BEGIN
         'pendente'
     FROM tbTipoDocumento td
     WHERE td.ativo = TRUE 
-    AND td.escopo = 'ALUNO';
+    AND td.quemDeveFornencer = 'ALUNO';
     
 END$$
 
@@ -1136,8 +1137,8 @@ VALUES
 -- Ações de tipos de documento
 (
     'listarTiposDocumento',
-    'Listar Tipos de Documento',
-    'Visualizar todos os tipos de documento',
+    'Lista de Tipos de Documento',
+    'Visualizar e gerenciar tipos de documento',
     'list-outline',
     'tiposDocumento',
     'acao',
@@ -1151,33 +1152,6 @@ VALUES
     'tiposDocumento',
     'acao',
     72
-),
-(
-    'editarTipoDocumento',
-    'Editar Tipo de Documento',
-    'Editar tipo de documento existente',
-    'create-outline',
-    'tiposDocumento',
-    'acao',
-    73
-),
-(
-    'excluirTipoDocumento',
-    'Excluir Tipo de Documento',
-    'Excluir tipo de documento',
-    'trash-outline',
-    'tiposDocumento',
-    'acao',
-    74
-),
-(
-    'organizarTiposDocumento',
-    'Organizar Tipos de Documento',
-    'Visualizar documentos organizados por escopo',
-    'file-tray-stacked-outline',
-    'tiposDocumento',
-    'acao',
-    75
 );
 
 -- ===================================================================
@@ -1190,101 +1164,98 @@ INSERT INTO
     `tbTipoDocumento` (
         `nome`,
         `descricao`,
-        `tipoProcessamento`,
-        `escopo`
+        `modalidadeEntrega`,
+        `quemDeveFornencer`
     )
 VALUES
-    -- Documentos da FAMÍLIA (responsável/família como um todo)
+    -- Documentos da FAMÍLIA
     (
         'Comprovante de Residência',
         'Comprovante de endereço atualizado da família',
-        'ANEXACAO',
+        'ANEXADO',
         'FAMILIA'
     ),
     (
         'Termo de Responsabilidade',
         'Termo de responsabilidade do responsável',
-        'ASSINATURA',
-        'FAMILIA'
+        'ASSINADO',
+        'RESPONSAVEL'
     ),
     (
         'Declaração de Veracidade',
         'Declaração de veracidade das informações prestadas',
-        'ASSINATURA',
+        'ASSINADO',
+        'RESPONSAVEL'
+    ),
+    -- Documentos do ALUNO específico
+    (
+        'Certidão de Nascimento',
+        'Certidão de nascimento do aluno',
+        'ANEXADO',
+        'ALUNO'
+    ),
+    (
+        'Foto 3x4',
+        'Foto recente 3x4 do aluno',
+        'ANEXADO',
+        'ALUNO'
+    ),
+    (
+        'Cartão de Vacinação',
+        'Cartão de vacinação atualizado do aluno',
+        'ANEXADO',
+        'ALUNO'
+    ),
+    (
+        'Histórico Escolar',
+        'Histórico escolar do aluno (se aplicável)',
+        'ANEXADO',
+        'ALUNO'
+    ),
+    (
+        'Atestado Médico',
+        'Atestado médico do aluno (se necessário)',
+        'ANEXADO',
+        'ALUNO'
+    ),
+    -- Documentos de TODOS OS INTEGRANTES da família (cada pessoa precisa fornecer)
+    (
+        'RG ou CNH',
+        'Documento de identidade com foto de cada integrante',
+        'ANEXADO',
+        'TODOS_INTEGRANTES'
+    ),
+    (
+        'CPF',
+        'Cadastro de Pessoa Física de cada integrante',
+        'ANEXADO',
+        'TODOS_INTEGRANTES'
+    ),
+    (
+        'Comprovante de Renda',
+        'Comprovante de renda individual de cada integrante que trabalha',
+        'ANEXADO',
+        'TODOS_INTEGRANTES'
+    ),
+    -- Documentos gerais de assinatura
+    (
+        'Termo de Compromisso',
+        'Termo de compromisso com as normas da instituição',
+        'ASSINADO',
         'FAMILIA'
     ),
-
--- Documentos do ALUNO específico
-(
-    'Certidão de Nascimento',
-    'Certidão de nascimento do aluno',
-    'ANEXACAO',
-    'ALUNO'
-),
-(
-    'Foto 3x4',
-    'Foto recente 3x4 do aluno',
-    'ANEXACAO',
-    'ALUNO'
-),
-(
-    'Cartão de Vacinação',
-    'Cartão de vacinação atualizado do aluno',
-    'ANEXACAO',
-    'ALUNO'
-),
-(
-    'Histórico Escolar',
-    'Histórico escolar do aluno (se aplicável)',
-    'ANEXACAO',
-    'ALUNO'
-),
-(
-    'Atestado Médico',
-    'Atestado médico do aluno (se necessário)',
-    'ANEXACAO',
-    'ALUNO'
-),
-
--- Documentos de TODOS OS INTEGRANTES da família (cada pessoa precisa fornecer)
-(
-    'RG ou CNH',
-    'Documento de identidade com foto de cada integrante',
-    'ANEXACAO',
-    'TODOS_INTEGRANTES'
-),
-(
-    'CPF',
-    'Cadastro de Pessoa Física de cada integrante',
-    'ANEXACAO',
-    'TODOS_INTEGRANTES'
-),
-(
-    'Comprovante de Renda',
-    'Comprovante de renda individual de cada integrante que trabalha',
-    'ANEXACAO',
-    'TODOS_INTEGRANTES'
-),
-
--- Documentos gerais de assinatura
-(
-    'Termo de Compromisso',
-    'Termo de compromisso com as normas da instituição',
-    'ASSINATURA',
-    'FAMILIA'
-),
-(
-    'Autorização de Uso de Imagem',
-    'Autorização para uso de imagem do aluno',
-    'ASSINATURA',
-    'FAMILIA'
-),
-(
-    'Declaração de Hipossuficiência',
-    'Declaração de situação socioeconômica familiar',
-    'ASSINATURA',
-    'FAMILIA'
-);
+    (
+        'Autorização de Uso de Imagem',
+        'Autorização para uso de imagem do aluno',
+        'ASSINADO',
+        'RESPONSAVEL'
+    ),
+    (
+        'Declaração de Hipossuficiência',
+        'Declaração de situação socioeconômica familiar',
+        'ASSINADO',
+        'RESPONSAVEL'
+    );
 
 -- ===================================================================
 -- CONFIGURAÇÕES DE DOCUMENTOS POR COTA
@@ -2006,8 +1977,8 @@ SELECT
     td.idTipoDocumento,
     td.nome as nomeDocumento,
     td.descricao,
-    td.tipoProcessamento,
-    td.escopo,
+    td.modalidadeEntrega,
+    td.quemDeveFornencer,
     dm.status,
     dm.caminhoArquivo,
     dm.dataEnvio,
@@ -2036,8 +2007,8 @@ SELECT
     td.idTipoDocumento,
     td.nome as nomeDocumento,
     td.descricao,
-    td.tipoProcessamento,
-    td.escopo,
+    td.modalidadeEntrega,
+    td.quemDeveFornencer,
     dm.status,
     dm.caminhoArquivo,
     dm.dataEnvio,
@@ -2073,7 +2044,7 @@ SELECT
     NULL as idAluno,
     td.nome as nomeDocumento,
     td.descricao,
-    td.escopo,
+    td.quemDeveFornencer,
     dm.status,
     dm.dataEnvio,
     dm.dataAprovacao,
@@ -2098,7 +2069,7 @@ SELECT
     a.tbPessoa_idPessoa as idAluno,
     td.nome as nomeDocumento,
     td.descricao,
-    td.escopo,
+    td.quemDeveFornencer,
     dm.status,
     dm.dataEnvio,
     dm.dataAprovacao,
@@ -2386,8 +2357,8 @@ BEGIN
         dm.idDocumentoMatricula,
         td.nome as nomeDocumento,
         td.descricao,
-        td.tipoProcessamento,
-        td.escopo,
+        td.modalidadeEntrega,
+        td.quemDeveFornencer,
         dm.status,
         dm.caminhoArquivo,
         dm.dataEnvio,
@@ -2411,8 +2382,8 @@ BEGIN
         dm.idDocumentoMatricula,
         td.nome as nomeDocumento,
         td.descricao,
-        td.tipoProcessamento,
-        td.escopo,
+        td.modalidadeEntrega,
+        td.quemDeveFornencer,
         dm.status,
         dm.caminhoArquivo,
         dm.dataEnvio,

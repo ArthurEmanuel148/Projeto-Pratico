@@ -1,39 +1,57 @@
 import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { AlertController, LoadingController, ToastController } from '@ionic/angular';
+import { AlertController, LoadingController, ToastController, IonicModule } from '@ionic/angular';
 import { TipoDocumentoService } from '../../../core/services/tipo-documento.service';
-import { TipoDocumento } from '../models/tipo-documento.interface';
-import { AuthService } from '../../../core/services/auth.service';
+import { TipoDocumento } from '../../../core/models/tipo-documento.interface';
 
 @Component({
     selector: 'app-lista-tipos-documentos',
     templateUrl: './lista-tipos-documentos.page.html',
     styleUrls: ['./lista-tipos-documentos.page.scss'],
-    standalone: false
+    standalone: true,
+    imports: [CommonModule, FormsModule, IonicModule]
 })
 export class ListaTiposDocumentosPage implements OnInit {
     tiposDocumentos: TipoDocumento[] = [];
     tiposDocumentosFiltrados: TipoDocumento[] = [];
     loading = false;
-    podeGerenciarTiposDocumentos = false;
+
     filtros = {
         nome: '',
-        tipoCota: '',
-        escopo: '',
-        ativo: true
+        modalidadeEntrega: '',
+        quemDeveFornencer: '',
+        ativo: null as boolean | null
     };
+
+    // Opções para filtros
+    modalidadesEntrega = [
+        { value: 'ASSINADO', label: 'Assinado' },
+        { value: 'ANEXADO', label: 'Anexado' }
+    ];
+
+    quemDeveFornecerOpcoes = [
+        { value: 'RESPONSAVEL', label: 'Responsável' },
+        { value: 'ALUNO', label: 'Aluno' },
+        { value: 'TODOS_INTEGRANTES', label: 'Todos os Integrantes' },
+        { value: 'FAMILIA', label: 'Família' }
+    ];
+
+    statusOptions = [
+        { value: true, label: 'Ativo' },
+        { value: false, label: 'Inativo' }
+    ];
 
     constructor(
         private tipoDocumentoService: TipoDocumentoService,
         private router: Router,
         private alertController: AlertController,
         private loadingController: LoadingController,
-        private toastController: ToastController,
-        private authService: AuthService
+        private toastController: ToastController
     ) { }
 
     ngOnInit() {
-        this.verificarPermissoes();
         this.carregarTiposDocumentos();
     }
 
@@ -41,27 +59,23 @@ export class ListaTiposDocumentosPage implements OnInit {
         this.carregarTiposDocumentos();
     }
 
-    verificarPermissoes() {
-        const usuario = this.authService.getFuncionarioLogado();
-        this.podeGerenciarTiposDocumentos = !!(
-            usuario?.tipo === 'admin' ||
-            usuario?.permissoes?.['gerenciamentoDocumentos'] ||
-            usuario?.permissoes?.['configuracaoSistema']
-        );
-    }
-
     async carregarTiposDocumentos() {
         this.loading = true;
+        const loading = await this.loadingController.create({
+            message: 'Carregando tipos de documentos...'
+        });
+        await loading.present();
 
         try {
-            this.tiposDocumentos = await this.tipoDocumentoService.listarTiposDocumentos().toPromise() || [];
+            const response = await this.tipoDocumentoService.listarTiposDocumentos(0, 100).toPromise();
+            this.tiposDocumentos = response?.content || [];
             this.aplicarFiltros();
-            console.log('Tipos de documentos carregados:', this.tiposDocumentos);
         } catch (error) {
             console.error('Erro ao carregar tipos de documentos:', error);
-            await this.apresentarToast('Erro ao carregar tipos de documentos', 'danger');
+            await this.showToast('Erro ao carregar tipos de documentos', 'danger');
         } finally {
             this.loading = false;
+            await loading.dismiss();
         }
     }
 
@@ -70,164 +84,66 @@ export class ListaTiposDocumentosPage implements OnInit {
             const nomeMatch = !this.filtros.nome ||
                 tipo.nome.toLowerCase().includes(this.filtros.nome.toLowerCase());
 
-            const tipoCotaMatch = !this.filtros.tipoCota ||
-                tipo.tipoCota === this.filtros.tipoCota;
+            const modalidadeMatch = !this.filtros.modalidadeEntrega ||
+                tipo.modalidadeEntrega === this.filtros.modalidadeEntrega;
 
-            const escopoMatch = !this.filtros.escopo ||
-                tipo.escopo === this.filtros.escopo;
+            const fornecedorMatch = !this.filtros.quemDeveFornencer ||
+                tipo.quemDeveFornencer === this.filtros.quemDeveFornencer;
 
-            const ativoMatch = this.filtros.ativo === undefined ||
+            const ativoMatch = this.filtros.ativo === null ||
                 tipo.ativo === this.filtros.ativo;
 
-            return nomeMatch && tipoCotaMatch && escopoMatch && ativoMatch;
+            return nomeMatch && modalidadeMatch && fornecedorMatch && ativoMatch;
         });
     }
 
     limparFiltros() {
         this.filtros = {
             nome: '',
-            tipoCota: '',
-            escopo: '',
-            ativo: true
+            modalidadeEntrega: '',
+            quemDeveFornencer: '',
+            ativo: null
         };
         this.aplicarFiltros();
     }
 
-    navegarParaCadastro() {
-        this.router.navigate(['/sistema/tipos-documentos/cadastro']);
+    novoTipoDocumento() {
+        this.router.navigate(['/sistema/tipos-documento/cadastro']);
     }
 
     editarTipoDocumento(id: number) {
-        this.router.navigate(['/sistema/tipos-documentos/cadastro'], {
-            queryParams: { id }
-        });
+        this.router.navigate(['/sistema/tipos-documento/editar', id]);
     }
 
     async alternarStatus(tipoDocumento: TipoDocumento) {
         const loading = await this.loadingController.create({
-            message: 'Alterando status...'
+            message: tipoDocumento.ativo ? 'Desativando...' : 'Ativando...'
         });
         await loading.present();
 
         try {
-            await this.tipoDocumentoService.alternarStatusTipoDocumento(
-                tipoDocumento.idTipoDocumento!
-            ).toPromise();
+            const dadosAtualizados = {
+                idTipoDocumento: tipoDocumento.idTipoDocumento!,
+                nome: tipoDocumento.nome,
+                descricao: tipoDocumento.descricao,
+                modalidadeEntrega: tipoDocumento.modalidadeEntrega,
+                quemDeveFornencer: tipoDocumento.quemDeveFornencer,
+                ativo: !tipoDocumento.ativo
+            };
+            await this.tipoDocumentoService.atualizarTipoDocumento(tipoDocumento.idTipoDocumento!, dadosAtualizados).toPromise();
 
-            tipoDocumento.ativo = !tipoDocumento.ativo;
-            this.aplicarFiltros();
-
-            await this.apresentarToast(
-                `Tipo de documento ${tipoDocumento.ativo ? 'ativado' : 'desativado'} com sucesso!`,
-                'success'
-            );
+            const status = dadosAtualizados.ativo ? 'ativado' : 'desativado';
+            await this.showToast(`Tipo de documento ${status} com sucesso!`, 'success');
+            this.carregarTiposDocumentos();
         } catch (error) {
             console.error('Erro ao alterar status:', error);
-            await this.apresentarToast('Erro ao alterar status do tipo de documento', 'danger');
+            await this.showToast('Erro ao alterar status do tipo de documento', 'danger');
         } finally {
             await loading.dismiss();
         }
     }
 
-    async confirmarRemocao(tipoDocumento: TipoDocumento) {
-        // Primeiro verifica se pode remover
-        try {
-            const podeRemover = await this.tipoDocumentoService.podeRemoverTipoDocumento(
-                tipoDocumento.idTipoDocumento!
-            ).toPromise();
-
-            if (!podeRemover) {
-                await this.apresentarToast(
-                    'Este tipo de documento não pode ser removido pois está sendo utilizado.',
-                    'warning'
-                );
-                return;
-            }
-        } catch (error) {
-            console.error('Erro ao verificar se pode remover:', error);
-        }
-
-        const alert = await this.alertController.create({
-            header: 'Confirmar Remoção',
-            message: `Tem certeza que deseja remover o tipo de documento "${tipoDocumento.nome}"?`,
-            buttons: [
-                {
-                    text: 'Cancelar',
-                    role: 'cancel'
-                },
-                {
-                    text: 'Remover',
-                    role: 'destructive',
-                    handler: () => this.removerTipoDocumento(tipoDocumento)
-                }
-            ]
-        });
-
-        await alert.present();
-    }
-
-    async removerTipoDocumento(tipoDocumento: TipoDocumento) {
-        const loading = await this.loadingController.create({
-            message: 'Removendo tipo de documento...'
-        });
-        await loading.present();
-
-        try {
-            await this.tipoDocumentoService.removerTipoDocumento(
-                tipoDocumento.idTipoDocumento!
-            ).toPromise();
-
-            this.tiposDocumentos = this.tiposDocumentos.filter(
-                t => t.idTipoDocumento !== tipoDocumento.idTipoDocumento
-            );
-            this.aplicarFiltros();
-
-            await this.apresentarToast('Tipo de documento removido com sucesso!', 'success');
-        } catch (error) {
-            console.error('Erro ao remover tipo de documento:', error);
-            await this.apresentarToast('Erro ao remover tipo de documento', 'danger');
-        } finally {
-            await loading.dismiss();
-        }
-    }
-
-    getTipoCotaLabel(tipoCota: string | null): string {
-        switch (tipoCota) {
-            case 'livre': return 'Livre';
-            case 'economica': return 'Econômica';
-            case 'funcionario': return 'Funcionário';
-            default: return 'Todas';
-        }
-    }
-
-    getEscopoLabel(escopo: string): string {
-        switch (escopo) {
-            case 'familia': return 'Família';
-            case 'aluno': return 'Aluno';
-            case 'ambos': return 'Ambos';
-            default: return escopo;
-        }
-    }
-
-    getTipoCotaColor(tipoCota: string | null): string {
-        switch (tipoCota) {
-            case 'livre': return 'primary';
-            case 'economica': return 'warning';
-            case 'funcionario': return 'tertiary';
-            default: return 'medium';
-        }
-    }
-
-    getEscopoColor(escopo: string): string {
-        switch (escopo) {
-            case 'familia': return 'success';
-            case 'aluno': return 'secondary';
-            case 'ambos': return 'tertiary';
-            default: return 'medium';
-        }
-    }
-
-    private async apresentarToast(message: string, color: string) {
+    private async showToast(message: string, color: string) {
         const toast = await this.toastController.create({
             message,
             duration: 3000,
@@ -235,5 +151,20 @@ export class ListaTiposDocumentosPage implements OnInit {
             position: 'top'
         });
         await toast.present();
+    }
+
+    // Métodos helper para templates
+    getModalidadeLabel(modalidade: string): string {
+        const modalidades = this.modalidadesEntrega.find(m => m.value === modalidade);
+        return modalidades?.label || modalidade;
+    }
+
+    getQuemDeveFornecerLabel(fornecedor: string): string {
+        const fornecedores = this.quemDeveFornecerOpcoes.find(f => f.value === fornecedor);
+        return fornecedores?.label || fornecedor;
+    }
+
+    formatarDataCriacao(data: Date): string {
+        return new Date(data).toLocaleDateString('pt-BR');
     }
 }

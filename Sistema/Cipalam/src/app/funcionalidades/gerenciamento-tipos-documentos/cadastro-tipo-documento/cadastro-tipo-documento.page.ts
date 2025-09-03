@@ -1,34 +1,38 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { FormBuilder, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { LoadingController, ToastController, AlertController } from '@ionic/angular';
+import { LoadingController, ToastController, AlertController, IonicModule } from '@ionic/angular';
 import { TipoDocumentoService } from '../../../core/services/tipo-documento.service';
-import { TipoDocumento, TipoDocumentoCreateRequest, TipoDocumentoUpdateRequest } from '../models/tipo-documento.interface';
+import { TipoDocumento, ModalidadeEntrega, QuemDeveFornencer } from '../../../core/models/tipo-documento.interface';
 
 @Component({
     selector: 'app-cadastro-tipo-documento',
     templateUrl: './cadastro-tipo-documento.page.html',
     styleUrls: ['./cadastro-tipo-documento.page.scss'],
-    standalone: false
+    standalone: true,
+    imports: [CommonModule, FormsModule, ReactiveFormsModule, IonicModule]
 })
 export class CadastroTipoDocumentoPage implements OnInit {
     tipoDocumentoForm!: FormGroup;
     isEditMode = false;
     tipoDocumentoId?: number;
-    loading = false;
+
+    // Estados para controle visual dos radio buttons
+    modalidadeSelecionada: string = '';
+    quemForneceSelecionado: string = '';
 
     // Opções para os selects
-    tiposCota = [
-        { value: null, label: 'Todas as Cotas' },
-        { value: 'livre', label: 'Cota Livre' },
-        { value: 'economica', label: 'Cota Econômica' },
-        { value: 'funcionario', label: 'Cota de Funcionário' }
+    modalidadesEntrega = [
+        { value: ModalidadeEntrega.ASSINADO, label: 'Assinado Digitalmente' },
+        { value: ModalidadeEntrega.ANEXADO, label: 'Anexado/Upload' }
     ];
 
-    escopos = [
-        { value: 'ambos', label: 'Família e Aluno' },
-        { value: 'familia', label: 'Apenas Família' },
-        { value: 'aluno', label: 'Apenas Aluno' }
+    quemDeveFornecerOpcoes = [
+        { value: QuemDeveFornencer.RESPONSAVEL, label: 'Apenas Responsável' },
+        { value: QuemDeveFornencer.ALUNO, label: 'Apenas Aluno' },
+        { value: QuemDeveFornencer.TODOS_INTEGRANTES, label: 'Todos os Integrantes da Família' },
+        { value: QuemDeveFornencer.FAMILIA, label: 'Família' }
     ];
 
     constructor(
@@ -39,32 +43,25 @@ export class CadastroTipoDocumentoPage implements OnInit {
         private loadingController: LoadingController,
         private toastController: ToastController,
         private alertController: AlertController
-    ) {
-        this.initializeForm();
-    }
+    ) { }
 
     ngOnInit() {
-        this.route.queryParams.subscribe(params => {
-            if (params['id']) {
-                this.tipoDocumentoId = parseInt(params['id']);
-                this.isEditMode = true;
-                this.carregarTipoDocumento();
-            }
-        });
+        this.createForm();
+        const id = this.route.snapshot.params['id'];
+        if (id) {
+            this.tipoDocumentoId = Number(id);
+            this.isEditMode = true;
+            this.carregarTipoDocumento();
+        }
     }
 
-    private initializeForm() {
+    private createForm() {
         this.tipoDocumentoForm = this.formBuilder.group({
             nome: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(100)]],
             descricao: ['', [Validators.maxLength(500)]],
-            obrigatorio: [true],
-            requerAssinatura: [false],
-            requerAnexo: [true],
-            tipoCota: [null],
-            escopo: ['ambos', [Validators.required]],
-            ativo: [true],
-            ordemExibicao: [1, [Validators.required, Validators.min(1), Validators.max(999)]],
-            templateDocumento: ['']
+            modalidadeEntrega: ['', [Validators.required]], // ASSINADO ou ANEXADO
+            quemDeveFornencer: ['', [Validators.required]], // RESPONSAVEL, ALUNO, TODOS_INTEGRANTES, FAMILIA
+            ativo: [true]
         });
     }
 
@@ -82,30 +79,28 @@ export class CadastroTipoDocumentoPage implements OnInit {
             if (tipoDocumento) {
                 this.tipoDocumentoForm.patchValue({
                     nome: tipoDocumento.nome,
-                    descricao: tipoDocumento.descricao || '',
-                    obrigatorio: tipoDocumento.obrigatorio,
-                    requerAssinatura: tipoDocumento.requerAssinatura,
-                    requerAnexo: tipoDocumento.requerAnexo,
-                    tipoCota: tipoDocumento.tipoCota,
-                    escopo: tipoDocumento.escopo,
-                    ativo: tipoDocumento.ativo,
-                    ordemExibicao: tipoDocumento.ordemExibicao,
-                    templateDocumento: tipoDocumento.templateDocumento || ''
+                    descricao: tipoDocumento.descricao,
+                    modalidadeEntrega: tipoDocumento.modalidadeEntrega,
+                    quemDeveFornencer: tipoDocumento.quemDeveFornencer,
+                    ativo: tipoDocumento.ativo
                 });
+
+                // Atualizar estados visuais
+                this.modalidadeSelecionada = tipoDocumento.modalidadeEntrega;
+                this.quemForneceSelecionado = tipoDocumento.quemDeveFornencer;
             }
         } catch (error) {
             console.error('Erro ao carregar tipo de documento:', error);
-            await this.apresentarToast('Erro ao carregar tipo de documento', 'danger');
-            this.router.navigate(['/sistema/tipos-documentos']);
+            await this.showToast('Erro ao carregar tipo de documento', 'danger');
         } finally {
             await loading.dismiss();
         }
     }
 
-    async salvarTipoDocumento() {
+    async salvar() {
         if (this.tipoDocumentoForm.invalid) {
-            this.marcarCamposComoTocados();
-            await this.apresentarToast('Por favor, corrija os erros no formulário', 'warning');
+            await this.showToast('Por favor, preencha todos os campos obrigatórios', 'warning');
+            this.tipoDocumentoForm.markAllAsTouched();
             return;
         }
 
@@ -118,101 +113,74 @@ export class CadastroTipoDocumentoPage implements OnInit {
             const formData = this.tipoDocumentoForm.value;
 
             if (this.isEditMode && this.tipoDocumentoId) {
-                const updateData: TipoDocumentoUpdateRequest = {
-                    idTipoDocumento: this.tipoDocumentoId,
-                    ...formData
-                };
-                await this.tipoDocumentoService.atualizarTipoDocumento(updateData).toPromise();
-                await this.apresentarToast('Tipo de documento atualizado com sucesso!', 'success');
+                await this.tipoDocumentoService.atualizarTipoDocumento(this.tipoDocumentoId, formData).toPromise();
+                await this.showToast('Tipo de documento atualizado com sucesso!', 'success');
             } else {
-                const createData: TipoDocumentoCreateRequest = formData;
-                await this.tipoDocumentoService.criarTipoDocumento(createData).toPromise();
-                await this.apresentarToast('Tipo de documento criado com sucesso!', 'success');
+                await this.tipoDocumentoService.criarTipoDocumento(formData).toPromise();
+                await this.showToast('Tipo de documento criado com sucesso!', 'success');
+
+                // Limpar formulário após criação
+                this.limparFormulario();
             }
 
-            this.router.navigate(['/sistema/tipos-documentos']);
+            // Navegar de volta para a lista
+            setTimeout(() => {
+                this.router.navigate(['/sistema/tipos-documento/lista']);
+            }, 1000);
         } catch (error) {
             console.error('Erro ao salvar tipo de documento:', error);
-            await this.apresentarToast(
-                `Erro ao ${this.isEditMode ? 'atualizar' : 'criar'} tipo de documento`,
-                'danger'
-            );
+            await this.showToast('Erro ao salvar tipo de documento', 'danger');
         } finally {
             await loading.dismiss();
         }
     }
 
-    async confirmarCancelamento() {
-        if (this.tipoDocumentoForm.dirty) {
-            const alert = await this.alertController.create({
-                header: 'Confirmar Cancelamento',
-                message: 'Você tem alterações não salvas. Deseja realmente cancelar?',
-                buttons: [
-                    {
-                        text: 'Continuar Editando',
-                        role: 'cancel'
-                    },
-                    {
-                        text: 'Cancelar',
-                        role: 'destructive',
-                        handler: () => this.cancelar()
-                    }
-                ]
-            });
-            await alert.present();
-        } else {
-            this.cancelar();
+    async confirmarExclusao() {
+        if (!this.isEditMode || !this.tipoDocumentoId) return;
+
+        const alert = await this.alertController.create({
+            header: 'Confirmar Exclusão',
+            message: 'Tem certeza que deseja excluir este tipo de documento? Esta ação não pode ser desfeita.',
+            buttons: [
+                {
+                    text: 'Cancelar',
+                    role: 'cancel'
+                },
+                {
+                    text: 'Excluir',
+                    handler: () => this.excluir()
+                }
+            ]
+        });
+
+        await alert.present();
+    }
+
+    async excluir() {
+        if (!this.tipoDocumentoId) return;
+
+        const loading = await this.loadingController.create({
+            message: 'Excluindo tipo de documento...'
+        });
+        await loading.present();
+
+        try {
+            await this.tipoDocumentoService.excluirTipoDocumento(this.tipoDocumentoId).toPromise();
+            await this.showToast('Tipo de documento excluído com sucesso!', 'success');
+            this.router.navigate(['/sistema/tipos-documento/lista']);
+        } catch (error) {
+            console.error('Erro ao excluir tipo de documento:', error);
+            await this.showToast('Erro ao excluir tipo de documento', 'danger');
+        } finally {
+            await loading.dismiss();
         }
     }
 
     cancelar() {
-        this.router.navigate(['/sistema/tipos-documentos']);
+        this.router.navigate(['/sistema/tipos-documento/lista']);
     }
 
-    // Validações customizadas
-    isFieldInvalid(fieldName: string): boolean {
-        const field = this.tipoDocumentoForm.get(fieldName);
-        return !!(field && field.invalid && (field.dirty || field.touched));
-    }
-
-    isFieldValid(fieldName: string): boolean {
-        const field = this.tipoDocumentoForm.get(fieldName);
-        return !!(field && field.valid && (field.dirty || field.touched));
-    }
-
-    getFieldError(fieldName: string): string {
-        const field = this.tipoDocumentoForm.get(fieldName);
-        if (field && field.errors) {
-            if (field.errors['required']) {
-                return 'Este campo é obrigatório';
-            }
-            if (field.errors['minlength']) {
-                const requiredLength = field.errors['minlength'].requiredLength;
-                return `Mínimo de ${requiredLength} caracteres`;
-            }
-            if (field.errors['maxlength']) {
-                const requiredLength = field.errors['maxlength'].requiredLength;
-                return `Máximo de ${requiredLength} caracteres`;
-            }
-            if (field.errors['min']) {
-                const min = field.errors['min'].min;
-                return `Valor mínimo: ${min}`;
-            }
-            if (field.errors['max']) {
-                const max = field.errors['max'].max;
-                return `Valor máximo: ${max}`;
-            }
-        }
-        return '';
-    }
-
-    private marcarCamposComoTocados() {
-        Object.keys(this.tipoDocumentoForm.controls).forEach(key => {
-            this.tipoDocumentoForm.get(key)?.markAsTouched();
-        });
-    }
-
-    private async apresentarToast(message: string, color: string) {
+    private async showToast(message: string, color: string) {
         const toast = await this.toastController.create({
             message,
             duration: 3000,
@@ -222,26 +190,59 @@ export class CadastroTipoDocumentoPage implements OnInit {
         await toast.present();
     }
 
-    // Helpers para melhorar UX
-    onTipoCotaChange() {
-        // Se não for específico para uma cota, pode aplicar para ambos os escopos
-        const tipoCota = this.tipoDocumentoForm.get('tipoCota')?.value;
-        if (tipoCota === null) {
-            // Sugere ambos quando é para todas as cotas
-            this.tipoDocumentoForm.patchValue({ escopo: 'ambos' });
-        }
+    // Métodos helper para templates
+    getModalidadeEntregaLabel(modalidade: ModalidadeEntrega): string {
+        const opcao = this.modalidadesEntrega.find(m => m.value === modalidade);
+        return opcao ? opcao.label : modalidade;
     }
 
-    onEscopoChange() {
-        // Lógica adicional se necessário
+    getQuemDeveFornecerLabel(quem: QuemDeveFornencer): string {
+        const opcao = this.quemDeveFornecerOpcoes.find(q => q.value === quem);
+        return opcao ? opcao.label : quem;
     }
 
-    // Preview do template (futuro)
-    previewTemplate() {
-        const template = this.tipoDocumentoForm.get('templateDocumento')?.value;
-        if (template) {
-            // Implementar preview do template no futuro
-            console.log('Preview do template:', template);
-        }
+    // Métodos para seleção manual dos radio buttons
+    selecionarModalidade(modalidade: string) {
+        console.log('Selecionando modalidade:', modalidade);
+        this.modalidadeSelecionada = modalidade;
+        this.tipoDocumentoForm.patchValue({ modalidadeEntrega: modalidade });
+        console.log('Valor atual do form:', this.tipoDocumentoForm.value);
+    }
+
+    selecionarQuemFornece(quem: string) {
+        console.log('Selecionando quem fornece:', quem);
+        this.quemForneceSelecionado = quem;
+        this.tipoDocumentoForm.patchValue({ quemDeveFornencer: quem });
+        console.log('Valor atual do form:', this.tipoDocumentoForm.value);
+    }
+
+    limparFormulario() {
+        this.tipoDocumentoForm.reset();
+        this.modalidadeSelecionada = '';
+        this.quemForneceSelecionado = '';
+        this.tipoDocumentoForm.patchValue({
+            nome: '',
+            descricao: '',
+            modalidadeEntrega: '',
+            quemDeveFornencer: '',
+            ativo: true
+        });
+    }
+
+    // Validações de campo
+    get nome() {
+        return this.tipoDocumentoForm.get('nome');
+    }
+
+    get descricao() {
+        return this.tipoDocumentoForm.get('descricao');
+    }
+
+    get modalidadeEntrega() {
+        return this.tipoDocumentoForm.get('modalidadeEntrega');
+    }
+
+    get quemDeveFornencer() {
+        return this.tipoDocumentoForm.get('quemDeveFornencer');
     }
 }

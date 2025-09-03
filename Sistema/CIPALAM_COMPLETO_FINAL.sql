@@ -1,8 +1,15 @@
 -- ===================================================================
 -- BANCO DE DADOS CIPALAM - VERSÃO COMPLETA ATUALIZADA
--- Data: 22/08/2025
--- Descrição: Schema completo com fluxo de INICIAR MATRÍCULA implementado
--- Inclui: Distribuição automática de dados + Login responsável + Documentos organizados
+-- Data: 03/09/2025
+-- Descrição: Schema completo com fluxo de INICIAR MATRÍCULA aprimorado
+-- Inclui: Distribuição automática de dados + Login responsável com senha dos 4 últimos dígitos do CPF + Documentos organizados
+-- Novas funcionalidades:
+-- - Ações "detalharDeclaracao" e "processarMatricula" dentro do contexto de declarações
+-- - View vw_detalhamento_declaracao para interface de detalhamento completo
+-- - View vw_iniciar_matricula mantida para listagem
+-- - Procedure sp_ObterInfoSelecaoTurma para interface de seleção de turma
+-- - Geração automática de login com usuário=CPF e senha=últimos 4 dígitos
+-- FLUXO: Matrículas > Declarações de Interesse > [selecionar uma] > Detalhar > Iniciar Matrícula
 -- ===================================================================
 
 -- MySQL Workbench Forward Engineering
@@ -737,7 +744,8 @@ BEGIN
         
         -- 4. CRIAR LOGIN PARA RESPONSÁVEL (apenas se não existir)
         SET v_usuarioLogin = REPLACE(REPLACE(v_cpfResponsavel, '.', ''), '-', '');
-        SET v_senhaLogin = '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi'; -- "password"
+        -- Gerar senha com os últimos 4 dígitos do CPF
+        SET v_senhaLogin = SHA2(RIGHT(REPLACE(REPLACE(v_cpfResponsavel, '.', ''), '-', ''), 4), 256);
         
         INSERT IGNORE INTO tblogin (usuario, senha, tbPessoa_idPessoa)
         VALUES (v_usuarioLogin, v_senhaLogin, v_idResponsavel);
@@ -1079,6 +1087,26 @@ VALUES
     'matriculas',
     'acao',
     41
+),
+
+-- Ações específicas dentro do detalhamento de declarações
+(
+    'detalharDeclaracao',
+    'Detalhar Declaração',
+    'Visualizar detalhes completos de uma declaração de interesse',
+    'eye-outline',
+    'declaracoesInteresse',
+    'acao',
+    401
+),
+(
+    'processarMatricula',
+    'Processar Matrícula',
+    'Iniciar processo de matrícula a partir de uma declaração',
+    'school-outline',
+    'declaracoesInteresse',
+    'acao',
+    402
 ),
 
 -- Configurações
@@ -2342,6 +2370,169 @@ WHERE
     AND i.etapaAtual = 'finalizado'
 ORDER BY i.dataEnvio ASC;
 
+-- View específica para interface de iniciar matrícula
+CREATE VIEW vw_iniciar_matricula AS
+SELECT
+    i.id as idDeclaracao,
+    i.protocolo,
+    i.nomeResponsavel,
+    i.cpfResponsavel,
+    i.telefoneResponsavel,
+    i.emailResponsavel,
+    i.nomeAluno,
+    YEAR(CURDATE()) - YEAR(i.dataNascimentoAluno) - (
+        DATE_FORMAT(CURDATE(), '%m%d') < DATE_FORMAT(i.dataNascimentoAluno, '%m%d')
+    ) as idadeAluno,
+    i.dataNascimentoAluno,
+    i.tipoCota,
+    i.escolaAluno,
+    i.municipioEscola,
+    i.ufEscola,
+    i.numeroIntegrantes,
+    i.observacoesResponsavel,
+    i.dataEnvio,
+    DATEDIFF(CURDATE(), i.dataEnvio) as diasAguardando,
+    CASE i.tipoCota
+        WHEN 'livre' THEN 'Cota Livre'
+        WHEN 'economica' THEN 'Cota Econômica'
+        WHEN 'funcionario' THEN 'Cota Funcionário'
+        ELSE 'Não Informado'
+    END as tipoCotaDescricao,
+    -- Verificar se responsável já existe no sistema
+    CASE
+        WHEN p.idPessoa IS NOT NULL THEN TRUE
+        ELSE FALSE
+    END as responsavelJaExiste,
+    p.idPessoa as idPessoaResponsavel,
+    -- Informações de endereço resumidas
+    CONCAT(
+        COALESCE(i.logradouro, ''),
+        ', ',
+        COALESCE(i.numero, 'S/N'),
+        ' - ',
+        COALESCE(i.bairro, ''),
+        ', ',
+        COALESCE(i.cidade, ''),
+        ' - ',
+        COALESCE(i.uf, '')
+    ) as enderecoCompleto,
+    -- Informações de documentos que serão necessários (simplificado)
+    (
+        SELECT JSON_EXTRACT(
+                cdc.documentosObrigatorios, '$'
+            )
+        FROM
+            tbConfiguracaoDocumentosCota cdc
+        WHERE
+            cdc.tipoCota = UPPER(i.tipoCota)
+    ) as documentosNecessarios,
+    -- Contagem de documentos que serão criados
+    (
+        SELECT JSON_LENGTH(cdc.documentosObrigatorios)
+        FROM
+            tbConfiguracaoDocumentosCota cdc
+        WHERE
+            cdc.tipoCota = UPPER(i.tipoCota)
+    ) as totalDocumentosNecessarios
+FROM
+    tbInteresseMatricula i
+    LEFT JOIN tbPessoa p ON p.CpfPessoa = i.cpfResponsavel
+WHERE
+    i.status = 'interesse_declarado'
+    AND i.etapaAtual = 'finalizado'
+ORDER BY i.dataEnvio ASC;
+
+-- View para detalhamento completo de uma declaração específica
+CREATE VIEW vw_detalhamento_declaracao AS
+SELECT
+    i.id,
+    i.protocolo,
+    i.status,
+    i.etapaAtual,
+    -- Dados do Responsável
+    i.nomeResponsavel,
+    i.cpfResponsavel,
+    i.dataNascimentoResponsavel,
+    i.telefoneResponsavel,
+    i.emailResponsavel,
+    i.rendaResponsavel,
+    i.profissaoResponsavel,
+    -- Dados do Aluno
+    i.nomeAluno,
+    i.dataNascimentoAluno,
+    i.cpfAluno,
+    YEAR(CURDATE()) - YEAR(i.dataNascimentoAluno) - (
+        DATE_FORMAT(CURDATE(), '%m%d') < DATE_FORMAT(i.dataNascimentoAluno, '%m%d')
+    ) as idadeAluno,
+    i.escolaAluno,
+    i.codigoInepEscola,
+    i.municipioEscola,
+    i.ufEscola,
+    -- Endereço
+    i.cep,
+    i.logradouro,
+    i.numero,
+    i.complemento,
+    i.bairro,
+    i.cidade,
+    i.uf,
+    i.codigoIbgeCidade,
+    i.pontoReferencia,
+    CONCAT(
+        COALESCE(i.logradouro, ''),
+        ', ',
+        COALESCE(i.numero, 'S/N'),
+        CASE
+            WHEN i.complemento IS NOT NULL
+            AND i.complemento != '' THEN CONCAT(', ', i.complemento)
+            ELSE ''
+        END,
+        ' - ',
+        COALESCE(i.bairro, ''),
+        ', ',
+        COALESCE(i.cidade, ''),
+        ' - ',
+        COALESCE(i.uf, ''),
+        ' - CEP: ',
+        COALESCE(i.cep, 'Não informado')
+    ) as enderecoCompleto,
+    -- Tipo de Cota
+    i.tipoCota,
+    CASE i.tipoCota
+        WHEN 'livre' THEN 'Cota Livre'
+        WHEN 'economica' THEN 'Cota Econômica'
+        WHEN 'funcionario' THEN 'Cota Funcionário'
+        ELSE 'Não Informado'
+    END as tipoCotaDescricao,
+    -- Informações Familiares
+    i.numeroIntegrantes,
+    i.integrantesRenda,
+    i.dadosFamiliaresPreenchidos,
+    -- Horários e Observações
+    i.horariosSelecionados,
+    i.observacoesResponsavel,
+    -- Controle de Datas
+    i.dataInicio,
+    i.dataEnvio,
+    i.ultimaAtualizacao,
+    DATEDIFF(CURDATE(), i.dataEnvio) as diasAguardando,
+    -- Verificações do Sistema
+    CASE
+        WHEN p.idPessoa IS NOT NULL THEN TRUE
+        ELSE FALSE
+    END as responsavelJaExiste,
+    p.idPessoa as idPessoaResponsavel,
+    p.NmPessoa as nomeResponsavelSistema,
+    -- Status para ação de iniciar matrícula
+    CASE
+        WHEN i.status = 'interesse_declarado'
+        AND i.etapaAtual = 'finalizado' THEN TRUE
+        ELSE FALSE
+    END as podeIniciarMatricula
+FROM
+    tbInteresseMatricula i
+    LEFT JOIN tbPessoa p ON p.CpfPessoa = i.cpfResponsavel;
+
 -- ===================================================================
 -- PROCEDURES ADICIONAIS
 -- ===================================================================
@@ -2402,6 +2593,101 @@ BEGIN
     AND dm.tbAluno_idPessoa IS NOT NULL
     
     ORDER BY tipoDocumento, nomeDocumento;
+END$$
+
+-- Procedure para obter informações para seleção de turma
+CREATE PROCEDURE `sp_ObterInfoSelecaoTurma`(IN p_idDeclaracao INT)
+BEGIN
+    -- Retornar informações da declaração
+    SELECT 
+        i.id,
+        i.protocolo,
+        i.nomeResponsavel,
+        i.cpfResponsavel,
+        i.nomeAluno,
+        i.dataNascimentoAluno,
+        YEAR(CURDATE()) - YEAR(i.dataNascimentoAluno) - 
+        (DATE_FORMAT(CURDATE(), '%m%d') < DATE_FORMAT(i.dataNascimentoAluno, '%m%d')) as idadeAluno,
+        i.tipoCota,
+        i.tipoCota as tipoCotaOriginal,
+        CASE i.tipoCota
+            WHEN 'livre' THEN 'Cota Livre'
+            WHEN 'economica' THEN 'Cota Econômica'
+            WHEN 'funcionario' THEN 'Cota Funcionário'
+            ELSE 'Não Informado'
+        END as tipoCotaDescricao,
+        i.escolaAluno,
+        i.observacoesResponsavel,
+        -- Verificar se responsável já existe
+        CASE
+            WHEN p.idPessoa IS NOT NULL THEN TRUE
+            ELSE FALSE
+        END as responsavelJaExiste,
+        p.idPessoa as idPessoaResponsavel,
+        -- Documentos que serão necessários
+        (SELECT 1) as totalDocumentosNecessarios
+    FROM tbInteresseMatricula i
+    LEFT JOIN tbPessoa p ON p.CpfPessoa = i.cpfResponsavel
+    WHERE i.id = p_idDeclaracao;
+    
+    -- Retornar turmas disponíveis
+    SELECT 
+        t.idtbTurma,
+        t.nomeTurma,
+        t.horarioInicio,
+        t.horarioFim,
+        t.capacidadeMaxima,
+        t.capacidadeAtual,
+        (t.capacidadeMaxima - t.capacidadeAtual) as vagasDisponiveis,
+        CASE
+            WHEN t.capacidadeAtual < t.capacidadeMaxima THEN TRUE
+            ELSE FALSE
+        END as temVagas,
+        CONCAT(
+            t.nomeTurma,
+            ' - ',
+            CASE
+                WHEN TIME(t.horarioInicio) >= '06:00:00'
+                AND TIME(t.horarioInicio) < '12:00:00' THEN 'Manhã'
+                WHEN TIME(t.horarioInicio) >= '12:00:00'
+                AND TIME(t.horarioInicio) < '18:00:00' THEN 'Tarde'
+                WHEN TIME(t.horarioInicio) >= '18:00:00'
+                OR TIME(t.horarioInicio) < '06:00:00' THEN 'Noite'
+                WHEN TIME(t.horarioInicio) >= '06:00:00'
+                AND TIME(t.horarioFim) >= '17:00:00' THEN 'Integral'
+                ELSE 'Não definido'
+            END,
+            ' (',
+            (t.capacidadeMaxima - t.capacidadeAtual),
+            ' vagas)'
+        ) as descricaoCompleta,
+        CONCAT(
+            DATE_FORMAT(t.horarioInicio, '%H:%i'),
+            ' às ',
+            DATE_FORMAT(t.horarioFim, '%H:%i')
+        ) as horarioFormatado
+    FROM tbTurma t
+    WHERE t.ativo = TRUE
+    AND t.capacidadeAtual < t.capacidadeMaxima
+    ORDER BY t.horarioInicio, t.nomeTurma;
+    
+    -- Retornar documentos que serão criados (simplificado)
+    SELECT 
+        td.idTipoDocumento,
+        td.nome as nomeDocumento,
+        td.descricao,
+        td.modalidadeEntrega,
+        td.quemDeveFornencer,
+        CASE td.quemDeveFornencer
+            WHEN 'RESPONSAVEL' THEN 'Responsável'
+            WHEN 'ALUNO' THEN 'Aluno'
+            WHEN 'FAMILIA' THEN 'Família'
+            WHEN 'TODOS_INTEGRANTES' THEN 'Todos os Integrantes'
+            ELSE 'Não especificado'
+        END as quemDeveFornecerDescricao
+    FROM tbTipoDocumento td
+    WHERE td.ativo = TRUE
+    ORDER BY td.quemDeveFornencer, td.nome;
 END$$
 
 -- Function para validar se pode iniciar matrícula
@@ -2600,37 +2886,126 @@ CALL sp_IniciarMatricula(1, 1, 2);
 CALL sp_ListarDocumentosResponsavel('111.222.333-44');
 ```
 
-**6. CONTAR DOCUMENTOS PENDENTES**:
+-- ===================================================================
+-- DOCUMENTAÇÃO DAS MELHORIAS IMPLEMENTADAS - 03/09/2025
+-- ===================================================================
+
+/*
+NOVAS FUNCIONALIDADES IMPLEMENTADAS:
+
+1. **FUNCIONALIDADES NO MENU**:
+- Adicionadas funcionalidades contextuais dentro de declarações:
+- Chave: 'detalharDeclaracao' - Visualizar detalhes completos
+- Chave: 'processarMatricula' - Iniciar processo de matrícula
+- Categoria: 'acao' sob 'declaracoesInteresse'
+
+2. **NOVA VIEW vw_detalhamento_declaracao**:
+- Informações completas de uma declaração específica
+- Inclui idade calculada do aluno
+- Endereço formatado completo
+- Todos os dados familiares e integrantes
+- Status para verificar se pode iniciar matrícula
+- Verificação se responsável já existe no sistema
+
+3. **VIEW vw_iniciar_matricula MANTIDA**:
+- Lista declarações prontas para matrícula
+- Informações resumidas para listagem
+- Contagem de documentos necessários
+
+4. **PROCEDURE sp_ObterInfoSelecaoTurma**:
+- Retorna 3 result sets:
+a) Informações da declaração (incluindo idade do aluno)
+b) Turmas disponíveis com vagas (formatadas)
+c) Documentos que serão criados por cota
+- Facilita a interface de seleção de turma
+
+5. **APRIMORAMENTO NA GERAÇÃO DE LOGIN**:
+- Usuário: CPF sem pontos e traços
+- Senha: Hash SHA256 dos últimos 4 dígitos do CPF
+- Processo automático na procedure sp_IniciarMatricula
+
+5. **VIEWS EXISTENTES MANTIDAS**:
+- vw_turmas_para_selecao: Turmas com vagas
+- vw_declaracoes_para_matricula: Declarações prontas
+- vw_iniciar_matricula: Nova view específica
+
+FLUXO DE USO DA NOVA FUNCIONALIDADE:
+
+1. Funcionário acessa menu "Matrículas" > "Declarações de Interesse"
+2. Sistema lista declarações disponíveis (vw_declaracoes_para_matricula)
+3. Funcionário clica em uma declaração específica para detalhar
+4. Sistema chama vw_detalhamento_declaracao para mostrar todos os detalhes
+5. Interface exibe botão "Iniciar Matrícula" se podeIniciarMatricula = TRUE
+6. Funcionário clica em "Iniciar Matrícula"
+7. Sistema chama sp_ObterInfoSelecaoTurma(idDeclaracao) para seleção de turma
+8. Interface mostra:
+- Dados completos do aluno e responsável
+- Turmas disponíveis para seleção
+- Documentos que serão criados automaticamente
+9. Funcionário seleciona turma e confirma
+10. Sistema chama sp_IniciarMatricula(idDeclaracao, idTurma, idFuncionario)
+11. Processo automatizado executa:
+- Cria família com dados da declaração
+- Cria/localiza responsável
+- Gera login (usuário=CPF, senha=hash dos 4 últimos dígitos)
+- Cria aluno e vincula à turma
+- Distribui integrantes da família
+- Cria documentos pendentes por cota
+- Atualiza status da declaração para 'matricula_iniciada'
+
+EXEMPLO DE USO COMPLETO:
 ```sql
+-- 1. Listar declarações disponíveis
+SELECT * FROM vw_declaracoes_para_matricula;
+
+-- 2. Detalhar declaração específica (ID 1)
+SELECT * FROM vw_detalhamento_declaracao WHERE id = 1;
+
+-- 3. Obter informações para seleção de turma (declaração ID 1)
+CALL sp_ObterInfoSelecaoTurma(1);
+
+-- 4. Iniciar matrícula (declaração 1, turma 1, funcionário 2)
+CALL sp_IniciarMatricula(1, 1, 2);
+
+-- 5. Verificar resultado
+SELECT * FROM tbAluno WHERE protocoloDeclaracao = 'PROT2025001';
+SELECT * FROM tblogin WHERE usuario = '11122233344';
+
+/*
+LOGIN GERADO AUTOMATICAMENTE:
+- Usuário: CPF sem formatação (exemplo: 11122233344)
+- Senha: Últimos 4 dígitos do CPF (exemplo: 3344)
+- Hash da senha armazenado: SHA256('3344')
+
+6. CONTAR DOCUMENTOS PENDENTES:
 SELECT fn_CountDocumentosPendentesResponsavel('111.222.333-44') as total;
-```
 
-🔍 **VIEWS ÚTEIS**:
-- **vw_turmas_para_selecao**: Turmas com vagas + descrição completa
-- **vw_declaracoes_para_matricula**: Declarações prontas + dados resumidos
-- **vw_documentos_responsavel**: Todos os documentos do responsável
-- **vw_declaracoes_completas**: Declarações com formatação completa
-- **vw_usuarios_sistema**: Para autenticação no sistema
+VIEWS ÚTEIS:
+- vw_turmas_para_selecao: Turmas com vagas + descrição completa
+- vw_declaracoes_para_matricula: Declarações prontas + dados resumidos
+- vw_documentos_responsavel: Todos os documentos do responsável
+- vw_declaracoes_completas: Declarações com formatação completa
+- vw_usuarios_sistema: Para autenticação no sistema
 
-🛠️ **PROCEDURES E FUNCTIONS**:
-- **sp_IniciarMatricula()**: Automatiza todo o fluxo
-- **sp_CriarDocumentosPendentes()**: Cria documentos baseados na cota
-- **sp_ListarDocumentosResponsavel()**: Lista documentos do responsável
-- **fn_ValidarIniciarMatricula()**: Valida se pode iniciar
-- **fn_CountDocumentosPendentesResponsavel()**: Conta documentos pendentes
+PROCEDURES E FUNCTIONS:
+- sp_IniciarMatricula(): Automatiza todo o fluxo
+- sp_CriarDocumentosPendentes(): Cria documentos baseados na cota
+- sp_ListarDocumentosResponsavel(): Lista documentos do responsável
+- fn_ValidarIniciarMatricula(): Valida se pode iniciar
+- fn_CountDocumentosPendentesResponsavel(): Conta documentos pendentes
 
-👤 **TIPOS DE LOGIN NO SISTEMA**:
-- **admin** / password (Administrador completo)
-- **joao.professor** / password (Funcionário de teste)
-- **maria.responsavel** / password (Responsável de teste)
-- **CPF_SEM_PONTOS** / password (Responsáveis auto-criados)
+TIPOS DE LOGIN NO SISTEMA:
+- admin / password (Administrador completo)
+- joao.professor / password (Funcionário de teste)
+- maria.responsavel / password (Responsável de teste)
+- CPF_SEM_PONTOS / password (Responsáveis auto-criados)
 
-📋 **DOCUMENTOS POR COTA**:
-- **LIVRE**: RG, CPF, Comprovante Residência, Certidão Nascimento, Foto 3x4
-- **ECONÔMICA**: Documentos básicos + Comprovante Renda + Declaração Dependentes  
-- **FUNCIONÁRIO**: Documentos básicos + Comprovante Vínculo + Declaração Parentesco
+DOCUMENTOS POR COTA:
+- LIVRE: RG, CPF, Comprovante Residência, Certidão Nascimento, Foto 3x4
+- ECONÔMICA: Documentos básicos + Comprovante Renda + Declaração Dependentes  
+- FUNCIONÁRIO: Documentos básicos + Comprovante Vínculo + Declaração Parentesco
 
-🔄 **PROCESSO AUTOMÁTICO sp_IniciarMatricula()**:
+PROCESSO AUTOMÁTICO sp_IniciarMatricula():
 1. Validar declaração e turma
 2. Criar família com dados da declaração
 3. Verificar se responsável já existe
@@ -2646,47 +3021,45 @@ SELECT fn_CountDocumentosPendentesResponsavel('111.222.333-44') as total;
 13. Registrar log da ação
 14. Retornar dados do processo
 
-⚡ **EXEMPLOS PRÁTICOS**:
+EXEMPLOS PRÁTICOS:
 
-```sql
--- 1. Ver declarações prontas para matricular
+Ver declarações prontas para matricular:
 SELECT protocolo, nomeAluno, tipoCotaDescricao, diasAguardando 
 FROM vw_declaracoes_para_matricula 
 ORDER BY diasAguardando DESC;
 
--- 2. Ver turmas com vagas
+Ver turmas com vagas:
 SELECT descricaoCompleta, vagasDisponiveis 
 FROM vw_turmas_para_selecao 
 WHERE temVagas = TRUE;
 
--- 3. Iniciar matrícula (declaração 1, turma 1, funcionário 2)
+Iniciar matrícula (declaração 1, turma 1, funcionário 2):
 CALL sp_IniciarMatricula(1, 1, 2);
 
--- 4. Ver documentos de um responsável
+Ver documentos de um responsável:
 CALL sp_ListarDocumentosResponsavel('111.222.333-44');
 
--- 5. Verificar integrantes de uma família
+Verificar integrantes de uma família:
 SELECT nomeIntegrante, parentesco, renda, profissao 
 FROM tbIntegranteFamilia 
 WHERE tbFamilia_idtbFamilia = 1;
-```
 
-🚀 **SISTEMA COMPLETAMENTE PRONTO PARA**:
-- ✅ Seleção de turma pelo funcionário
-- ✅ Distribuição automática de todos os dados
-- ✅ Criação automática de integrantes familiares
+SISTEMA COMPLETAMENTE PRONTO PARA:
+- Seleção de turma pelo funcionário
+- Distribuição automática de todos os dados
+- Criação automática de integrantes familiares
 - ✅ Documentos organizados por cota e escopo
-- ✅ Login automático para responsável
-- ✅ Interface responsável para upload de documentos
-- ✅ Controle completo do fluxo de matrícula
+- Login automático para responsável
+- Interface responsável para upload de documentos
+- Controle completo do fluxo de matrícula
 
-💡 **PARA USAR ESTE BANCO**:
+PARA USAR ESTE BANCO:
 1. Execute este arquivo SQL completo
 2. O banco será recriado do zero com todos os dados
 3. Teste as procedures e views
 4. Integre com o backend/frontend
 
-✨ **BANCO COMPLETAMENTE FUNCIONAL E OTIMIZADO!**
+BANCO COMPLETAMENTE FUNCIONAL E OTIMIZADO!
 */
 
 -- ===================================================================

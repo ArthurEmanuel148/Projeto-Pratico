@@ -47,6 +47,22 @@ public class InteresseMatriculaController {
         return ResponseEntity.ok(interesses);
     }
 
+    /**
+     * Novo endpoint - Lista declarações prontas para matrícula usando view do banco
+     */
+    @GetMapping("/para-matricula")
+    public ResponseEntity<?> listarParaMatricula() {
+        try {
+            List<Map<String, Object>> declaracoes = interesseMatriculaService.listarDeclaracoesParaMatricula();
+            return ResponseEntity.ok(declaracoes);
+        } catch (Exception e) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("message", "Erro ao listar declarações para matrícula: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+        }
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<InteresseMatricula> buscarPorId(@PathVariable Integer id) {
         Optional<InteresseMatricula> interesse = interesseMatriculaService.buscarPorId(id);
@@ -82,6 +98,46 @@ public class InteresseMatriculaController {
             errorResponse.put("success", false);
             errorResponse.put("message", "Erro ao iniciar matrícula: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+        }
+    }
+
+    /**
+     * Endpoint completo - Iniciar matrícula com seleção de turma usando procedures
+     * do banco
+     */
+    @PostMapping("/{declaracaoId}/iniciar-matricula-completa")
+    public ResponseEntity<?> iniciarMatriculaCompleta(
+            @PathVariable Integer declaracaoId,
+            @RequestParam Integer turmaId,
+            @RequestParam Integer funcionarioId) {
+        try {
+            // Usar o service especializado para fluxo completo
+            Map<String, Object> resultado = interesseMatriculaService.iniciarMatriculaCompleta(declaracaoId, turmaId,
+                    funcionarioId);
+            return ResponseEntity.ok(resultado);
+        } catch (Exception e) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("message", "Erro ao processar matrícula completa: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+        }
+    }
+
+    /**
+     * Validar se uma declaração pode ser matriculada em uma turma específica
+     */
+    @GetMapping("/{declaracaoId}/validar-matricula/{turmaId}")
+    public ResponseEntity<?> validarMatricula(
+            @PathVariable Integer declaracaoId,
+            @PathVariable Integer turmaId) {
+        try {
+            Map<String, Object> validacao = interesseMatriculaService.validarIniciarMatricula(declaracaoId, turmaId);
+            return ResponseEntity.ok(validacao);
+        } catch (Exception e) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("valido", false);
+            errorResponse.put("mensagem", "Erro na validação: " + e.getMessage());
+            return ResponseEntity.ok(errorResponse);
         }
     }
 

@@ -447,19 +447,18 @@ CREATE TABLE `tbTipoDocumento` (
     `idTipoDocumento` BIGINT NOT NULL AUTO_INCREMENT,
     `nome` VARCHAR(100) NOT NULL,
     `descricao` TEXT NULL,
-    `modalidadeEntrega` ENUM('ASSINADO', 'ANEXADO') NOT NULL DEFAULT 'ANEXADO',
-    `quemDeveFornencer` ENUM(
-        'RESPONSAVEL',
+    `tipoProcessamento` ENUM('ANEXACAO', 'ASSINATURA') NOT NULL DEFAULT 'ANEXACAO',
+    `escopo` ENUM(
+        'FAMILIA',
         'ALUNO',
-        'TODOS_INTEGRANTES',
-        'FAMILIA'
-    ) NOT NULL DEFAULT 'RESPONSAVEL',
+        'TODOS_INTEGRANTES'
+    ) NOT NULL DEFAULT 'FAMILIA',
     `ativo` BOOLEAN DEFAULT TRUE,
     `dataCriacao` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     `dataAtualizacao` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (`idTipoDocumento`),
-    INDEX `idx_modalidadeEntrega` (`modalidadeEntrega`),
-    INDEX `idx_quemDeveFornencer` (`quemDeveFornencer`),
+    INDEX `idx_tipoProcessamento` (`tipoProcessamento`),
+    INDEX `idx_escopo` (`escopo`),
     INDEX `idx_ativo` (`ativo`),
     UNIQUE KEY `unique_nome_ativo` (`nome`, `ativo`)
 ) ENGINE = InnoDB;
@@ -956,7 +955,7 @@ BEGIN
         'pendente'
     FROM tbTipoDocumento td
     WHERE td.ativo = TRUE 
-    AND td.quemDeveFornencer IN ('FAMILIA', 'TODOS_INTEGRANTES');
+    AND td.escopo IN ('FAMILIA', 'TODOS_INTEGRANTES');
     
     -- Criar documentos do ALUNO (escopo 'aluno' ou 'ambos')
     INSERT INTO tbDocumentoMatricula (
@@ -970,11 +969,11 @@ BEGIN
         'pendente'
     FROM tbTipoDocumento td
     WHERE td.ativo = TRUE 
-    AND td.quemDeveFornencer = 'ALUNO';
+    AND td.escopo = 'ALUNO';
     
 END$$
 
-DELIMITER;
+DELIMITER ;
 
 -- ===================================================================
 -- INSERÇÃO DE FUNCIONALIDADES (SEM ROTAS)
@@ -1192,98 +1191,101 @@ INSERT INTO
     `tbTipoDocumento` (
         `nome`,
         `descricao`,
-        `modalidadeEntrega`,
-        `quemDeveFornencer`
+        `tipoProcessamento`,
+        `escopo`
     )
 VALUES
-    -- Documentos da FAMÍLIA
+    -- Documentos da FAMÍLIA (responsável/família como um todo)
     (
         'Comprovante de Residência',
         'Comprovante de endereço atualizado da família',
-        'ANEXADO',
+        'ANEXACAO',
         'FAMILIA'
     ),
     (
         'Termo de Responsabilidade',
         'Termo de responsabilidade do responsável',
-        'ASSINADO',
-        'RESPONSAVEL'
+        'ASSINATURA',
+        'FAMILIA'
     ),
     (
         'Declaração de Veracidade',
         'Declaração de veracidade das informações prestadas',
-        'ASSINADO',
-        'RESPONSAVEL'
-    ),
-    -- Documentos do ALUNO específico
-    (
-        'Certidão de Nascimento',
-        'Certidão de nascimento do aluno',
-        'ANEXADO',
-        'ALUNO'
-    ),
-    (
-        'Foto 3x4',
-        'Foto recente 3x4 do aluno',
-        'ANEXADO',
-        'ALUNO'
-    ),
-    (
-        'Cartão de Vacinação',
-        'Cartão de vacinação atualizado do aluno',
-        'ANEXADO',
-        'ALUNO'
-    ),
-    (
-        'Histórico Escolar',
-        'Histórico escolar do aluno (se aplicável)',
-        'ANEXADO',
-        'ALUNO'
-    ),
-    (
-        'Atestado Médico',
-        'Atestado médico do aluno (se necessário)',
-        'ANEXADO',
-        'ALUNO'
-    ),
-    -- Documentos de TODOS OS INTEGRANTES da família (cada pessoa precisa fornecer)
-    (
-        'RG ou CNH',
-        'Documento de identidade com foto de cada integrante',
-        'ANEXADO',
-        'TODOS_INTEGRANTES'
-    ),
-    (
-        'CPF',
-        'Cadastro de Pessoa Física de cada integrante',
-        'ANEXADO',
-        'TODOS_INTEGRANTES'
-    ),
-    (
-        'Comprovante de Renda',
-        'Comprovante de renda individual de cada integrante que trabalha',
-        'ANEXADO',
-        'TODOS_INTEGRANTES'
-    ),
-    -- Documentos gerais de assinatura
-    (
-        'Termo de Compromisso',
-        'Termo de compromisso com as normas da instituição',
-        'ASSINADO',
+        'ASSINATURA',
         'FAMILIA'
     ),
-    (
-        'Autorização de Uso de Imagem',
-        'Autorização para uso de imagem do aluno',
-        'ASSINADO',
-        'RESPONSAVEL'
-    ),
-    (
-        'Declaração de Hipossuficiência',
-        'Declaração de situação socioeconômica familiar',
-        'ASSINADO',
-        'RESPONSAVEL'
-    );
+
+-- Documentos do ALUNO específico
+(
+    'Certidão de Nascimento',
+    'Certidão de nascimento do aluno',
+    'ANEXACAO',
+    'ALUNO'
+),
+(
+    'Foto 3x4',
+    'Foto recente 3x4 do aluno',
+    'ANEXACAO',
+    'ALUNO'
+),
+(
+    'Cartão de Vacinação',
+    'Cartão de vacinação atualizado do aluno',
+    'ANEXACAO',
+    'ALUNO'
+),
+(
+    'Histórico Escolar',
+    'Histórico escolar do aluno (se aplicável)',
+    'ANEXACAO',
+    'ALUNO'
+),
+(
+    'Atestado Médico',
+    'Atestado médico do aluno (se necessário)',
+    'ANEXACAO',
+    'ALUNO'
+),
+
+-- Documentos de TODOS OS INTEGRANTES da família (cada pessoa precisa fornecer)
+(
+    'RG ou CNH',
+    'Documento de identidade com foto de cada integrante',
+    'ANEXACAO',
+    'TODOS_INTEGRANTES'
+),
+(
+    'CPF',
+    'Cadastro de Pessoa Física de cada integrante',
+    'ANEXACAO',
+    'TODOS_INTEGRANTES'
+),
+(
+    'Comprovante de Renda',
+    'Comprovante de renda individual de cada integrante que trabalha',
+    'ANEXACAO',
+    'TODOS_INTEGRANTES'
+),
+
+-- Documentos gerais de assinatura
+(
+    'Termo de Compromisso',
+    'Termo de compromisso com as normas da instituição',
+    'ASSINATURA',
+    'FAMILIA'
+),
+(
+    'Autorização de Uso de Imagem',
+    'Autorização para uso de imagem do aluno',
+    'ASSINATURA',
+    'FAMILIA'
+),
+(
+    'Declaração de Hipossuficiência',
+    'Declaração de situação socioeconômica familiar',
+    'ASSINATURA',
+    'FAMILIA'
+);
 
 -- ===================================================================
 -- CONFIGURAÇÕES DE DOCUMENTOS POR COTA
@@ -2005,8 +2007,8 @@ SELECT
     td.idTipoDocumento,
     td.nome as nomeDocumento,
     td.descricao,
-    td.modalidadeEntrega,
-    td.quemDeveFornencer,
+    td.tipoProcessamento,
+    td.escopo,
     dm.status,
     dm.caminhoArquivo,
     dm.dataEnvio,
@@ -2035,8 +2037,8 @@ SELECT
     td.idTipoDocumento,
     td.nome as nomeDocumento,
     td.descricao,
-    td.modalidadeEntrega,
-    td.quemDeveFornencer,
+    td.tipoProcessamento,
+    td.escopo,
     dm.status,
     dm.caminhoArquivo,
     dm.dataEnvio,
@@ -2072,7 +2074,7 @@ SELECT
     NULL as idAluno,
     td.nome as nomeDocumento,
     td.descricao,
-    td.quemDeveFornencer,
+    td.escopo,
     dm.status,
     dm.dataEnvio,
     dm.dataAprovacao,
@@ -2097,7 +2099,7 @@ SELECT
     a.tbPessoa_idPessoa as idAluno,
     td.nome as nomeDocumento,
     td.descricao,
-    td.quemDeveFornencer,
+    td.escopo,
     dm.status,
     dm.dataEnvio,
     dm.dataAprovacao,
@@ -2548,8 +2550,8 @@ BEGIN
         dm.idDocumentoMatricula,
         td.nome as nomeDocumento,
         td.descricao,
-        td.modalidadeEntrega,
-        td.quemDeveFornencer,
+        td.tipoProcessamento,
+        td.escopo,
         dm.status,
         dm.caminhoArquivo,
         dm.dataEnvio,
@@ -2573,8 +2575,8 @@ BEGIN
         dm.idDocumentoMatricula,
         td.nome as nomeDocumento,
         td.descricao,
-        td.modalidadeEntrega,
-        td.quemDeveFornencer,
+        td.tipoProcessamento,
+        td.escopo,
         dm.status,
         dm.caminhoArquivo,
         dm.dataEnvio,
@@ -2756,7 +2758,7 @@ BEGIN
     RETURN v_total;
 END$$
 
-DELIMITER;
+DELIMITER ;
 
 -- ===================================================================
 -- DADOS DE TESTE REMOVIDOS - TURMAS SERÃO CRIADAS VIA INTERFACE

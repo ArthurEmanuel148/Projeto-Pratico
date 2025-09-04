@@ -111,27 +111,26 @@ public class PessoaService {
         Optional<Login> loginOpt = loginRepo.findByUsuario(usuario);
         if (loginOpt.isPresent()) {
             Login login = loginOpt.get();
-            // Verificar se a senha está correta usando BCrypt
-            if (passwordEncoder.matches(senha, login.getSenha())) {
-                Pessoa pessoa = login.getPessoa();
-                String tipo = "funcionario"; // tipo padrão
+            Pessoa pessoa = login.getPessoa();
+            String tipo = "";
+            List<String> permissoes = new ArrayList<>();
 
-                // Verificar se é administrador
-                if (pessoa.getNmPessoa().equals("Administrador do Sistema") || usuario.equals("admin")) {
-                    tipo = "admin";
-                } else if (alunoRepo.existsByPessoa_IdPessoa(pessoa.getIdPessoa())) {
-                    tipo = "aluno";
-                }
-
-                // Buscar permissões do usuário
-                Map<String, Boolean> permissoes = permissaoService.buscarPermissoesPorPessoa(pessoa.getIdPessoa());
-
-                Map<String, Object> info = new HashMap<>();
-                info.put("pessoa", pessoa);
-                info.put("tipo", tipo);
-                info.put("permissoes", permissoes);
-                return Optional.of(info);
+            // Verificar se é administrador
+            if (pessoa.getNmPessoa().equals("Administrador do Sistema") || usuario.equals("admin")) {
+                tipo = "admin";
+            } else if (funcionarioRepo.existsByTbPessoaIdPessoa(pessoa.getIdPessoa())) {
+                tipo = "funcionario";
+            } else if (alunoRepo.existsByPessoa_IdPessoa(pessoa.getIdPessoa())) {
+                tipo = "aluno";
             }
+
+            // Buscar permissões se necessário
+            // permissoes = permissaoService.buscarPermissoesPorPessoa(pessoa.getIdPessoa());
+
+            Map<String, Object> info = new HashMap<>();
+            info.put("tipo", tipo);
+            info.put("permissoes", permissoes);
+            return Optional.of(info);
         }
         return Optional.empty();
     }

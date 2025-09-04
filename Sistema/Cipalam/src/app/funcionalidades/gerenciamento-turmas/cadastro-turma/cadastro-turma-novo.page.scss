@@ -61,14 +61,12 @@
   
   // Garante que o conteúdo ocupe toda a altura
   min-height: 100vh;
-  // Garante espaçamento na parte inferior
-  padding-bottom: env(safe-area-inset-bottom, 20px);
 }
 
 .form-container {
   max-width: var(--form-max-width);
   margin: 0 auto;
-  padding: 1.5rem 1.5rem 4rem 1.5rem;
+  padding: 1.5rem;
   position: relative;
 }
 
@@ -244,21 +242,12 @@
     // Melhor controle do label flutuante
     &.item-has-focus ion-label[position="floating"],
     &.item-has-value ion-label[position="floating"],
-    &.item-has-placeholder ion-label[position="floating"],
     &.item-interactive.item-input ion-label[position="floating"] {
       transform: translateY(-1rem) scale(0.75) !important;
       color: #222 !important;
       background: var(--custom-surface);
       padding: 0 4px;
       border-radius: 2px;
-    }
-
-    // Força o comportamento do label flutuante ao clicar
-    &.item-has-focus {
-      ion-label[position="floating"] {
-        transform: translateY(-1rem) scale(0.75) !important;
-        transition: transform 0.15s ease-out !important;
-      }
     }
 
     ion-input[type="date"], ion-input, ion-datetime, ion-textarea {
@@ -323,8 +312,7 @@ ion-textarea {
   gap: 1rem;
   justify-content: flex-end;
   margin-top: 2rem;
-  padding: 1.5rem 0 3rem 0;
-  margin-bottom: 2rem;
+  padding: 1.5rem 0;
 
   ion-button {
     min-width: 140px;

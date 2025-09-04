@@ -1,24 +1,29 @@
-<ion-header [translucent]="true">
-    <ion-toolbar color="primary">
-        <ion-title>Gerenciar Turmas</ion-title>
+<ion-header>
+    <ion-toolbar>
+        <ion-buttons slot="start">
+            <ion-back-button defaultHref="/sistema/dashboard"></ion-back-button>
+        </ion-buttons>
         <ion-buttons slot="end">
             <ion-button fill="clear" (click)="navegarParaCadastro()" *ngIf="podeGerenciarTurmas">
-                <ion-icon name="add"></ion-icon>
+                <ion-icon name="add" slot="start"></ion-icon>
+                Nova
             </ion-button>
         </ion-buttons>
     </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true" class="ion-padding">
+<ion-content class="ion-padding-horizontal">
     <!-- Header com título e descrição -->
     <div class="page-header">
-        <h1>
-            <ion-icon name="school-outline"></ion-icon>
-            Gerenciamento de Turmas
-        </h1>
-        <p class="descricao-sistema">
-            Gerencie todas as turmas do sistema. Você pode criar, editar e visualizar informações das turmas.
-        </p>
+        <div class="header-content">
+            <div class="header-info">
+                <h1>Gerenciamento de Turmas</h1>
+                <p>Gerencie todas as turmas do sistema. Você pode criar, editar e visualizar informações das turmas.</p>
+            </div>
+            <div class="header-illustration">
+                <ion-icon name="library-outline"></ion-icon>
+            </div>
+        </div>
     </div>
 
     <!-- Filtros -->

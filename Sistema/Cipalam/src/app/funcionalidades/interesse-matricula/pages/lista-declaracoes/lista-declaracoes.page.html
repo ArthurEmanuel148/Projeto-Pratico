@@ -1,10 +1,24 @@
 <ion-header>
-  <ion-toolbar color="primary">
-    <ion-title>Declarações de Interesse</ion-title>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/sistema/dashboard"></ion-back-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
+<ion-content class="ion-padding-horizontal">
+  <!-- Header com título e descrição -->
+  <div class="page-header">
+    <div class="header-content">
+      <div class="header-info">
+        <h1>Declarações de Interesse</h1>
+        <p>Gerencie todas as declarações de interesse para matrículas do sistema.</p>
+      </div>
+      <div class="header-illustration">
+        <ion-icon name="document-text-outline"></ion-icon>
+      </div>
+    </div>
+  </div>
   <!-- Resumo de vagas -->
   <ion-card>
     <ion-card-header>

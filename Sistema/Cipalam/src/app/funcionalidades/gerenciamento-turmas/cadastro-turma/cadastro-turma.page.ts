@@ -27,9 +27,9 @@ export class CadastroTurmaPage implements OnInit {
     ) {
         this.cadastroForm = this.fb.group({
             nomeTurma: ['', [Validators.required, Validators.minLength(3)]],
-            capacidadeMaxima: [20, [Validators.required, Validators.min(1), Validators.max(50)]],
-            horarioInicio: ['08:00', [Validators.required]],
-            horarioFim: ['12:00', [Validators.required]],
+            capacidadeMaxima: ['', [Validators.required, Validators.min(1), Validators.max(50)]],
+            horarioInicio: ['', [Validators.required]],
+            horarioFim: ['', [Validators.required]],
             observacoes: [''],
             ativo: [true]
         });
@@ -44,14 +44,6 @@ export class CadastroTurmaPage implements OnInit {
                 this.carregarDadosTurma();
             }
         });
-
-        // Marcar campos que já têm valores como touched para mostrar validação visual
-        setTimeout(() => {
-            this.cadastroForm.get('capacidadeMaxima')?.markAsTouched();
-            this.cadastroForm.get('horarioInicio')?.markAsTouched();
-            this.cadastroForm.get('horarioFim')?.markAsTouched();
-            this.cadastroForm.get('ativo')?.markAsTouched();
-        }, 100);
 
         // Configurar listener para validação em tempo real
         this.setupFormValidation();
@@ -97,6 +89,68 @@ export class CadastroTurmaPage implements OnInit {
             }
         }
         return '';
+    }
+
+    // Método para controlar foco nos inputs - mostra placeholder apenas após clicar
+    onInputFocus(event: any, placeholderText: string) {
+        const input = event.target;
+        const ionItem = input.closest('ion-item');
+        
+        // Força o label a subir imediatamente
+        if (ionItem) {
+            ionItem.classList.add('item-has-focus');
+            if (!input.value) {
+                ionItem.classList.add('item-has-placeholder');
+            }
+        }
+        
+        if (input && !input.value) {
+            // Define um valor temporário invisível para forçar o label a subir
+            input.value = ' ';
+            setTimeout(() => {
+                input.value = '';
+                input.placeholder = placeholderText;
+            }, 50);
+        }
+    }
+
+    // Método para controlar blur nos inputs - remove placeholder se vazio
+    onInputBlur(event: any) {
+        const input = event.target;
+        const ionItem = input.closest('ion-item');
+        
+        if (input && !input.value.trim()) {
+            input.placeholder = '';
+            input.value = '';
+            if (ionItem) {
+                ionItem.classList.remove('item-has-placeholder');
+            }
+        }
+        
+        // Remove a classe de foco se não houver valor
+        if (ionItem && !input.value.trim()) {
+            setTimeout(() => {
+                ionItem.classList.remove('item-has-focus');
+            }, 100);
+        }
+    }
+
+    // Método especial para campos de tempo - pré-preenche com valor padrão
+    onTimeFocus(event: any, fieldName: string, defaultValue: string) {
+        const field = this.cadastroForm.get(fieldName);
+        const input = event.target;
+        const ionItem = input.closest('ion-item');
+        
+        // Força o label a subir imediatamente
+        if (ionItem) {
+            ionItem.classList.add('item-has-focus', 'item-has-value');
+        }
+        
+        if (field && !field.value) {
+            setTimeout(() => {
+                field.setValue(defaultValue);
+            }, 50);
+        }
     }
 
     async carregarDadosTurma() {

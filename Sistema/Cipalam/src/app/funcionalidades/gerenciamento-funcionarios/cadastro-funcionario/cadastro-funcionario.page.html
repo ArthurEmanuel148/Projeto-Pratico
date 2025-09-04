@@ -67,14 +67,14 @@
         <div class="form-group">
           <ion-item>
             <ion-label position="floating">Data de Nascimento <ion-text color="danger">*</ion-text></ion-label>
-            <ion-input type="text" formControlName="dataNascimento" (ionInput)="onDateInput($event)" (ionFocus)="onDateFocus($event)" (ionBlur)="onDateBlur($event)" required></ion-input>
+            <ion-input type="date" formControlName="dataNascimento" required></ion-input>
             <ion-button fill="clear" slot="end" (click)="openDatePicker('dataNascimento')">
               <ion-icon name="calendar-outline"></ion-icon>
             </ion-button>
           </ion-item>
           <ion-item>
             <ion-label position="floating">Data de Entrada <ion-text color="danger">*</ion-text></ion-label>
-            <ion-input type="text" formControlName="dataEntradaInstituto" (ionInput)="onDateInput($event)" (ionFocus)="onDateFocus($event)" (ionBlur)="onDateBlur($event)" required></ion-input>
+            <ion-input type="date" formControlName="dataEntradaInstituto" required></ion-input>
             <ion-button fill="clear" slot="end" (click)="openDatePicker('dataEntradaInstituto')">
               <ion-icon name="calendar-outline"></ion-icon>
             </ion-button>

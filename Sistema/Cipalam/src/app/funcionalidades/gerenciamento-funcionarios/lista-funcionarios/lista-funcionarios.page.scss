@@ -1,80 +1,359 @@
-.loading-container {
+// =============================================================================
+// VARIÁVEIS CSS CUSTOMIZADAS PARA CONSISTÊNCIA VISUAL
+// =============================================================================
+
+:host {
+  --form-max-width: 900px;
+  --section-spacing: 2.25rem;
+  --input-spacing: 1.5rem;
+  --border-radius: 12px;
+  --animation-duration: 0.3s;
+  
+  // Cores dinâmicas que funcionam em ambos os temas
+  --custom-primary: var(--ion-color-primary);
+  --custom-success: var(--ion-color-success);
+  --custom-danger: var(--ion-color-danger);
+  --custom-warning: var(--ion-color-warning);
+  --custom-dark-text: #2c3e50;
+  
+  // Backgrounds e superfícies
+  --custom-background: var(--ion-background-color, #ffffff);
+  --custom-surface: var(--ion-item-background, #ffffff);
+  --custom-surface-variant: var(--ion-color-light, #f8f9fa);
+  
+  // Textos
+  --custom-text: var(--ion-text-color, #000000);
+  --custom-text-secondary: var(--ion-color-medium, #6c757d);
+  --custom-text-muted: var(--ion-color-medium-shade, #9e9e9e);
+  
+  // Bordas
+  --custom-border: var(--ion-color-light-shade, #e0e0e0);
+  --custom-border-focus: var(--ion-color-primary);
+  
+  // Sombras
+  --custom-shadow-light: 0 2px 8px rgba(0, 0, 0, 0.08);
+  --custom-shadow-medium: 0 4px 16px rgba(0, 0, 0, 0.12);
+  --custom-shadow-heavy: 0 8px 32px rgba(0, 0, 0, 0.16);
+}
+
+// =============================================================================
+// CONFIGURAÇÃO DA BARRA VERMELHA (PADRÃO DO SISTEMA)
+// =============================================================================
+
+ion-header {
+  ion-toolbar {
+    --min-height: 44px;
+    --height: 44px;
+    
+    @media (max-width: 768px) {
+      --min-height: 44px;
+      --height: 44px;
+    }
+  }
+}
+
+// =============================================================================
+// HEADER DA PÁGINA NO PADRÃO FUNCIONÁRIO
+// =============================================================================
+
+.page-header {
+  background: transparent;
+  color: var(--custom-text);
+  padding: 0.25rem 1.5rem;
+  margin-bottom: 0.5rem;
+  position: relative;
+  overflow: hidden;
+  text-align: center; // Centralizando o texto
+
+  .header-content {
     display: flex;
-    flex-direction: column;
     align-items: center;
-    justify-content: center;
-    height: 200px;
-    padding: 20px;
+    justify-content: center; // Centralizando o conteúdo
+    position: relative;
+    z-index: 1;
+
+    .header-info {
+      flex: 1;
+
+      h1 {
+        font-size: 1.75rem;
+        font-weight: 700;
+        margin: 0 0 0.5rem 0;
+        letter-spacing: -0.5px;
+        color: var(--custom-text);
+        text-align: center; // Garantindo centralização
+      }
+
+      p {
+        font-size: 1rem;
+        opacity: 0.7;
+        margin: 0;
+        font-weight: 400;
+        color: var(--custom-text-secondary);
+        text-align: center; // Garantindo centralização
+      }
+    }
+
+    .header-illustration {
+      flex-shrink: 0;
+      margin-left: 1.25rem;
+
+      ion-icon {
+        font-size: 2rem;
+        color: white;
+        background: var(--custom-primary);
+        border-radius: 50%;
+        padding: 1rem;
+        box-shadow: 0 4px 12px rgba(var(--ion-color-primary-rgb), 0.3);
+        transition: all 0.3s ease;
+        
+        &:hover {
+          transform: scale(1.05);
+          box-shadow: 0 6px 20px rgba(var(--ion-color-primary-rgb), 0.4);
+        }
+      }
+    }
+  }
 }
 
-.loading-container ion-spinner {
-    margin-bottom: 16px;
+// =============================================================================
+// LAYOUT PRINCIPAL
+// =============================================================================
+
+ion-content {
+  --padding-top: 0;
+  --padding-bottom: 20px;
 }
 
-.loading-container p {
-    color: var(--ion-color-medium);
-    margin: 0;
+.content-container {
+  max-width: var(--form-max-width);
+  margin: 0 auto;
+  padding: 0 1rem 2rem;
+
+  @media (max-width: 768px) {
+    padding: 0 0.5rem 2rem;
+  }
 }
 
-.empty-state {
+// =============================================================================
+// COMPONENTES ESPECÍFICOS
+// =============================================================================
+
+// Lista de funcionários
+.funcionarios-lista {
+  .lista-header {
     display: flex;
-    flex-direction: column;
+    justify-content: space-between;
     align-items: center;
-    justify-content: center;
-    padding: 40px 20px;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+
+    h2 {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin: 0;
+      color: var(--custom-text);
+    }
+
+    @media (max-width: 768px) {
+      flex-direction: column;
+      align-items: stretch;
+
+      ion-button {
+        width: 100%;
+      }
+    }
+  }
+
+  .lista-vazia {
     text-align: center;
-    min-height: 300px;
+    padding: 3rem 1rem;
+
+    ion-icon {
+      font-size: 4rem;
+      margin-bottom: 1rem;
+    }
+
+    h3 {
+      color: var(--custom-text);
+      margin-bottom: 1rem;
+    }
+
+    p {
+      color: var(--custom-text-secondary);
+      line-height: 1.5;
+    }
+  }
 }
 
-.empty-state ion-icon {
-    color: var(--ion-color-medium);
+// Loading container
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+  padding: 20px;
+  color: var(--custom-text-secondary);
+
+  ion-spinner {
     margin-bottom: 16px;
+    --color: var(--custom-primary);
+  }
+
+  p {
+    margin: 0;
+    opacity: 0.8;
+  }
 }
 
-.empty-state h2 {
-    color: var(--ion-color-dark);
-    margin: 16px 0 8px 0;
-    font-size: 1.5em;
+// Cards dos funcionários
+.funcionario-card {
+  margin-bottom: 1rem;
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  border: 1px solid var(--custom-border);
+  transition: all var(--animation-duration) ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--custom-shadow-medium);
+  }
+
+  ion-card-header {
+    padding-bottom: 0.5rem;
+
+    ion-card-subtitle {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    ion-card-title {
+      font-size: 1.3rem;
+      font-weight: 600;
+      color: var(--custom-text);
+      text-align: center; // Centralizando o nome
+      padding: 0.5rem 0;
+      background: var(--custom-surface-variant);
+      border-radius: 8px;
+      margin: 0.5rem 0;
+    }
+  }
+
+  .funcionario-info {
+    .info-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.5rem;
+      padding: 0.25rem 0;
+
+      .label {
+        font-weight: 500;
+        color: var(--custom-text-secondary);
+        font-size: 0.9rem;
+      }
+
+      .value {
+        color: var(--custom-text);
+        font-weight: 500;
+        text-align: right;
+        flex: 1;
+        margin-left: 1rem;
+      }
+    }
+  }
+
+  .acoes-funcionario {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--custom-border);
+    display: flex;
+    gap: 0.5rem;
+    justify-content: flex-end;
+
+    ion-button {
+      --border-radius: 8px;
+    }
+  }
 }
 
-.empty-state p {
-    color: var(--ion-color-medium);
-    margin: 0 0 24px 0;
-    line-height: 1.5;
+// Chips customizados
+ion-chip {
+  --background: transparent;
+  --color: var(--ion-color-primary);
+  font-size: 0.8rem;
+  font-weight: 500;
+  border-radius: 20px; // Mais arredondado
+
+  ion-icon {
+    margin-right: 0.25rem;
+  }
 }
 
-.empty-state ion-button {
-    margin-top: 16px;
-    max-width: 300px;
+// Botões de ação
+.action-buttons {
+  margin-bottom: 1.5rem;
+  
+  ion-button {
+    --border-radius: var(--border-radius);
+    margin: 0.5rem 0;
+  }
 }
 
-// Estilo para os itens da lista
-ion-item {
-    --border-color: var(--ion-color-light);
-}
+// =============================================================================
+// RESPONSIVIDADE
+// =============================================================================
 
-ion-item ion-label h2 {
-    font-weight: 600;
-    color: var(--ion-color-dark);
-}
+@media (max-width: 768px) {
+  .page-header {
+    padding: 0.25rem 1rem;
 
-ion-item ion-label p {
-    color: var(--ion-color-medium);
-    margin: 2px 0;
-}
+    .header-content {
+      .header-illustration {
+        margin-left: 1rem;
 
-// Header personalizado
-ion-header ion-toolbar {
-    --background: var(--ion-color-primary);
-    --color: white;
-}
+        ion-icon {
+          font-size: 1.75rem;
+          padding: 0.875rem;
+        }
+      }
 
-ion-header ion-title {
-    font-weight: 600;
-}
+      .header-info {
+        h1 {
+          font-size: 1.5rem;
+        }
 
-// Botão flutuante
-ion-fab-button {
-    --background: var(--ion-color-primary);
-    --color: white;
+        p {
+          font-size: 0.9rem;
+        }
+      }
+    }
+  }
+
+  .funcionario-card {
+    ion-card-header {
+      ion-card-subtitle {
+        ion-chip {
+          font-size: 0.7rem;
+        }
+      }
+
+      ion-card-title {
+        font-size: 1.1rem;
+      }
+    }
+
+    .acoes-funcionario {
+      flex-direction: column;
+
+      ion-button {
+        width: 100%;
+      }
+    }
+  }
 }

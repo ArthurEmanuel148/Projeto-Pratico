@@ -440,19 +440,18 @@ CREATE TABLE `tbTipoDocumento` (
     `idTipoDocumento` BIGINT NOT NULL AUTO_INCREMENT,
     `nome` VARCHAR(100) NOT NULL,
     `descricao` TEXT NULL,
-    `modalidadeEntrega` ENUM('ASSINADO', 'ANEXADO') NOT NULL DEFAULT 'ANEXADO',
-    `quemDeveFornencer` ENUM(
-        'RESPONSAVEL',
+    `tipoProcessamento` ENUM('ANEXACAO', 'ASSINATURA') NOT NULL DEFAULT 'ANEXACAO',
+    `escopo` ENUM(
+        'FAMILIA',
         'ALUNO',
-        'TODOS_INTEGRANTES',
-        'FAMILIA'
-    ) NOT NULL DEFAULT 'RESPONSAVEL',
+        'TODOS_INTEGRANTES'
+    ) NOT NULL DEFAULT 'FAMILIA',
     `ativo` BOOLEAN DEFAULT TRUE,
     `dataCriacao` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     `dataAtualizacao` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (`idTipoDocumento`),
-    INDEX `idx_modalidadeEntrega` (`modalidadeEntrega`),
-    INDEX `idx_quemDeveFornencer` (`quemDeveFornencer`),
+    INDEX `idx_tipoProcessamento` (`tipoProcessamento`),
+    INDEX `idx_escopo` (`escopo`),
     INDEX `idx_ativo` (`ativo`),
     UNIQUE KEY `unique_nome_ativo` (`nome`, `ativo`)
 ) ENGINE = InnoDB;
@@ -553,64 +552,6 @@ CREATE TABLE `tbLogMatricula` (
     CONSTRAINT `fk_tbLogMatricula_usuario` FOREIGN KEY (`usuario_idPessoa`) REFERENCES `tbPessoa` (`idPessoa`) ON DELETE SET NULL ON UPDATE NO ACTION
 ) ENGINE = InnoDB;
 
--- Inserir pessoa Bina
-INSERT INTO `tbPessoa` (
-    `NmPessoa`,
-    `CpfPessoa`,
-    `dtNascPessoa`,
-    `email`,
-    `telefone`
-) VALUES (
-    'Bina',
-    '333.333.333-33',
-    '1995-01-01',
-    'bina@email.com',
-    '(11) 99999-3333'
-);
-
--- Inserir login para Bina (senha: 1234)
-INSERT INTO `tblogin` (
-    `usuario`,
-    `senha`,
-    `tbPessoa_idPessoa`
-) VALUES (
-    'Bina',
-    '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',
-    (SELECT idPessoa FROM tbPessoa WHERE NmPessoa = 'Bina' LIMIT 1)
-);
-
--- Registrar Bina como funcionário
-INSERT INTO `tbFuncionario` (
-    `tbPessoa_idPessoa`,
-    `dataInicio`
-) VALUES (
-    (SELECT idPessoa FROM tbPessoa WHERE NmPessoa = 'Bina' LIMIT 1),
-    '2025-08-14'
-);
-
--- Dar permissões básicas para Bina (exemplo: acesso ao painel)
-INSERT INTO `tbPermissao` (
-    `tbPessoa_idPessoa`,
-    `tbFuncionalidade_idFuncionalidade`,
-    `temPermissao`
-) VALUES (
-    (SELECT idPessoa FROM tbPessoa WHERE NmPessoa = 'Bina' LIMIT 1),
-    (SELECT idFuncionalidade FROM tbFuncionalidade WHERE chave = 'painel'),
-    TRUE
-);
-
-SELECT * FROM tblogin WHERE usuario = 'Bina';
-
-SELECT l.usuario, l.ativo AS loginAtivo, p.ativo AS pessoaAtiva
-FROM tblogin l
-JOIN tbPessoa p ON l.tbPessoa_idPessoa = p.idPessoa
-WHERE l.usuario = 'Bina';
-
-UPDATE tblogin
-SET senha = '1234'
-WHERE usuario = 'Bina';
-
-SELECT usuario, senha FROM tblogin WHERE usuario = 'Bina';
 -- ===================================================================
 -- TABELA PARA INTEGRANTES DA FAMÍLIA (SEPARADA DO JSON)
 -- ===================================================================
@@ -1006,7 +947,7 @@ BEGIN
         'pendente'
     FROM tbTipoDocumento td
     WHERE td.ativo = TRUE 
-    AND td.quemDeveFornencer IN ('FAMILIA', 'TODOS_INTEGRANTES');
+    AND td.escopo IN ('FAMILIA', 'TODOS_INTEGRANTES');
     
     -- Criar documentos do ALUNO (escopo 'aluno' ou 'ambos')
     INSERT INTO tbDocumentoMatricula (
@@ -1020,11 +961,11 @@ BEGIN
         'pendente'
     FROM tbTipoDocumento td
     WHERE td.ativo = TRUE 
-    AND td.quemDeveFornencer = 'ALUNO';
+    AND td.escopo = 'ALUNO';
     
 END$$
 
-DELIMITER;
+DELIMITER ;
 
 -- ===================================================================
 -- INSERÇÃO DE FUNCIONALIDADES (SEM ROTAS)
@@ -1222,98 +1163,101 @@ INSERT INTO
     `tbTipoDocumento` (
         `nome`,
         `descricao`,
-        `modalidadeEntrega`,
-        `quemDeveFornencer`
+        `tipoProcessamento`,
+        `escopo`
     )
 VALUES
-    -- Documentos da FAMÍLIA
+    -- Documentos da FAMÍLIA (responsável/família como um todo)
     (
         'Comprovante de Residência',
         'Comprovante de endereço atualizado da família',
-        'ANEXADO',
+        'ANEXACAO',
         'FAMILIA'
     ),
     (
         'Termo de Responsabilidade',
         'Termo de responsabilidade do responsável',
-        'ASSINADO',
-        'RESPONSAVEL'
+        'ASSINATURA',
+        'FAMILIA'
     ),
     (
         'Declaração de Veracidade',
         'Declaração de veracidade das informações prestadas',
-        'ASSINADO',
-        'RESPONSAVEL'
-    ),
-    -- Documentos do ALUNO específico
-    (
-        'Certidão de Nascimento',
-        'Certidão de nascimento do aluno',
-        'ANEXADO',
-        'ALUNO'
-    ),
-    (
-        'Foto 3x4',
-        'Foto recente 3x4 do aluno',
-        'ANEXADO',
-        'ALUNO'
-    ),
-    (
-        'Cartão de Vacinação',
-        'Cartão de vacinação atualizado do aluno',
-        'ANEXADO',
-        'ALUNO'
-    ),
-    (
-        'Histórico Escolar',
-        'Histórico escolar do aluno (se aplicável)',
-        'ANEXADO',
-        'ALUNO'
-    ),
-    (
-        'Atestado Médico',
-        'Atestado médico do aluno (se necessário)',
-        'ANEXADO',
-        'ALUNO'
-    ),
-    -- Documentos de TODOS OS INTEGRANTES da família (cada pessoa precisa fornecer)
-    (
-        'RG ou CNH',
-        'Documento de identidade com foto de cada integrante',
-        'ANEXADO',
-        'TODOS_INTEGRANTES'
-    ),
-    (
-        'CPF',
-        'Cadastro de Pessoa Física de cada integrante',
-        'ANEXADO',
-        'TODOS_INTEGRANTES'
-    ),
-    (
-        'Comprovante de Renda',
-        'Comprovante de renda individual de cada integrante que trabalha',
-        'ANEXADO',
-        'TODOS_INTEGRANTES'
-    ),
-    -- Documentos gerais de assinatura
-    (
-        'Termo de Compromisso',
-        'Termo de compromisso com as normas da instituição',
-        'ASSINADO',
+        'ASSINATURA',
         'FAMILIA'
     ),
-    (
-        'Autorização de Uso de Imagem',
-        'Autorização para uso de imagem do aluno',
-        'ASSINADO',
-        'RESPONSAVEL'
-    ),
-    (
-        'Declaração de Hipossuficiência',
-        'Declaração de situação socioeconômica familiar',
-        'ASSINADO',
-        'RESPONSAVEL'
-    );
+
+-- Documentos do ALUNO específico
+(
+    'Certidão de Nascimento',
+    'Certidão de nascimento do aluno',
+    'ANEXACAO',
+    'ALUNO'
+),
+(
+    'Foto 3x4',
+    'Foto recente 3x4 do aluno',
+    'ANEXACAO',
+    'ALUNO'
+),
+(
+    'Cartão de Vacinação',
+    'Cartão de vacinação atualizado do aluno',
+    'ANEXACAO',
+    'ALUNO'
+),
+(
+    'Histórico Escolar',
+    'Histórico escolar do aluno (se aplicável)',
+    'ANEXACAO',
+    'ALUNO'
+),
+(
+    'Atestado Médico',
+    'Atestado médico do aluno (se necessário)',
+    'ANEXACAO',
+    'ALUNO'
+),
+
+-- Documentos de TODOS OS INTEGRANTES da família (cada pessoa precisa fornecer)
+(
+    'RG ou CNH',
+    'Documento de identidade com foto de cada integrante',
+    'ANEXACAO',
+    'TODOS_INTEGRANTES'
+),
+(
+    'CPF',
+    'Cadastro de Pessoa Física de cada integrante',
+    'ANEXACAO',
+    'TODOS_INTEGRANTES'
+),
+(
+    'Comprovante de Renda',
+    'Comprovante de renda individual de cada integrante que trabalha',
+    'ANEXACAO',
+    'TODOS_INTEGRANTES'
+),
+
+-- Documentos gerais de assinatura
+(
+    'Termo de Compromisso',
+    'Termo de compromisso com as normas da instituição',
+    'ASSINATURA',
+    'FAMILIA'
+),
+(
+    'Autorização de Uso de Imagem',
+    'Autorização para uso de imagem do aluno',
+    'ASSINATURA',
+    'FAMILIA'
+),
+(
+    'Declaração de Hipossuficiência',
+    'Declaração de situação socioeconômica familiar',
+    'ASSINATURA',
+    'FAMILIA'
+);
 
 -- ===================================================================
 -- CONFIGURAÇÕES DE DOCUMENTOS POR COTA
@@ -2035,8 +1979,8 @@ SELECT
     td.idTipoDocumento,
     td.nome as nomeDocumento,
     td.descricao,
-    td.modalidadeEntrega,
-    td.quemDeveFornencer,
+    td.tipoProcessamento,
+    td.escopo,
     dm.status,
     dm.caminhoArquivo,
     dm.dataEnvio,
@@ -2065,8 +2009,8 @@ SELECT
     td.idTipoDocumento,
     td.nome as nomeDocumento,
     td.descricao,
-    td.modalidadeEntrega,
-    td.quemDeveFornencer,
+    td.tipoProcessamento,
+    td.escopo,
     dm.status,
     dm.caminhoArquivo,
     dm.dataEnvio,
@@ -2102,7 +2046,7 @@ SELECT
     NULL as idAluno,
     td.nome as nomeDocumento,
     td.descricao,
-    td.quemDeveFornencer,
+    td.escopo,
     dm.status,
     dm.dataEnvio,
     dm.dataAprovacao,
@@ -2127,7 +2071,7 @@ SELECT
     a.tbPessoa_idPessoa as idAluno,
     td.nome as nomeDocumento,
     td.descricao,
-    td.quemDeveFornencer,
+    td.escopo,
     dm.status,
     dm.dataEnvio,
     dm.dataAprovacao,
@@ -2415,8 +2359,8 @@ BEGIN
         dm.idDocumentoMatricula,
         td.nome as nomeDocumento,
         td.descricao,
-        td.modalidadeEntrega,
-        td.quemDeveFornencer,
+        td.tipoProcessamento,
+        td.escopo,
         dm.status,
         dm.caminhoArquivo,
         dm.dataEnvio,
@@ -2440,8 +2384,8 @@ BEGIN
         dm.idDocumentoMatricula,
         td.nome as nomeDocumento,
         td.descricao,
-        td.modalidadeEntrega,
-        td.quemDeveFornencer,
+        td.tipoProcessamento,
+        td.escopo,
         dm.status,
         dm.caminhoArquivo,
         dm.dataEnvio,
@@ -2528,7 +2472,7 @@ BEGIN
     RETURN v_total;
 END$$
 
-DELIMITER;
+DELIMITER ;
 
 -- ===================================================================
 -- DADOS DE TESTE REMOVIDOS - TURMAS SERÃO CRIADAS VIA INTERFACE

@@ -1,32 +1,40 @@
 <ion-header>
-  <ion-toolbar color="primary">
+  <ion-toolbar>
     <ion-buttons slot="start">
       <ion-back-button defaultHref="/sistema/matriculas/declaracoes"></ion-back-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-<!-- Título da página logo abaixo do menu superior -->
-<div class="ion-padding">
-  <h2 class="ion-text-center">Detalhe da Declaração de Interesse</h2>
-</div>
+<ion-content class="ion-padding-horizontal">
+  <!-- Header com título e descrição -->
+  <div class="page-header">
+    <div class="header-content">
+      <div class="header-info">
+        <h1>Detalhe da Declaração</h1>
+        <p>Informações completas da declaração de interesse</p>
+      </div>
+    </div>
+  </div>
 
-<!-- Adicione logo abaixo do título da página -->
-<div class="ion-padding ion-text-start">
-  <ion-button fill="clear" color="primary" routerLink="/sistema/matriculas/declaracoes">
-    <ion-icon name="arrow-back-outline" slot="start"></ion-icon>
-    Voltar para a listagem
-  </ion-button>
-</div>
+  <!-- Link de voltar para a listagem -->
+  <div class="content-container">
+    <div class="back-link">
+      <ion-button fill="clear" color="primary" routerLink="/sistema/matriculas/declaracoes">
+        <ion-icon name="arrow-back-outline" slot="start"></ion-icon>
+        Voltar para a listagem
+      </ion-button>
+    </div>
 
-<ion-content *ngIf="!carregando && declaracao; else carregandoTpl" class="ion-padding">
-  <ion-card *ngIf="declaracao">
+    <!-- Conteúdo da página -->
+    <div *ngIf="!carregando && declaracao; else carregandoTpl" class="page-content">
+      <ion-card *ngIf="declaracao">
     <ion-card-header>
       <ion-card-title>Dados do Aluno</ion-card-title>
     </ion-card-header>
     <ion-card-content>
-      <p><strong>Nome:</strong> {{ declaracao.nomeAluno || declaracao.nomeCompleto || (declaracao.dadosAluno &&
-        declaracao.dadosAluno.nomeAluno) || 'Não informado' }}</p>
+      <p class="nome-destaque"><strong>Nome:</strong> <span class="valor-nome">{{ declaracao.nomeAluno || declaracao.nomeCompleto || (declaracao.dadosAluno &&
+        declaracao.dadosAluno.nomeAluno) || 'Não informado' }}</span></p>
       <p><strong>Data de Nascimento:</strong> {{ (declaracao.dataNascimentoAluno || (declaracao.dadosAluno &&
         declaracao.dadosAluno.dataNascimentoAluno)) | date:'dd/MM/yyyy' }}</p>
       <p><strong>CPF:</strong> {{ declaracao.cpfAluno || declaracao.cpf || (declaracao.dadosAluno &&
@@ -43,8 +51,8 @@
       <ion-card-title>Dados do Responsável</ion-card-title>
     </ion-card-header>
     <ion-card-content>
-      <p><strong>Nome:</strong> {{ declaracao.nomeResponsavel || (declaracao.dadosResponsavel &&
-        declaracao.dadosResponsavel.nomeResponsavel) || 'Não informado' }}</p>
+      <p class="nome-destaque"><strong>Nome:</strong> <span class="valor-nome">{{ declaracao.nomeResponsavel || (declaracao.dadosResponsavel &&
+        declaracao.dadosResponsavel.nomeResponsavel) || 'Não informado' }}</span></p>
       <p><strong>CPF:</strong> {{ declaracao.cpfResponsavel || (declaracao.dadosResponsavel &&
         declaracao.dadosResponsavel.cpfResponsavel) || 'Não informado' }}</p>
       <p><strong>Data de Nascimento:</strong> {{ (declaracao.dataNascimentoResponsavel || (declaracao.dadosResponsavel
@@ -215,15 +223,16 @@
     </ion-card-content>
   </ion-card>
 
-  <div class="ion-padding">
-    <ion-button expand="block" color="success" (click)="iniciarMatricula()" *ngIf="!matriculaIniciada"
-      [disabled]="processandoMatricula">
-      <ion-icon name="document-attach-outline" slot="start"></ion-icon>
-      {{ processandoMatricula ? 'Processando...' : 'Iniciar Matrícula' }}
-    </ion-button>
-  </div>
+    <!-- Botão de iniciar matrícula -->
+    <div class="action-section">
+      <ion-button expand="block" color="success" (click)="iniciarMatricula()" *ngIf="!matriculaIniciada"
+        [disabled]="processandoMatricula">
+        <ion-icon name="document-attach-outline" slot="start"></ion-icon>
+        {{ processandoMatricula ? 'Processando...' : 'Iniciar Matrícula' }}
+      </ion-button>
+    </div>
 
-  <ion-card *ngIf="matriculaIniciada">
+    <ion-card *ngIf="matriculaIniciada">
     <ion-card-header>
       <ion-card-title color="success">
         <ion-icon name="checkmark-circle-outline" slot="start"></ion-icon>
@@ -279,8 +288,15 @@
       </div>
     </ion-card-content>
   </ion-card>
-</ion-content>
+  
+    </div> <!-- Fecha page-content -->
+  </div> <!-- Fecha content-container -->
 
-<ng-template #carregandoTpl>
-  <ion-spinner class="ion-margin"></ion-spinner>
-</ng-template>
+  <ng-template #carregandoTpl>
+    <div class="loading-container">
+      <ion-spinner></ion-spinner>
+      <p>Carregando detalhes da declaração...</p>
+    </div>
+  </ng-template>
+
+</ion-content>

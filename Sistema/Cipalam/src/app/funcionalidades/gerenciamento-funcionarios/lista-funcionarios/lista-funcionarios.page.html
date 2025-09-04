@@ -1,55 +1,100 @@
 <ion-header>
-    <ion-toolbar>
-        <ion-buttons slot="start">
-            <ion-back-button defaultHref="/sistema/dashboard"></ion-back-button>
-        </ion-buttons>
-        <ion-title>Lista de Funcionários</ion-title>
-        <ion-buttons slot="end">
-            <ion-button fill="clear" (click)="navegarParaCadastro()" *ngIf="podeGerenciarFuncionarios">
-                <ion-icon name="add" slot="start"></ion-icon>
-                Novo
-            </ion-button>
-        </ion-buttons>
-    </ion-toolbar>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/sistema/dashboard"></ion-back-button>
+    </ion-buttons>
+  </ion-toolbar>
 </ion-header>
 
-<ion-content>
+<ion-content class="ion-padding-horizontal">
+  <!-- Header com título e descrição centralizados -->
+  <div class="page-header">
+    <div class="header-content">
+      <div class="header-info">
+        <h1>Lista de Funcionários</h1>
+        <p>Gerencie todos os funcionários do sistema</p>
+      </div>
+      <div class="header-illustration">
+        <ion-icon name="people-outline"></ion-icon>
+      </div>
+    </div>
+  </div>
+
+  <!-- Conteúdo principal -->
+  <div class="content-container">
     <!-- Loading -->
     <div *ngIf="loading" class="loading-container">
-        <ion-spinner name="crescent"></ion-spinner>
-        <p>Carregando funcionários...</p>
+      <ion-spinner name="crescent"></ion-spinner>
+      <p>Carregando funcionários...</p>
     </div>
 
     <!-- Lista de funcionários -->
-    <div *ngIf="!loading && funcionarios.length > 0">
-        <ion-list>
-            <ion-item *ngFor="let funcionario of funcionarios" button (click)="editarFuncionario(funcionario.id)">
-                <ion-label>
-                    <h2>{{ funcionario.nome }}</h2>
-                    <p>Email: {{ funcionario.email }}</p>
-                    <p>Usuário: {{ funcionario.usuario }}</p>
-                </ion-label>
-                <ion-icon name="chevron-forward" slot="end"></ion-icon>
-            </ion-item>
-        </ion-list>
+    <div *ngIf="!loading && funcionarios.length > 0" class="funcionarios-lista">
+      <div class="lista-header">
+        <h2>
+          Funcionários Cadastrados
+          <ion-badge color="primary">{{ funcionarios.length }}</ion-badge>
+        </h2>
+
+        <ion-button *ngIf="podeGerenciarFuncionarios" (click)="navegarParaCadastro()" color="primary">
+          <ion-icon name="add" slot="start"></ion-icon>
+          Novo Funcionário
+        </ion-button>
+      </div>
+      
+      <!-- Cards dos funcionários -->
+      <ion-card *ngFor="let funcionario of funcionarios" class="funcionario-card" button (click)="editarFuncionario(funcionario.id)">
+        <ion-card-header>
+          <ion-card-subtitle>
+            <ion-chip color="primary" outline>
+              <ion-icon name="person-outline"></ion-icon>
+              <ion-label>Funcionário</ion-label>
+            </ion-chip>
+
+            <ion-chip color="success" outline>
+              <ion-icon name="checkmark-circle"></ion-icon>
+              <ion-label>Ativo</ion-label>
+            </ion-chip>
+          </ion-card-subtitle>
+
+          <ion-card-title>{{ funcionario.nome }}</ion-card-title>
+        </ion-card-header>
+
+        <ion-card-content>
+          <div class="funcionario-info">
+            <div class="info-row">
+              <span class="label">Email:</span>
+              <span class="value">{{ funcionario.email }}</span>
+            </div>
+
+            <div class="info-row">
+              <span class="label">Usuário:</span>
+              <span class="value">{{ funcionario.usuario }}</span>
+            </div>
+          </div>
+
+          <!-- Ações -->
+          <div class="acoes-funcionario" *ngIf="podeGerenciarFuncionarios">
+            <ion-button fill="outline" size="small" (click)="editarFuncionario(funcionario.id); $event.stopPropagation()">
+              <ion-icon name="create" slot="start"></ion-icon>
+              Editar
+            </ion-button>
+          </div>
+        </ion-card-content>
+      </ion-card>
     </div>
 
     <!-- Mensagem quando não há funcionários -->
-    <div *ngIf="!loading && funcionarios.length === 0" class="empty-state">
-        <ion-icon name="people" size="large"></ion-icon>
-        <h2>Nenhum funcionário encontrado</h2>
-        <p>Ainda não há funcionários cadastrados no sistema.</p>
-        <ion-button expand="block" fill="outline" (click)="navegarParaCadastro()" *ngIf="podeGerenciarFuncionarios">
-            <ion-icon name="add" slot="start"></ion-icon>
-            Cadastrar Primeiro Funcionário
+    <div *ngIf="!loading && funcionarios.length === 0" class="lista-vazia">
+      <ion-icon name="people-outline" color="medium"></ion-icon>
+      <h3>Nenhum funcionário encontrado</h3>
+      <p>Ainda não há funcionários cadastrados no sistema.</p>
+      <span *ngIf="podeGerenciarFuncionarios">
+        <ion-button fill="clear" (click)="navegarParaCadastro()">
+          cadastrar o primeiro funcionário
         </ion-button>
+      </span>
     </div>
 
-    <!-- Botão flutuante para adicionar -->
-    <ion-fab vertical="bottom" horizontal="end" slot="fixed"
-        *ngIf="podeGerenciarFuncionarios && funcionarios.length > 0">
-        <ion-fab-button (click)="navegarParaCadastro()">
-            <ion-icon name="add"></ion-icon>
-        </ion-fab-button>
-    </ion-fab>
+  </div> <!-- Fecha content-container -->
 </ion-content>

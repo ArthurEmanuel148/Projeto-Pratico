@@ -37,13 +37,14 @@ export class PainelResponsavelPage implements OnInit {
       if (!usuarioLogado?.pessoaId && !usuarioLogado?.usuarioId) {
         console.error('Usuário não está logado ou ID não disponível');
         this.familiaDocumentos = null;
+        this.carregando = false;
         return;
       }
 
       const idUsuario = usuarioLogado.pessoaId || usuarioLogado.usuarioId;
       console.log('🔍 Buscando documentos para responsável ID:', idUsuario);
 
-      // Chamar o serviço atualizado que busca dados reais
+      // Chamar o serviço que busca dados reais do backend
       this.responsavelDocumentosService.getDocumentosPorFamilia(idUsuario!).subscribe({
         next: (documentos) => {
           console.log('✅ Documentos recebidos do backend:', documentos);
@@ -57,38 +58,16 @@ export class PainelResponsavelPage implements OnInit {
         },
         error: (error) => {
           console.error('❌ Erro ao carregar documentos da família:', error);
+          this.familiaDocumentos = null;
           this.carregando = false;
-
-          // Em caso de erro, usar dados mock para demonstração
-          console.log('📝 Usando dados mock como fallback');
-          this.carregarDocumentosMock();
         }
       });
 
     } catch (error) {
       console.error('❌ Erro ao carregar documentos:', error);
+      this.familiaDocumentos = null;
       this.carregando = false;
-      // Fallback para dados mock
-      this.carregarDocumentosMock();
     }
-  }
-
-  /**
-   * Método auxiliar para carregar dados mock (fallback)
-   */
-  private carregarDocumentosMock() {
-    this.responsavelDocumentosService.getDocumentosPorFamilia(4).subscribe({
-      next: (documentos) => {
-        this.familiaDocumentos = documentos;
-        if (documentos?.documentosPorPessoa?.length > 0) {
-          this.selecionarPessoa(documentos.documentosPorPessoa[0]);
-        }
-      },
-      error: (error) => {
-        console.error('❌ Erro ao carregar dados mock:', error);
-        this.familiaDocumentos = null;
-      }
-    });
   }
 
   /**

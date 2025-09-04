@@ -76,8 +76,7 @@ export class ResponsavelDocumentosService {
                 }),
                 catchError(error => {
                     console.error('❌ Erro ao buscar documentos por família:', error);
-                    console.warn('⚠️ Usando dados mock como fallback');
-                    return of(this.getMockFamiliaDocumentos());
+                    throw error; // Propagar o erro em vez de usar dados mock
                 })
             );
     }

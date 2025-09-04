@@ -128,7 +128,9 @@ public class MatriculaController {
             } else {
                 // Login já existe, atualizar a senha para a nova senha padrão
                 Login loginExist = loginExistente.get();
-                loginExist.setSenha(senha);
+                // Criptografar a senha antes de salvar
+                String senhaCriptografada = passwordEncoder.encode(senha);
+                loginExist.setSenha(senhaCriptografada);
                 loginRepository.save(loginExist);
 
                 // Garantir que existe responsável para esta pessoa

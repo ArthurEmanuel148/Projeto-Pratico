@@ -55,11 +55,11 @@ public class ResponsavelDocumentoService {
         String sql = """
                     SELECT
                         p.idPessoa as id,
-                        p.nome,
+                        p.NmPessoa as nome,
                         p.email,
-                        f.idtbFamilia as idFamilia
+                        r.tbFamilia_idtbFamilia as idFamilia
                     FROM tbPessoa p
-                    INNER JOIN tbFamilia f ON p.idPessoa = f.tbPessoa_idPessoa
+                    INNER JOIN tbResponsavel r ON p.idPessoa = r.tbPessoa_idPessoa
                     WHERE p.idPessoa = ?
                 """;
 
@@ -91,35 +91,26 @@ public class ResponsavelDocumentoService {
         String sql = """
                     SELECT DISTINCT
                         p.idPessoa,
-                        p.nome,
+                        p.NmPessoa as nome,
                         CASE
-                            WHEN p.idPessoa = f.tbPessoa_idPessoa THEN 'responsavel'
+                            WHEN r.tbPessoa_idPessoa = p.idPessoa THEN 'responsavel'
                             WHEN a.idPessoa IS NOT NULL THEN 'aluno'
                             ELSE 'integrante'
                         END as parentesco
-                    FROM tbFamilia f
-                    INNER JOIN tbIntegranteFamilia if_fam ON f.idtbFamilia = if_fam.tbFamilia_idtbFamilia
-                    INNER JOIN tbPessoa p ON if_fam.tbPessoa_idPessoa = p.idPessoa
-                    LEFT JOIN tbAluno a ON p.idPessoa = a.idPessoa
-                    WHERE f.tbPessoa_idPessoa = ?
-
-                    UNION
-
-                    SELECT
-                        p.idPessoa,
-                        p.nome,
-                        'responsavel' as parentesco
                     FROM tbPessoa p
-                    INNER JOIN tbFamilia f ON p.idPessoa = f.tbPessoa_idPessoa
-                    WHERE p.idPessoa = ?
-
+                    LEFT JOIN tbResponsavel r ON r.tbPessoa_idPessoa = ?
+                    LEFT JOIN tbAluno a ON a.idPessoa = p.idPessoa
+                    LEFT JOIN tbIntegranteFamilia if_fam ON if_fam.tbPessoa_idPessoa = p.idPessoa
+                    WHERE (r.tbPessoa_idPessoa = p.idPessoa OR
+                           a.tbFamilia_idtbFamilia = r.tbFamilia_idtbFamilia OR
+                           if_fam.tbFamilia_idtbFamilia = r.tbFamilia_idtbFamilia)
                     ORDER BY
-                        CASE parentesco
-                            WHEN 'responsavel' THEN 1
-                            WHEN 'aluno' THEN 2
+                        CASE
+                            WHEN r.tbPessoa_idPessoa = p.idPessoa THEN 1
+                            WHEN a.idPessoa IS NOT NULL THEN 2
                             ELSE 3
                         END,
-                        nome
+                        p.NmPessoa
                 """;
 
         return jdbcTemplate.queryForList(sql, idResponsavel, idResponsavel);

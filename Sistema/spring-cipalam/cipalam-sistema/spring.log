@@ -1,3 +1,34 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] --------------------< com.cipalam:cipalam-sistema >---------------------
+[INFO] Building cipalam-sistema 0.0.1-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] >>> spring-boot:3.4.9:run (default-cli) > test-compile @ cipalam-sistema >>>
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ cipalam-sistema ---
+[INFO] Copying 2 resources from src/main/resources to target/classes
+[INFO] Copying 0 resource from src/main/resources to target/classes
+[INFO] 
+[INFO] --- compiler:3.13.0:compile (default-compile) @ cipalam-sistema ---
+[INFO] Recompiling the module because of changed source code.
+[INFO] Compiling 87 source files with javac [debug parameters release 21] to target/classes
+[INFO] /Applications/XAMPP/xamppfiles/htdocs/GitHub/Projeto-Pratico/Projeto-Pratico/Sistema/spring-cipalam/cipalam-sistema/src/main/java/com/cipalam/cipalam_sistema/controller/MatriculaController.java: Some input files use or override a deprecated API.
+[INFO] /Applications/XAMPP/xamppfiles/htdocs/GitHub/Projeto-Pratico/Projeto-Pratico/Sistema/spring-cipalam/cipalam-sistema/src/main/java/com/cipalam/cipalam_sistema/controller/MatriculaController.java: Recompile with -Xlint:deprecation for details.
+[INFO] 
+[INFO] --- resources:3.3.1:testResources (default-testResources) @ cipalam-sistema ---
+[INFO] skip non existing resourceDirectory /Applications/XAMPP/xamppfiles/htdocs/GitHub/Projeto-Pratico/Projeto-Pratico/Sistema/spring-cipalam/cipalam-sistema/src/test/resources
+[INFO] 
+[INFO] --- compiler:3.13.0:testCompile (default-testCompile) @ cipalam-sistema ---
+[INFO] Recompiling the module because of changed dependency.
+[INFO] Compiling 1 source file with javac [debug parameters release 21] to target/test-classes
+[INFO] 
+[INFO] <<< spring-boot:3.4.9:run (default-cli) < test-compile @ cipalam-sistema <<<
+[INFO] 
+[INFO] 
+[INFO] --- spring-boot:3.4.9:run (default-cli) @ cipalam-sistema ---
+[INFO] Attaching agents: []
 
   .   ____          _            __ _ _
  /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
@@ -6,26 +37,28 @@
   '  |____| .__|_| |_|_| |_\__, | / / / /
  =========|_|==============|___/=/_/_/_/
 
- :: Spring Boot ::                (v3.4.7)
+ :: Spring Boot ::                (v3.4.9)
 
-2025-08-24T04:33:20.350-03:00  INFO 35936 --- [           main] c.c.c.CipalamSistemaApplication          : Starting CipalamSistemaApplication v0.0.1-SNAPSHOT using Java 21.0.6 with PID 35936 (/Applications/XAMPP/xamppfiles/htdocs/GitHub/Projeto-Pratico/Sistema/spring-cipalam/cipalam-sistema/target/cipalam-sistema-0.0.1-SNAPSHOT.jar started by arthuremanuel in /Applications/XAMPP/xamppfiles/htdocs/GitHub/Projeto-Pratico/Sistema/spring-cipalam/cipalam-sistema)
-2025-08-24T04:33:20.351-03:00  INFO 35936 --- [           main] c.c.c.CipalamSistemaApplication          : No active profile set, falling back to 1 default profile: "default"
-2025-08-24T04:33:20.779-03:00  INFO 35936 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
-2025-08-24T04:33:20.818-03:00  INFO 35936 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 34 ms. Found 14 JPA repository interfaces.
-2025-08-24T04:33:21.126-03:00  INFO 35936 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
-2025-08-24T04:33:21.134-03:00  INFO 35936 --- [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
-2025-08-24T04:33:21.134-03:00  INFO 35936 --- [           main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.42]
-2025-08-24T04:33:21.153-03:00  INFO 35936 --- [           main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
-2025-08-24T04:33:21.153-03:00  INFO 35936 --- [           main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 783 ms
-2025-08-24T04:33:21.230-03:00  INFO 35936 --- [           main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
-2025-08-24T04:33:21.272-03:00  INFO 35936 --- [           main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.6.18.Final
-2025-08-24T04:33:21.292-03:00  INFO 35936 --- [           main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
-2025-08-24T04:33:21.449-03:00  INFO 35936 --- [           main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
-2025-08-24T04:33:21.466-03:00  INFO 35936 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
-2025-08-24T04:33:21.585-03:00  INFO 35936 --- [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@f10d055
-2025-08-24T04:33:21.586-03:00  INFO 35936 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
-2025-08-24T04:33:21.614-03:00  WARN 35936 --- [           main] org.hibernate.dialect.Dialect            : HHH000511: The 5.5.5 version for [org.hibernate.dialect.MySQLDialect] is no longer supported, hence certain features may not work properly. The minimum supported version is 8.0.0. Check the community dialects project for available legacy versions.
-2025-08-24T04:33:21.626-03:00  INFO 35936 --- [           main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+2025-09-04T00:10:41.813-03:00  INFO 48456 --- [  restartedMain] c.c.c.CipalamSistemaApplication          : Starting CipalamSistemaApplication using Java 21.0.6 with PID 48456 (/Applications/XAMPP/xamppfiles/htdocs/GitHub/Projeto-Pratico/Projeto-Pratico/Sistema/spring-cipalam/cipalam-sistema/target/classes started by arthuremanuel in /Applications/XAMPP/xamppfiles/htdocs/GitHub/Projeto-Pratico/Projeto-Pratico/Sistema/spring-cipalam/cipalam-sistema)
+2025-09-04T00:10:41.813-03:00  INFO 48456 --- [  restartedMain] c.c.c.CipalamSistemaApplication          : No active profile set, falling back to 1 default profile: "default"
+2025-09-04T00:10:41.828-03:00  INFO 48456 --- [  restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2025-09-04T00:10:41.828-03:00  INFO 48456 --- [  restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2025-09-04T00:10:42.113-03:00  INFO 48456 --- [  restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-09-04T00:10:42.147-03:00  INFO 48456 --- [  restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 30 ms. Found 12 JPA repository interfaces.
+2025-09-04T00:10:42.414-03:00  INFO 48456 --- [  restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2025-09-04T00:10:42.421-03:00  INFO 48456 --- [  restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-09-04T00:10:42.421-03:00  INFO 48456 --- [  restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.44]
+2025-09-04T00:10:42.434-03:00  INFO 48456 --- [  restartedMain] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-09-04T00:10:42.434-03:00  INFO 48456 --- [  restartedMain] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 605 ms
+2025-09-04T00:10:42.502-03:00  INFO 48456 --- [  restartedMain] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-09-04T00:10:42.527-03:00  INFO 48456 --- [  restartedMain] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.6.26.Final
+2025-09-04T00:10:42.542-03:00  INFO 48456 --- [  restartedMain] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-09-04T00:10:42.648-03:00  INFO 48456 --- [  restartedMain] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-09-04T00:10:42.659-03:00  INFO 48456 --- [  restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2025-09-04T00:10:42.738-03:00  INFO 48456 --- [  restartedMain] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@7e4de962
+2025-09-04T00:10:42.739-03:00  INFO 48456 --- [  restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2025-09-04T00:10:42.760-03:00  WARN 48456 --- [  restartedMain] org.hibernate.dialect.Dialect            : HHH000511: The 5.5.5 version for [org.hibernate.dialect.MySQLDialect] is no longer supported, hence certain features may not work properly. The minimum supported version is 8.0.0. Check the community dialects project for available legacy versions.
+2025-09-04T00:10:42.767-03:00  INFO 48456 --- [  restartedMain] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
 	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
 	Database driver: undefined/unknown
 	Database version: 5.5.5
@@ -33,24 +66,268 @@
 	Isolation level: undefined/unknown
 	Minimum pool size: undefined/unknown
 	Maximum pool size: undefined/unknown
-2025-08-24T04:33:22.226-03:00  INFO 35936 --- [           main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
-2025-08-24T04:33:22.227-03:00  INFO 35936 --- [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
-2025-08-24T04:33:22.474-03:00  INFO 35936 --- [           main] eAuthenticationProviderManagerConfigurer : Global AuthenticationManager configured with AuthenticationProvider bean with name authenticationProvider
-2025-08-24T04:33:22.475-03:00  WARN 35936 --- [           main] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with an AuthenticationProvider bean. UserDetailsService beans will not be used by Spring Security for automatically configuring username/password login. Consider removing the AuthenticationProvider bean. Alternatively, consider using the UserDetailsService in a manually instantiated DaoAuthenticationProvider. If the current configuration is intentional, to turn off this warning, increase the logging level of 'org.springframework.security.config.annotation.authentication.configuration.InitializeUserDetailsBeanManagerConfigurer' to ERROR
-2025-08-24T04:33:22.489-03:00  INFO 35936 --- [           main] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
-2025-08-24T04:33:23.096-03:00  WARN 35936 --- [           main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
-2025-08-24T04:33:23.806-03:00  INFO 35936 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/'
-2025-08-24T04:33:23.817-03:00  INFO 35936 --- [           main] c.c.c.CipalamSistemaApplication          : Started CipalamSistemaApplication in 3.682 seconds (process running for 4.067)
+2025-09-04T00:10:43.194-03:00  INFO 48456 --- [  restartedMain] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-09-04T00:10:43.195-03:00  INFO 48456 --- [  restartedMain] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-09-04T00:10:43.406-03:00  INFO 48456 --- [  restartedMain] eAuthenticationProviderManagerConfigurer : Global AuthenticationManager configured with AuthenticationProvider bean with name authenticationProvider
+2025-09-04T00:10:43.406-03:00  WARN 48456 --- [  restartedMain] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with an AuthenticationProvider bean. UserDetailsService beans will not be used by Spring Security for automatically configuring username/password login. Consider removing the AuthenticationProvider bean. Alternatively, consider using the UserDetailsService in a manually instantiated DaoAuthenticationProvider. If the current configuration is intentional, to turn off this warning, increase the logging level of 'org.springframework.security.config.annotation.authentication.configuration.InitializeUserDetailsBeanManagerConfigurer' to ERROR
+2025-09-04T00:10:43.419-03:00  INFO 48456 --- [  restartedMain] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
+2025-09-04T00:10:44.392-03:00  WARN 48456 --- [  restartedMain] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-09-04T00:10:44.715-03:00  INFO 48456 --- [  restartedMain] o.s.b.d.a.OptionalLiveReloadServer       : LiveReload server is running on port 35729
+2025-09-04T00:10:44.733-03:00  INFO 48456 --- [  restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/'
+2025-09-04T00:10:44.738-03:00  INFO 48456 --- [  restartedMain] c.c.c.CipalamSistemaApplication          : Started CipalamSistemaApplication in 3.065 seconds (process running for 3.251)
 Hibernate: select l1_0.idtblogin,l1_0.tbPessoa_idPessoa,l1_0.senha,l1_0.usuario from tblogin l1_0 where l1_0.usuario=?
-Hibernate: select p1_0.idPessoa,p1_0.ativo,p1_0.caminhoComprovanteRenda,p1_0.caminhoIdentidadePessoa,p1_0.caminhoImagem,p1_0.CpfPessoa,p1_0.dataAtualizacao,p1_0.dataCriacao,p1_0.descricaoRenda,p1_0.dtNascPessoa,p1_0.email,p1_0.tbFamilia_idtbFamilia,p1_0.NmPessoa,p1_0.parentesco,p1_0.rendaComprovada,p1_0.telefone,p1_0.tipoRenda,p1_0.valorRenda from tbPessoa p1_0 where p1_0.idPessoa=?
+Hibernate: select p1_0.idPessoa,p1_0.ativo,p1_0.caminhoIdentidadePessoa,p1_0.caminhoImagem,p1_0.CpfPessoa,p1_0.dataCriacao,p1_0.dtNascPessoa,p1_0.email,p1_0.NmPessoa,p1_0.profissao,p1_0.renda,p1_0.telefone from tbPessoa p1_0 where p1_0.idPessoa=?
 Hibernate: select l1_0.idtblogin,l1_0.tbPessoa_idPessoa,l1_0.senha,l1_0.usuario from tblogin l1_0 where l1_0.usuario=?
-Hibernate: select p1_0.idPessoa,p1_0.ativo,p1_0.caminhoComprovanteRenda,p1_0.caminhoIdentidadePessoa,p1_0.caminhoImagem,p1_0.CpfPessoa,p1_0.dataAtualizacao,p1_0.dataCriacao,p1_0.descricaoRenda,p1_0.dtNascPessoa,p1_0.email,p1_0.tbFamilia_idtbFamilia,p1_0.NmPessoa,p1_0.parentesco,p1_0.rendaComprovada,p1_0.telefone,p1_0.tipoRenda,p1_0.valorRenda from tbPessoa p1_0 where p1_0.idPessoa=?
-2025-08-24T04:33:35.602-03:00  INFO 35936 --- [nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
-2025-08-24T04:33:35.605-03:00  INFO 35936 --- [nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
-2025-08-24T04:33:35.607-03:00  INFO 35936 --- [nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 2 ms
-Hibernate: select p1_0.idPessoa,p1_0.ativo,p1_0.caminhoComprovanteRenda,p1_0.caminhoIdentidadePessoa,p1_0.caminhoImagem,p1_0.CpfPessoa,p1_0.dataAtualizacao,p1_0.dataCriacao,p1_0.descricaoRenda,p1_0.dtNascPessoa,p1_0.email,p1_0.tbFamilia_idtbFamilia,p1_0.NmPessoa,p1_0.parentesco,p1_0.rendaComprovada,p1_0.telefone,p1_0.tipoRenda,p1_0.valorRenda from tbPessoa p1_0 where p1_0.CpfPessoa=?
+Hibernate: select p1_0.idPessoa,p1_0.ativo,p1_0.caminhoIdentidadePessoa,p1_0.caminhoImagem,p1_0.CpfPessoa,p1_0.dataCriacao,p1_0.dtNascPessoa,p1_0.email,p1_0.NmPessoa,p1_0.profissao,p1_0.renda,p1_0.telefone from tbPessoa p1_0 where p1_0.idPessoa=?
+2025-09-04T00:10:56.914-03:00  INFO 48456 --- [nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-09-04T00:10:56.914-03:00  INFO 48456 --- [nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2025-09-04T00:10:56.915-03:00  INFO 48456 --- [nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 1 ms
+Hibernate: SELECT fn_ValidarIniciarMatricula(?, ?) as resultado
+Hibernate: SELECT fn_ValidarIniciarMatricula(?, ?) as resultado
+Hibernate: {call sp_IniciarMatricula(?,?,?)}
+Hibernate:     SELECT
+        a.tbFamilia_idtbFamilia as idFamilia,
+        a.tbPessoa_idPessoa as idAluno,
+        p_resp.idPessoa as idResponsavel,
+        a.matricula,
+        l.usuario as loginResponsavel,
+        CONCAT('Últimos 4 dígitos do CPF: ', RIGHT(REPLACE(REPLACE(p_resp.CpfPessoa, '.', ''), '-', ''), 4)) as senhaTemporaria
+    FROM tbAluno a
+    INNER JOIN tbPessoa p_aluno ON a.tbPessoa_idPessoa = p_aluno.idPessoa
+    INNER JOIN tbFamilia f ON a.tbFamilia_idtbFamilia = f.idtbFamilia
+    INNER JOIN tbResponsavel r ON f.idtbFamilia = r.tbFamilia_idtbFamilia
+    INNER JOIN tbPessoa p_resp ON r.tbPessoa_idPessoa = p_resp.idPessoa
+    INNER JOIN tblogin l ON p_resp.idPessoa = l.tbPessoa_idPessoa
+    WHERE a.protocoloDeclaracao = (
+        SELECT protocolo FROM tbInteresseMatricula WHERE id = ?
+    )
+    ORDER BY a.dataInicioMatricula DESC
+    LIMIT 1
+
+Hibernate: SELECT fn_ValidarIniciarMatricula(?, ?) as resultado
+Hibernate:     SELECT
+        id,
+        protocolo,
+        nomeAluno,
+        nomeResponsavel,
+        CASE
+            WHEN tipoCota = 'livre' THEN 'Cota Livre'
+            WHEN tipoCota = 'economica' THEN 'Cota Econômica'
+            WHEN tipoCota = 'funcionario' THEN 'Cota Funcionário'
+            ELSE tipoCota
+        END as tipoCotaDescricao,
+        dataEnvio,
+        DATEDIFF(CURDATE(), DATE(dataEnvio)) as diasAguardando
+    FROM tbInteresseMatricula
+    WHERE status = 'interesse_declarado'
+    ORDER BY dataEnvio ASC
+
+Hibernate:     SELECT
+        idtbTurma as id,
+        nomeTurma as nome,
+        CASE
+            WHEN horarioInicio < '12:00:00' THEN 'Manhã'
+            WHEN horarioInicio < '18:00:00' THEN 'Tarde'
+            ELSE 'Noite'
+        END as turno,
+        CONCAT(nomeTurma, ' - ',
+            CASE
+                WHEN horarioInicio < '12:00:00' THEN 'Manhã'
+                WHEN horarioInicio < '18:00:00' THEN 'Tarde'
+                ELSE 'Noite'
+            END,
+            ' (', TIME_FORMAT(horarioInicio, '%H:%i'), ' às ', TIME_FORMAT(horarioFim, '%H:%i'), ')'
+        ) as descricaoCompleta,
+        (capacidadeMaxima - capacidadeAtual) as vagasDisponiveis,
+        CASE WHEN (capacidadeMaxima - capacidadeAtual) > 0 THEN TRUE ELSE FALSE END as temVagas,
+        capacidadeMaxima
+    FROM tbTurma
+    WHERE ativo = TRUE AND (capacidadeMaxima - capacidadeAtual) > 0
+    ORDER BY horarioInicio ASC, nomeTurma ASC
+
+Hibernate: SELECT fn_ValidarIniciarMatricula(?, ?) as resultado
+Hibernate: SELECT fn_ValidarIniciarMatricula(?, ?) as resultado
+Hibernate: {call sp_IniciarMatricula(?,?,?)}
+Hibernate:     SELECT
+        a.tbFamilia_idtbFamilia as idFamilia,
+        a.tbPessoa_idPessoa as idAluno,
+        p_resp.idPessoa as idResponsavel,
+        a.matricula,
+        l.usuario as loginResponsavel,
+        CONCAT('Últimos 4 dígitos do CPF: ', RIGHT(REPLACE(REPLACE(p_resp.CpfPessoa, '.', ''), '-', ''), 4)) as senhaTemporaria
+    FROM tbAluno a
+    INNER JOIN tbPessoa p_aluno ON a.tbPessoa_idPessoa = p_aluno.idPessoa
+    INNER JOIN tbFamilia f ON a.tbFamilia_idtbFamilia = f.idtbFamilia
+    INNER JOIN tbResponsavel r ON f.idtbFamilia = r.tbFamilia_idtbFamilia
+    INNER JOIN tbPessoa p_resp ON r.tbPessoa_idPessoa = p_resp.idPessoa
+    INNER JOIN tblogin l ON p_resp.idPessoa = l.tbPessoa_idPessoa
+    WHERE a.protocoloDeclaracao = (
+        SELECT protocolo FROM tbInteresseMatricula WHERE id = ?
+    )
+    ORDER BY a.dataInicioMatricula DESC
+    LIMIT 1
+
+Hibernate:     SELECT
+        id,
+        protocolo,
+        nomeAluno,
+        nomeResponsavel,
+        CASE
+            WHEN tipoCota = 'livre' THEN 'Cota Livre'
+            WHEN tipoCota = 'economica' THEN 'Cota Econômica'
+            WHEN tipoCota = 'funcionario' THEN 'Cota Funcionário'
+            ELSE tipoCota
+        END as tipoCotaDescricao,
+        dataEnvio,
+        DATEDIFF(CURDATE(), DATE(dataEnvio)) as diasAguardando
+    FROM tbInteresseMatricula
+    WHERE status = 'interesse_declarado'
+    ORDER BY dataEnvio ASC
+
+Hibernate:     SELECT
+        idtbTurma as id,
+        nomeTurma as nome,
+        CASE
+            WHEN horarioInicio < '12:00:00' THEN 'Manhã'
+            WHEN horarioInicio < '18:00:00' THEN 'Tarde'
+            ELSE 'Noite'
+        END as turno,
+        CONCAT(nomeTurma, ' - ',
+            CASE
+                WHEN horarioInicio < '12:00:00' THEN 'Manhã'
+                WHEN horarioInicio < '18:00:00' THEN 'Tarde'
+                ELSE 'Noite'
+            END,
+            ' (', TIME_FORMAT(horarioInicio, '%H:%i'), ' às ', TIME_FORMAT(horarioFim, '%H:%i'), ')'
+        ) as descricaoCompleta,
+        (capacidadeMaxima - capacidadeAtual) as vagasDisponiveis,
+        CASE WHEN (capacidadeMaxima - capacidadeAtual) > 0 THEN TRUE ELSE FALSE END as temVagas,
+        capacidadeMaxima
+    FROM tbTurma
+    WHERE ativo = TRUE AND (capacidadeMaxima - capacidadeAtual) > 0
+    ORDER BY horarioInicio ASC, nomeTurma ASC
+
+Hibernate: SELECT fn_ValidarIniciarMatricula(?, ?) as resultado
+Hibernate: SELECT fn_ValidarIniciarMatricula(?, ?) as resultado
+Hibernate: {call sp_IniciarMatricula(?,?,?)}
+Hibernate:     SELECT
+        a.tbFamilia_idtbFamilia as idFamilia,
+        a.tbPessoa_idPessoa as idAluno,
+        p_resp.idPessoa as idResponsavel,
+        a.matricula,
+        l.usuario as loginResponsavel,
+        CONCAT('Últimos 4 dígitos do CPF: ', RIGHT(REPLACE(REPLACE(p_resp.CpfPessoa, '.', ''), '-', ''), 4)) as senhaTemporaria
+    FROM tbAluno a
+    INNER JOIN tbPessoa p_aluno ON a.tbPessoa_idPessoa = p_aluno.idPessoa
+    INNER JOIN tbFamilia f ON a.tbFamilia_idtbFamilia = f.idtbFamilia
+    INNER JOIN tbResponsavel r ON f.idtbFamilia = r.tbFamilia_idtbFamilia
+    INNER JOIN tbPessoa p_resp ON r.tbPessoa_idPessoa = p_resp.idPessoa
+    INNER JOIN tblogin l ON p_resp.idPessoa = l.tbPessoa_idPessoa
+    WHERE a.protocoloDeclaracao = (
+        SELECT protocolo FROM tbInteresseMatricula WHERE id = ?
+    )
+    ORDER BY a.dataInicioMatricula DESC
+    LIMIT 1
+
+Hibernate: insert into tbInteresseMatricula (bairro,cep,cidade,codigoIbgeCidade,codigoInepEscola,complemento,cpfAluno,cpfResponsavel,dataEnvio,dataFinalizacao,dataInicioMatricula,dataNascimentoAluno,dataNascimentoResponsavel,emailResponsavel,escolaAluno,funcionarioResponsavel_idPessoa,horariosSelecionados,integrantesRenda,logradouro,municipioEscola,nomeAluno,nomeResponsavel,numero,numeroIntegrantes,observacoesInternas,observacoesResponsavel,pontoReferencia,profissaoResponsavel,protocolo,rendaResponsavel,responsavelLogin_idPessoa,status,telefoneResponsavel,tipoCota,uf,ufEscola) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+Hibernate: SELECT fn_ValidarIniciarMatricula(?, ?) as resultado
+Hibernate: {call sp_IniciarMatricula(?,?,?)}
+Hibernate:     SELECT
+        a.tbFamilia_idtbFamilia as idFamilia,
+        a.tbPessoa_idPessoa as idAluno,
+        p_resp.idPessoa as idResponsavel,
+        a.matricula,
+        l.usuario as loginResponsavel,
+        CONCAT('Últimos 4 dígitos do CPF: ', RIGHT(REPLACE(REPLACE(p_resp.CpfPessoa, '.', ''), '-', ''), 4)) as senhaTemporaria
+    FROM tbAluno a
+    INNER JOIN tbPessoa p_aluno ON a.tbPessoa_idPessoa = p_aluno.idPessoa
+    INNER JOIN tbFamilia f ON a.tbFamilia_idtbFamilia = f.idtbFamilia
+    INNER JOIN tbResponsavel r ON f.idtbFamilia = r.tbFamilia_idtbFamilia
+    INNER JOIN tbPessoa p_resp ON r.tbPessoa_idPessoa = p_resp.idPessoa
+    INNER JOIN tblogin l ON p_resp.idPessoa = l.tbPessoa_idPessoa
+    WHERE a.protocoloDeclaracao = (
+        SELECT protocolo FROM tbInteresseMatricula WHERE id = ?
+    )
+    ORDER BY a.dataInicioMatricula DESC
+    LIMIT 1
+
+Hibernate: SELECT fn_ValidarIniciarMatricula(?, ?) as resultado
+Hibernate: {call sp_IniciarMatricula(?,?,?)}
+Hibernate:     SELECT
+        a.tbFamilia_idtbFamilia as idFamilia,
+        a.tbPessoa_idPessoa as idAluno,
+        p_resp.idPessoa as idResponsavel,
+        a.matricula,
+        l.usuario as loginResponsavel,
+        CONCAT('Últimos 4 dígitos do CPF: ', RIGHT(REPLACE(REPLACE(p_resp.CpfPessoa, '.', ''), '-', ''), 4)) as senhaTemporaria
+    FROM tbAluno a
+    INNER JOIN tbPessoa p_aluno ON a.tbPessoa_idPessoa = p_aluno.idPessoa
+    INNER JOIN tbFamilia f ON a.tbFamilia_idtbFamilia = f.idtbFamilia
+    INNER JOIN tbResponsavel r ON f.idtbFamilia = r.tbFamilia_idtbFamilia
+    INNER JOIN tbPessoa p_resp ON r.tbPessoa_idPessoa = p_resp.idPessoa
+    INNER JOIN tblogin l ON p_resp.idPessoa = l.tbPessoa_idPessoa
+    WHERE a.protocoloDeclaracao = (
+        SELECT protocolo FROM tbInteresseMatricula WHERE id = ?
+    )
+    ORDER BY a.dataInicioMatricula DESC
+    LIMIT 1
+
+2025-09-04T00:54:37.927-03:00  INFO 48456 --- [   File Watcher] rtingClassPathChangeChangedEventListener : Restarting due to 4 class path changes (0 additions, 0 deletions, 4 modifications)
+2025-09-04T00:54:37.940-03:00  INFO 48456 --- [       Thread-5] o.s.b.w.e.tomcat.GracefulShutdown        : Commencing graceful shutdown. Waiting for active requests to complete
+2025-09-04T00:54:37.952-03:00  INFO 48456 --- [tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown        : Graceful shutdown complete
+2025-09-04T00:54:37.959-03:00  INFO 48456 --- [       Thread-5] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-09-04T00:54:37.965-03:00  INFO 48456 --- [       Thread-5] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2025-09-04T00:54:37.971-03:00  INFO 48456 --- [       Thread-5] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v3.4.9)
+
+2025-09-04T00:54:38.054-03:00  INFO 48456 --- [  restartedMain] c.c.c.CipalamSistemaApplication          : Starting CipalamSistemaApplication using Java 21.0.6 with PID 48456 (/Applications/XAMPP/xamppfiles/htdocs/GitHub/Projeto-Pratico/Projeto-Pratico/Sistema/spring-cipalam/cipalam-sistema/target/classes started by arthuremanuel in /Applications/XAMPP/xamppfiles/htdocs/GitHub/Projeto-Pratico/Projeto-Pratico/Sistema/spring-cipalam/cipalam-sistema)
+2025-09-04T00:54:38.054-03:00  INFO 48456 --- [  restartedMain] c.c.c.CipalamSistemaApplication          : No active profile set, falling back to 1 default profile: "default"
+2025-09-04T00:54:38.146-03:00  INFO 48456 --- [  restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-09-04T00:54:38.157-03:00  INFO 48456 --- [  restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 10 ms. Found 12 JPA repository interfaces.
+2025-09-04T00:54:38.233-03:00  INFO 48456 --- [  restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2025-09-04T00:54:38.234-03:00  INFO 48456 --- [  restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-09-04T00:54:38.234-03:00  INFO 48456 --- [  restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.44]
+2025-09-04T00:54:38.239-03:00  INFO 48456 --- [  restartedMain] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-09-04T00:54:38.239-03:00  INFO 48456 --- [  restartedMain] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 184 ms
+2025-09-04T00:54:38.273-03:00  INFO 48456 --- [  restartedMain] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-09-04T00:54:38.274-03:00  INFO 48456 --- [  restartedMain] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-09-04T00:54:38.286-03:00  INFO 48456 --- [  restartedMain] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-09-04T00:54:38.287-03:00  INFO 48456 --- [  restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-2 - Starting...
+2025-09-04T00:54:38.293-03:00  INFO 48456 --- [  restartedMain] com.zaxxer.hikari.pool.HikariPool        : HikariPool-2 - Added connection com.mysql.cj.jdbc.ConnectionImpl@15d5dd51
+2025-09-04T00:54:38.293-03:00  INFO 48456 --- [  restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-2 - Start completed.
+2025-09-04T00:54:38.294-03:00  WARN 48456 --- [  restartedMain] org.hibernate.dialect.Dialect            : HHH000511: The 5.5.5 version for [org.hibernate.dialect.MySQLDialect] is no longer supported, hence certain features may not work properly. The minimum supported version is 8.0.0. Check the community dialects project for available legacy versions.
+2025-09-04T00:54:38.294-03:00  INFO 48456 --- [  restartedMain] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-2)']
+	Database driver: undefined/unknown
+	Database version: 5.5.5
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-09-04T00:54:38.402-03:00  INFO 48456 --- [  restartedMain] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-09-04T00:54:38.402-03:00  INFO 48456 --- [  restartedMain] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-09-04T00:54:38.484-03:00  INFO 48456 --- [  restartedMain] eAuthenticationProviderManagerConfigurer : Global AuthenticationManager configured with AuthenticationProvider bean with name authenticationProvider
+2025-09-04T00:54:38.485-03:00  WARN 48456 --- [  restartedMain] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with an AuthenticationProvider bean. UserDetailsService beans will not be used by Spring Security for automatically configuring username/password login. Consider removing the AuthenticationProvider bean. Alternatively, consider using the UserDetailsService in a manually instantiated DaoAuthenticationProvider. If the current configuration is intentional, to turn off this warning, increase the logging level of 'org.springframework.security.config.annotation.authentication.configuration.InitializeUserDetailsBeanManagerConfigurer' to ERROR
+2025-09-04T00:54:38.626-03:00  WARN 48456 --- [  restartedMain] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-09-04T00:54:38.812-03:00  INFO 48456 --- [  restartedMain] o.s.b.d.a.OptionalLiveReloadServer       : LiveReload server is running on port 35729
+2025-09-04T00:54:38.818-03:00  INFO 48456 --- [  restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/'
+2025-09-04T00:54:38.821-03:00  INFO 48456 --- [  restartedMain] c.c.c.CipalamSistemaApplication          : Started CipalamSistemaApplication in 0.777 seconds (process running for 2637.16)
 Hibernate: select l1_0.idtblogin,l1_0.tbPessoa_idPessoa,l1_0.senha,l1_0.usuario from tblogin l1_0 where l1_0.usuario=?
-Hibernate: select p1_0.idPessoa,p1_0.ativo,p1_0.caminhoComprovanteRenda,p1_0.caminhoIdentidadePessoa,p1_0.caminhoImagem,p1_0.CpfPessoa,p1_0.dataAtualizacao,p1_0.dataCriacao,p1_0.descricaoRenda,p1_0.dtNascPessoa,p1_0.email,p1_0.tbFamilia_idtbFamilia,p1_0.NmPessoa,p1_0.parentesco,p1_0.rendaComprovada,p1_0.telefone,p1_0.tipoRenda,p1_0.valorRenda from tbPessoa p1_0 where p1_0.idPessoa=?
-Hibernate: select r1_0.tbPessoa_idPessoa,r1_0.tbFamilia_idtbFamilia from tbResponsavel r1_0 where r1_0.tbPessoa_idPessoa=?
-Hibernate: select p1_0.idPermissao,p1_0.dataAtualizacao,p1_0.dataCriacao,p1_0.tbFuncionalidade_idFuncionalidade,p1_0.tbPessoa_idPessoa,p1_0.temPermissao from tbPermissao p1_0 where p1_0.tbPessoa_idPessoa=? and p1_0.temPermissao=1
-Hibernate: select r1_0.tbPessoa_idPessoa,r1_0.tbFamilia_idtbFamilia from tbResponsavel r1_0 where r1_0.tbPessoa_idPessoa=?
+Hibernate: select p1_0.idPessoa,p1_0.ativo,p1_0.caminhoIdentidadePessoa,p1_0.caminhoImagem,p1_0.CpfPessoa,p1_0.dataCriacao,p1_0.dtNascPessoa,p1_0.email,p1_0.NmPessoa,p1_0.profissao,p1_0.renda,p1_0.telefone from tbPessoa p1_0 where p1_0.idPessoa=?
+Hibernate: select l1_0.idtblogin,l1_0.tbPessoa_idPessoa,l1_0.senha,l1_0.usuario from tblogin l1_0 where l1_0.usuario=?
+=== Criando usuário funcionário para teste ===
+Hibernate: insert into tbPessoa (ativo,caminhoIdentidadePessoa,caminhoImagem,CpfPessoa,dataCriacao,dtNascPessoa,email,NmPessoa,profissao,renda,telefone) values (?,?,?,?,?,?,?,?,?,?,?)
+Hibernate: insert into tblogin (tbPessoa_idPessoa,senha,usuario) values (?,?,?)
+Usuário funcionário criado:
+Usuário: funcionario
+Senha: 123456
+========================================
+2025-09-04T00:54:38.851-03:00  INFO 48456 --- [  restartedMain] .ConditionEvaluationDeltaLoggingListener : Condition evaluation unchanged

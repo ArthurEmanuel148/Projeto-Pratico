@@ -293,7 +293,8 @@ public class InteresseMatriculaService {
     }
 
     /**
-     * Lista declarações prontas para matrícula usando a view do banco
+     * Lista declarações prontas para matrícula usando a tabela real
+     * tbInteresseMatricula
      */
     public List<Map<String, Object>> listarDeclaracoesParaMatricula() {
         String sql = """
@@ -302,17 +303,22 @@ public class InteresseMatriculaService {
                         protocolo,
                         nomeAluno,
                         nomeResponsavel,
-                        tipoCotaDescricao,
+                        CASE
+                            WHEN tipoCota = 'livre' THEN 'Cota Livre'
+                            WHEN tipoCota = 'economica' THEN 'Cota Econômica'
+                            WHEN tipoCota = 'funcionario' THEN 'Cota Funcionário'
+                            ELSE tipoCota
+                        END as tipoCotaDescricao,
                         dataEnvio,
-                        diasAguardando
-                    FROM vw_declaracoes_para_matricula
-                    ORDER BY diasAguardando DESC
+                        DATEDIFF(CURDATE(), DATE(dataEnvio)) as diasAguardando
+                    FROM tbInteresseMatricula
+                    WHERE status = 'interesse_declarado'
+                    ORDER BY dataEnvio ASC
                 """;
 
         Query query = entityManager.createNativeQuery(sql);
         @SuppressWarnings("unchecked")
         List<Object[]> results = query.getResultList();
-
         return results.stream().map(row -> {
             Map<String, Object> map = new HashMap<>();
             map.put("id", row[0]);
@@ -409,12 +415,13 @@ public class InteresseMatriculaService {
                     FROM tbAluno a
                     INNER JOIN tbPessoa p_aluno ON a.tbPessoa_idPessoa = p_aluno.idPessoa
                     INNER JOIN tbFamilia f ON a.tbFamilia_idtbFamilia = f.idtbFamilia
-                    INNER JOIN tbPessoa p_resp ON f.tbResponsavel_tbPessoa_idPessoa = p_resp.idPessoa
-                    INNER JOIN tblogin l ON p_resp.idPessoa = l.pessoa_idPessoa
+                    INNER JOIN tbResponsavel r ON f.idtbFamilia = r.tbFamilia_idtbFamilia
+                    INNER JOIN tbPessoa p_resp ON r.tbPessoa_idPessoa = p_resp.idPessoa
+                    INNER JOIN tblogin l ON p_resp.idPessoa = l.tbPessoa_idPessoa
                     WHERE a.protocoloDeclaracao = (
                         SELECT protocolo FROM tbInteresseMatricula WHERE id = :declaracaoId
                     )
-                    ORDER BY a.id DESC
+                    ORDER BY a.tbPessoa_idPessoa DESC
                     LIMIT 1
                 """;
 

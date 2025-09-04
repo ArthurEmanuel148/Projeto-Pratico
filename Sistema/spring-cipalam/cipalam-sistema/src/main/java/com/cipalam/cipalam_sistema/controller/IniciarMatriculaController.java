@@ -3,6 +3,7 @@ package com.cipalam.cipalam_sistema.controller;
 import com.cipalam.cipalam_sistema.DTO.IniciarMatriculaRequest;
 import com.cipalam.cipalam_sistema.DTO.IniciarMatriculaResponse;
 import com.cipalam.cipalam_sistema.service.IniciarMatriculaService;
+import com.cipalam.cipalam_sistema.service.MatriculaService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,9 @@ public class IniciarMatriculaController {
 
     @Autowired
     private IniciarMatriculaService iniciarMatriculaService;
+
+    @Autowired
+    private MatriculaService matriculaService;
 
     /**
      * Lista declarações de interesse prontas para matrícula
@@ -114,10 +118,8 @@ public class IniciarMatriculaController {
     @PostMapping("/iniciar")
     public ResponseEntity<?> iniciarMatricula(@RequestBody IniciarMatriculaRequest request) {
         try {
-            IniciarMatriculaResponse response = iniciarMatriculaService.iniciarMatricula(
-                    request.getIdDeclaracao(),
-                    request.getIdTurma(),
-                    request.getIdFuncionario());
+            // Usar MatriculaService que tem a criptografia BCrypt implementada
+            IniciarMatriculaResponse response = matriculaService.iniciarMatricula(request);
 
             return ResponseEntity.ok(response);
         } catch (Exception e) {

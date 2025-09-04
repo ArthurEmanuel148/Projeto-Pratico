@@ -1,254 +1,667 @@
+/* Estilo geral da página - Tema Branco Limpo e Moderno */
 .responsavel-content {
-  --ion-color-primary: #2dd36f;
-  --ion-color-primary-shade: #24b864;
-  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  --background: #f8fafc;
+  --ion-background-color: #ffffff;
   min-height: 100vh;
 }
 
+/* Header de boas-vindas - Design Limpo */
 .welcome-container {
-  text-align: center;
-  margin-bottom: 20px;
+  margin-bottom: 32px;
 }
 
 .welcome-header {
-  padding: 20px;
-  border-radius: 10px;
-  margin-bottom: 20px;
-}
-
-.welcome-icon {
-  font-size: 3rem;
-  margin-bottom: 10px;
-}
-
-.welcome-header h1 {
-  color: var(--ion-color-primary);
-  font-weight: 600;
-  margin: 10px 0;
-  font-size: 1.5rem;
-}
-
-.welcome-header p {
-  color: var(--ion-color-medium);
-  font-size: 1rem;
-  margin: 0;
-}
-
-.section-container {
-  margin-bottom: 20px;
-}
-
-ion-card {
-  border-radius: 12px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
-  margin: 16px 0;
-}
-
-ion-card-header {
-  padding-bottom: 10px;
-}
-
-ion-card-title {
-  font-size: 1.2rem;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-ion-card-title ion-icon {
-  font-size: 1.4rem;
-}
-
-ion-card-subtitle {
-  color: var(--ion-color-medium);
-  font-size: 0.9rem;
-  margin-top: 5px;
-}
-
-.status-info {
   text-align: center;
-  padding: 10px 0;
-}
+  padding: 40px 32px;
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  border: 1px solid #e2e8f0;
+  border-radius: 20px;
+  color: #1e293b;
+  margin-bottom: 32px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
 
-.status-info ion-chip {
-  margin-bottom: 15px;
-}
+  .welcome-icon {
+    font-size: 3.5rem;
+    margin-bottom: 20px;
+    color: #4f46e5;
+    background: linear-gradient(135deg, #4f46e5, #7c3aed);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
 
-.status-info p {
-  color: var(--ion-color-medium);
-  margin: 0;
-  line-height: 1.5;
-}
+  h1 {
+    margin: 0;
+    font-size: 2rem;
+    font-weight: 700;
+    color: #0f172a;
+    letter-spacing: -0.025em;
+    line-height: 1.2;
+  }
 
-ion-list {
-  background: transparent;
-}
-
-ion-item {
-  --border-radius: 8px;
-  --background: rgba(255, 255, 255, 0.6);
-  margin-bottom: 10px;
-  border-radius: 8px;
-  --padding-start: 16px;
-  --padding-end: 16px;
-}
-
-ion-item ion-icon[slot="start"] {
-  margin-right: 12px;
-  font-size: 1.3rem;
-}
-
-ion-item h3 {
-  font-weight: 600;
-  color: var(--ion-color-dark);
-  margin: 0;
-  font-size: 1rem;
-}
-
-ion-item p {
-  color: var(--ion-color-medium);
-  margin: 4px 0 0 0;
-  font-size: 0.9rem;
-}
-
-ion-chip {
-  font-weight: 500;
-  font-size: 0.8rem;
-}
-
-.upload-button {
-  margin-top: 20px;
-  --border-radius: 8px;
-  font-weight: 600;
-}
-
-.upload-button ion-icon {
-  margin-right: 8px;
-}
-
-/* Estados dos documentos */
-ion-chip[color="warning"] {
-  --background: rgba(255, 193, 7, 0.2);
-  --color: #e6a400;
-}
-
-ion-chip[color="success"] {
-  --background: rgba(45, 211, 111, 0.2);
-  --color: #2dd36f;
-}
-
-ion-chip[color="danger"] {
-  --background: rgba(235, 68, 90, 0.2);
-  --color: #eb445a;
-}
-
-/* Estilos para documentos */
-.document-category {
-  margin-bottom: 24px;
-  
-  h3 {
-    color: var(--ion-color-dark);
-    font-weight: 600;
-    margin-bottom: 16px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
+  p {
+    margin: 16px 0 0 0;
+    color: #64748b;
     font-size: 1.1rem;
-    
-    ion-icon {
-      font-size: 1.3rem;
+    font-weight: 400;
+    line-height: 1.5;
+  }
+}
+
+/* Seções da página - Design Moderno */
+.section-container {
+  margin-bottom: 32px;
+
+  ion-card {
+    --background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 20px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+    margin: 0;
+    transition: all 0.3s ease;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    }
+
+    ion-card-header {
+      padding: 32px 32px 20px 32px;
+
+      ion-card-title {
+        color: #0f172a;
+        font-size: 1.4rem;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        letter-spacing: -0.02em;
+
+        ion-icon {
+          color: #4f46e5;
+          font-size: 1.6rem;
+          background: #eef2ff;
+          padding: 8px;
+          border-radius: 12px;
+        }
+      }
+
+      ion-card-subtitle {
+        color: #64748b;
+        font-size: 1rem;
+        margin-top: 12px;
+        font-weight: 400;
+        line-height: 1.5;
+      }
+    }
+
+    ion-card-content {
+      padding: 0 32px 32px 32px;
     }
   }
 }
 
+/* Loading - Tema Limpo */
 .loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 64px 32px;
   text-align: center;
-  padding: 40px 20px;
-  
+  background: #ffffff;
+  border-radius: 20px;
+  border: 1px solid #e2e8f0;
+
   ion-spinner {
-    margin-bottom: 16px;
+    margin-bottom: 20px;
+    --color: #4f46e5;
+    transform: scale(1.2);
   }
-  
+
   p {
-    color: var(--ion-color-medium);
-    font-size: 0.9rem;
+    color: #666666;
+    font-size: 0.95rem;
     margin: 0;
   }
 }
 
-.no-documents {
-  text-align: center;
-  padding: 40px 20px;
-  color: var(--ion-color-medium);
-  
-  ion-icon {
-    font-size: 3rem;
-    margin-bottom: 16px;
-    opacity: 0.5;
+/* Grid de pessoas - Design Moderno */
+.pessoas-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 16px;
+  margin-bottom: 0;
+}
+
+.pessoa-card {
+  padding: 20px;
+  background: #ffffff;
+  border: 2px solid #f5f5f5;
+  border-radius: 16px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+
+  &:hover {
+    border-color: #e8eaf6;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
   }
-  
-  h3 {
-    font-size: 1.1rem;
-    font-weight: 500;
-    margin: 0 0 8px 0;
-    color: var(--ion-color-medium-shade);
+
+  &.selected {
+    border-color: #3f51b5;
+    background: #f8f9ff;
+    box-shadow: 0 8px 24px rgba(63, 81, 181, 0.12);
+    transform: translateY(-2px);
   }
-  
-  p {
-    font-size: 0.9rem;
-    line-height: 1.4;
-    margin: 0;
-    opacity: 0.8;
+
+  .pessoa-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 12px;
+
+    ion-icon {
+      font-size: 2rem;
+      margin-right: 16px;
+      color: #3f51b5;
+    }
+
+    .pessoa-info {
+      flex: 1;
+
+      h3 {
+        margin: 0;
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #1a1a1a;
+        letter-spacing: -0.01em;
+      }
+
+      p {
+        margin: 4px 0 0 0;
+        font-size: 0.9rem;
+        color: #666666;
+        font-weight: 500;
+      }
+    }
+  }
+
+  .pessoa-stats {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+
+    ion-chip {
+      --background: #f5f5f5;
+      --color: #333333;
+      font-size: 0.8rem;
+      font-weight: 600;
+      height: 28px;
+
+      &[color="warning"] {
+        --background: #fff3e0;
+        --color: #f57c00;
+      }
+
+      &[color="success"] {
+        --background: #e8f5e8;
+        --color: #2e7d32;
+      }
+
+      &[color="primary"] {
+        --background: #e8eaf6;
+        --color: #3f51b5;
+      }
+    }
   }
 }
 
-.arquivo-anexado {
-  color: var(--ion-color-success) !important;
-  font-weight: 500;
-  font-size: 0.85rem !important;
-}
+/* Resumo de documentos */
+.resumo-documentos {
+  display: flex;
+  gap: 16px;
+  margin-top: 16px;
+  flex-wrap: wrap;
 
-/* Botões de ação nos documentos */
-ion-button[fill="clear"] {
-  --padding-start: 8px;
-  --padding-end: 8px;
-  
-  ion-icon {
-    font-size: 1.2rem;
+  .resumo-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+
+    ion-badge {
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+
+    span {
+      font-size: 0.8rem;
+      color: var(--ion-color-medium);
+    }
   }
 }
 
-/* Responsividade */
-@media (max-width: 768px) {
-  .welcome-header h1 {
-    font-size: 1.3rem;
-  }
-
-  .welcome-header p {
-    font-size: 0.9rem;
-  }
-
-  ion-card {
-    margin: 12px 0;
-  }
+/* Seletor de pessoas */
+.pessoas-selector {
+  margin-bottom: 16px;
 
   ion-card-title {
-    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
   }
 }
 
-/* Efeitos de hover para desktop */
-@media (hover: hover) {
-  ion-button:hover {
-    --background: var(--ion-color-primary-shade);
-    transform: translateY(-1px);
-    transition: all 0.2s ease;
+.pessoas-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.pessoa-card {
+  border: 2px solid var(--ion-color-light);
+  border-radius: 12px;
+  padding: 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background: white;
+
+  &:hover {
+    border-color: var(--ion-color-primary-tint);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   }
 
-  ion-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
-    transition: all 0.3s ease;
+  &.selected {
+    border-color: var(--ion-color-primary);
+    background: var(--ion-color-primary-tint);
+    box-shadow: 0 4px 12px rgba(var(--ion-color-primary-rgb), 0.2);
   }
+}
+
+.pessoa-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+
+  ion-icon {
+    font-size: 1.5rem;
+  }
+
+  h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--ion-color-dark);
+  }
+}
+
+.pessoa-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  .parentesco {
+    font-size: 0.85rem;
+    color: var(--ion-color-medium);
+    font-weight: 500;
+  }
+
+  .documentos-status {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+
+    span {
+      font-size: 0.75rem;
+      padding: 2px 6px;
+      border-radius: 8px;
+      font-weight: 500;
+
+      &.pendentes {
+        background: var(--ion-color-warning-tint);
+        color: var(--ion-color-warning-shade);
+      }
+
+      &.aprovados {
+        background: var(--ion-color-success-tint);
+        color: var(--ion-color-success-shade);
+      }
+    }
+  }
+}
+
+/* Card de documentos da pessoa */
+.documentos-pessoa {
+  ion-card-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+}
+
+/* Lista de documentos - Design Limpo */
+ion-list {
+  background: transparent;
+  padding: 0;
+
+  ion-item {
+    --background: #ffffff;
+    --border-width: 0;
+    margin-bottom: 12px;
+    border-radius: 12px;
+    border: 1px solid #f0f0f0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    transition: all 0.2s ease;
+
+    &:hover {
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+      transform: translateY(-1px);
+    }
+
+    ion-icon[slot="start"] {
+      margin-right: 16px;
+      font-size: 1.5rem;
+
+      &[color="warning"] {
+        color: #f57c00;
+      }
+
+      &[color="primary"] {
+        color: #3f51b5;
+      }
+
+      &[color="success"] {
+        color: #2e7d32;
+      }
+
+      &[color="danger"] {
+        color: #d32f2f;
+      }
+    }
+
+    ion-label {
+      padding: 12px 0;
+
+      h2 {
+        font-size: 1.05rem;
+        font-weight: 700;
+        color: #1a1a1a;
+        margin-bottom: 6px;
+        letter-spacing: -0.01em;
+      }
+
+      p {
+        font-size: 0.9rem;
+        color: #666666;
+        margin: 4px 0;
+        line-height: 1.4;
+
+        &.arquivo-anexado {
+          color: #3f51b5;
+          font-weight: 600;
+          background: #f8f9ff;
+          padding: 6px 12px;
+          border-radius: 8px;
+          margin-top: 8px;
+        }
+
+        &.observacoes {
+          color: #f57c00;
+          font-style: italic;
+          background: #fff8e1;
+          padding: 8px 12px;
+          border-radius: 8px;
+          margin-top: 8px;
+          border-left: 3px solid #ffc107;
+        }
+      }
+    }
+
+    ion-chip[slot="end"] {
+      margin-right: 12px;
+      height: 32px;
+      font-weight: 600;
+
+      &[color="warning"] {
+        --background: #fff3e0;
+        --color: #f57c00;
+      }
+
+      &[color="primary"] {
+        --background: #e8eaf6;
+        --color: #3f51b5;
+      }
+
+      &[color="success"] {
+        --background: #e8f5e8;
+        --color: #2e7d32;
+      }
+
+      &[color="danger"] {
+        --background: #ffebee;
+        --color: #d32f2f;
+      }
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 4px;
+      align-items: center;
+      margin-right: 8px;
+
+      ion-button {
+        --border-radius: 8px;
+        --padding-start: 8px;
+        --padding-end: 8px;
+        height: 36px;
+
+        ion-icon {
+          font-size: 1.2rem;
+        }
+      }
+    }
+  }
+}
+
+.documento-datas {
+  display: flex;
+  gap: 12px;
+  margin-top: 4px;
+
+  small {
+    font-size: 0.75rem;
+    color: var(--ion-color-medium-shade);
+  }
+}
+
+.document-actions {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
+/* Estados vazios - Design Limpo */
+.no-documents,
+.no-documents-pessoa {
+  text-align: center;
+  padding: 48px 24px;
+  background: #fafafa;
+  border-radius: 16px;
+  border: 2px dashed #e0e0e0;
+
+  ion-icon {
+    margin-bottom: 20px;
+    font-size: 3rem;
+    color: #bdbdbd;
+  }
+
+  h3 {
+    margin: 0 0 12px 0;
+    color: #1a1a1a;
+    font-size: 1.2rem;
+    font-weight: 700;
+  }
+
+  p {
+    margin: 0;
+    color: #666666;
+    font-size: 1rem;
+    line-height: 1.5;
+  }
+}
+
+/* Informações de contato - Design Moderno */
+.section-container:last-child {
+  ion-item {
+    --background: transparent;
+    --border-width: 0;
+    --padding-start: 0;
+    margin-bottom: 16px;
+
+    ion-icon[slot="start"] {
+      color: #3f51b5;
+      font-size: 1.4rem;
+      margin-right: 16px;
+    }
+
+    ion-label {
+      h3 {
+        color: #1a1a1a;
+        font-size: 1rem;
+        font-weight: 700;
+        margin-bottom: 4px;
+      }
+
+      p {
+        color: #666666;
+        font-size: 0.95rem;
+        margin: 0;
+        font-weight: 500;
+      }
+    }
+  }
+}
+
+/* Status info */
+.status-info {
+  ion-chip {
+    margin: 0 0 12px 0;
+  }
+
+  p {
+    margin: 0;
+    color: var(--ion-color-medium-shade);
+    font-size: 0.9rem;
+  }
+}
+
+/* Responsividade Aprimorada */
+@media (min-width: 768px) {
+  .pessoas-grid {
+    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+    gap: 20px;
+  }
+
+  .welcome-header {
+    padding: 40px 32px;
+
+    h1 {
+      font-size: 2rem;
+    }
+
+    .welcome-icon {
+      font-size: 3.5rem;
+    }
+  }
+
+  .section-container {
+    margin-bottom: 32px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .responsavel-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 24px;
+  }
+
+  .pessoas-grid {
+    grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+    gap: 24px;
+  }
+
+  .welcome-header {
+    padding: 48px 40px;
+  }
+}
+
+/* Animações Suaves */
+.pessoa-card {
+  animation: slideInUp 0.4s cubic-bezier(0.4, 0.0, 0.2, 1);
+}
+
+.documentos-pessoa {
+  animation: fadeIn 0.5s ease-out;
+}
+
+.section-container {
+  animation: fadeInUp 0.3s ease-out;
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Scroll suave */
+.responsavel-content {
+  scroll-behavior: smooth;
+}
+
+/* Cores personalizadas para o tema branco */
+:root {
+  --cipalam-primary: #3f51b5;
+  --cipalam-primary-light: #7986cb;
+  --cipalam-primary-dark: #303f9f;
+  --cipalam-success: #2e7d32;
+  --cipalam-warning: #f57c00;
+  --cipalam-danger: #d32f2f;
+  --cipalam-text: #1a1a1a;
+  --cipalam-text-secondary: #666666;
+  --cipalam-background: #ffffff;
+  --cipalam-surface: #fafafa;
+  --cipalam-border: #e8eaf6;
 }

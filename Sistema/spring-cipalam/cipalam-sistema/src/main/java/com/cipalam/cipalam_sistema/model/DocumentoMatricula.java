@@ -54,6 +54,9 @@ public class DocumentoMatricula {
     @JoinColumn(name = "funcionarioAprovador_idPessoa")
     private Pessoa funcionarioAprovador;
 
+    @Column(name = "tbPessoa_idPessoa")
+    private Long tbPessoaIdPessoa; // Para documentos específicos de uma pessoa
+
     @PrePersist
     public void prePersist() {
         if (status == null) {

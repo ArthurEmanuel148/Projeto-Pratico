@@ -1,8 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { MaskService } from '../../../../core/services/mask.service';
-import { MaskService } from '../../../core/services/mask.service';
-import { MaskService } from '../../../../core/services/mask.service';
 
 @Component({
   selector: 'app-etapa-dados-responsavel',

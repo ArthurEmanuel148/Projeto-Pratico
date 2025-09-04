@@ -18,7 +18,7 @@
       <!-- Debug info -->
       <div style="background: #f0f0f0; padding: 10px; margin: 10px 0; border-radius: 5px;">
         <small>
-          <strong>Debug:</strong> Total de documentos carregados: {{ tiposDocumentos?.length || 0 }}<br>
+          <strong>Debug:</strong> Total de documentos carregados: {{ tiposDocumentos.length || 0 }}<br>
           Loading: {{ loading }}<br>
           Tipos de documentos válidos: {{ (tiposDocumentos && Array.isArray(tiposDocumentos)) ? 'Sim' : 'Não' }}
         </small>
@@ -66,11 +66,11 @@
               <h4>{{ documento.nome }}</h4>
               <p>{{ documento.descricao }}</p>
               <div class="documento-badges">
-                <span class="badge modalidade" [class]="documento.modalidadeEntrega?.toLowerCase()">
+                <span class="badge modalidade" [class]="documento.modalidadeEntrega.toLowerCase()">
                   {{ documento.modalidadeEntrega === 'ASSINADO' ? 'Assinado' : 'Anexado' }}
                 </span>
-                <span class="badge fornecedor" [class]="documento.quemDeveFornencer?.toLowerCase()">
-                  {{ documento.quemDeveFornencer?.replace('_', ' ') }}
+                <span class="badge fornecedor" [class]="documento.quemDeveFornencer.toLowerCase()">
+                  {{ documento.quemDeveFornencer.replace('_', ' ') }}
                 </span>
               </div>
             </div>
@@ -110,11 +110,11 @@
               <h4>{{ documento.nome }}</h4>
               <p>{{ documento.descricao }}</p>
               <div class="documento-badges">
-                <span class="badge modalidade" [class]="documento.modalidadeEntrega?.toLowerCase()">
+                <span class="badge modalidade" [class]="documento.modalidadeEntrega.toLowerCase()">
                   {{ documento.modalidadeEntrega === 'ASSINADO' ? 'Assinado' : 'Anexado' }}
                 </span>
-                <span class="badge fornecedor" [class]="documento.quemDeveFornencer?.toLowerCase()">
-                  {{ documento.quemDeveFornencer?.replace('_', ' ') }}
+                <span class="badge fornecedor" [class]="documento.quemDeveFornencer.toLowerCase()">
+                  {{ documento.quemDeveFornencer.replace('_', ' ') }}
                 </span>
               </div>
             </div>
@@ -154,11 +154,11 @@
               <h4>{{ documento.nome }}</h4>
               <p>{{ documento.descricao }}</p>
               <div class="documento-badges">
-                <span class="badge modalidade" [class]="documento.modalidadeEntrega?.toLowerCase()">
+                <span class="badge modalidade" [class]="documento.modalidadeEntrega.toLowerCase()">
                   {{ documento.modalidadeEntrega === 'ASSINADO' ? 'Assinado' : 'Anexado' }}
                 </span>
-                <span class="badge fornecedor" [class]="documento.quemDeveFornencer?.toLowerCase()">
-                  {{ documento.quemDeveFornencer?.replace('_', ' ') }}
+                <span class="badge fornecedor" [class]="documento.quemDeveFornencer.toLowerCase()">
+                  {{ documento.quemDeveFornencer.replace('_', ' ') }}
                 </span>
               </div>
             </div>

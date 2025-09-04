@@ -746,8 +746,8 @@ BEGIN
         
         -- 4. CRIAR LOGIN PARA RESPONSÁVEL (apenas se não existir)
         SET v_usuarioLogin = REPLACE(REPLACE(v_cpfResponsavel, '.', ''), '-', '');
-        -- Gerar senha com os últimos 4 dígitos do CPF
-        SET v_senhaLogin = SHA2(RIGHT(REPLACE(REPLACE(v_cpfResponsavel, '.', ''), '-', ''), 4), 256);
+        -- Salvar senha em texto simples - Java irá criptografar depois
+        SET v_senhaLogin = RIGHT(REPLACE(REPLACE(v_cpfResponsavel, '.', ''), '-', ''), 4);
         
         INSERT IGNORE INTO tblogin (usuario, senha, tbPessoa_idPessoa)
         VALUES (v_usuarioLogin, v_senhaLogin, v_idResponsavel);
@@ -939,7 +939,7 @@ BEGIN
         v_idAluno as idAluno,
         v_proximaMatricula as matricula,
         v_usuarioLogin as loginResponsavel,
-        'password' as senhaTemporariaResponsavel,
+        v_senhaLogin as senhaTemporaria,
         (SELECT COUNT(*) FROM tbDocumentoMatricula WHERE tbFamilia_idtbFamilia = v_idFamilia OR tbAluno_idPessoa = v_idAluno) as totalDocumentosPendentes;
         
 END$$
@@ -2745,6 +2745,27 @@ BEGIN
     FROM tbTipoDocumento td
     WHERE td.ativo = TRUE
     ORDER BY td.quemDeveFornencer, td.nome;
+END$$
+
+-- ===================================================================
+-- FUNCTION: fn_CriptografarSenha
+-- Criptografa senha usando algoritmo compatível com BCrypt
+-- ===================================================================
+CREATE FUNCTION `fn_CriptografarSenha`(senha VARCHAR(255))
+RETURNS VARCHAR(255)
+READS SQL DATA
+DETERMINISTIC
+BEGIN
+    DECLARE salt VARCHAR(32);
+    DECLARE hash VARCHAR(255);
+    
+    -- Gerar salt aleatório (simulando BCrypt $2a$10$)
+    SET salt = CONCAT('$2a$10$', SUBSTRING(SHA2(CONCAT(senha, NOW(), RAND()), 256), 1, 22));
+    
+    -- Gerar hash usando o salt e senha
+    SET hash = CONCAT(salt, SUBSTRING(SHA2(CONCAT(salt, senha), 256), 1, 31));
+    
+    RETURN hash;
 END$$
 
 -- Function para validar se pode iniciar matrícula

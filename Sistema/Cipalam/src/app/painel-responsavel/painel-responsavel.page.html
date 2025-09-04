@@ -1,225 +1,257 @@
-<ion-content class="ion-padding responsavel-content">
-  <!-- Header de Boas-vindas Melhorado -->
-  <div class="welcome-container">
-    <div class="welcome-header">
-      <ion-icon name="home" class="welcome-icon"></ion-icon>
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-title class="header-title">
+      <ion-icon name="folder-open" class="header-icon"></ion-icon>
+      Painel do Responsável
+    </ion-title>
+    <ion-buttons slot="end">
+      <ion-button fill="clear" (click)="carregarDocumentosFamilia()">
+        <ion-icon name="refresh" [class.spin]="carregando"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="modern-content">
+  <!-- Hero Section -->
+  <div class="hero-section">
+    <div class="hero-content">
+      <div class="user-avatar">
+        <ion-icon name="person-circle"></ion-icon>
+      </div>
       <h1>Olá, {{ usuarioLogado?.pessoa?.nmPessoa || usuarioLogado?.nomePessoa || 'Responsável' }}!</h1>
       <p>Gerencie os documentos necessários para a matrícula da sua família</p>
     </div>
-  </div>
-
-  <!-- Loading -->
-  <div class="section-container" *ngIf="carregando">
-    <div class="loading-container">
-      <ion-spinner name="dots"></ion-spinner>
-      <p>Carregando documentos da família...</p>
+    <div class="hero-decoration">
+      <div class="decoration-circle circle-1"></div>
+      <div class="decoration-circle circle-2"></div>
+      <div class="decoration-circle circle-3"></div>
     </div>
   </div>
 
-  <!-- Resumo da Situação -->
-  <div class="section-container" *ngIf="!carregando && familiaDocumentos">
-    <ion-card>
-      <ion-card-header>
-        <ion-card-title>
-          <ion-icon name="analytics-outline"></ion-icon>
-          Resumo dos Documentos
-        </ion-card-title>
-        <ion-card-subtitle>
-          Acompanhe o progresso do envio dos documentos de toda a família
-        </ion-card-subtitle>
-      </ion-card-header>
-      <ion-card-content>
-        <div class="resumo-documentos" *ngIf="familiaDocumentos.resumo">
-          <div class="resumo-item">
-            <ion-badge color="medium">{{ familiaDocumentos.resumo.totalDocumentos }}</ion-badge>
-            <span>Total</span>
-          </div>
-          <div class="resumo-item">
-            <ion-badge color="warning">{{ familiaDocumentos.resumo.pendentes }}</ion-badge>
-            <span>Pendentes</span>
-          </div>
-          <div class="resumo-item">
-            <ion-badge color="primary">{{ familiaDocumentos.resumo.anexados }}</ion-badge>
-            <span>Enviados</span>
-          </div>
-          <div class="resumo-item">
-            <ion-badge color="success">{{ familiaDocumentos.resumo.aprovados }}</ion-badge>
-            <span>Aprovados</span>
-          </div>
-          <div class="resumo-item" *ngIf="familiaDocumentos.resumo.rejeitados > 0">
-            <ion-badge color="danger">{{ familiaDocumentos.resumo.rejeitados }}</ion-badge>
-            <span>Rejeitados</span>
-          </div>
-        </div>
-      </ion-card-content>
-    </ion-card>
+  <!-- Loading State -->
+  <div class="loading-section" *ngIf="carregando">
+    <div class="loading-content">
+      <ion-spinner name="dots" color="primary"></ion-spinner>
+      <h3>Carregando documentos...</h3>
+      <p>Aguarde enquanto buscamos os documentos da sua família</p>
+    </div>
   </div>
 
-  <!-- Seleção de Membros da Família -->
-  <div class="section-container"
-    *ngIf="!carregando && familiaDocumentos && familiaDocumentos.documentosPorPessoa.length > 0">
-    <ion-card>
-      <ion-card-header>
-        <ion-card-title>
-          <ion-icon name="people"></ion-icon>
-          Membros da Família
-        </ion-card-title>
-        <ion-card-subtitle>
-          Selecione um membro para visualizar os documentos necessários
-        </ion-card-subtitle>
-      </ion-card-header>
-      <ion-card-content>
-        <div class="pessoas-grid">
-          <div *ngFor="let pessoa of familiaDocumentos.documentosPorPessoa" class="pessoa-card"
-            [class.selected]="pessoaSelecionada && pessoaSelecionada.pessoa.id === pessoa.pessoa.id"
-            (click)="selecionarPessoa(pessoa)">
+  <!-- Main Content -->
+  <div class="main-content" *ngIf="!carregando">
 
-            <div class="pessoa-header">
-              <ion-icon [name]="obterIconeParentesco(pessoa.pessoa.parentesco)"
-                [color]="obterCorParentesco(pessoa.pessoa.parentesco)"></ion-icon>
-              <div class="pessoa-info">
-                <h3>{{ pessoa.pessoa.nome }}</h3>
-                <p class="parentesco">{{ obterDescricaoParentesco(pessoa.pessoa.parentesco) }}</p>
-                <div class="documentos-status">
-                  <span class="pendentes" *ngIf="obterEstatisticasPessoa(pessoa).pendentes > 0">
-                    {{ obterEstatisticasPessoa(pessoa).pendentes }} pendente(s)
-                  </span>
-                  <span class="aprovados" *ngIf="obterEstatisticasPessoa(pessoa).aprovados > 0">
-                    {{ obterEstatisticasPessoa(pessoa).aprovados }} aprovado(s)
-                  </span>
-                </div>
-              </div>
+    <!-- Quick Stats Dashboard -->
+    <div class="stats-dashboard" *ngIf="familiaDocumentos">
+      <h2 class="section-title">
+        <ion-icon name="analytics"></ion-icon>
+        Resumo dos Documentos
+      </h2>
+
+      <div class="stats-grid" *ngIf="familiaDocumentos.resumo">
+        <div class="stat-card total">
+          <div class="stat-icon">
+            <ion-icon name="documents"></ion-icon>
+          </div>
+          <div class="stat-info">
+            <span class="stat-number">{{ familiaDocumentos.resumo.totalDocumentos }}</span>
+            <span class="stat-label">Total</span>
+          </div>
+        </div>
+
+        <div class="stat-card pending">
+          <div class="stat-icon">
+            <ion-icon name="time"></ion-icon>
+          </div>
+          <div class="stat-info">
+            <span class="stat-number">{{ familiaDocumentos.resumo.pendentes }}</span>
+            <span class="stat-label">Pendentes</span>
+          </div>
+        </div>
+
+        <div class="stat-card sent">
+          <div class="stat-icon">
+            <ion-icon name="cloud-upload"></ion-icon>
+          </div>
+          <div class="stat-info">
+            <span class="stat-number">{{ familiaDocumentos.resumo.anexados }}</span>
+            <span class="stat-label">Enviados</span>
+          </div>
+        </div>
+
+        <div class="stat-card approved">
+          <div class="stat-icon">
+            <ion-icon name="checkmark-circle"></ion-icon>
+          </div>
+          <div class="stat-info">
+            <span class="stat-number">{{ familiaDocumentos.resumo.aprovados }}</span>
+            <span class="stat-label">Aprovados</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Family Members Section -->
+    <div class="family-section" *ngIf="familiaDocumentos && familiaDocumentos.documentosPorPessoa.length > 0">
+      <h2 class="section-title">
+        <ion-icon name="people"></ion-icon>
+        Membros da Família
+      </h2>
+
+      <div class="family-grid">
+        <div *ngFor="let pessoa of familiaDocumentos.documentosPorPessoa" class="member-card"
+          [class.selected]="pessoaSelecionada && pessoaSelecionada.pessoa.id === pessoa.pessoa.id"
+          (click)="selecionarPessoa(pessoa)">
+
+          <div class="member-avatar">
+            <ion-icon [name]="obterIconeParentesco(pessoa.pessoa.parentesco)"></ion-icon>
+          </div>
+
+          <div class="member-info">
+            <h3>{{ pessoa.pessoa.nome }}</h3>
+            <p class="member-role">{{ obterDescricaoParentesco(pessoa.pessoa.parentesco) }}</p>
+
+            <div class="member-stats">
+              <span class="stat pending" *ngIf="obterEstatisticasPessoa(pessoa).pendentes > 0">
+                {{ obterEstatisticasPessoa(pessoa).pendentes }} pendente(s)
+              </span>
+              <span class="stat approved" *ngIf="obterEstatisticasPessoa(pessoa).aprovados > 0">
+                {{ obterEstatisticasPessoa(pessoa).aprovados }} aprovado(s)
+              </span>
             </div>
           </div>
+
+          <div class="member-indicator">
+            <ion-icon name="chevron-forward"></ion-icon>
+          </div>
         </div>
-      </ion-card-content>
-    </ion-card>
-  </div>
+      </div>
+    </div>
 
-  <!-- Documentos da Pessoa Selecionada -->
-  <div class="section-container documentos-pessoa" *ngIf="!carregando && pessoaSelecionada">
-    <ion-card>
-      <ion-card-header>
-        <ion-card-title>
-          <ion-icon [name]="obterIconeParentesco(pessoaSelecionada.pessoa.parentesco)"></ion-icon>
-          Documentos de {{ pessoaSelecionada.pessoa.nome }}
-        </ion-card-title>
-        <ion-card-subtitle>
-          {{ obterDescricaoParentesco(pessoaSelecionada.pessoa.parentesco) }} -
-          {{ pessoaSelecionada.documentos.length }} documento(s) necessário(s)
-        </ion-card-subtitle>
-      </ion-card-header>
-      <ion-card-content>
-        <!-- Lista de documentos aprimorada -->
-        <ion-list *ngIf="pessoaSelecionada.documentos.length > 0">
-          <ion-item *ngFor="let documento of pessoaSelecionada.documentos">
-            <ion-icon slot="start" [name]="obterIconeDocumento(documento.tipoDocumento.categoria)"
-              [color]="obterCorStatus(documento.status)"></ion-icon>
+    <!-- Documents Section -->
+    <div class="documents-section" *ngIf="pessoaSelecionada">
+      <h2 class="section-title">
+        <ion-icon [name]="obterIconeParentesco(pessoaSelecionada.pessoa.parentesco)"></ion-icon>
+        Documentos de {{ pessoaSelecionada.pessoa.nome }}
+      </h2>
 
-            <ion-label>
-              <h2>{{ documento.tipoDocumento.nome }}</h2>
+      <div class="documents-list" *ngIf="pessoaSelecionada.documentos.length > 0">
+        <div *ngFor="let documento of pessoaSelecionada.documentos" class="document-card">
+
+          <div class="document-header">
+            <div class="document-icon" [ngClass]="documento.status">
+              <ion-icon [name]="obterIconeDocumento(documento.tipoDocumento.categoria)"></ion-icon>
+            </div>
+
+            <div class="document-info">
+              <h3>{{ documento.tipoDocumento.nome }}</h3>
               <p>{{ documento.tipoDocumento.descricao }}</p>
-
-              <!-- Arquivo anexado -->
-              <p *ngIf="documento.nomeArquivo" class="arquivo-anexado">
-                <ion-icon name="document"></ion-icon>
-                {{ documento.nomeArquivo }}
-              </p>
-
-              <!-- Observações -->
-              <p *ngIf="documento.observacoes" class="observacoes">
-                <ion-icon name="alert-circle"></ion-icon>
-                {{ documento.observacoes }}
-              </p>
-
-              <!-- Datas importantes -->
-              <div class="documento-datas" *ngIf="documento.dataEnvio || documento.dataAprovacao">
-                <small *ngIf="documento.dataEnvio">
-                  Enviado: {{ documento.dataEnvio | date:'dd/MM/yyyy' }}
-                </small>
-                <small *ngIf="documento.dataAprovacao">
-                  Aprovado: {{ documento.dataAprovacao | date:'dd/MM/yyyy' }}
-                </small>
-              </div>
-            </ion-label>
-
-            <!-- Status -->
-            <ion-chip slot="end" [color]="obterCorStatus(documento.status)">
-              {{ documento.statusDescricao }}
-            </ion-chip>
-
-            <!-- Ações -->
-            <div slot="end" class="document-actions">
-              <ion-button fill="clear" size="small" color="primary"
-                *ngIf="documento.status === 'pendente' || documento.status === 'rejeitado'"
-                (click)="anexarDocumento(documento)">
-                <ion-icon name="cloud-upload"></ion-icon>
-              </ion-button>
-
-              <ion-button fill="clear" size="small" color="medium" *ngIf="documento.nomeArquivo"
-                (click)="baixarDocumento(documento)">
-                <ion-icon name="download"></ion-icon>
-              </ion-button>
             </div>
-          </ion-item>
-        </ion-list>
 
-        <!-- Estado vazio - Nenhum documento para a pessoa -->
-        <div *ngIf="pessoaSelecionada.documentos.length === 0" class="no-documents-pessoa">
-          <ion-icon name="document-text-outline"></ion-icon>
-          <h3>Nenhum documento necessário</h3>
-          <p>Não há documentos configurados para {{ pessoaSelecionada.pessoa.nome }}.</p>
+            <div class="document-status">
+              <ion-chip [color]="obterCorStatus(documento.status)" class="status-chip">
+                {{ documento.statusDescricao }}
+              </ion-chip>
+            </div>
+          </div>
+
+          <!-- Document Details -->
+          <div class="document-details" *ngIf="documento.nomeArquivo || documento.observacoes || documento.dataEnvio">
+
+            <div class="detail-item" *ngIf="documento.nomeArquivo">
+              <ion-icon name="document-attach"></ion-icon>
+              <span>{{ documento.nomeArquivo }}</span>
+            </div>
+
+            <div class="detail-item warning" *ngIf="documento.observacoes">
+              <ion-icon name="warning"></ion-icon>
+              <span>{{ documento.observacoes }}</span>
+            </div>
+
+            <div class="detail-item" *ngIf="documento.dataEnvio">
+              <ion-icon name="calendar"></ion-icon>
+              <span>Enviado em {{ documento.dataEnvio | date:'dd/MM/yyyy HH:mm' }}</span>
+            </div>
+
+            <div class="detail-item success" *ngIf="documento.dataAprovacao">
+              <ion-icon name="checkmark-circle"></ion-icon>
+              <span>Aprovado em {{ documento.dataAprovacao | date:'dd/MM/yyyy HH:mm' }}</span>
+            </div>
+          </div>
+
+          <!-- Actions -->
+          <div class="document-actions">
+            <ion-button fill="outline" size="small"
+              *ngIf="documento.status === 'pendente' || documento.status === 'rejeitado'"
+              (click)="anexarDocumento(documento)">
+              <ion-icon name="cloud-upload" slot="start"></ion-icon>
+              {{ documento.status === 'rejeitado' ? 'Reenviar' : 'Anexar' }}
+            </ion-button>
+
+            <ion-button fill="clear" size="small" color="medium" *ngIf="documento.nomeArquivo"
+              (click)="baixarDocumento(documento)">
+              <ion-icon name="download" slot="start"></ion-icon>
+              Download
+            </ion-button>
+          </div>
         </div>
-      </ion-card-content>
-    </ion-card>
-  </div>
+      </div>
 
-  <!-- Estado vazio - Nenhuma família carregada -->
-  <div class="section-container" *ngIf="!carregando && !familiaDocumentos">
-    <div class="no-documents">
-      <ion-icon name="folder-open-outline"></ion-icon>
-      <h3>Nenhum documento encontrado</h3>
-      <p>Não foram encontrados documentos para sua família. Entre em contato com a secretaria para mais informações.</p>
+      <!-- No Documents for Person -->
+      <div class="empty-state" *ngIf="pessoaSelecionada.documentos.length === 0">
+        <div class="empty-icon">
+          <ion-icon name="document-text-outline"></ion-icon>
+        </div>
+        <h3>Nenhum documento necessário</h3>
+        <p>Não há documentos configurados para {{ pessoaSelecionada.pessoa.nome }}.</p>
+      </div>
     </div>
-  </div>
 
-  <!-- Informações de Contato -->
-  <div class="section-container">
-    <ion-card>
-      <ion-card-header>
-        <ion-card-title>
-          <ion-icon name="help-circle"></ion-icon>
-          Precisa de Ajuda?
-        </ion-card-title>
-        <ion-card-subtitle>
-          Nossa equipe está disponível para esclarecer suas dúvidas
-        </ion-card-subtitle>
-      </ion-card-header>
-      <ion-card-content>
-        <ion-item lines="none">
-          <ion-icon name="call" slot="start" color="primary"></ion-icon>
-          <ion-label>
-            <h3>Telefone</h3>
+    <!-- No Family Data -->
+    <div class="empty-state main" *ngIf="!familiaDocumentos">
+      <div class="empty-icon">
+        <ion-icon name="folder-open-outline"></ion-icon>
+      </div>
+      <h3>Nenhum documento encontrado</h3>
+      <p>Não foram encontrados documentos para sua família.</p>
+      <ion-button fill="outline" (click)="carregarDocumentosFamilia()">
+        <ion-icon name="refresh" slot="start"></ion-icon>
+        Recarregar
+      </ion-button>
+    </div>
+
+    <!-- Help Section -->
+    <div class="help-section">
+      <h2 class="section-title">
+        <ion-icon name="help-circle"></ion-icon>
+        Precisa de Ajuda?
+      </h2>
+
+      <div class="contact-grid">
+        <div class="contact-item">
+          <ion-icon name="call" color="primary"></ion-icon>
+          <div>
+            <h4>Telefone</h4>
             <p>(31) 3822-9999</p>
-          </ion-label>
-        </ion-item>
+          </div>
+        </div>
 
-        <ion-item lines="none">
-          <ion-icon name="mail" slot="start" color="primary"></ion-icon>
-          <ion-label>
-            <h3>E-mail</h3>
-            <p>contato&#64;cipalam.org.br</p>
-          </ion-label>
-        </ion-item>
+        <div class="contact-item">
+          <ion-icon name="mail" color="primary"></ion-icon>
+          <div>
+            <h4>E-mail</h4>
+            <p>contatocipalam.org.br</p>
+          </div>
+        </div>
 
-        <ion-item lines="none">
-          <ion-icon name="time" slot="start" color="primary"></ion-icon>
-          <ion-label>
-            <h3>Horário de Atendimento</h3>
-            <p>Segunda a Sexta-feira: 8h às 17h</p>
-          </ion-label>
-        </ion-item>
-      </ion-card-content>
-    </ion-card>
+        <div class="contact-item">
+          <ion-icon name="time" color="primary"></ion-icon>
+          <div>
+            <h4>Horário</h4>
+            <p>Seg. a Sex: 8h às 17h</p>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </ion-content>

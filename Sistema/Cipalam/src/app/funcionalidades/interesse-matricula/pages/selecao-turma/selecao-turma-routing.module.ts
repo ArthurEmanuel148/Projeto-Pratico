@@ -4,14 +4,14 @@ import { Routes, RouterModule } from '@angular/router';
 import { SelecaoTurmaPage } from './selecao-turma.page';
 
 const routes: Routes = [
-  {
-    path: '',
-    component: SelecaoTurmaPage
-  }
+    {
+        path: '',
+        component: SelecaoTurmaPage
+    }
 ];
 
 @NgModule({
-  imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule],
+    imports: [RouterModule.forChild(routes)],
+    exports: [RouterModule],
 })
-export class SelecaoTurmaPageRoutingModule {}
+export class SelecaoTurmaPageRoutingModule { }

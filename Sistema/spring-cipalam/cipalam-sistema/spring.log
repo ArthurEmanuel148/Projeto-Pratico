@@ -12002,3 +12002,1149 @@ Hibernate: select p1_0.idPessoa,p1_0.ativo,p1_0.caminhoIdentidadePessoa,p1_0.cam
 Hibernate: select r1_0.tbPessoa_idPessoa,r1_0.tbFamilia_idtbFamilia from tbResponsavel r1_0 where r1_0.tbPessoa_idPessoa=?
 Hibernate: select p1_0.idPermissao,p1_0.dataAtualizacao,p1_0.dataCriacao,p1_0.tbFuncionalidade_idFuncionalidade,p1_0.tbPessoa_idPessoa,p1_0.temPermissao from tbPermissao p1_0 where p1_0.tbPessoa_idPessoa=? and p1_0.temPermissao=1
 Hibernate: select r1_0.tbPessoa_idPessoa,r1_0.tbFamilia_idtbFamilia from tbResponsavel r1_0 where r1_0.tbPessoa_idPessoa=?
+Hibernate: select im1_0.id,im1_0.bairro,im1_0.cep,im1_0.cidade,im1_0.codigoIbgeCidade,im1_0.codigoInepEscola,im1_0.complemento,im1_0.cpfAluno,im1_0.cpfResponsavel,im1_0.dataEnvio,im1_0.dataFinalizacao,im1_0.dataInicioMatricula,im1_0.dataNascimentoAluno,im1_0.dataNascimentoResponsavel,im1_0.emailResponsavel,im1_0.escolaAluno,im1_0.funcionarioResponsavel_idPessoa,im1_0.horariosSelecionados,im1_0.integrantesRenda,im1_0.logradouro,im1_0.municipioEscola,im1_0.nomeAluno,im1_0.nomeResponsavel,im1_0.numero,im1_0.numeroIntegrantes,im1_0.observacoesInternas,im1_0.observacoesResponsavel,im1_0.pontoReferencia,im1_0.profissaoResponsavel,im1_0.protocolo,im1_0.rendaResponsavel,im1_0.responsavelLogin_idPessoa,im1_0.status,im1_0.telefoneResponsavel,im1_0.tipoCota,im1_0.uf,im1_0.ufEscola from tbInteresseMatricula im1_0
+Hibernate: select p1_0.idPessoa,p1_0.ativo,p1_0.caminhoIdentidadePessoa,p1_0.caminhoImagem,p1_0.CpfPessoa,p1_0.dataCriacao,p1_0.dtNascPessoa,p1_0.email,p1_0.NmPessoa,p1_0.profissao,p1_0.renda,p1_0.telefone from tbPessoa p1_0 where p1_0.idPessoa=?
+Hibernate: select p1_0.idPessoa,p1_0.ativo,p1_0.caminhoIdentidadePessoa,p1_0.caminhoImagem,p1_0.CpfPessoa,p1_0.dataCriacao,p1_0.dtNascPessoa,p1_0.email,p1_0.NmPessoa,p1_0.profissao,p1_0.renda,p1_0.telefone from tbPessoa p1_0 where p1_0.idPessoa=?
+Hibernate: select td1_0.idTipoDocumento,td1_0.ativo,td1_0.dataAtualizacao,td1_0.dataCriacao,td1_0.descricao,td1_0.escopo,td1_0.nome,td1_0.tipoProcessamento from tbTipoDocumento td1_0 where td1_0.ativo order by td1_0.nome
+Hibernate: select cdc1_0.id,cdc1_0.dataAtualizacao,cdc1_0.documentosObrigatorios,cdc1_0.funcionarioResponsavel_idPessoa,cdc1_0.tipoCota from tbConfiguracaoDocumentosCota cdc1_0
+Hibernate: select cdc1_0.id,cdc1_0.dataAtualizacao,cdc1_0.documentosObrigatorios,cdc1_0.funcionarioResponsavel_idPessoa,cdc1_0.tipoCota from tbConfiguracaoDocumentosCota cdc1_0
+Hibernate: select cdc1_0.id,cdc1_0.dataAtualizacao,cdc1_0.documentosObrigatorios,cdc1_0.funcionarioResponsavel_idPessoa,cdc1_0.tipoCota from tbConfiguracaoDocumentosCota cdc1_0 where cdc1_0.tipoCota=?
+Hibernate: select cdc1_0.id,cdc1_0.dataAtualizacao,cdc1_0.documentosObrigatorios,cdc1_0.funcionarioResponsavel_idPessoa,cdc1_0.tipoCota from tbConfiguracaoDocumentosCota cdc1_0 where cdc1_0.tipoCota=?
+Hibernate: select cdc1_0.id,cdc1_0.dataAtualizacao,cdc1_0.documentosObrigatorios,cdc1_0.funcionarioResponsavel_idPessoa,cdc1_0.tipoCota from tbConfiguracaoDocumentosCota cdc1_0 where cdc1_0.tipoCota=?
+Hibernate: update tbConfiguracaoDocumentosCota set dataAtualizacao=?,documentosObrigatorios=?,funcionarioResponsavel_idPessoa=?,tipoCota=? where id=?
+Hibernate: select cdc1_0.id,cdc1_0.dataAtualizacao,cdc1_0.documentosObrigatorios,cdc1_0.funcionarioResponsavel_idPessoa,cdc1_0.tipoCota from tbConfiguracaoDocumentosCota cdc1_0
+Hibernate: select t1_0.idtbTurma,t1_0.ativo,t1_0.capacidadeAtual,t1_0.capacidadeMaxima,t1_0.dataCriacao,t1_0.horarioFim,t1_0.horarioInicio,t1_0.nomeTurma,t1_0.observacoes from tbTurma t1_0
+Hibernate: select t1_0.idtbTurma,t1_0.ativo,t1_0.capacidadeAtual,t1_0.capacidadeMaxima,t1_0.dataCriacao,t1_0.horarioFim,t1_0.horarioInicio,t1_0.nomeTurma,t1_0.observacoes from tbTurma t1_0
+Hibernate: select t1_0.idtbTurma,t1_0.ativo,t1_0.capacidadeAtual,t1_0.capacidadeMaxima,t1_0.dataCriacao,t1_0.horarioFim,t1_0.horarioInicio,t1_0.nomeTurma,t1_0.observacoes from tbTurma t1_0 where t1_0.idtbTurma=?
+Hibernate: select td1_0.idTipoDocumento,td1_0.ativo,td1_0.dataAtualizacao,td1_0.dataCriacao,td1_0.descricao,td1_0.escopo,td1_0.nome,td1_0.tipoProcessamento from tbTipoDocumento td1_0 where (? is null or lower(td1_0.nome) like replace(lower(concat('%',?,'%')),'\\','\\\\')) and (? is null or td1_0.tipoProcessamento=?) and (? is null or td1_0.escopo=?) and (? is null or td1_0.ativo=?) order by td1_0.nome limit ?
+Hibernate: select td1_0.idTipoDocumento,td1_0.ativo,td1_0.dataAtualizacao,td1_0.dataCriacao,td1_0.descricao,td1_0.escopo,td1_0.nome,td1_0.tipoProcessamento from tbTipoDocumento td1_0 where (? is null or lower(td1_0.nome) like replace(lower(concat('%',?,'%')),'\\','\\\\')) and (? is null or td1_0.tipoProcessamento=?) and (? is null or td1_0.escopo=?) and (? is null or td1_0.ativo=?) order by td1_0.nome limit ?
+2025-09-04T09:38:25.969-03:00  WARN 48456 --- [io-8080-exec-10] ration$PageModule$WarningLoggingModifier : Serializing PageImpl instances as-is is not supported, meaning that there is no guarantee about the stability of the resulting JSON structure!
+	For a stable JSON structure, please use Spring Data's PagedModel (globally via @EnableSpringDataWebSupport(pageSerializationMode = VIA_DTO))
+	or Spring HATEOAS and Spring Data's PagedResourcesAssembler as documented in https://docs.spring.io/spring-data/commons/reference/repositories/core-extensions.html#core.web.pageables.
+
+Hibernate: select td1_0.idTipoDocumento,td1_0.ativo,td1_0.dataAtualizacao,td1_0.dataCriacao,td1_0.descricao,td1_0.escopo,td1_0.nome,td1_0.tipoProcessamento from tbTipoDocumento td1_0 where (? is null or lower(td1_0.nome) like replace(lower(concat('%',?,'%')),'\\','\\\\')) and (? is null or td1_0.tipoProcessamento=?) and (? is null or td1_0.escopo=?) and (? is null or td1_0.ativo=?) order by td1_0.nome limit ?
+Hibernate: select td1_0.idTipoDocumento,td1_0.ativo,td1_0.dataAtualizacao,td1_0.dataCriacao,td1_0.descricao,td1_0.escopo,td1_0.nome,td1_0.tipoProcessamento from tbTipoDocumento td1_0 where (? is null or lower(td1_0.nome) like replace(lower(concat('%',?,'%')),'\\','\\\\')) and (? is null or td1_0.tipoProcessamento=?) and (? is null or td1_0.escopo=?) and (? is null or td1_0.ativo=?) order by td1_0.nome limit ?
+2025-09-04T09:48:58.174-03:00  INFO 48456 --- [   File Watcher] rtingClassPathChangeChangedEventListener : Restarting due to 8 class path changes (8 additions, 0 deletions, 0 modifications)
+2025-09-04T09:48:58.258-03:00  INFO 48456 --- [     Thread-251] o.s.b.w.e.tomcat.GracefulShutdown        : Commencing graceful shutdown. Waiting for active requests to complete
+2025-09-04T09:48:58.270-03:00  INFO 48456 --- [tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown        : Graceful shutdown complete
+2025-09-04T09:48:58.294-03:00  INFO 48456 --- [     Thread-251] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-09-04T09:48:58.328-03:00  INFO 48456 --- [     Thread-251] com.zaxxer.hikari.HikariDataSource       : HikariPool-68 - Shutdown initiated...
+2025-09-04T09:48:58.365-03:00  INFO 48456 --- [     Thread-251] com.zaxxer.hikari.HikariDataSource       : HikariPool-68 - Shutdown completed.
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v3.4.9)
+
+2025-09-04T09:48:58.702-03:00  INFO 48456 --- [  restartedMain] c.c.c.CipalamSistemaApplication          : Starting CipalamSistemaApplication using Java 21.0.6 with PID 48456 (/Applications/XAMPP/xamppfiles/htdocs/GitHub/Projeto-Pratico/Projeto-Pratico/Sistema/spring-cipalam/cipalam-sistema/target/classes started by arthuremanuel in /Applications/XAMPP/xamppfiles/htdocs/GitHub/Projeto-Pratico/Projeto-Pratico/Sistema/spring-cipalam/cipalam-sistema)
+2025-09-04T09:48:58.703-03:00  INFO 48456 --- [  restartedMain] c.c.c.CipalamSistemaApplication          : No active profile set, falling back to 1 default profile: "default"
+2025-09-04T09:48:58.863-03:00  INFO 48456 --- [  restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-09-04T09:48:58.884-03:00  INFO 48456 --- [  restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 19 ms. Found 13 JPA repository interfaces.
+2025-09-04T09:48:58.999-03:00  INFO 48456 --- [  restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2025-09-04T09:48:59.003-03:00  INFO 48456 --- [  restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-09-04T09:48:59.003-03:00  INFO 48456 --- [  restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.44]
+2025-09-04T09:48:59.008-03:00  INFO 48456 --- [  restartedMain] o.a.c.c.C.[Tomcat-32].[localhost].[/]    : Initializing Spring embedded WebApplicationContext
+2025-09-04T09:48:59.008-03:00  INFO 48456 --- [  restartedMain] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 303 ms
+2025-09-04T09:48:59.050-03:00  INFO 48456 --- [  restartedMain] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-09-04T09:48:59.051-03:00  INFO 48456 --- [  restartedMain] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-09-04T09:48:59.058-03:00  INFO 48456 --- [  restartedMain] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-09-04T09:48:59.059-03:00  INFO 48456 --- [  restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-69 - Starting...
+2025-09-04T09:48:59.096-03:00  INFO 48456 --- [  restartedMain] com.zaxxer.hikari.pool.HikariPool        : HikariPool-69 - Added connection com.mysql.cj.jdbc.ConnectionImpl@4bf987b8
+2025-09-04T09:48:59.097-03:00  INFO 48456 --- [  restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-69 - Start completed.
+2025-09-04T09:48:59.098-03:00  WARN 48456 --- [  restartedMain] org.hibernate.dialect.Dialect            : HHH000511: The 5.5.5 version for [org.hibernate.dialect.MySQLDialect] is no longer supported, hence certain features may not work properly. The minimum supported version is 8.0.0. Check the community dialects project for available legacy versions.
+2025-09-04T09:48:59.099-03:00  INFO 48456 --- [  restartedMain] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-69)']
+	Database driver: undefined/unknown
+	Database version: 5.5.5
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-09-04T09:48:59.253-03:00  INFO 48456 --- [  restartedMain] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-09-04T09:48:59.253-03:00  INFO 48456 --- [  restartedMain] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-09-04T09:48:59.367-03:00  INFO 48456 --- [  restartedMain] eAuthenticationProviderManagerConfigurer : Global AuthenticationManager configured with AuthenticationProvider bean with name authenticationProvider
+2025-09-04T09:48:59.367-03:00  WARN 48456 --- [  restartedMain] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with an AuthenticationProvider bean. UserDetailsService beans will not be used by Spring Security for automatically configuring username/password login. Consider removing the AuthenticationProvider bean. Alternatively, consider using the UserDetailsService in a manually instantiated DaoAuthenticationProvider. If the current configuration is intentional, to turn off this warning, increase the logging level of 'org.springframework.security.config.annotation.authentication.configuration.InitializeUserDetailsBeanManagerConfigurer' to ERROR
+2025-09-04T09:48:59.903-03:00  WARN 48456 --- [  restartedMain] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-09-04T09:49:00.164-03:00  INFO 48456 --- [  restartedMain] o.s.b.d.a.OptionalLiveReloadServer       : LiveReload server is running on port 35729
+2025-09-04T09:49:00.173-03:00  INFO 48456 --- [  restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/'
+2025-09-04T09:49:00.179-03:00  INFO 48456 --- [  restartedMain] c.c.c.CipalamSistemaApplication          : Started CipalamSistemaApplication in 1.504 seconds (process running for 18312.31)
+Hibernate: select l1_0.idtblogin,l1_0.tbPessoa_idPessoa,l1_0.senha,l1_0.usuario from tblogin l1_0 where l1_0.usuario=?
+Hibernate: select p1_0.idPessoa,p1_0.ativo,p1_0.caminhoIdentidadePessoa,p1_0.caminhoImagem,p1_0.CpfPessoa,p1_0.dataCriacao,p1_0.dtNascPessoa,p1_0.email,p1_0.NmPessoa,p1_0.profissao,p1_0.renda,p1_0.telefone from tbPessoa p1_0 where p1_0.idPessoa=?
+Hibernate: select l1_0.idtblogin,l1_0.tbPessoa_idPessoa,l1_0.senha,l1_0.usuario from tblogin l1_0 where l1_0.usuario=?
+=== Criando usuário funcionário para teste ===
+Hibernate: insert into tbPessoa (ativo,caminhoIdentidadePessoa,caminhoImagem,CpfPessoa,dataCriacao,dtNascPessoa,email,NmPessoa,profissao,renda,telefone) values (?,?,?,?,?,?,?,?,?,?,?)
+Hibernate: insert into tblogin (tbPessoa_idPessoa,senha,usuario) values (?,?,?)
+Usuário funcionário criado:
+Usuário: funcionario
+Senha: 123456
+========================================
+2025-09-04T09:49:00.288-03:00  INFO 48456 --- [  restartedMain] .ConditionEvaluationDeltaLoggingListener : Condition evaluation unchanged
+2025-09-04T09:49:23.248-03:00  INFO 48456 --- [   File Watcher] rtingClassPathChangeChangedEventListener : Restarting due to 1 class path change (1 addition, 0 deletions, 0 modifications)
+2025-09-04T09:49:23.265-03:00  INFO 48456 --- [     Thread-255] o.s.b.w.e.tomcat.GracefulShutdown        : Commencing graceful shutdown. Waiting for active requests to complete
+2025-09-04T09:49:23.271-03:00  INFO 48456 --- [tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown        : Graceful shutdown complete
+2025-09-04T09:49:23.289-03:00  INFO 48456 --- [     Thread-255] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-09-04T09:49:23.304-03:00  INFO 48456 --- [     Thread-255] com.zaxxer.hikari.HikariDataSource       : HikariPool-69 - Shutdown initiated...
+2025-09-04T09:49:23.306-03:00  INFO 48456 --- [     Thread-255] com.zaxxer.hikari.HikariDataSource       : HikariPool-69 - Shutdown completed.
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v3.4.9)
+
+2025-09-04T09:49:23.479-03:00  INFO 48456 --- [  restartedMain] c.c.c.CipalamSistemaApplication          : Starting CipalamSistemaApplication using Java 21.0.6 with PID 48456 (/Applications/XAMPP/xamppfiles/htdocs/GitHub/Projeto-Pratico/Projeto-Pratico/Sistema/spring-cipalam/cipalam-sistema/target/classes started by arthuremanuel in /Applications/XAMPP/xamppfiles/htdocs/GitHub/Projeto-Pratico/Projeto-Pratico/Sistema/spring-cipalam/cipalam-sistema)
+2025-09-04T09:49:23.479-03:00  INFO 48456 --- [  restartedMain] c.c.c.CipalamSistemaApplication          : No active profile set, falling back to 1 default profile: "default"
+2025-09-04T09:49:23.604-03:00  INFO 48456 --- [  restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-09-04T09:49:23.620-03:00  INFO 48456 --- [  restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 15 ms. Found 13 JPA repository interfaces.
+2025-09-04T09:49:23.699-03:00  INFO 48456 --- [  restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2025-09-04T09:49:23.700-03:00  INFO 48456 --- [  restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-09-04T09:49:23.700-03:00  INFO 48456 --- [  restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.44]
+2025-09-04T09:49:23.706-03:00  INFO 48456 --- [  restartedMain] o.a.c.c.C.[Tomcat-32].[localhost].[/]    : Initializing Spring embedded WebApplicationContext
+2025-09-04T09:49:23.706-03:00  INFO 48456 --- [  restartedMain] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 226 ms
+2025-09-04T09:49:23.737-03:00  INFO 48456 --- [  restartedMain] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-09-04T09:49:23.738-03:00  INFO 48456 --- [  restartedMain] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-09-04T09:49:23.744-03:00  INFO 48456 --- [  restartedMain] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-09-04T09:49:23.745-03:00  INFO 48456 --- [  restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-70 - Starting...
+2025-09-04T09:49:23.775-03:00  INFO 48456 --- [  restartedMain] com.zaxxer.hikari.pool.HikariPool        : HikariPool-70 - Added connection com.mysql.cj.jdbc.ConnectionImpl@16f4ce89
+2025-09-04T09:49:23.775-03:00  INFO 48456 --- [  restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-70 - Start completed.
+2025-09-04T09:49:23.776-03:00  WARN 48456 --- [  restartedMain] org.hibernate.dialect.Dialect            : HHH000511: The 5.5.5 version for [org.hibernate.dialect.MySQLDialect] is no longer supported, hence certain features may not work properly. The minimum supported version is 8.0.0. Check the community dialects project for available legacy versions.
+2025-09-04T09:49:23.777-03:00  INFO 48456 --- [  restartedMain] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-70)']
+	Database driver: undefined/unknown
+	Database version: 5.5.5
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-09-04T09:49:23.922-03:00  INFO 48456 --- [  restartedMain] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-09-04T09:49:23.923-03:00  INFO 48456 --- [  restartedMain] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-09-04T09:49:24.015-03:00  INFO 48456 --- [  restartedMain] eAuthenticationProviderManagerConfigurer : Global AuthenticationManager configured with AuthenticationProvider bean with name authenticationProvider
+2025-09-04T09:49:24.015-03:00  WARN 48456 --- [  restartedMain] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with an AuthenticationProvider bean. UserDetailsService beans will not be used by Spring Security for automatically configuring username/password login. Consider removing the AuthenticationProvider bean. Alternatively, consider using the UserDetailsService in a manually instantiated DaoAuthenticationProvider. If the current configuration is intentional, to turn off this warning, increase the logging level of 'org.springframework.security.config.annotation.authentication.configuration.InitializeUserDetailsBeanManagerConfigurer' to ERROR
+2025-09-04T09:49:24.196-03:00  WARN 48456 --- [  restartedMain] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-09-04T09:49:24.404-03:00  INFO 48456 --- [  restartedMain] o.s.b.d.a.OptionalLiveReloadServer       : LiveReload server is running on port 35729
+2025-09-04T09:49:24.411-03:00  INFO 48456 --- [  restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/'
+2025-09-04T09:49:24.413-03:00  INFO 48456 --- [  restartedMain] c.c.c.CipalamSistemaApplication          : Started CipalamSistemaApplication in 0.948 seconds (process running for 18336.545)
+Hibernate: select l1_0.idtblogin,l1_0.tbPessoa_idPessoa,l1_0.senha,l1_0.usuario from tblogin l1_0 where l1_0.usuario=?
+Hibernate: select p1_0.idPessoa,p1_0.ativo,p1_0.caminhoIdentidadePessoa,p1_0.caminhoImagem,p1_0.CpfPessoa,p1_0.dataCriacao,p1_0.dtNascPessoa,p1_0.email,p1_0.NmPessoa,p1_0.profissao,p1_0.renda,p1_0.telefone from tbPessoa p1_0 where p1_0.idPessoa=?
+Hibernate: select l1_0.idtblogin,l1_0.tbPessoa_idPessoa,l1_0.senha,l1_0.usuario from tblogin l1_0 where l1_0.usuario=?
+Hibernate: select p1_0.idPessoa,p1_0.ativo,p1_0.caminhoIdentidadePessoa,p1_0.caminhoImagem,p1_0.CpfPessoa,p1_0.dataCriacao,p1_0.dtNascPessoa,p1_0.email,p1_0.NmPessoa,p1_0.profissao,p1_0.renda,p1_0.telefone from tbPessoa p1_0 where p1_0.idPessoa=?
+2025-09-04T09:49:24.460-03:00  INFO 48456 --- [  restartedMain] .ConditionEvaluationDeltaLoggingListener : Condition evaluation unchanged
+2025-09-04T09:50:08.208-03:00  INFO 48456 --- [   File Watcher] rtingClassPathChangeChangedEventListener : Restarting due to 97 class path changes (3 additions, 0 deletions, 94 modifications)
+2025-09-04T09:50:08.219-03:00  INFO 48456 --- [     Thread-259] o.s.b.w.e.tomcat.GracefulShutdown        : Commencing graceful shutdown. Waiting for active requests to complete
+2025-09-04T09:50:08.222-03:00  INFO 48456 --- [tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown        : Graceful shutdown complete
+2025-09-04T09:50:08.227-03:00  INFO 48456 --- [     Thread-259] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-09-04T09:50:08.234-03:00  INFO 48456 --- [     Thread-259] com.zaxxer.hikari.HikariDataSource       : HikariPool-70 - Shutdown initiated...
+2025-09-04T09:50:08.236-03:00  INFO 48456 --- [     Thread-259] com.zaxxer.hikari.HikariDataSource       : HikariPool-70 - Shutdown completed.
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v3.4.9)
+
+2025-09-04T09:50:08.364-03:00  INFO 48456 --- [  restartedMain] c.c.c.CipalamSistemaApplication          : Starting CipalamSistemaApplication using Java 21.0.6 with PID 48456 (/Applications/XAMPP/xamppfiles/htdocs/GitHub/Projeto-Pratico/Projeto-Pratico/Sistema/spring-cipalam/cipalam-sistema/target/classes started by arthuremanuel in /Applications/XAMPP/xamppfiles/htdocs/GitHub/Projeto-Pratico/Projeto-Pratico/Sistema/spring-cipalam/cipalam-sistema)
+2025-09-04T09:50:08.364-03:00  INFO 48456 --- [  restartedMain] c.c.c.CipalamSistemaApplication          : No active profile set, falling back to 1 default profile: "default"
+2025-09-04T09:50:08.447-03:00  INFO 48456 --- [  restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-09-04T09:50:08.458-03:00  INFO 48456 --- [  restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 10 ms. Found 13 JPA repository interfaces.
+2025-09-04T09:50:08.531-03:00  INFO 48456 --- [  restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2025-09-04T09:50:08.532-03:00  INFO 48456 --- [  restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-09-04T09:50:08.532-03:00  INFO 48456 --- [  restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.44]
+2025-09-04T09:50:08.536-03:00  INFO 48456 --- [  restartedMain] o.a.c.c.C.[Tomcat-32].[localhost].[/]    : Initializing Spring embedded WebApplicationContext
+2025-09-04T09:50:08.536-03:00  INFO 48456 --- [  restartedMain] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 172 ms
+2025-09-04T09:50:08.564-03:00  INFO 48456 --- [  restartedMain] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-09-04T09:50:08.564-03:00  INFO 48456 --- [  restartedMain] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-09-04T09:50:08.569-03:00  INFO 48456 --- [  restartedMain] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-09-04T09:50:08.569-03:00  INFO 48456 --- [  restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-71 - Starting...
+2025-09-04T09:50:08.601-03:00  INFO 48456 --- [  restartedMain] com.zaxxer.hikari.pool.HikariPool        : HikariPool-71 - Added connection com.mysql.cj.jdbc.ConnectionImpl@37b56393
+2025-09-04T09:50:08.601-03:00  INFO 48456 --- [  restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-71 - Start completed.
+2025-09-04T09:50:08.603-03:00  WARN 48456 --- [  restartedMain] org.hibernate.dialect.Dialect            : HHH000511: The 5.5.5 version for [org.hibernate.dialect.MySQLDialect] is no longer supported, hence certain features may not work properly. The minimum supported version is 8.0.0. Check the community dialects project for available legacy versions.
+2025-09-04T09:50:08.604-03:00  INFO 48456 --- [  restartedMain] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-71)']
+	Database driver: undefined/unknown
+	Database version: 5.5.5
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-09-04T09:50:08.724-03:00  INFO 48456 --- [  restartedMain] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-09-04T09:50:08.724-03:00  INFO 48456 --- [  restartedMain] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-09-04T09:50:08.818-03:00  INFO 48456 --- [  restartedMain] eAuthenticationProviderManagerConfigurer : Global AuthenticationManager configured with AuthenticationProvider bean with name authenticationProvider
+2025-09-04T09:50:08.818-03:00  WARN 48456 --- [  restartedMain] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with an AuthenticationProvider bean. UserDetailsService beans will not be used by Spring Security for automatically configuring username/password login. Consider removing the AuthenticationProvider bean. Alternatively, consider using the UserDetailsService in a manually instantiated DaoAuthenticationProvider. If the current configuration is intentional, to turn off this warning, increase the logging level of 'org.springframework.security.config.annotation.authentication.configuration.InitializeUserDetailsBeanManagerConfigurer' to ERROR
+2025-09-04T09:50:08.994-03:00  WARN 48456 --- [  restartedMain] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-09-04T09:50:09.179-03:00  INFO 48456 --- [  restartedMain] o.s.b.d.a.OptionalLiveReloadServer       : LiveReload server is running on port 35729
+2025-09-04T09:50:09.185-03:00  INFO 48456 --- [  restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/'
+2025-09-04T09:50:09.187-03:00  INFO 48456 --- [  restartedMain] c.c.c.CipalamSistemaApplication          : Started CipalamSistemaApplication in 0.839 seconds (process running for 18381.319)
+Hibernate: select l1_0.idtblogin,l1_0.tbPessoa_idPessoa,l1_0.senha,l1_0.usuario from tblogin l1_0 where l1_0.usuario=?
+Hibernate: select p1_0.idPessoa,p1_0.ativo,p1_0.caminhoIdentidadePessoa,p1_0.caminhoImagem,p1_0.CpfPessoa,p1_0.dataCriacao,p1_0.dtNascPessoa,p1_0.email,p1_0.NmPessoa,p1_0.profissao,p1_0.renda,p1_0.telefone from tbPessoa p1_0 where p1_0.idPessoa=?
+Hibernate: select l1_0.idtblogin,l1_0.tbPessoa_idPessoa,l1_0.senha,l1_0.usuario from tblogin l1_0 where l1_0.usuario=?
+Hibernate: select p1_0.idPessoa,p1_0.ativo,p1_0.caminhoIdentidadePessoa,p1_0.caminhoImagem,p1_0.CpfPessoa,p1_0.dataCriacao,p1_0.dtNascPessoa,p1_0.email,p1_0.NmPessoa,p1_0.profissao,p1_0.renda,p1_0.telefone from tbPessoa p1_0 where p1_0.idPessoa=?
+2025-09-04T09:50:09.226-03:00  INFO 48456 --- [  restartedMain] .ConditionEvaluationDeltaLoggingListener : Condition evaluation unchanged
+2025-09-04T09:50:20.719-03:00  INFO 48456 --- [   File Watcher] rtingClassPathChangeChangedEventListener : Restarting due to 3 class path changes (2 additions, 0 deletions, 1 modification)
+2025-09-04T09:50:20.726-03:00  INFO 48456 --- [     Thread-263] o.s.b.w.e.tomcat.GracefulShutdown        : Commencing graceful shutdown. Waiting for active requests to complete
+2025-09-04T09:50:20.730-03:00  INFO 48456 --- [tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown        : Graceful shutdown complete
+2025-09-04T09:50:20.734-03:00  INFO 48456 --- [     Thread-263] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-09-04T09:50:20.746-03:00  INFO 48456 --- [     Thread-263] com.zaxxer.hikari.HikariDataSource       : HikariPool-71 - Shutdown initiated...
+2025-09-04T09:50:20.749-03:00  INFO 48456 --- [     Thread-263] com.zaxxer.hikari.HikariDataSource       : HikariPool-71 - Shutdown completed.
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v3.4.9)
+
+2025-09-04T09:50:20.844-03:00  INFO 48456 --- [  restartedMain] c.c.c.CipalamSistemaApplication          : Starting CipalamSistemaApplication using Java 21.0.6 with PID 48456 (/Applications/XAMPP/xamppfiles/htdocs/GitHub/Projeto-Pratico/Projeto-Pratico/Sistema/spring-cipalam/cipalam-sistema/target/classes started by arthuremanuel in /Applications/XAMPP/xamppfiles/htdocs/GitHub/Projeto-Pratico/Projeto-Pratico/Sistema/spring-cipalam/cipalam-sistema)
+2025-09-04T09:50:20.844-03:00  INFO 48456 --- [  restartedMain] c.c.c.CipalamSistemaApplication          : No active profile set, falling back to 1 default profile: "default"
+2025-09-04T09:50:20.932-03:00  INFO 48456 --- [  restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-09-04T09:50:20.943-03:00  INFO 48456 --- [  restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 11 ms. Found 13 JPA repository interfaces.
+2025-09-04T09:50:21.016-03:00  INFO 48456 --- [  restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2025-09-04T09:50:21.016-03:00  INFO 48456 --- [  restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-09-04T09:50:21.016-03:00  INFO 48456 --- [  restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.44]
+2025-09-04T09:50:21.020-03:00  INFO 48456 --- [  restartedMain] o.a.c.c.C.[Tomcat-32].[localhost].[/]    : Initializing Spring embedded WebApplicationContext
+2025-09-04T09:50:21.020-03:00  INFO 48456 --- [  restartedMain] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 175 ms
+2025-09-04T09:50:21.057-03:00  INFO 48456 --- [  restartedMain] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-09-04T09:50:21.058-03:00  INFO 48456 --- [  restartedMain] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-09-04T09:50:21.062-03:00  INFO 48456 --- [  restartedMain] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-09-04T09:50:21.062-03:00  INFO 48456 --- [  restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-72 - Starting...
+2025-09-04T09:50:21.067-03:00  INFO 48456 --- [  restartedMain] com.zaxxer.hikari.pool.HikariPool        : HikariPool-72 - Added connection com.mysql.cj.jdbc.ConnectionImpl@2cd81055
+2025-09-04T09:50:21.067-03:00  INFO 48456 --- [  restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-72 - Start completed.
+2025-09-04T09:50:21.068-03:00  WARN 48456 --- [  restartedMain] org.hibernate.dialect.Dialect            : HHH000511: The 5.5.5 version for [org.hibernate.dialect.MySQLDialect] is no longer supported, hence certain features may not work properly. The minimum supported version is 8.0.0. Check the community dialects project for available legacy versions.
+2025-09-04T09:50:21.068-03:00  INFO 48456 --- [  restartedMain] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-72)']
+	Database driver: undefined/unknown
+	Database version: 5.5.5
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-09-04T09:50:21.164-03:00  INFO 48456 --- [  restartedMain] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-09-04T09:50:21.165-03:00  INFO 48456 --- [  restartedMain] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-09-04T09:50:21.253-03:00  INFO 48456 --- [  restartedMain] eAuthenticationProviderManagerConfigurer : Global AuthenticationManager configured with AuthenticationProvider bean with name authenticationProvider
+2025-09-04T09:50:21.254-03:00  WARN 48456 --- [  restartedMain] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with an AuthenticationProvider bean. UserDetailsService beans will not be used by Spring Security for automatically configuring username/password login. Consider removing the AuthenticationProvider bean. Alternatively, consider using the UserDetailsService in a manually instantiated DaoAuthenticationProvider. If the current configuration is intentional, to turn off this warning, increase the logging level of 'org.springframework.security.config.annotation.authentication.configuration.InitializeUserDetailsBeanManagerConfigurer' to ERROR
+2025-09-04T09:50:21.423-03:00  WARN 48456 --- [  restartedMain] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-09-04T09:50:21.613-03:00  INFO 48456 --- [  restartedMain] o.s.b.d.a.OptionalLiveReloadServer       : LiveReload server is running on port 35729
+2025-09-04T09:50:21.619-03:00  INFO 48456 --- [  restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/'
+2025-09-04T09:50:21.621-03:00  INFO 48456 --- [  restartedMain] c.c.c.CipalamSistemaApplication          : Started CipalamSistemaApplication in 0.785 seconds (process running for 18393.753)
+Hibernate: select l1_0.idtblogin,l1_0.tbPessoa_idPessoa,l1_0.senha,l1_0.usuario from tblogin l1_0 where l1_0.usuario=?
+Hibernate: select p1_0.idPessoa,p1_0.ativo,p1_0.caminhoIdentidadePessoa,p1_0.caminhoImagem,p1_0.CpfPessoa,p1_0.dataCriacao,p1_0.dtNascPessoa,p1_0.email,p1_0.NmPessoa,p1_0.profissao,p1_0.renda,p1_0.telefone from tbPessoa p1_0 where p1_0.idPessoa=?
+Hibernate: select l1_0.idtblogin,l1_0.tbPessoa_idPessoa,l1_0.senha,l1_0.usuario from tblogin l1_0 where l1_0.usuario=?
+Hibernate: select p1_0.idPessoa,p1_0.ativo,p1_0.caminhoIdentidadePessoa,p1_0.caminhoImagem,p1_0.CpfPessoa,p1_0.dataCriacao,p1_0.dtNascPessoa,p1_0.email,p1_0.NmPessoa,p1_0.profissao,p1_0.renda,p1_0.telefone from tbPessoa p1_0 where p1_0.idPessoa=?
+2025-09-04T09:50:21.647-03:00  INFO 48456 --- [  restartedMain] .ConditionEvaluationDeltaLoggingListener : Condition evaluation unchanged
+2025-09-04T09:50:28.115-03:00  INFO 48456 --- [   File Watcher] rtingClassPathChangeChangedEventListener : Restarting due to 1 class path change (0 additions, 0 deletions, 1 modification)
+2025-09-04T09:50:28.140-03:00  INFO 48456 --- [     Thread-267] o.s.b.w.e.tomcat.GracefulShutdown        : Commencing graceful shutdown. Waiting for active requests to complete
+2025-09-04T09:50:28.144-03:00  INFO 48456 --- [tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown        : Graceful shutdown complete
+2025-09-04T09:50:28.152-03:00  INFO 48456 --- [     Thread-267] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-09-04T09:50:28.155-03:00  INFO 48456 --- [     Thread-267] com.zaxxer.hikari.HikariDataSource       : HikariPool-72 - Shutdown initiated...
+2025-09-04T09:50:28.157-03:00  INFO 48456 --- [     Thread-267] com.zaxxer.hikari.HikariDataSource       : HikariPool-72 - Shutdown completed.
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v3.4.9)
+
+2025-09-04T09:50:28.252-03:00  INFO 48456 --- [  restartedMain] c.c.c.CipalamSistemaApplication          : Starting CipalamSistemaApplication using Java 21.0.6 with PID 48456 (/Applications/XAMPP/xamppfiles/htdocs/GitHub/Projeto-Pratico/Projeto-Pratico/Sistema/spring-cipalam/cipalam-sistema/target/classes started by arthuremanuel in /Applications/XAMPP/xamppfiles/htdocs/GitHub/Projeto-Pratico/Projeto-Pratico/Sistema/spring-cipalam/cipalam-sistema)
+2025-09-04T09:50:28.252-03:00  INFO 48456 --- [  restartedMain] c.c.c.CipalamSistemaApplication          : No active profile set, falling back to 1 default profile: "default"
+2025-09-04T09:50:28.327-03:00  INFO 48456 --- [  restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-09-04T09:50:28.338-03:00  INFO 48456 --- [  restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 10 ms. Found 13 JPA repository interfaces.
+2025-09-04T09:50:28.401-03:00  INFO 48456 --- [  restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2025-09-04T09:50:28.401-03:00  INFO 48456 --- [  restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-09-04T09:50:28.401-03:00  INFO 48456 --- [  restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.44]
+2025-09-04T09:50:28.405-03:00  INFO 48456 --- [  restartedMain] o.a.c.c.C.[Tomcat-32].[localhost].[/]    : Initializing Spring embedded WebApplicationContext
+2025-09-04T09:50:28.405-03:00  INFO 48456 --- [  restartedMain] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 153 ms
+2025-09-04T09:50:28.435-03:00  INFO 48456 --- [  restartedMain] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-09-04T09:50:28.436-03:00  INFO 48456 --- [  restartedMain] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-09-04T09:50:28.439-03:00  INFO 48456 --- [  restartedMain] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-09-04T09:50:28.439-03:00  INFO 48456 --- [  restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-73 - Starting...
+2025-09-04T09:50:28.443-03:00  INFO 48456 --- [  restartedMain] com.zaxxer.hikari.pool.HikariPool        : HikariPool-73 - Added connection com.mysql.cj.jdbc.ConnectionImpl@19103083
+2025-09-04T09:50:28.443-03:00  INFO 48456 --- [  restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-73 - Start completed.
+2025-09-04T09:50:28.444-03:00  WARN 48456 --- [  restartedMain] org.hibernate.dialect.Dialect            : HHH000511: The 5.5.5 version for [org.hibernate.dialect.MySQLDialect] is no longer supported, hence certain features may not work properly. The minimum supported version is 8.0.0. Check the community dialects project for available legacy versions.
+2025-09-04T09:50:28.444-03:00  INFO 48456 --- [  restartedMain] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-73)']
+	Database driver: undefined/unknown
+	Database version: 5.5.5
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-09-04T09:50:28.560-03:00  INFO 48456 --- [  restartedMain] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-09-04T09:50:28.561-03:00  INFO 48456 --- [  restartedMain] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-09-04T09:50:28.644-03:00  INFO 48456 --- [  restartedMain] eAuthenticationProviderManagerConfigurer : Global AuthenticationManager configured with AuthenticationProvider bean with name authenticationProvider
+2025-09-04T09:50:28.644-03:00  WARN 48456 --- [  restartedMain] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with an AuthenticationProvider bean. UserDetailsService beans will not be used by Spring Security for automatically configuring username/password login. Consider removing the AuthenticationProvider bean. Alternatively, consider using the UserDetailsService in a manually instantiated DaoAuthenticationProvider. If the current configuration is intentional, to turn off this warning, increase the logging level of 'org.springframework.security.config.annotation.authentication.configuration.InitializeUserDetailsBeanManagerConfigurer' to ERROR
+2025-09-04T09:50:28.809-03:00  WARN 48456 --- [  restartedMain] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-09-04T09:50:28.997-03:00  INFO 48456 --- [  restartedMain] o.s.b.d.a.OptionalLiveReloadServer       : LiveReload server is running on port 35729
+2025-09-04T09:50:29.003-03:00  INFO 48456 --- [  restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/'
+2025-09-04T09:50:29.004-03:00  INFO 48456 --- [  restartedMain] c.c.c.CipalamSistemaApplication          : Started CipalamSistemaApplication in 0.763 seconds (process running for 18401.136)
+Hibernate: select l1_0.idtblogin,l1_0.tbPessoa_idPessoa,l1_0.senha,l1_0.usuario from tblogin l1_0 where l1_0.usuario=?
+Hibernate: select p1_0.idPessoa,p1_0.ativo,p1_0.caminhoIdentidadePessoa,p1_0.caminhoImagem,p1_0.CpfPessoa,p1_0.dataCriacao,p1_0.dtNascPessoa,p1_0.email,p1_0.NmPessoa,p1_0.profissao,p1_0.renda,p1_0.telefone from tbPessoa p1_0 where p1_0.idPessoa=?
+Hibernate: select l1_0.idtblogin,l1_0.tbPessoa_idPessoa,l1_0.senha,l1_0.usuario from tblogin l1_0 where l1_0.usuario=?
+Hibernate: select p1_0.idPessoa,p1_0.ativo,p1_0.caminhoIdentidadePessoa,p1_0.caminhoImagem,p1_0.CpfPessoa,p1_0.dataCriacao,p1_0.dtNascPessoa,p1_0.email,p1_0.NmPessoa,p1_0.profissao,p1_0.renda,p1_0.telefone from tbPessoa p1_0 where p1_0.idPessoa=?
+2025-09-04T09:50:29.027-03:00  INFO 48456 --- [  restartedMain] .ConditionEvaluationDeltaLoggingListener : Condition evaluation unchanged
+2025-09-04T09:50:34.462-03:00  INFO 48456 --- [   File Watcher] rtingClassPathChangeChangedEventListener : Restarting due to 1 class path change (0 additions, 0 deletions, 1 modification)
+2025-09-04T09:50:34.468-03:00  INFO 48456 --- [     Thread-271] o.s.b.w.e.tomcat.GracefulShutdown        : Commencing graceful shutdown. Waiting for active requests to complete
+2025-09-04T09:50:34.470-03:00  INFO 48456 --- [tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown        : Graceful shutdown complete
+2025-09-04T09:50:34.475-03:00  INFO 48456 --- [     Thread-271] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-09-04T09:50:34.479-03:00  INFO 48456 --- [     Thread-271] com.zaxxer.hikari.HikariDataSource       : HikariPool-73 - Shutdown initiated...
+2025-09-04T09:50:34.481-03:00  INFO 48456 --- [     Thread-271] com.zaxxer.hikari.HikariDataSource       : HikariPool-73 - Shutdown completed.
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v3.4.9)
+
+2025-09-04T09:50:34.606-03:00  INFO 48456 --- [  restartedMain] c.c.c.CipalamSistemaApplication          : Starting CipalamSistemaApplication using Java 21.0.6 with PID 48456 (/Applications/XAMPP/xamppfiles/htdocs/GitHub/Projeto-Pratico/Projeto-Pratico/Sistema/spring-cipalam/cipalam-sistema/target/classes started by arthuremanuel in /Applications/XAMPP/xamppfiles/htdocs/GitHub/Projeto-Pratico/Projeto-Pratico/Sistema/spring-cipalam/cipalam-sistema)
+2025-09-04T09:50:34.606-03:00  INFO 48456 --- [  restartedMain] c.c.c.CipalamSistemaApplication          : No active profile set, falling back to 1 default profile: "default"
+2025-09-04T09:50:34.703-03:00  INFO 48456 --- [  restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-09-04T09:50:34.716-03:00  INFO 48456 --- [  restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 12 ms. Found 13 JPA repository interfaces.
+2025-09-04T09:50:34.803-03:00  INFO 48456 --- [  restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2025-09-04T09:50:34.803-03:00  INFO 48456 --- [  restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-09-04T09:50:34.803-03:00  INFO 48456 --- [  restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.44]
+2025-09-04T09:50:34.807-03:00  INFO 48456 --- [  restartedMain] o.a.c.c.C.[Tomcat-32].[localhost].[/]    : Initializing Spring embedded WebApplicationContext
+2025-09-04T09:50:34.807-03:00  INFO 48456 --- [  restartedMain] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 200 ms
+2025-09-04T09:50:34.836-03:00  INFO 48456 --- [  restartedMain] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-09-04T09:50:34.837-03:00  INFO 48456 --- [  restartedMain] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-09-04T09:50:34.842-03:00  INFO 48456 --- [  restartedMain] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-09-04T09:50:34.842-03:00  INFO 48456 --- [  restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-74 - Starting...
+2025-09-04T09:50:34.846-03:00  INFO 48456 --- [  restartedMain] com.zaxxer.hikari.pool.HikariPool        : HikariPool-74 - Added connection com.mysql.cj.jdbc.ConnectionImpl@116496a7
+2025-09-04T09:50:34.846-03:00  INFO 48456 --- [  restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-74 - Start completed.
+2025-09-04T09:50:34.847-03:00  WARN 48456 --- [  restartedMain] org.hibernate.dialect.Dialect            : HHH000511: The 5.5.5 version for [org.hibernate.dialect.MySQLDialect] is no longer supported, hence certain features may not work properly. The minimum supported version is 8.0.0. Check the community dialects project for available legacy versions.
+2025-09-04T09:50:34.847-03:00  INFO 48456 --- [  restartedMain] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-74)']
+	Database driver: undefined/unknown
+	Database version: 5.5.5
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-09-04T09:50:34.944-03:00  INFO 48456 --- [  restartedMain] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-09-04T09:50:34.944-03:00  INFO 48456 --- [  restartedMain] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-09-04T09:50:35.035-03:00  INFO 48456 --- [  restartedMain] eAuthenticationProviderManagerConfigurer : Global AuthenticationManager configured with AuthenticationProvider bean with name authenticationProvider
+2025-09-04T09:50:35.035-03:00  WARN 48456 --- [  restartedMain] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with an AuthenticationProvider bean. UserDetailsService beans will not be used by Spring Security for automatically configuring username/password login. Consider removing the AuthenticationProvider bean. Alternatively, consider using the UserDetailsService in a manually instantiated DaoAuthenticationProvider. If the current configuration is intentional, to turn off this warning, increase the logging level of 'org.springframework.security.config.annotation.authentication.configuration.InitializeUserDetailsBeanManagerConfigurer' to ERROR
+2025-09-04T09:50:35.222-03:00  WARN 48456 --- [  restartedMain] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-09-04T09:50:35.413-03:00  INFO 48456 --- [  restartedMain] o.s.b.d.a.OptionalLiveReloadServer       : LiveReload server is running on port 35729
+2025-09-04T09:50:35.419-03:00  INFO 48456 --- [  restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/'
+2025-09-04T09:50:35.421-03:00  INFO 48456 --- [  restartedMain] c.c.c.CipalamSistemaApplication          : Started CipalamSistemaApplication in 0.827 seconds (process running for 18407.553)
+Hibernate: select l1_0.idtblogin,l1_0.tbPessoa_idPessoa,l1_0.senha,l1_0.usuario from tblogin l1_0 where l1_0.usuario=?
+Hibernate: select p1_0.idPessoa,p1_0.ativo,p1_0.caminhoIdentidadePessoa,p1_0.caminhoImagem,p1_0.CpfPessoa,p1_0.dataCriacao,p1_0.dtNascPessoa,p1_0.email,p1_0.NmPessoa,p1_0.profissao,p1_0.renda,p1_0.telefone from tbPessoa p1_0 where p1_0.idPessoa=?
+Hibernate: select l1_0.idtblogin,l1_0.tbPessoa_idPessoa,l1_0.senha,l1_0.usuario from tblogin l1_0 where l1_0.usuario=?
+Hibernate: select p1_0.idPessoa,p1_0.ativo,p1_0.caminhoIdentidadePessoa,p1_0.caminhoImagem,p1_0.CpfPessoa,p1_0.dataCriacao,p1_0.dtNascPessoa,p1_0.email,p1_0.NmPessoa,p1_0.profissao,p1_0.renda,p1_0.telefone from tbPessoa p1_0 where p1_0.idPessoa=?
+2025-09-04T09:50:35.447-03:00  INFO 48456 --- [  restartedMain] .ConditionEvaluationDeltaLoggingListener : Condition evaluation unchanged
+2025-09-04T09:50:41.897-03:00  INFO 48456 --- [   File Watcher] rtingClassPathChangeChangedEventListener : Restarting due to 2 class path changes (0 additions, 0 deletions, 2 modifications)
+2025-09-04T09:50:41.914-03:00  INFO 48456 --- [     Thread-275] o.s.b.w.e.tomcat.GracefulShutdown        : Commencing graceful shutdown. Waiting for active requests to complete
+2025-09-04T09:50:41.920-03:00  INFO 48456 --- [tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown        : Graceful shutdown complete
+2025-09-04T09:50:41.928-03:00  INFO 48456 --- [     Thread-275] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-09-04T09:50:41.930-03:00  INFO 48456 --- [     Thread-275] com.zaxxer.hikari.HikariDataSource       : HikariPool-74 - Shutdown initiated...
+2025-09-04T09:50:41.932-03:00  INFO 48456 --- [     Thread-275] com.zaxxer.hikari.HikariDataSource       : HikariPool-74 - Shutdown completed.
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v3.4.9)
+
+2025-09-04T09:50:42.021-03:00  INFO 48456 --- [  restartedMain] c.c.c.CipalamSistemaApplication          : Starting CipalamSistemaApplication using Java 21.0.6 with PID 48456 (/Applications/XAMPP/xamppfiles/htdocs/GitHub/Projeto-Pratico/Projeto-Pratico/Sistema/spring-cipalam/cipalam-sistema/target/classes started by arthuremanuel in /Applications/XAMPP/xamppfiles/htdocs/GitHub/Projeto-Pratico/Projeto-Pratico/Sistema/spring-cipalam/cipalam-sistema)
+2025-09-04T09:50:42.021-03:00  INFO 48456 --- [  restartedMain] c.c.c.CipalamSistemaApplication          : No active profile set, falling back to 1 default profile: "default"
+2025-09-04T09:50:42.096-03:00  INFO 48456 --- [  restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-09-04T09:50:42.106-03:00  INFO 48456 --- [  restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 9 ms. Found 13 JPA repository interfaces.
+2025-09-04T09:50:42.170-03:00  INFO 48456 --- [  restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2025-09-04T09:50:42.171-03:00  INFO 48456 --- [  restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-09-04T09:50:42.171-03:00  INFO 48456 --- [  restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.44]
+2025-09-04T09:50:42.175-03:00  INFO 48456 --- [  restartedMain] o.a.c.c.C.[Tomcat-32].[localhost].[/]    : Initializing Spring embedded WebApplicationContext
+2025-09-04T09:50:42.175-03:00  INFO 48456 --- [  restartedMain] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 154 ms
+2025-09-04T09:50:42.200-03:00  INFO 48456 --- [  restartedMain] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-09-04T09:50:42.201-03:00  INFO 48456 --- [  restartedMain] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-09-04T09:50:42.204-03:00  INFO 48456 --- [  restartedMain] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-09-04T09:50:42.204-03:00  INFO 48456 --- [  restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-75 - Starting...
+2025-09-04T09:50:42.209-03:00  INFO 48456 --- [  restartedMain] com.zaxxer.hikari.pool.HikariPool        : HikariPool-75 - Added connection com.mysql.cj.jdbc.ConnectionImpl@3b4aa476
+2025-09-04T09:50:42.209-03:00  INFO 48456 --- [  restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-75 - Start completed.
+2025-09-04T09:50:42.210-03:00  WARN 48456 --- [  restartedMain] org.hibernate.dialect.Dialect            : HHH000511: The 5.5.5 version for [org.hibernate.dialect.MySQLDialect] is no longer supported, hence certain features may not work properly. The minimum supported version is 8.0.0. Check the community dialects project for available legacy versions.
+2025-09-04T09:50:42.210-03:00  INFO 48456 --- [  restartedMain] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-75)']
+	Database driver: undefined/unknown
+	Database version: 5.5.5
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-09-04T09:50:42.305-03:00  INFO 48456 --- [  restartedMain] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-09-04T09:50:42.305-03:00  INFO 48456 --- [  restartedMain] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-09-04T09:50:42.388-03:00  INFO 48456 --- [  restartedMain] eAuthenticationProviderManagerConfigurer : Global AuthenticationManager configured with AuthenticationProvider bean with name authenticationProvider
+2025-09-04T09:50:42.388-03:00  WARN 48456 --- [  restartedMain] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with an AuthenticationProvider bean. UserDetailsService beans will not be used by Spring Security for automatically configuring username/password login. Consider removing the AuthenticationProvider bean. Alternatively, consider using the UserDetailsService in a manually instantiated DaoAuthenticationProvider. If the current configuration is intentional, to turn off this warning, increase the logging level of 'org.springframework.security.config.annotation.authentication.configuration.InitializeUserDetailsBeanManagerConfigurer' to ERROR
+2025-09-04T09:50:42.547-03:00  WARN 48456 --- [  restartedMain] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-09-04T09:50:42.731-03:00  INFO 48456 --- [  restartedMain] o.s.b.d.a.OptionalLiveReloadServer       : LiveReload server is running on port 35729
+2025-09-04T09:50:42.737-03:00  INFO 48456 --- [  restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/'
+2025-09-04T09:50:42.739-03:00  INFO 48456 --- [  restartedMain] c.c.c.CipalamSistemaApplication          : Started CipalamSistemaApplication in 0.727 seconds (process running for 18414.871)
+Hibernate: select l1_0.idtblogin,l1_0.tbPessoa_idPessoa,l1_0.senha,l1_0.usuario from tblogin l1_0 where l1_0.usuario=?
+Hibernate: select p1_0.idPessoa,p1_0.ativo,p1_0.caminhoIdentidadePessoa,p1_0.caminhoImagem,p1_0.CpfPessoa,p1_0.dataCriacao,p1_0.dtNascPessoa,p1_0.email,p1_0.NmPessoa,p1_0.profissao,p1_0.renda,p1_0.telefone from tbPessoa p1_0 where p1_0.idPessoa=?
+Hibernate: select l1_0.idtblogin,l1_0.tbPessoa_idPessoa,l1_0.senha,l1_0.usuario from tblogin l1_0 where l1_0.usuario=?
+Hibernate: select p1_0.idPessoa,p1_0.ativo,p1_0.caminhoIdentidadePessoa,p1_0.caminhoImagem,p1_0.CpfPessoa,p1_0.dataCriacao,p1_0.dtNascPessoa,p1_0.email,p1_0.NmPessoa,p1_0.profissao,p1_0.renda,p1_0.telefone from tbPessoa p1_0 where p1_0.idPessoa=?
+2025-09-04T09:50:42.762-03:00  INFO 48456 --- [  restartedMain] .ConditionEvaluationDeltaLoggingListener : Condition evaluation unchanged
+2025-09-04T09:50:48.215-03:00  INFO 48456 --- [   File Watcher] rtingClassPathChangeChangedEventListener : Restarting due to 1 class path change (0 additions, 0 deletions, 1 modification)
+2025-09-04T09:50:48.229-03:00  INFO 48456 --- [     Thread-279] o.s.b.w.e.tomcat.GracefulShutdown        : Commencing graceful shutdown. Waiting for active requests to complete
+2025-09-04T09:50:48.232-03:00  INFO 48456 --- [tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown        : Graceful shutdown complete
+2025-09-04T09:50:48.235-03:00  INFO 48456 --- [     Thread-279] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-09-04T09:50:48.236-03:00  INFO 48456 --- [     Thread-279] com.zaxxer.hikari.HikariDataSource       : HikariPool-75 - Shutdown initiated...
+2025-09-04T09:50:48.238-03:00  INFO 48456 --- [     Thread-279] com.zaxxer.hikari.HikariDataSource       : HikariPool-75 - Shutdown completed.
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v3.4.9)
+
+2025-09-04T09:50:48.354-03:00  INFO 48456 --- [  restartedMain] c.c.c.CipalamSistemaApplication          : Starting CipalamSistemaApplication using Java 21.0.6 with PID 48456 (/Applications/XAMPP/xamppfiles/htdocs/GitHub/Projeto-Pratico/Projeto-Pratico/Sistema/spring-cipalam/cipalam-sistema/target/classes started by arthuremanuel in /Applications/XAMPP/xamppfiles/htdocs/GitHub/Projeto-Pratico/Projeto-Pratico/Sistema/spring-cipalam/cipalam-sistema)
+2025-09-04T09:50:48.354-03:00  INFO 48456 --- [  restartedMain] c.c.c.CipalamSistemaApplication          : No active profile set, falling back to 1 default profile: "default"
+2025-09-04T09:50:48.431-03:00  INFO 48456 --- [  restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-09-04T09:50:48.441-03:00  INFO 48456 --- [  restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 9 ms. Found 13 JPA repository interfaces.
+2025-09-04T09:50:48.507-03:00  INFO 48456 --- [  restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2025-09-04T09:50:48.507-03:00  INFO 48456 --- [  restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-09-04T09:50:48.507-03:00  INFO 48456 --- [  restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.44]
+2025-09-04T09:50:48.512-03:00  INFO 48456 --- [  restartedMain] o.a.c.c.C.[Tomcat-32].[localhost].[/]    : Initializing Spring embedded WebApplicationContext
+2025-09-04T09:50:48.512-03:00  INFO 48456 --- [  restartedMain] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 157 ms
+2025-09-04T09:50:48.542-03:00  INFO 48456 --- [  restartedMain] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-09-04T09:50:48.545-03:00  INFO 48456 --- [  restartedMain] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-09-04T09:50:48.551-03:00  INFO 48456 --- [  restartedMain] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-09-04T09:50:48.552-03:00  INFO 48456 --- [  restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-76 - Starting...
+2025-09-04T09:50:48.564-03:00  INFO 48456 --- [  restartedMain] com.zaxxer.hikari.pool.HikariPool        : HikariPool-76 - Added connection com.mysql.cj.jdbc.ConnectionImpl@3a707334
+2025-09-04T09:50:48.564-03:00  INFO 48456 --- [  restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-76 - Start completed.
+2025-09-04T09:50:48.566-03:00  WARN 48456 --- [  restartedMain] org.hibernate.dialect.Dialect            : HHH000511: The 5.5.5 version for [org.hibernate.dialect.MySQLDialect] is no longer supported, hence certain features may not work properly. The minimum supported version is 8.0.0. Check the community dialects project for available legacy versions.
+2025-09-04T09:50:48.566-03:00  INFO 48456 --- [  restartedMain] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-76)']
+	Database driver: undefined/unknown
+	Database version: 5.5.5
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-09-04T09:50:48.667-03:00  INFO 48456 --- [  restartedMain] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-09-04T09:50:48.667-03:00  INFO 48456 --- [  restartedMain] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-09-04T09:50:48.752-03:00  INFO 48456 --- [  restartedMain] eAuthenticationProviderManagerConfigurer : Global AuthenticationManager configured with AuthenticationProvider bean with name authenticationProvider
+2025-09-04T09:50:48.752-03:00  WARN 48456 --- [  restartedMain] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with an AuthenticationProvider bean. UserDetailsService beans will not be used by Spring Security for automatically configuring username/password login. Consider removing the AuthenticationProvider bean. Alternatively, consider using the UserDetailsService in a manually instantiated DaoAuthenticationProvider. If the current configuration is intentional, to turn off this warning, increase the logging level of 'org.springframework.security.config.annotation.authentication.configuration.InitializeUserDetailsBeanManagerConfigurer' to ERROR
+2025-09-04T09:50:48.917-03:00  WARN 48456 --- [  restartedMain] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-09-04T09:50:49.112-03:00  INFO 48456 --- [  restartedMain] o.s.b.d.a.OptionalLiveReloadServer       : LiveReload server is running on port 35729
+2025-09-04T09:50:49.118-03:00  INFO 48456 --- [  restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/'
+2025-09-04T09:50:49.120-03:00  INFO 48456 --- [  restartedMain] c.c.c.CipalamSistemaApplication          : Started CipalamSistemaApplication in 0.776 seconds (process running for 18421.252)
+Hibernate: select l1_0.idtblogin,l1_0.tbPessoa_idPessoa,l1_0.senha,l1_0.usuario from tblogin l1_0 where l1_0.usuario=?
+Hibernate: select p1_0.idPessoa,p1_0.ativo,p1_0.caminhoIdentidadePessoa,p1_0.caminhoImagem,p1_0.CpfPessoa,p1_0.dataCriacao,p1_0.dtNascPessoa,p1_0.email,p1_0.NmPessoa,p1_0.profissao,p1_0.renda,p1_0.telefone from tbPessoa p1_0 where p1_0.idPessoa=?
+Hibernate: select l1_0.idtblogin,l1_0.tbPessoa_idPessoa,l1_0.senha,l1_0.usuario from tblogin l1_0 where l1_0.usuario=?
+Hibernate: select p1_0.idPessoa,p1_0.ativo,p1_0.caminhoIdentidadePessoa,p1_0.caminhoImagem,p1_0.CpfPessoa,p1_0.dataCriacao,p1_0.dtNascPessoa,p1_0.email,p1_0.NmPessoa,p1_0.profissao,p1_0.renda,p1_0.telefone from tbPessoa p1_0 where p1_0.idPessoa=?
+2025-09-04T09:50:49.146-03:00  INFO 48456 --- [  restartedMain] .ConditionEvaluationDeltaLoggingListener : Condition evaluation unchanged
+2025-09-04T09:50:51.552-03:00  INFO 48456 --- [   File Watcher] rtingClassPathChangeChangedEventListener : Restarting due to 1 class path change (0 additions, 0 deletions, 1 modification)
+2025-09-04T09:50:51.574-03:00  INFO 48456 --- [     Thread-283] o.s.b.w.e.tomcat.GracefulShutdown        : Commencing graceful shutdown. Waiting for active requests to complete
+2025-09-04T09:50:51.581-03:00  INFO 48456 --- [tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown        : Graceful shutdown complete
+2025-09-04T09:50:51.586-03:00  INFO 48456 --- [     Thread-283] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-09-04T09:50:51.588-03:00  INFO 48456 --- [     Thread-283] com.zaxxer.hikari.HikariDataSource       : HikariPool-76 - Shutdown initiated...
+2025-09-04T09:50:51.590-03:00  INFO 48456 --- [     Thread-283] com.zaxxer.hikari.HikariDataSource       : HikariPool-76 - Shutdown completed.
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v3.4.9)
+
+2025-09-04T09:50:51.685-03:00  INFO 48456 --- [  restartedMain] c.c.c.CipalamSistemaApplication          : Starting CipalamSistemaApplication using Java 21.0.6 with PID 48456 (/Applications/XAMPP/xamppfiles/htdocs/GitHub/Projeto-Pratico/Projeto-Pratico/Sistema/spring-cipalam/cipalam-sistema/target/classes started by arthuremanuel in /Applications/XAMPP/xamppfiles/htdocs/GitHub/Projeto-Pratico/Projeto-Pratico/Sistema/spring-cipalam/cipalam-sistema)
+2025-09-04T09:50:51.685-03:00  INFO 48456 --- [  restartedMain] c.c.c.CipalamSistemaApplication          : No active profile set, falling back to 1 default profile: "default"
+2025-09-04T09:50:51.746-03:00  INFO 48456 --- [  restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-09-04T09:50:51.756-03:00  INFO 48456 --- [  restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 8 ms. Found 13 JPA repository interfaces.
+2025-09-04T09:50:51.818-03:00  INFO 48456 --- [  restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2025-09-04T09:50:51.818-03:00  INFO 48456 --- [  restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-09-04T09:50:51.818-03:00  INFO 48456 --- [  restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.44]
+2025-09-04T09:50:51.822-03:00  INFO 48456 --- [  restartedMain] o.a.c.c.C.[Tomcat-32].[localhost].[/]    : Initializing Spring embedded WebApplicationContext
+2025-09-04T09:50:51.822-03:00  INFO 48456 --- [  restartedMain] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 136 ms
+2025-09-04T09:50:51.850-03:00  INFO 48456 --- [  restartedMain] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-09-04T09:50:51.851-03:00  INFO 48456 --- [  restartedMain] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-09-04T09:50:51.855-03:00  INFO 48456 --- [  restartedMain] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-09-04T09:50:51.855-03:00  INFO 48456 --- [  restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-77 - Starting...
+2025-09-04T09:50:51.859-03:00  INFO 48456 --- [  restartedMain] com.zaxxer.hikari.pool.HikariPool        : HikariPool-77 - Added connection com.mysql.cj.jdbc.ConnectionImpl@39e92b57
+2025-09-04T09:50:51.859-03:00  INFO 48456 --- [  restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-77 - Start completed.
+2025-09-04T09:50:51.860-03:00  WARN 48456 --- [  restartedMain] org.hibernate.dialect.Dialect            : HHH000511: The 5.5.5 version for [org.hibernate.dialect.MySQLDialect] is no longer supported, hence certain features may not work properly. The minimum supported version is 8.0.0. Check the community dialects project for available legacy versions.
+2025-09-04T09:50:51.860-03:00  INFO 48456 --- [  restartedMain] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-77)']
+	Database driver: undefined/unknown
+	Database version: 5.5.5
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-09-04T09:50:51.952-03:00  INFO 48456 --- [  restartedMain] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-09-04T09:50:51.953-03:00  INFO 48456 --- [  restartedMain] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-09-04T09:50:52.039-03:00  INFO 48456 --- [  restartedMain] eAuthenticationProviderManagerConfigurer : Global AuthenticationManager configured with AuthenticationProvider bean with name authenticationProvider
+2025-09-04T09:50:52.039-03:00  WARN 48456 --- [  restartedMain] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with an AuthenticationProvider bean. UserDetailsService beans will not be used by Spring Security for automatically configuring username/password login. Consider removing the AuthenticationProvider bean. Alternatively, consider using the UserDetailsService in a manually instantiated DaoAuthenticationProvider. If the current configuration is intentional, to turn off this warning, increase the logging level of 'org.springframework.security.config.annotation.authentication.configuration.InitializeUserDetailsBeanManagerConfigurer' to ERROR
+2025-09-04T09:50:52.195-03:00  WARN 48456 --- [  restartedMain] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-09-04T09:50:52.375-03:00  INFO 48456 --- [  restartedMain] o.s.b.d.a.OptionalLiveReloadServer       : LiveReload server is running on port 35729
+2025-09-04T09:50:52.381-03:00  INFO 48456 --- [  restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/'
+2025-09-04T09:50:52.382-03:00  INFO 48456 --- [  restartedMain] c.c.c.CipalamSistemaApplication          : Started CipalamSistemaApplication in 0.706 seconds (process running for 18424.514)
+Hibernate: select l1_0.idtblogin,l1_0.tbPessoa_idPessoa,l1_0.senha,l1_0.usuario from tblogin l1_0 where l1_0.usuario=?
+Hibernate: select p1_0.idPessoa,p1_0.ativo,p1_0.caminhoIdentidadePessoa,p1_0.caminhoImagem,p1_0.CpfPessoa,p1_0.dataCriacao,p1_0.dtNascPessoa,p1_0.email,p1_0.NmPessoa,p1_0.profissao,p1_0.renda,p1_0.telefone from tbPessoa p1_0 where p1_0.idPessoa=?
+Hibernate: select l1_0.idtblogin,l1_0.tbPessoa_idPessoa,l1_0.senha,l1_0.usuario from tblogin l1_0 where l1_0.usuario=?
+Hibernate: select p1_0.idPessoa,p1_0.ativo,p1_0.caminhoIdentidadePessoa,p1_0.caminhoImagem,p1_0.CpfPessoa,p1_0.dataCriacao,p1_0.dtNascPessoa,p1_0.email,p1_0.NmPessoa,p1_0.profissao,p1_0.renda,p1_0.telefone from tbPessoa p1_0 where p1_0.idPessoa=?
+2025-09-04T09:50:52.406-03:00  INFO 48456 --- [  restartedMain] .ConditionEvaluationDeltaLoggingListener : Condition evaluation unchanged
+2025-09-04T09:50:57.833-03:00  INFO 48456 --- [   File Watcher] rtingClassPathChangeChangedEventListener : Restarting due to 1 class path change (0 additions, 0 deletions, 1 modification)
+2025-09-04T09:50:57.846-03:00  INFO 48456 --- [     Thread-287] o.s.b.w.e.tomcat.GracefulShutdown        : Commencing graceful shutdown. Waiting for active requests to complete
+2025-09-04T09:50:57.849-03:00  INFO 48456 --- [tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown        : Graceful shutdown complete
+2025-09-04T09:50:57.863-03:00  INFO 48456 --- [     Thread-287] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-09-04T09:50:57.870-03:00  INFO 48456 --- [     Thread-287] com.zaxxer.hikari.HikariDataSource       : HikariPool-77 - Shutdown initiated...
+2025-09-04T09:50:57.877-03:00  INFO 48456 --- [     Thread-287] com.zaxxer.hikari.HikariDataSource       : HikariPool-77 - Shutdown completed.
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v3.4.9)
+
+2025-09-04T09:50:57.980-03:00  INFO 48456 --- [  restartedMain] c.c.c.CipalamSistemaApplication          : Starting CipalamSistemaApplication using Java 21.0.6 with PID 48456 (/Applications/XAMPP/xamppfiles/htdocs/GitHub/Projeto-Pratico/Projeto-Pratico/Sistema/spring-cipalam/cipalam-sistema/target/classes started by arthuremanuel in /Applications/XAMPP/xamppfiles/htdocs/GitHub/Projeto-Pratico/Projeto-Pratico/Sistema/spring-cipalam/cipalam-sistema)
+2025-09-04T09:50:57.980-03:00  INFO 48456 --- [  restartedMain] c.c.c.CipalamSistemaApplication          : No active profile set, falling back to 1 default profile: "default"
+2025-09-04T09:50:58.067-03:00  INFO 48456 --- [  restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-09-04T09:50:58.083-03:00  INFO 48456 --- [  restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 15 ms. Found 13 JPA repository interfaces.
+2025-09-04T09:50:58.612-03:00  INFO 48456 --- [  restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2025-09-04T09:50:58.617-03:00  INFO 48456 --- [  restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-09-04T09:50:58.617-03:00  INFO 48456 --- [  restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.44]
+2025-09-04T09:50:58.632-03:00  INFO 48456 --- [  restartedMain] o.a.c.c.C.[Tomcat-32].[localhost].[/]    : Initializing Spring embedded WebApplicationContext
+2025-09-04T09:50:58.632-03:00  INFO 48456 --- [  restartedMain] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 651 ms
+2025-09-04T09:50:58.714-03:00  INFO 48456 --- [  restartedMain] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-09-04T09:50:58.716-03:00  INFO 48456 --- [  restartedMain] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-09-04T09:50:58.721-03:00  INFO 48456 --- [  restartedMain] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-09-04T09:50:58.722-03:00  INFO 48456 --- [  restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-78 - Starting...
+2025-09-04T09:50:58.729-03:00  INFO 48456 --- [  restartedMain] com.zaxxer.hikari.pool.HikariPool        : HikariPool-78 - Added connection com.mysql.cj.jdbc.ConnectionImpl@24b18f16
+2025-09-04T09:50:58.729-03:00  INFO 48456 --- [  restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-78 - Start completed.
+2025-09-04T09:50:58.731-03:00  WARN 48456 --- [  restartedMain] org.hibernate.dialect.Dialect            : HHH000511: The 5.5.5 version for [org.hibernate.dialect.MySQLDialect] is no longer supported, hence certain features may not work properly. The minimum supported version is 8.0.0. Check the community dialects project for available legacy versions.
+2025-09-04T09:50:58.732-03:00  INFO 48456 --- [  restartedMain] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-78)']
+	Database driver: undefined/unknown
+	Database version: 5.5.5
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-09-04T09:50:58.861-03:00  INFO 48456 --- [  restartedMain] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-09-04T09:50:58.861-03:00  INFO 48456 --- [  restartedMain] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-09-04T09:50:59.003-03:00  INFO 48456 --- [  restartedMain] eAuthenticationProviderManagerConfigurer : Global AuthenticationManager configured with AuthenticationProvider bean with name authenticationProvider
+2025-09-04T09:50:59.004-03:00  WARN 48456 --- [  restartedMain] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with an AuthenticationProvider bean. UserDetailsService beans will not be used by Spring Security for automatically configuring username/password login. Consider removing the AuthenticationProvider bean. Alternatively, consider using the UserDetailsService in a manually instantiated DaoAuthenticationProvider. If the current configuration is intentional, to turn off this warning, increase the logging level of 'org.springframework.security.config.annotation.authentication.configuration.InitializeUserDetailsBeanManagerConfigurer' to ERROR
+2025-09-04T09:50:59.252-03:00  WARN 48456 --- [  restartedMain] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-09-04T09:50:59.525-03:00  INFO 48456 --- [  restartedMain] o.s.b.d.a.OptionalLiveReloadServer       : LiveReload server is running on port 35729
+2025-09-04T09:50:59.534-03:00  INFO 48456 --- [  restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/'
+2025-09-04T09:50:59.536-03:00  INFO 48456 --- [  restartedMain] c.c.c.CipalamSistemaApplication          : Started CipalamSistemaApplication in 1.564 seconds (process running for 18431.668)
+Hibernate: select l1_0.idtblogin,l1_0.tbPessoa_idPessoa,l1_0.senha,l1_0.usuario from tblogin l1_0 where l1_0.usuario=?
+Hibernate: select p1_0.idPessoa,p1_0.ativo,p1_0.caminhoIdentidadePessoa,p1_0.caminhoImagem,p1_0.CpfPessoa,p1_0.dataCriacao,p1_0.dtNascPessoa,p1_0.email,p1_0.NmPessoa,p1_0.profissao,p1_0.renda,p1_0.telefone from tbPessoa p1_0 where p1_0.idPessoa=?
+Hibernate: select l1_0.idtblogin,l1_0.tbPessoa_idPessoa,l1_0.senha,l1_0.usuario from tblogin l1_0 where l1_0.usuario=?
+Hibernate: select p1_0.idPessoa,p1_0.ativo,p1_0.caminhoIdentidadePessoa,p1_0.caminhoImagem,p1_0.CpfPessoa,p1_0.dataCriacao,p1_0.dtNascPessoa,p1_0.email,p1_0.NmPessoa,p1_0.profissao,p1_0.renda,p1_0.telefone from tbPessoa p1_0 where p1_0.idPessoa=?
+2025-09-04T09:50:59.585-03:00  INFO 48456 --- [  restartedMain] .ConditionEvaluationDeltaLoggingListener : Condition evaluation unchanged
+2025-09-04T09:51:12.894-03:00  INFO 48456 --- [   File Watcher] rtingClassPathChangeChangedEventListener : Restarting due to 1 class path change (0 additions, 0 deletions, 1 modification)
+2025-09-04T09:51:12.903-03:00  INFO 48456 --- [     Thread-291] o.s.b.w.e.tomcat.GracefulShutdown        : Commencing graceful shutdown. Waiting for active requests to complete
+2025-09-04T09:51:12.913-03:00  INFO 48456 --- [tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown        : Graceful shutdown complete
+2025-09-04T09:51:12.920-03:00  INFO 48456 --- [     Thread-291] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-09-04T09:51:12.930-03:00  INFO 48456 --- [     Thread-291] com.zaxxer.hikari.HikariDataSource       : HikariPool-78 - Shutdown initiated...
+2025-09-04T09:51:12.934-03:00  INFO 48456 --- [     Thread-291] com.zaxxer.hikari.HikariDataSource       : HikariPool-78 - Shutdown completed.
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v3.4.9)
+
+2025-09-04T09:51:13.065-03:00  INFO 48456 --- [  restartedMain] c.c.c.CipalamSistemaApplication          : Starting CipalamSistemaApplication using Java 21.0.6 with PID 48456 (/Applications/XAMPP/xamppfiles/htdocs/GitHub/Projeto-Pratico/Projeto-Pratico/Sistema/spring-cipalam/cipalam-sistema/target/classes started by arthuremanuel in /Applications/XAMPP/xamppfiles/htdocs/GitHub/Projeto-Pratico/Projeto-Pratico/Sistema/spring-cipalam/cipalam-sistema)
+2025-09-04T09:51:13.065-03:00  INFO 48456 --- [  restartedMain] c.c.c.CipalamSistemaApplication          : No active profile set, falling back to 1 default profile: "default"
+2025-09-04T09:51:13.176-03:00  INFO 48456 --- [  restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-09-04T09:51:13.188-03:00  INFO 48456 --- [  restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 11 ms. Found 13 JPA repository interfaces.
+2025-09-04T09:51:13.260-03:00  INFO 48456 --- [  restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2025-09-04T09:51:13.261-03:00  INFO 48456 --- [  restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-09-04T09:51:13.261-03:00  INFO 48456 --- [  restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.44]
+2025-09-04T09:51:13.264-03:00  INFO 48456 --- [  restartedMain] o.a.c.c.C.[Tomcat-32].[localhost].[/]    : Initializing Spring embedded WebApplicationContext
+2025-09-04T09:51:13.264-03:00  INFO 48456 --- [  restartedMain] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 198 ms
+2025-09-04T09:51:13.292-03:00  INFO 48456 --- [  restartedMain] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-09-04T09:51:13.292-03:00  INFO 48456 --- [  restartedMain] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-09-04T09:51:13.296-03:00  INFO 48456 --- [  restartedMain] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-09-04T09:51:13.296-03:00  INFO 48456 --- [  restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-79 - Starting...
+2025-09-04T09:51:13.337-03:00  INFO 48456 --- [  restartedMain] com.zaxxer.hikari.pool.HikariPool        : HikariPool-79 - Added connection com.mysql.cj.jdbc.ConnectionImpl@695790f9
+2025-09-04T09:51:13.337-03:00  INFO 48456 --- [  restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-79 - Start completed.
+2025-09-04T09:51:13.338-03:00  WARN 48456 --- [  restartedMain] org.hibernate.dialect.Dialect            : HHH000511: The 5.5.5 version for [org.hibernate.dialect.MySQLDialect] is no longer supported, hence certain features may not work properly. The minimum supported version is 8.0.0. Check the community dialects project for available legacy versions.
+2025-09-04T09:51:13.338-03:00  INFO 48456 --- [  restartedMain] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-79)']
+	Database driver: undefined/unknown
+	Database version: 5.5.5
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-09-04T09:51:13.454-03:00  INFO 48456 --- [  restartedMain] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-09-04T09:51:13.454-03:00  INFO 48456 --- [  restartedMain] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-09-04T09:51:13.571-03:00  INFO 48456 --- [  restartedMain] eAuthenticationProviderManagerConfigurer : Global AuthenticationManager configured with AuthenticationProvider bean with name authenticationProvider
+2025-09-04T09:51:13.571-03:00  WARN 48456 --- [  restartedMain] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with an AuthenticationProvider bean. UserDetailsService beans will not be used by Spring Security for automatically configuring username/password login. Consider removing the AuthenticationProvider bean. Alternatively, consider using the UserDetailsService in a manually instantiated DaoAuthenticationProvider. If the current configuration is intentional, to turn off this warning, increase the logging level of 'org.springframework.security.config.annotation.authentication.configuration.InitializeUserDetailsBeanManagerConfigurer' to ERROR
+2025-09-04T09:51:13.780-03:00  WARN 48456 --- [  restartedMain] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-09-04T09:51:13.984-03:00  INFO 48456 --- [  restartedMain] o.s.b.d.a.OptionalLiveReloadServer       : LiveReload server is running on port 35729
+2025-09-04T09:51:13.992-03:00  INFO 48456 --- [  restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/'
+2025-09-04T09:51:13.994-03:00  INFO 48456 --- [  restartedMain] c.c.c.CipalamSistemaApplication          : Started CipalamSistemaApplication in 0.941 seconds (process running for 18446.126)
+Hibernate: select l1_0.idtblogin,l1_0.tbPessoa_idPessoa,l1_0.senha,l1_0.usuario from tblogin l1_0 where l1_0.usuario=?
+Hibernate: select p1_0.idPessoa,p1_0.ativo,p1_0.caminhoIdentidadePessoa,p1_0.caminhoImagem,p1_0.CpfPessoa,p1_0.dataCriacao,p1_0.dtNascPessoa,p1_0.email,p1_0.NmPessoa,p1_0.profissao,p1_0.renda,p1_0.telefone from tbPessoa p1_0 where p1_0.idPessoa=?
+Hibernate: select l1_0.idtblogin,l1_0.tbPessoa_idPessoa,l1_0.senha,l1_0.usuario from tblogin l1_0 where l1_0.usuario=?
+Hibernate: select p1_0.idPessoa,p1_0.ativo,p1_0.caminhoIdentidadePessoa,p1_0.caminhoImagem,p1_0.CpfPessoa,p1_0.dataCriacao,p1_0.dtNascPessoa,p1_0.email,p1_0.NmPessoa,p1_0.profissao,p1_0.renda,p1_0.telefone from tbPessoa p1_0 where p1_0.idPessoa=?
+2025-09-04T09:51:14.044-03:00  INFO 48456 --- [  restartedMain] .ConditionEvaluationDeltaLoggingListener : Condition evaluation unchanged
+2025-09-04T09:51:15.404-03:00  INFO 48456 --- [   File Watcher] rtingClassPathChangeChangedEventListener : Restarting due to 1 class path change (0 additions, 0 deletions, 1 modification)
+2025-09-04T09:51:15.413-03:00  INFO 48456 --- [     Thread-295] o.s.b.w.e.tomcat.GracefulShutdown        : Commencing graceful shutdown. Waiting for active requests to complete
+2025-09-04T09:51:15.416-03:00  INFO 48456 --- [tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown        : Graceful shutdown complete
+2025-09-04T09:51:15.423-03:00  INFO 48456 --- [     Thread-295] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-09-04T09:51:15.424-03:00  INFO 48456 --- [     Thread-295] com.zaxxer.hikari.HikariDataSource       : HikariPool-79 - Shutdown initiated...
+2025-09-04T09:51:15.426-03:00  INFO 48456 --- [     Thread-295] com.zaxxer.hikari.HikariDataSource       : HikariPool-79 - Shutdown completed.
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v3.4.9)
+
+2025-09-04T09:51:15.554-03:00  INFO 48456 --- [  restartedMain] c.c.c.CipalamSistemaApplication          : Starting CipalamSistemaApplication using Java 21.0.6 with PID 48456 (/Applications/XAMPP/xamppfiles/htdocs/GitHub/Projeto-Pratico/Projeto-Pratico/Sistema/spring-cipalam/cipalam-sistema/target/classes started by arthuremanuel in /Applications/XAMPP/xamppfiles/htdocs/GitHub/Projeto-Pratico/Projeto-Pratico/Sistema/spring-cipalam/cipalam-sistema)
+2025-09-04T09:51:15.554-03:00  INFO 48456 --- [  restartedMain] c.c.c.CipalamSistemaApplication          : No active profile set, falling back to 1 default profile: "default"
+2025-09-04T09:51:15.635-03:00  INFO 48456 --- [  restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-09-04T09:51:15.650-03:00  INFO 48456 --- [  restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 13 ms. Found 13 JPA repository interfaces.
+2025-09-04T09:51:15.722-03:00  INFO 48456 --- [  restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2025-09-04T09:51:15.722-03:00  INFO 48456 --- [  restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-09-04T09:51:15.722-03:00  INFO 48456 --- [  restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.44]
+2025-09-04T09:51:15.726-03:00  INFO 48456 --- [  restartedMain] o.a.c.c.C.[Tomcat-32].[localhost].[/]    : Initializing Spring embedded WebApplicationContext
+2025-09-04T09:51:15.726-03:00  INFO 48456 --- [  restartedMain] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 172 ms
+2025-09-04T09:51:15.767-03:00  INFO 48456 --- [  restartedMain] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-09-04T09:51:15.767-03:00  INFO 48456 --- [  restartedMain] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-09-04T09:51:15.771-03:00  INFO 48456 --- [  restartedMain] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-09-04T09:51:15.771-03:00  INFO 48456 --- [  restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-80 - Starting...
+2025-09-04T09:51:15.776-03:00  INFO 48456 --- [  restartedMain] com.zaxxer.hikari.pool.HikariPool        : HikariPool-80 - Added connection com.mysql.cj.jdbc.ConnectionImpl@4a512789
+2025-09-04T09:51:15.776-03:00  INFO 48456 --- [  restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-80 - Start completed.
+2025-09-04T09:51:15.778-03:00  WARN 48456 --- [  restartedMain] org.hibernate.dialect.Dialect            : HHH000511: The 5.5.5 version for [org.hibernate.dialect.MySQLDialect] is no longer supported, hence certain features may not work properly. The minimum supported version is 8.0.0. Check the community dialects project for available legacy versions.
+2025-09-04T09:51:15.778-03:00  INFO 48456 --- [  restartedMain] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-80)']
+	Database driver: undefined/unknown
+	Database version: 5.5.5
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-09-04T09:51:15.892-03:00  INFO 48456 --- [  restartedMain] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-09-04T09:51:15.892-03:00  INFO 48456 --- [  restartedMain] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-09-04T09:51:16.047-03:00  INFO 48456 --- [  restartedMain] eAuthenticationProviderManagerConfigurer : Global AuthenticationManager configured with AuthenticationProvider bean with name authenticationProvider
+2025-09-04T09:51:16.047-03:00  WARN 48456 --- [  restartedMain] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with an AuthenticationProvider bean. UserDetailsService beans will not be used by Spring Security for automatically configuring username/password login. Consider removing the AuthenticationProvider bean. Alternatively, consider using the UserDetailsService in a manually instantiated DaoAuthenticationProvider. If the current configuration is intentional, to turn off this warning, increase the logging level of 'org.springframework.security.config.annotation.authentication.configuration.InitializeUserDetailsBeanManagerConfigurer' to ERROR
+2025-09-04T09:51:16.246-03:00  WARN 48456 --- [  restartedMain] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-09-04T09:51:16.470-03:00  INFO 48456 --- [  restartedMain] o.s.b.d.a.OptionalLiveReloadServer       : LiveReload server is running on port 35729
+2025-09-04T09:51:16.477-03:00  INFO 48456 --- [  restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/'
+2025-09-04T09:51:16.478-03:00  INFO 48456 --- [  restartedMain] c.c.c.CipalamSistemaApplication          : Started CipalamSistemaApplication in 0.933 seconds (process running for 18448.611)
+Hibernate: select l1_0.idtblogin,l1_0.tbPessoa_idPessoa,l1_0.senha,l1_0.usuario from tblogin l1_0 where l1_0.usuario=?
+Hibernate: select p1_0.idPessoa,p1_0.ativo,p1_0.caminhoIdentidadePessoa,p1_0.caminhoImagem,p1_0.CpfPessoa,p1_0.dataCriacao,p1_0.dtNascPessoa,p1_0.email,p1_0.NmPessoa,p1_0.profissao,p1_0.renda,p1_0.telefone from tbPessoa p1_0 where p1_0.idPessoa=?
+Hibernate: select l1_0.idtblogin,l1_0.tbPessoa_idPessoa,l1_0.senha,l1_0.usuario from tblogin l1_0 where l1_0.usuario=?
+Hibernate: select p1_0.idPessoa,p1_0.ativo,p1_0.caminhoIdentidadePessoa,p1_0.caminhoImagem,p1_0.CpfPessoa,p1_0.dataCriacao,p1_0.dtNascPessoa,p1_0.email,p1_0.NmPessoa,p1_0.profissao,p1_0.renda,p1_0.telefone from tbPessoa p1_0 where p1_0.idPessoa=?
+2025-09-04T09:51:16.507-03:00  INFO 48456 --- [  restartedMain] .ConditionEvaluationDeltaLoggingListener : Condition evaluation unchanged
+2025-09-04T09:51:26.994-03:00  INFO 48456 --- [   File Watcher] rtingClassPathChangeChangedEventListener : Restarting due to 1 class path change (0 additions, 0 deletions, 1 modification)
+2025-09-04T09:51:26.999-03:00  INFO 48456 --- [     Thread-299] o.s.b.w.e.tomcat.GracefulShutdown        : Commencing graceful shutdown. Waiting for active requests to complete
+2025-09-04T09:51:27.003-03:00  INFO 48456 --- [tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown        : Graceful shutdown complete
+2025-09-04T09:51:27.008-03:00  INFO 48456 --- [     Thread-299] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-09-04T09:51:27.012-03:00  INFO 48456 --- [     Thread-299] com.zaxxer.hikari.HikariDataSource       : HikariPool-80 - Shutdown initiated...
+2025-09-04T09:51:27.013-03:00  INFO 48456 --- [     Thread-299] com.zaxxer.hikari.HikariDataSource       : HikariPool-80 - Shutdown completed.
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v3.4.9)
+
+2025-09-04T09:51:27.122-03:00  INFO 48456 --- [  restartedMain] c.c.c.CipalamSistemaApplication          : Starting CipalamSistemaApplication using Java 21.0.6 with PID 48456 (/Applications/XAMPP/xamppfiles/htdocs/GitHub/Projeto-Pratico/Projeto-Pratico/Sistema/spring-cipalam/cipalam-sistema/target/classes started by arthuremanuel in /Applications/XAMPP/xamppfiles/htdocs/GitHub/Projeto-Pratico/Projeto-Pratico/Sistema/spring-cipalam/cipalam-sistema)
+2025-09-04T09:51:27.123-03:00  INFO 48456 --- [  restartedMain] c.c.c.CipalamSistemaApplication          : No active profile set, falling back to 1 default profile: "default"
+2025-09-04T09:51:27.231-03:00  INFO 48456 --- [  restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-09-04T09:51:27.241-03:00  INFO 48456 --- [  restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 10 ms. Found 13 JPA repository interfaces.
+2025-09-04T09:51:27.308-03:00  INFO 48456 --- [  restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2025-09-04T09:51:27.308-03:00  INFO 48456 --- [  restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-09-04T09:51:27.308-03:00  INFO 48456 --- [  restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.44]
+2025-09-04T09:51:27.314-03:00  INFO 48456 --- [  restartedMain] o.a.c.c.C.[Tomcat-32].[localhost].[/]    : Initializing Spring embedded WebApplicationContext
+2025-09-04T09:51:27.314-03:00  INFO 48456 --- [  restartedMain] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 189 ms
+2025-09-04T09:51:27.353-03:00  INFO 48456 --- [  restartedMain] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-09-04T09:51:27.354-03:00  INFO 48456 --- [  restartedMain] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-09-04T09:51:27.357-03:00  INFO 48456 --- [  restartedMain] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-09-04T09:51:27.357-03:00  INFO 48456 --- [  restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-81 - Starting...
+2025-09-04T09:51:27.362-03:00  INFO 48456 --- [  restartedMain] com.zaxxer.hikari.pool.HikariPool        : HikariPool-81 - Added connection com.mysql.cj.jdbc.ConnectionImpl@445fd353
+2025-09-04T09:51:27.362-03:00  INFO 48456 --- [  restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-81 - Start completed.
+2025-09-04T09:51:27.363-03:00  WARN 48456 --- [  restartedMain] org.hibernate.dialect.Dialect            : HHH000511: The 5.5.5 version for [org.hibernate.dialect.MySQLDialect] is no longer supported, hence certain features may not work properly. The minimum supported version is 8.0.0. Check the community dialects project for available legacy versions.
+2025-09-04T09:51:27.363-03:00  INFO 48456 --- [  restartedMain] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-81)']
+	Database driver: undefined/unknown
+	Database version: 5.5.5
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-09-04T09:51:27.467-03:00  INFO 48456 --- [  restartedMain] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-09-04T09:51:27.467-03:00  INFO 48456 --- [  restartedMain] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-09-04T09:51:27.588-03:00  INFO 48456 --- [  restartedMain] eAuthenticationProviderManagerConfigurer : Global AuthenticationManager configured with AuthenticationProvider bean with name authenticationProvider
+2025-09-04T09:51:27.588-03:00  WARN 48456 --- [  restartedMain] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with an AuthenticationProvider bean. UserDetailsService beans will not be used by Spring Security for automatically configuring username/password login. Consider removing the AuthenticationProvider bean. Alternatively, consider using the UserDetailsService in a manually instantiated DaoAuthenticationProvider. If the current configuration is intentional, to turn off this warning, increase the logging level of 'org.springframework.security.config.annotation.authentication.configuration.InitializeUserDetailsBeanManagerConfigurer' to ERROR
+2025-09-04T09:51:27.757-03:00  WARN 48456 --- [  restartedMain] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-09-04T09:51:27.950-03:00  INFO 48456 --- [  restartedMain] o.s.b.d.a.OptionalLiveReloadServer       : LiveReload server is running on port 35729
+2025-09-04T09:51:27.956-03:00  INFO 48456 --- [  restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/'
+2025-09-04T09:51:27.958-03:00  INFO 48456 --- [  restartedMain] c.c.c.CipalamSistemaApplication          : Started CipalamSistemaApplication in 0.845 seconds (process running for 18460.09)
+Hibernate: select l1_0.idtblogin,l1_0.tbPessoa_idPessoa,l1_0.senha,l1_0.usuario from tblogin l1_0 where l1_0.usuario=?
+Hibernate: select p1_0.idPessoa,p1_0.ativo,p1_0.caminhoIdentidadePessoa,p1_0.caminhoImagem,p1_0.CpfPessoa,p1_0.dataCriacao,p1_0.dtNascPessoa,p1_0.email,p1_0.NmPessoa,p1_0.profissao,p1_0.renda,p1_0.telefone from tbPessoa p1_0 where p1_0.idPessoa=?
+Hibernate: select l1_0.idtblogin,l1_0.tbPessoa_idPessoa,l1_0.senha,l1_0.usuario from tblogin l1_0 where l1_0.usuario=?
+Hibernate: select p1_0.idPessoa,p1_0.ativo,p1_0.caminhoIdentidadePessoa,p1_0.caminhoImagem,p1_0.CpfPessoa,p1_0.dataCriacao,p1_0.dtNascPessoa,p1_0.email,p1_0.NmPessoa,p1_0.profissao,p1_0.renda,p1_0.telefone from tbPessoa p1_0 where p1_0.idPessoa=?
+2025-09-04T09:51:27.985-03:00  INFO 48456 --- [  restartedMain] .ConditionEvaluationDeltaLoggingListener : Condition evaluation unchanged
+2025-09-04T09:51:52.651-03:00  INFO 48456 --- [   File Watcher] rtingClassPathChangeChangedEventListener : Restarting due to 1 class path change (0 additions, 0 deletions, 1 modification)
+2025-09-04T09:51:52.654-03:00  INFO 48456 --- [     Thread-303] o.s.b.w.e.tomcat.GracefulShutdown        : Commencing graceful shutdown. Waiting for active requests to complete
+2025-09-04T09:51:52.655-03:00  INFO 48456 --- [tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown        : Graceful shutdown complete
+2025-09-04T09:51:52.658-03:00  INFO 48456 --- [     Thread-303] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-09-04T09:51:52.659-03:00  INFO 48456 --- [     Thread-303] com.zaxxer.hikari.HikariDataSource       : HikariPool-81 - Shutdown initiated...
+2025-09-04T09:51:52.661-03:00  INFO 48456 --- [     Thread-303] com.zaxxer.hikari.HikariDataSource       : HikariPool-81 - Shutdown completed.
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v3.4.9)
+
+2025-09-04T09:51:52.751-03:00  INFO 48456 --- [  restartedMain] c.c.c.CipalamSistemaApplication          : Starting CipalamSistemaApplication using Java 21.0.6 with PID 48456 (/Applications/XAMPP/xamppfiles/htdocs/GitHub/Projeto-Pratico/Projeto-Pratico/Sistema/spring-cipalam/cipalam-sistema/target/classes started by arthuremanuel in /Applications/XAMPP/xamppfiles/htdocs/GitHub/Projeto-Pratico/Projeto-Pratico/Sistema/spring-cipalam/cipalam-sistema)
+2025-09-04T09:51:52.751-03:00  INFO 48456 --- [  restartedMain] c.c.c.CipalamSistemaApplication          : No active profile set, falling back to 1 default profile: "default"
+2025-09-04T09:51:52.841-03:00  INFO 48456 --- [  restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-09-04T09:51:52.852-03:00  INFO 48456 --- [  restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 10 ms. Found 13 JPA repository interfaces.
+2025-09-04T09:51:52.951-03:00  INFO 48456 --- [  restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2025-09-04T09:51:52.951-03:00  INFO 48456 --- [  restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-09-04T09:51:52.951-03:00  INFO 48456 --- [  restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.44]
+2025-09-04T09:51:52.955-03:00  INFO 48456 --- [  restartedMain] o.a.c.c.C.[Tomcat-32].[localhost].[/]    : Initializing Spring embedded WebApplicationContext
+2025-09-04T09:51:52.955-03:00  INFO 48456 --- [  restartedMain] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 203 ms
+2025-09-04T09:51:52.989-03:00  INFO 48456 --- [  restartedMain] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-09-04T09:51:52.989-03:00  INFO 48456 --- [  restartedMain] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-09-04T09:51:52.993-03:00  INFO 48456 --- [  restartedMain] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-09-04T09:51:52.993-03:00  INFO 48456 --- [  restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-82 - Starting...
+2025-09-04T09:51:52.998-03:00  INFO 48456 --- [  restartedMain] com.zaxxer.hikari.pool.HikariPool        : HikariPool-82 - Added connection com.mysql.cj.jdbc.ConnectionImpl@dbb8b12
+2025-09-04T09:51:52.998-03:00  INFO 48456 --- [  restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-82 - Start completed.
+2025-09-04T09:51:52.999-03:00  WARN 48456 --- [  restartedMain] org.hibernate.dialect.Dialect            : HHH000511: The 5.5.5 version for [org.hibernate.dialect.MySQLDialect] is no longer supported, hence certain features may not work properly. The minimum supported version is 8.0.0. Check the community dialects project for available legacy versions.
+2025-09-04T09:51:52.999-03:00  INFO 48456 --- [  restartedMain] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-82)']
+	Database driver: undefined/unknown
+	Database version: 5.5.5
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-09-04T09:51:53.083-03:00  INFO 48456 --- [  restartedMain] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-09-04T09:51:53.084-03:00  INFO 48456 --- [  restartedMain] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-09-04T09:51:53.175-03:00  INFO 48456 --- [  restartedMain] eAuthenticationProviderManagerConfigurer : Global AuthenticationManager configured with AuthenticationProvider bean with name authenticationProvider
+2025-09-04T09:51:53.176-03:00  WARN 48456 --- [  restartedMain] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with an AuthenticationProvider bean. UserDetailsService beans will not be used by Spring Security for automatically configuring username/password login. Consider removing the AuthenticationProvider bean. Alternatively, consider using the UserDetailsService in a manually instantiated DaoAuthenticationProvider. If the current configuration is intentional, to turn off this warning, increase the logging level of 'org.springframework.security.config.annotation.authentication.configuration.InitializeUserDetailsBeanManagerConfigurer' to ERROR
+2025-09-04T09:51:53.339-03:00  WARN 48456 --- [  restartedMain] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-09-04T09:51:53.519-03:00  INFO 48456 --- [  restartedMain] o.s.b.d.a.OptionalLiveReloadServer       : LiveReload server is running on port 35729
+2025-09-04T09:51:53.526-03:00  INFO 48456 --- [  restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/'
+2025-09-04T09:51:53.527-03:00  INFO 48456 --- [  restartedMain] c.c.c.CipalamSistemaApplication          : Started CipalamSistemaApplication in 0.783 seconds (process running for 18485.66)
+Hibernate: select l1_0.idtblogin,l1_0.tbPessoa_idPessoa,l1_0.senha,l1_0.usuario from tblogin l1_0 where l1_0.usuario=?
+Hibernate: select p1_0.idPessoa,p1_0.ativo,p1_0.caminhoIdentidadePessoa,p1_0.caminhoImagem,p1_0.CpfPessoa,p1_0.dataCriacao,p1_0.dtNascPessoa,p1_0.email,p1_0.NmPessoa,p1_0.profissao,p1_0.renda,p1_0.telefone from tbPessoa p1_0 where p1_0.idPessoa=?
+Hibernate: select l1_0.idtblogin,l1_0.tbPessoa_idPessoa,l1_0.senha,l1_0.usuario from tblogin l1_0 where l1_0.usuario=?
+Hibernate: select p1_0.idPessoa,p1_0.ativo,p1_0.caminhoIdentidadePessoa,p1_0.caminhoImagem,p1_0.CpfPessoa,p1_0.dataCriacao,p1_0.dtNascPessoa,p1_0.email,p1_0.NmPessoa,p1_0.profissao,p1_0.renda,p1_0.telefone from tbPessoa p1_0 where p1_0.idPessoa=?
+2025-09-04T09:51:53.556-03:00  INFO 48456 --- [  restartedMain] .ConditionEvaluationDeltaLoggingListener : Condition evaluation unchanged
+2025-09-04T09:52:02.851-03:00  INFO 48456 --- [nio-8080-exec-1] o.a.c.c.C.[Tomcat-32].[localhost].[/]    : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-09-04T09:52:02.852-03:00  INFO 48456 --- [nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2025-09-04T09:52:02.859-03:00  INFO 48456 --- [nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 6 ms
+2025-09-04T09:52:14.184-03:00  INFO 48456 --- [   File Watcher] rtingClassPathChangeChangedEventListener : Restarting due to 1 class path change (0 additions, 0 deletions, 1 modification)
+2025-09-04T09:52:14.192-03:00  INFO 48456 --- [     Thread-307] o.s.b.w.e.tomcat.GracefulShutdown        : Commencing graceful shutdown. Waiting for active requests to complete
+2025-09-04T09:52:14.199-03:00  INFO 48456 --- [tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown        : Graceful shutdown complete
+2025-09-04T09:52:14.205-03:00  INFO 48456 --- [     Thread-307] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-09-04T09:52:14.209-03:00  INFO 48456 --- [     Thread-307] com.zaxxer.hikari.HikariDataSource       : HikariPool-82 - Shutdown initiated...
+2025-09-04T09:52:14.215-03:00  INFO 48456 --- [     Thread-307] com.zaxxer.hikari.HikariDataSource       : HikariPool-82 - Shutdown completed.
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v3.4.9)
+
+2025-09-04T09:52:14.324-03:00  INFO 48456 --- [  restartedMain] c.c.c.CipalamSistemaApplication          : Starting CipalamSistemaApplication using Java 21.0.6 with PID 48456 (/Applications/XAMPP/xamppfiles/htdocs/GitHub/Projeto-Pratico/Projeto-Pratico/Sistema/spring-cipalam/cipalam-sistema/target/classes started by arthuremanuel in /Applications/XAMPP/xamppfiles/htdocs/GitHub/Projeto-Pratico/Projeto-Pratico/Sistema/spring-cipalam/cipalam-sistema)
+2025-09-04T09:52:14.324-03:00  INFO 48456 --- [  restartedMain] c.c.c.CipalamSistemaApplication          : No active profile set, falling back to 1 default profile: "default"
+2025-09-04T09:52:14.412-03:00  INFO 48456 --- [  restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-09-04T09:52:14.423-03:00  INFO 48456 --- [  restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 10 ms. Found 13 JPA repository interfaces.
+2025-09-04T09:52:14.488-03:00  INFO 48456 --- [  restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2025-09-04T09:52:14.488-03:00  INFO 48456 --- [  restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-09-04T09:52:14.488-03:00  INFO 48456 --- [  restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.44]
+2025-09-04T09:52:14.492-03:00  INFO 48456 --- [  restartedMain] o.a.c.c.C.[Tomcat-32].[localhost].[/]    : Initializing Spring embedded WebApplicationContext
+2025-09-04T09:52:14.492-03:00  INFO 48456 --- [  restartedMain] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 167 ms
+2025-09-04T09:52:14.522-03:00  INFO 48456 --- [  restartedMain] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-09-04T09:52:14.522-03:00  INFO 48456 --- [  restartedMain] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-09-04T09:52:14.526-03:00  INFO 48456 --- [  restartedMain] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-09-04T09:52:14.526-03:00  INFO 48456 --- [  restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-83 - Starting...
+2025-09-04T09:52:14.532-03:00  INFO 48456 --- [  restartedMain] com.zaxxer.hikari.pool.HikariPool        : HikariPool-83 - Added connection com.mysql.cj.jdbc.ConnectionImpl@47bd23c6
+2025-09-04T09:52:14.532-03:00  INFO 48456 --- [  restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-83 - Start completed.
+2025-09-04T09:52:14.533-03:00  WARN 48456 --- [  restartedMain] org.hibernate.dialect.Dialect            : HHH000511: The 5.5.5 version for [org.hibernate.dialect.MySQLDialect] is no longer supported, hence certain features may not work properly. The minimum supported version is 8.0.0. Check the community dialects project for available legacy versions.
+2025-09-04T09:52:14.533-03:00  INFO 48456 --- [  restartedMain] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-83)']
+	Database driver: undefined/unknown
+	Database version: 5.5.5
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-09-04T09:52:14.609-03:00  INFO 48456 --- [  restartedMain] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-09-04T09:52:14.609-03:00  INFO 48456 --- [  restartedMain] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-09-04T09:52:14.715-03:00  INFO 48456 --- [  restartedMain] eAuthenticationProviderManagerConfigurer : Global AuthenticationManager configured with AuthenticationProvider bean with name authenticationProvider
+2025-09-04T09:52:14.715-03:00  WARN 48456 --- [  restartedMain] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with an AuthenticationProvider bean. UserDetailsService beans will not be used by Spring Security for automatically configuring username/password login. Consider removing the AuthenticationProvider bean. Alternatively, consider using the UserDetailsService in a manually instantiated DaoAuthenticationProvider. If the current configuration is intentional, to turn off this warning, increase the logging level of 'org.springframework.security.config.annotation.authentication.configuration.InitializeUserDetailsBeanManagerConfigurer' to ERROR
+2025-09-04T09:52:14.881-03:00  WARN 48456 --- [  restartedMain] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-09-04T09:52:15.062-03:00  INFO 48456 --- [  restartedMain] o.s.b.d.a.OptionalLiveReloadServer       : LiveReload server is running on port 35729
+2025-09-04T09:52:15.068-03:00  INFO 48456 --- [  restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/'
+2025-09-04T09:52:15.070-03:00  INFO 48456 --- [  restartedMain] c.c.c.CipalamSistemaApplication          : Started CipalamSistemaApplication in 0.755 seconds (process running for 18507.202)
+Hibernate: select l1_0.idtblogin,l1_0.tbPessoa_idPessoa,l1_0.senha,l1_0.usuario from tblogin l1_0 where l1_0.usuario=?
+Hibernate: select p1_0.idPessoa,p1_0.ativo,p1_0.caminhoIdentidadePessoa,p1_0.caminhoImagem,p1_0.CpfPessoa,p1_0.dataCriacao,p1_0.dtNascPessoa,p1_0.email,p1_0.NmPessoa,p1_0.profissao,p1_0.renda,p1_0.telefone from tbPessoa p1_0 where p1_0.idPessoa=?
+Hibernate: select l1_0.idtblogin,l1_0.tbPessoa_idPessoa,l1_0.senha,l1_0.usuario from tblogin l1_0 where l1_0.usuario=?
+Hibernate: select p1_0.idPessoa,p1_0.ativo,p1_0.caminhoIdentidadePessoa,p1_0.caminhoImagem,p1_0.CpfPessoa,p1_0.dataCriacao,p1_0.dtNascPessoa,p1_0.email,p1_0.NmPessoa,p1_0.profissao,p1_0.renda,p1_0.telefone from tbPessoa p1_0 where p1_0.idPessoa=?
+2025-09-04T09:52:15.094-03:00  INFO 48456 --- [  restartedMain] .ConditionEvaluationDeltaLoggingListener : Condition evaluation unchanged
+2025-09-04T09:52:39.812-03:00  INFO 48456 --- [   File Watcher] rtingClassPathChangeChangedEventListener : Restarting due to 1 class path change (0 additions, 0 deletions, 1 modification)
+2025-09-04T09:52:39.822-03:00  INFO 48456 --- [     Thread-311] o.s.b.w.e.tomcat.GracefulShutdown        : Commencing graceful shutdown. Waiting for active requests to complete
+2025-09-04T09:52:39.825-03:00  INFO 48456 --- [tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown        : Graceful shutdown complete
+2025-09-04T09:52:39.828-03:00  INFO 48456 --- [     Thread-311] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-09-04T09:52:39.830-03:00  INFO 48456 --- [     Thread-311] com.zaxxer.hikari.HikariDataSource       : HikariPool-83 - Shutdown initiated...
+2025-09-04T09:52:39.832-03:00  INFO 48456 --- [     Thread-311] com.zaxxer.hikari.HikariDataSource       : HikariPool-83 - Shutdown completed.
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v3.4.9)
+
+2025-09-04T09:52:39.949-03:00  INFO 48456 --- [  restartedMain] c.c.c.CipalamSistemaApplication          : Starting CipalamSistemaApplication using Java 21.0.6 with PID 48456 (/Applications/XAMPP/xamppfiles/htdocs/GitHub/Projeto-Pratico/Projeto-Pratico/Sistema/spring-cipalam/cipalam-sistema/target/classes started by arthuremanuel in /Applications/XAMPP/xamppfiles/htdocs/GitHub/Projeto-Pratico/Projeto-Pratico/Sistema/spring-cipalam/cipalam-sistema)
+2025-09-04T09:52:39.949-03:00  INFO 48456 --- [  restartedMain] c.c.c.CipalamSistemaApplication          : No active profile set, falling back to 1 default profile: "default"
+2025-09-04T09:52:40.167-03:00  INFO 48456 --- [  restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-09-04T09:52:40.193-03:00  INFO 48456 --- [  restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 25 ms. Found 13 JPA repository interfaces.
+2025-09-04T09:52:40.314-03:00  INFO 48456 --- [  restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2025-09-04T09:52:40.314-03:00  INFO 48456 --- [  restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-09-04T09:52:40.314-03:00  INFO 48456 --- [  restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.44]
+2025-09-04T09:52:40.319-03:00  INFO 48456 --- [  restartedMain] o.a.c.c.C.[Tomcat-32].[localhost].[/]    : Initializing Spring embedded WebApplicationContext
+2025-09-04T09:52:40.319-03:00  INFO 48456 --- [  restartedMain] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 368 ms
+2025-09-04T09:52:40.359-03:00  INFO 48456 --- [  restartedMain] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-09-04T09:52:40.360-03:00  INFO 48456 --- [  restartedMain] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-09-04T09:52:40.374-03:00  INFO 48456 --- [  restartedMain] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-09-04T09:52:40.378-03:00  INFO 48456 --- [  restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-84 - Starting...
+2025-09-04T09:52:40.387-03:00  INFO 48456 --- [  restartedMain] com.zaxxer.hikari.pool.HikariPool        : HikariPool-84 - Added connection com.mysql.cj.jdbc.ConnectionImpl@5d77f5e1
+2025-09-04T09:52:40.387-03:00  INFO 48456 --- [  restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-84 - Start completed.
+2025-09-04T09:52:40.390-03:00  WARN 48456 --- [  restartedMain] org.hibernate.dialect.Dialect            : HHH000511: The 5.5.5 version for [org.hibernate.dialect.MySQLDialect] is no longer supported, hence certain features may not work properly. The minimum supported version is 8.0.0. Check the community dialects project for available legacy versions.
+2025-09-04T09:52:40.392-03:00  INFO 48456 --- [  restartedMain] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-84)']
+	Database driver: undefined/unknown
+	Database version: 5.5.5
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-09-04T09:52:40.864-03:00  INFO 48456 --- [  restartedMain] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-09-04T09:52:40.864-03:00  INFO 48456 --- [  restartedMain] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-09-04T09:52:41.131-03:00  INFO 48456 --- [  restartedMain] eAuthenticationProviderManagerConfigurer : Global AuthenticationManager configured with AuthenticationProvider bean with name authenticationProvider
+2025-09-04T09:52:41.131-03:00  WARN 48456 --- [  restartedMain] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with an AuthenticationProvider bean. UserDetailsService beans will not be used by Spring Security for automatically configuring username/password login. Consider removing the AuthenticationProvider bean. Alternatively, consider using the UserDetailsService in a manually instantiated DaoAuthenticationProvider. If the current configuration is intentional, to turn off this warning, increase the logging level of 'org.springframework.security.config.annotation.authentication.configuration.InitializeUserDetailsBeanManagerConfigurer' to ERROR
+2025-09-04T09:52:41.421-03:00  WARN 48456 --- [  restartedMain] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-09-04T09:52:41.718-03:00  INFO 48456 --- [  restartedMain] o.s.b.d.a.OptionalLiveReloadServer       : LiveReload server is running on port 35729
+2025-09-04T09:52:41.735-03:00  INFO 48456 --- [  restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/'
+2025-09-04T09:52:41.738-03:00  INFO 48456 --- [  restartedMain] c.c.c.CipalamSistemaApplication          : Started CipalamSistemaApplication in 1.797 seconds (process running for 18533.87)
+Hibernate: select l1_0.idtblogin,l1_0.tbPessoa_idPessoa,l1_0.senha,l1_0.usuario from tblogin l1_0 where l1_0.usuario=?
+Hibernate: select p1_0.idPessoa,p1_0.ativo,p1_0.caminhoIdentidadePessoa,p1_0.caminhoImagem,p1_0.CpfPessoa,p1_0.dataCriacao,p1_0.dtNascPessoa,p1_0.email,p1_0.NmPessoa,p1_0.profissao,p1_0.renda,p1_0.telefone from tbPessoa p1_0 where p1_0.idPessoa=?
+Hibernate: select l1_0.idtblogin,l1_0.tbPessoa_idPessoa,l1_0.senha,l1_0.usuario from tblogin l1_0 where l1_0.usuario=?
+Hibernate: select p1_0.idPessoa,p1_0.ativo,p1_0.caminhoIdentidadePessoa,p1_0.caminhoImagem,p1_0.CpfPessoa,p1_0.dataCriacao,p1_0.dtNascPessoa,p1_0.email,p1_0.NmPessoa,p1_0.profissao,p1_0.renda,p1_0.telefone from tbPessoa p1_0 where p1_0.idPessoa=?
+2025-09-04T09:52:41.813-03:00  INFO 48456 --- [  restartedMain] .ConditionEvaluationDeltaLoggingListener : Condition evaluation unchanged
+2025-09-04T09:52:54.315-03:00  INFO 48456 --- [   File Watcher] rtingClassPathChangeChangedEventListener : Restarting due to 1 class path change (0 additions, 0 deletions, 1 modification)
+2025-09-04T09:52:54.325-03:00  INFO 48456 --- [     Thread-315] o.s.b.w.e.tomcat.GracefulShutdown        : Commencing graceful shutdown. Waiting for active requests to complete
+2025-09-04T09:52:54.333-03:00  INFO 48456 --- [tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown        : Graceful shutdown complete
+2025-09-04T09:52:54.335-03:00  INFO 48456 --- [     Thread-315] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-09-04T09:52:54.336-03:00  INFO 48456 --- [     Thread-315] com.zaxxer.hikari.HikariDataSource       : HikariPool-84 - Shutdown initiated...
+2025-09-04T09:52:54.338-03:00  INFO 48456 --- [     Thread-315] com.zaxxer.hikari.HikariDataSource       : HikariPool-84 - Shutdown completed.
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v3.4.9)
+
+2025-09-04T09:52:54.444-03:00  INFO 48456 --- [  restartedMain] c.c.c.CipalamSistemaApplication          : Starting CipalamSistemaApplication using Java 21.0.6 with PID 48456 (/Applications/XAMPP/xamppfiles/htdocs/GitHub/Projeto-Pratico/Projeto-Pratico/Sistema/spring-cipalam/cipalam-sistema/target/classes started by arthuremanuel in /Applications/XAMPP/xamppfiles/htdocs/GitHub/Projeto-Pratico/Projeto-Pratico/Sistema/spring-cipalam/cipalam-sistema)
+2025-09-04T09:52:54.444-03:00  INFO 48456 --- [  restartedMain] c.c.c.CipalamSistemaApplication          : No active profile set, falling back to 1 default profile: "default"
+2025-09-04T09:52:54.531-03:00  INFO 48456 --- [  restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-09-04T09:52:54.546-03:00  INFO 48456 --- [  restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 14 ms. Found 13 JPA repository interfaces.
+2025-09-04T09:52:54.615-03:00  INFO 48456 --- [  restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2025-09-04T09:52:54.615-03:00  INFO 48456 --- [  restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-09-04T09:52:54.615-03:00  INFO 48456 --- [  restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.44]
+2025-09-04T09:52:54.618-03:00  INFO 48456 --- [  restartedMain] o.a.c.c.C.[Tomcat-32].[localhost].[/]    : Initializing Spring embedded WebApplicationContext
+2025-09-04T09:52:54.618-03:00  INFO 48456 --- [  restartedMain] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 174 ms
+2025-09-04T09:52:54.647-03:00  INFO 48456 --- [  restartedMain] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-09-04T09:52:54.648-03:00  INFO 48456 --- [  restartedMain] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-09-04T09:52:54.651-03:00  INFO 48456 --- [  restartedMain] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-09-04T09:52:54.651-03:00  INFO 48456 --- [  restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-85 - Starting...
+2025-09-04T09:52:54.654-03:00  INFO 48456 --- [  restartedMain] com.zaxxer.hikari.pool.HikariPool        : HikariPool-85 - Added connection com.mysql.cj.jdbc.ConnectionImpl@3cd552a5
+2025-09-04T09:52:54.654-03:00  INFO 48456 --- [  restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-85 - Start completed.
+2025-09-04T09:52:54.654-03:00  WARN 48456 --- [  restartedMain] org.hibernate.dialect.Dialect            : HHH000511: The 5.5.5 version for [org.hibernate.dialect.MySQLDialect] is no longer supported, hence certain features may not work properly. The minimum supported version is 8.0.0. Check the community dialects project for available legacy versions.
+2025-09-04T09:52:54.655-03:00  INFO 48456 --- [  restartedMain] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-85)']
+	Database driver: undefined/unknown
+	Database version: 5.5.5
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-09-04T09:52:54.762-03:00  INFO 48456 --- [  restartedMain] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-09-04T09:52:54.762-03:00  INFO 48456 --- [  restartedMain] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-09-04T09:52:54.889-03:00  INFO 48456 --- [  restartedMain] eAuthenticationProviderManagerConfigurer : Global AuthenticationManager configured with AuthenticationProvider bean with name authenticationProvider
+2025-09-04T09:52:54.889-03:00  WARN 48456 --- [  restartedMain] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with an AuthenticationProvider bean. UserDetailsService beans will not be used by Spring Security for automatically configuring username/password login. Consider removing the AuthenticationProvider bean. Alternatively, consider using the UserDetailsService in a manually instantiated DaoAuthenticationProvider. If the current configuration is intentional, to turn off this warning, increase the logging level of 'org.springframework.security.config.annotation.authentication.configuration.InitializeUserDetailsBeanManagerConfigurer' to ERROR
+2025-09-04T09:52:55.052-03:00  WARN 48456 --- [  restartedMain] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-09-04T09:52:55.229-03:00  INFO 48456 --- [  restartedMain] o.s.b.d.a.OptionalLiveReloadServer       : LiveReload server is running on port 35729
+2025-09-04T09:52:55.235-03:00  INFO 48456 --- [  restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/'
+2025-09-04T09:52:55.236-03:00  INFO 48456 --- [  restartedMain] c.c.c.CipalamSistemaApplication          : Started CipalamSistemaApplication in 0.8 seconds (process running for 18547.369)
+Hibernate: select l1_0.idtblogin,l1_0.tbPessoa_idPessoa,l1_0.senha,l1_0.usuario from tblogin l1_0 where l1_0.usuario=?
+Hibernate: select p1_0.idPessoa,p1_0.ativo,p1_0.caminhoIdentidadePessoa,p1_0.caminhoImagem,p1_0.CpfPessoa,p1_0.dataCriacao,p1_0.dtNascPessoa,p1_0.email,p1_0.NmPessoa,p1_0.profissao,p1_0.renda,p1_0.telefone from tbPessoa p1_0 where p1_0.idPessoa=?
+Hibernate: select l1_0.idtblogin,l1_0.tbPessoa_idPessoa,l1_0.senha,l1_0.usuario from tblogin l1_0 where l1_0.usuario=?
+Hibernate: select p1_0.idPessoa,p1_0.ativo,p1_0.caminhoIdentidadePessoa,p1_0.caminhoImagem,p1_0.CpfPessoa,p1_0.dataCriacao,p1_0.dtNascPessoa,p1_0.email,p1_0.NmPessoa,p1_0.profissao,p1_0.renda,p1_0.telefone from tbPessoa p1_0 where p1_0.idPessoa=?
+2025-09-04T09:52:55.264-03:00  INFO 48456 --- [  restartedMain] .ConditionEvaluationDeltaLoggingListener : Condition evaluation unchanged
+2025-09-04T09:53:15.199-03:00  INFO 48456 --- [   File Watcher] rtingClassPathChangeChangedEventListener : Restarting due to 1 class path change (0 additions, 0 deletions, 1 modification)
+2025-09-04T09:53:15.232-03:00  INFO 48456 --- [     Thread-319] o.s.b.w.e.tomcat.GracefulShutdown        : Commencing graceful shutdown. Waiting for active requests to complete
+2025-09-04T09:53:15.236-03:00  INFO 48456 --- [tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown        : Graceful shutdown complete
+2025-09-04T09:53:15.241-03:00  INFO 48456 --- [     Thread-319] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-09-04T09:53:15.250-03:00  INFO 48456 --- [     Thread-319] com.zaxxer.hikari.HikariDataSource       : HikariPool-85 - Shutdown initiated...
+2025-09-04T09:53:15.252-03:00  INFO 48456 --- [     Thread-319] com.zaxxer.hikari.HikariDataSource       : HikariPool-85 - Shutdown completed.
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v3.4.9)
+
+2025-09-04T09:53:15.464-03:00  INFO 48456 --- [  restartedMain] c.c.c.CipalamSistemaApplication          : Starting CipalamSistemaApplication using Java 21.0.6 with PID 48456 (/Applications/XAMPP/xamppfiles/htdocs/GitHub/Projeto-Pratico/Projeto-Pratico/Sistema/spring-cipalam/cipalam-sistema/target/classes started by arthuremanuel in /Applications/XAMPP/xamppfiles/htdocs/GitHub/Projeto-Pratico/Projeto-Pratico/Sistema/spring-cipalam/cipalam-sistema)
+2025-09-04T09:53:15.464-03:00  INFO 48456 --- [  restartedMain] c.c.c.CipalamSistemaApplication          : No active profile set, falling back to 1 default profile: "default"
+2025-09-04T09:53:15.662-03:00  INFO 48456 --- [  restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-09-04T09:53:15.677-03:00  INFO 48456 --- [  restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 14 ms. Found 13 JPA repository interfaces.
+2025-09-04T09:53:15.801-03:00  INFO 48456 --- [  restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2025-09-04T09:53:15.802-03:00  INFO 48456 --- [  restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-09-04T09:53:15.802-03:00  INFO 48456 --- [  restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.44]
+2025-09-04T09:53:15.812-03:00  INFO 48456 --- [  restartedMain] o.a.c.c.C.[Tomcat-32].[localhost].[/]    : Initializing Spring embedded WebApplicationContext
+2025-09-04T09:53:15.812-03:00  INFO 48456 --- [  restartedMain] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 347 ms
+2025-09-04T09:53:15.866-03:00  INFO 48456 --- [  restartedMain] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-09-04T09:53:15.867-03:00  INFO 48456 --- [  restartedMain] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-09-04T09:53:15.872-03:00  INFO 48456 --- [  restartedMain] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-09-04T09:53:15.872-03:00  INFO 48456 --- [  restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-86 - Starting...
+2025-09-04T09:53:15.909-03:00  INFO 48456 --- [  restartedMain] com.zaxxer.hikari.pool.HikariPool        : HikariPool-86 - Added connection com.mysql.cj.jdbc.ConnectionImpl@7e254da7
+2025-09-04T09:53:15.909-03:00  INFO 48456 --- [  restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-86 - Start completed.
+2025-09-04T09:53:15.910-03:00  WARN 48456 --- [  restartedMain] org.hibernate.dialect.Dialect            : HHH000511: The 5.5.5 version for [org.hibernate.dialect.MySQLDialect] is no longer supported, hence certain features may not work properly. The minimum supported version is 8.0.0. Check the community dialects project for available legacy versions.
+2025-09-04T09:53:15.911-03:00  INFO 48456 --- [  restartedMain] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-86)']
+	Database driver: undefined/unknown
+	Database version: 5.5.5
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-09-04T09:53:16.022-03:00  INFO 48456 --- [  restartedMain] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-09-04T09:53:16.022-03:00  INFO 48456 --- [  restartedMain] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-09-04T09:53:16.206-03:00  INFO 48456 --- [  restartedMain] eAuthenticationProviderManagerConfigurer : Global AuthenticationManager configured with AuthenticationProvider bean with name authenticationProvider
+2025-09-04T09:53:16.207-03:00  WARN 48456 --- [  restartedMain] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with an AuthenticationProvider bean. UserDetailsService beans will not be used by Spring Security for automatically configuring username/password login. Consider removing the AuthenticationProvider bean. Alternatively, consider using the UserDetailsService in a manually instantiated DaoAuthenticationProvider. If the current configuration is intentional, to turn off this warning, increase the logging level of 'org.springframework.security.config.annotation.authentication.configuration.InitializeUserDetailsBeanManagerConfigurer' to ERROR
+2025-09-04T09:53:16.423-03:00  WARN 48456 --- [  restartedMain] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-09-04T09:53:16.612-03:00  INFO 48456 --- [  restartedMain] o.s.b.d.a.OptionalLiveReloadServer       : LiveReload server is running on port 35729
+2025-09-04T09:53:16.618-03:00  INFO 48456 --- [  restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/'
+2025-09-04T09:53:16.620-03:00  INFO 48456 --- [  restartedMain] c.c.c.CipalamSistemaApplication          : Started CipalamSistemaApplication in 1.172 seconds (process running for 18568.753)
+Hibernate: select l1_0.idtblogin,l1_0.tbPessoa_idPessoa,l1_0.senha,l1_0.usuario from tblogin l1_0 where l1_0.usuario=?
+Hibernate: select p1_0.idPessoa,p1_0.ativo,p1_0.caminhoIdentidadePessoa,p1_0.caminhoImagem,p1_0.CpfPessoa,p1_0.dataCriacao,p1_0.dtNascPessoa,p1_0.email,p1_0.NmPessoa,p1_0.profissao,p1_0.renda,p1_0.telefone from tbPessoa p1_0 where p1_0.idPessoa=?
+Hibernate: select l1_0.idtblogin,l1_0.tbPessoa_idPessoa,l1_0.senha,l1_0.usuario from tblogin l1_0 where l1_0.usuario=?
+Hibernate: select p1_0.idPessoa,p1_0.ativo,p1_0.caminhoIdentidadePessoa,p1_0.caminhoImagem,p1_0.CpfPessoa,p1_0.dataCriacao,p1_0.dtNascPessoa,p1_0.email,p1_0.NmPessoa,p1_0.profissao,p1_0.renda,p1_0.telefone from tbPessoa p1_0 where p1_0.idPessoa=?
+2025-09-04T09:53:16.665-03:00  INFO 48456 --- [  restartedMain] .ConditionEvaluationDeltaLoggingListener : Condition evaluation unchanged
+2025-09-04T09:53:53.469-03:00  INFO 48456 --- [nio-8080-exec-1] o.a.c.c.C.[Tomcat-32].[localhost].[/]    : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-09-04T09:53:53.475-03:00  INFO 48456 --- [nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2025-09-04T09:53:53.528-03:00  INFO 48456 --- [nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 53 ms
+Hibernate: select p1_0.idPessoa,p1_0.ativo,p1_0.caminhoIdentidadePessoa,p1_0.caminhoImagem,p1_0.CpfPessoa,p1_0.dataCriacao,p1_0.dtNascPessoa,p1_0.email,p1_0.NmPessoa,p1_0.profissao,p1_0.renda,p1_0.telefone from tbPessoa p1_0 where p1_0.CpfPessoa=?
+Hibernate: select l1_0.idtblogin,l1_0.tbPessoa_idPessoa,l1_0.senha,l1_0.usuario from tblogin l1_0 where l1_0.usuario=?
+Hibernate: select p1_0.idPessoa,p1_0.ativo,p1_0.caminhoIdentidadePessoa,p1_0.caminhoImagem,p1_0.CpfPessoa,p1_0.dataCriacao,p1_0.dtNascPessoa,p1_0.email,p1_0.NmPessoa,p1_0.profissao,p1_0.renda,p1_0.telefone from tbPessoa p1_0 where p1_0.idPessoa=?
+Hibernate: select r1_0.tbPessoa_idPessoa,r1_0.tbFamilia_idtbFamilia from tbResponsavel r1_0 where r1_0.tbPessoa_idPessoa=?
+Hibernate: select p1_0.idPermissao,p1_0.dataAtualizacao,p1_0.dataCriacao,p1_0.tbFuncionalidade_idFuncionalidade,p1_0.tbPessoa_idPessoa,p1_0.temPermissao from tbPermissao p1_0 where p1_0.tbPessoa_idPessoa=? and p1_0.temPermissao=1
+Hibernate: select f1_0.idFuncionalidade,f1_0.ativo,f1_0.categoria,f1_0.chave,f1_0.descricao,f1_0.icone,f1_0.nomeAmigavel,f1_0.ordemExibicao,f1_0.pai from tbFuncionalidade f1_0 where f1_0.idFuncionalidade=?
+Hibernate: select f1_0.idFuncionalidade,f1_0.ativo,f1_0.categoria,f1_0.chave,f1_0.descricao,f1_0.icone,f1_0.nomeAmigavel,f1_0.ordemExibicao,f1_0.pai from tbFuncionalidade f1_0 where f1_0.idFuncionalidade=?
+Hibernate: select f1_0.idFuncionalidade,f1_0.ativo,f1_0.categoria,f1_0.chave,f1_0.descricao,f1_0.icone,f1_0.nomeAmigavel,f1_0.ordemExibicao,f1_0.pai from tbFuncionalidade f1_0 where f1_0.idFuncionalidade=?
+Hibernate: select f1_0.idFuncionalidade,f1_0.ativo,f1_0.categoria,f1_0.chave,f1_0.descricao,f1_0.icone,f1_0.nomeAmigavel,f1_0.ordemExibicao,f1_0.pai from tbFuncionalidade f1_0 where f1_0.idFuncionalidade=?
+Hibernate: select f1_0.idFuncionalidade,f1_0.ativo,f1_0.categoria,f1_0.chave,f1_0.descricao,f1_0.icone,f1_0.nomeAmigavel,f1_0.ordemExibicao,f1_0.pai from tbFuncionalidade f1_0 where f1_0.idFuncionalidade=?
+Hibernate: select f1_0.idFuncionalidade,f1_0.ativo,f1_0.categoria,f1_0.chave,f1_0.descricao,f1_0.icone,f1_0.nomeAmigavel,f1_0.ordemExibicao,f1_0.pai from tbFuncionalidade f1_0 where f1_0.idFuncionalidade=?
+Hibernate: select f1_0.idFuncionalidade,f1_0.ativo,f1_0.categoria,f1_0.chave,f1_0.descricao,f1_0.icone,f1_0.nomeAmigavel,f1_0.ordemExibicao,f1_0.pai from tbFuncionalidade f1_0 where f1_0.idFuncionalidade=?
+Hibernate: select f1_0.idFuncionalidade,f1_0.ativo,f1_0.categoria,f1_0.chave,f1_0.descricao,f1_0.icone,f1_0.nomeAmigavel,f1_0.ordemExibicao,f1_0.pai from tbFuncionalidade f1_0 where f1_0.idFuncionalidade=?
+Hibernate: select f1_0.idFuncionalidade,f1_0.ativo,f1_0.categoria,f1_0.chave,f1_0.descricao,f1_0.icone,f1_0.nomeAmigavel,f1_0.ordemExibicao,f1_0.pai from tbFuncionalidade f1_0 where f1_0.idFuncionalidade=?
+Hibernate: select f1_0.idFuncionalidade,f1_0.ativo,f1_0.categoria,f1_0.chave,f1_0.descricao,f1_0.icone,f1_0.nomeAmigavel,f1_0.ordemExibicao,f1_0.pai from tbFuncionalidade f1_0 where f1_0.idFuncionalidade=?
+Hibernate: select f1_0.idFuncionalidade,f1_0.ativo,f1_0.categoria,f1_0.chave,f1_0.descricao,f1_0.icone,f1_0.nomeAmigavel,f1_0.ordemExibicao,f1_0.pai from tbFuncionalidade f1_0 where f1_0.idFuncionalidade=?
+Hibernate: select f1_0.idFuncionalidade,f1_0.ativo,f1_0.categoria,f1_0.chave,f1_0.descricao,f1_0.icone,f1_0.nomeAmigavel,f1_0.ordemExibicao,f1_0.pai from tbFuncionalidade f1_0 where f1_0.idFuncionalidade=?
+Hibernate: select f1_0.idFuncionalidade,f1_0.ativo,f1_0.categoria,f1_0.chave,f1_0.descricao,f1_0.icone,f1_0.nomeAmigavel,f1_0.ordemExibicao,f1_0.pai from tbFuncionalidade f1_0 where f1_0.idFuncionalidade=?
+Hibernate: select f1_0.idFuncionalidade,f1_0.ativo,f1_0.categoria,f1_0.chave,f1_0.descricao,f1_0.icone,f1_0.nomeAmigavel,f1_0.ordemExibicao,f1_0.pai from tbFuncionalidade f1_0 where f1_0.idFuncionalidade=?
+Hibernate: select f1_0.idFuncionalidade,f1_0.ativo,f1_0.categoria,f1_0.chave,f1_0.descricao,f1_0.icone,f1_0.nomeAmigavel,f1_0.ordemExibicao,f1_0.pai from tbFuncionalidade f1_0 where f1_0.idFuncionalidade=?
+Hibernate: select f1_0.idFuncionalidade,f1_0.ativo,f1_0.categoria,f1_0.chave,f1_0.descricao,f1_0.icone,f1_0.nomeAmigavel,f1_0.ordemExibicao,f1_0.pai from tbFuncionalidade f1_0 where f1_0.idFuncionalidade=?
+Hibernate: select f1_0.idFuncionalidade,f1_0.ativo,f1_0.categoria,f1_0.chave,f1_0.descricao,f1_0.icone,f1_0.nomeAmigavel,f1_0.ordemExibicao,f1_0.pai from tbFuncionalidade f1_0 where f1_0.idFuncionalidade=?
+Hibernate: select f1_0.idFuncionalidade,f1_0.ativo,f1_0.categoria,f1_0.chave,f1_0.descricao,f1_0.icone,f1_0.nomeAmigavel,f1_0.ordemExibicao,f1_0.pai from tbFuncionalidade f1_0 where f1_0.idFuncionalidade=?
+Hibernate: select f1_0.idFuncionalidade,f1_0.ativo,f1_0.categoria,f1_0.chave,f1_0.descricao,f1_0.icone,f1_0.nomeAmigavel,f1_0.ordemExibicao,f1_0.pai from tbFuncionalidade f1_0 where f1_0.idFuncionalidade=?
+Hibernate: select r1_0.tbPessoa_idPessoa,r1_0.tbFamilia_idtbFamilia from tbResponsavel r1_0 where r1_0.tbPessoa_idPessoa=?
+Hibernate: select f1_0.idFuncionario,f1_0.ativo,f1_0.dataAtualizacao,f1_0.dataCriacao,f1_0.dataFim,f1_0.dataInicio,f1_0.observacoes,f1_0.tbPessoa_idPessoa from tbFuncionario f1_0
+Hibernate: select f1_0.idFuncionario,f1_0.ativo,f1_0.dataAtualizacao,f1_0.dataCriacao,f1_0.dataFim,f1_0.dataInicio,f1_0.observacoes,f1_0.tbPessoa_idPessoa from tbFuncionario f1_0
+Hibernate: select p1_0.idPessoa,p1_0.ativo,p1_0.caminhoIdentidadePessoa,p1_0.caminhoImagem,p1_0.CpfPessoa,p1_0.dataCriacao,p1_0.dtNascPessoa,p1_0.email,p1_0.NmPessoa,p1_0.profissao,p1_0.renda,p1_0.telefone from tbPessoa p1_0 where p1_0.idPessoa=?
+Hibernate: select p1_0.idPessoa,p1_0.ativo,p1_0.caminhoIdentidadePessoa,p1_0.caminhoImagem,p1_0.CpfPessoa,p1_0.dataCriacao,p1_0.dtNascPessoa,p1_0.email,p1_0.NmPessoa,p1_0.profissao,p1_0.renda,p1_0.telefone from tbPessoa p1_0 where p1_0.idPessoa=?
+Hibernate: select l1_0.idtblogin,l1_0.tbPessoa_idPessoa,l1_0.senha,l1_0.usuario from tblogin l1_0
+Hibernate: select l1_0.idtblogin,l1_0.tbPessoa_idPessoa,l1_0.senha,l1_0.usuario from tblogin l1_0
+Hibernate: select p1_0.idPessoa,p1_0.ativo,p1_0.caminhoIdentidadePessoa,p1_0.caminhoImagem,p1_0.CpfPessoa,p1_0.dataCriacao,p1_0.dtNascPessoa,p1_0.email,p1_0.NmPessoa,p1_0.profissao,p1_0.renda,p1_0.telefone from tbPessoa p1_0 where p1_0.idPessoa=?
+Hibernate: select p1_0.idPessoa,p1_0.ativo,p1_0.caminhoIdentidadePessoa,p1_0.caminhoImagem,p1_0.CpfPessoa,p1_0.dataCriacao,p1_0.dtNascPessoa,p1_0.email,p1_0.NmPessoa,p1_0.profissao,p1_0.renda,p1_0.telefone from tbPessoa p1_0 where p1_0.idPessoa=?
+Hibernate: select p1_0.idPessoa,p1_0.ativo,p1_0.caminhoIdentidadePessoa,p1_0.caminhoImagem,p1_0.CpfPessoa,p1_0.dataCriacao,p1_0.dtNascPessoa,p1_0.email,p1_0.NmPessoa,p1_0.profissao,p1_0.renda,p1_0.telefone from tbPessoa p1_0 where p1_0.idPessoa=?
+Hibernate: select p1_0.idPessoa,p1_0.ativo,p1_0.caminhoIdentidadePessoa,p1_0.caminhoImagem,p1_0.CpfPessoa,p1_0.dataCriacao,p1_0.dtNascPessoa,p1_0.email,p1_0.NmPessoa,p1_0.profissao,p1_0.renda,p1_0.telefone from tbPessoa p1_0 where p1_0.idPessoa=?
+Hibernate: select p1_0.idPermissao,p1_0.dataAtualizacao,p1_0.dataCriacao,p1_0.tbFuncionalidade_idFuncionalidade,p1_0.tbPessoa_idPessoa,p1_0.temPermissao from tbPermissao p1_0 where p1_0.tbPessoa_idPessoa=?
+Hibernate: select f1_0.idFuncionalidade,f1_0.ativo,f1_0.categoria,f1_0.chave,f1_0.descricao,f1_0.icone,f1_0.nomeAmigavel,f1_0.ordemExibicao,f1_0.pai from tbFuncionalidade f1_0 where f1_0.idFuncionalidade=?
+Hibernate: select f1_0.idFuncionalidade,f1_0.ativo,f1_0.categoria,f1_0.chave,f1_0.descricao,f1_0.icone,f1_0.nomeAmigavel,f1_0.ordemExibicao,f1_0.pai from tbFuncionalidade f1_0 where f1_0.idFuncionalidade=?
+Hibernate: select f1_0.idFuncionalidade,f1_0.ativo,f1_0.categoria,f1_0.chave,f1_0.descricao,f1_0.icone,f1_0.nomeAmigavel,f1_0.ordemExibicao,f1_0.pai from tbFuncionalidade f1_0 where f1_0.idFuncionalidade=?
+Hibernate: select f1_0.idFuncionalidade,f1_0.ativo,f1_0.categoria,f1_0.chave,f1_0.descricao,f1_0.icone,f1_0.nomeAmigavel,f1_0.ordemExibicao,f1_0.pai from tbFuncionalidade f1_0 where f1_0.idFuncionalidade=?
+Hibernate: select f1_0.idFuncionalidade,f1_0.ativo,f1_0.categoria,f1_0.chave,f1_0.descricao,f1_0.icone,f1_0.nomeAmigavel,f1_0.ordemExibicao,f1_0.pai from tbFuncionalidade f1_0 where f1_0.idFuncionalidade=?
+Hibernate: select f1_0.idFuncionalidade,f1_0.ativo,f1_0.categoria,f1_0.chave,f1_0.descricao,f1_0.icone,f1_0.nomeAmigavel,f1_0.ordemExibicao,f1_0.pai from tbFuncionalidade f1_0 where f1_0.idFuncionalidade=?
+Hibernate: select p1_0.idPessoa,p1_0.ativo,p1_0.caminhoIdentidadePessoa,p1_0.caminhoImagem,p1_0.CpfPessoa,p1_0.dataCriacao,p1_0.dtNascPessoa,p1_0.email,p1_0.NmPessoa,p1_0.profissao,p1_0.renda,p1_0.telefone from tbPessoa p1_0 where p1_0.idPessoa=?
+Hibernate: select p1_0.idPessoa,p1_0.ativo,p1_0.caminhoIdentidadePessoa,p1_0.caminhoImagem,p1_0.CpfPessoa,p1_0.dataCriacao,p1_0.dtNascPessoa,p1_0.email,p1_0.NmPessoa,p1_0.profissao,p1_0.renda,p1_0.telefone from tbPessoa p1_0 where p1_0.idPessoa=?
+Hibernate: select p1_0.idPessoa,p1_0.ativo,p1_0.caminhoIdentidadePessoa,p1_0.caminhoImagem,p1_0.CpfPessoa,p1_0.dataCriacao,p1_0.dtNascPessoa,p1_0.email,p1_0.NmPessoa,p1_0.profissao,p1_0.renda,p1_0.telefone from tbPessoa p1_0 where p1_0.idPessoa=?
+Hibernate: select p1_0.idPessoa,p1_0.ativo,p1_0.caminhoIdentidadePessoa,p1_0.caminhoImagem,p1_0.CpfPessoa,p1_0.dataCriacao,p1_0.dtNascPessoa,p1_0.email,p1_0.NmPessoa,p1_0.profissao,p1_0.renda,p1_0.telefone from tbPessoa p1_0 where p1_0.idPessoa=?
+Hibernate: select p1_0.idPermissao,p1_0.dataAtualizacao,p1_0.dataCriacao,p1_0.tbFuncionalidade_idFuncionalidade,p1_0.tbPessoa_idPessoa,p1_0.temPermissao from tbPermissao p1_0 where p1_0.tbPessoa_idPessoa=?
+Hibernate: select f1_0.idFuncionalidade,f1_0.ativo,f1_0.categoria,f1_0.chave,f1_0.descricao,f1_0.icone,f1_0.nomeAmigavel,f1_0.ordemExibicao,f1_0.pai from tbFuncionalidade f1_0 where f1_0.idFuncionalidade=?
+Hibernate: select f1_0.idFuncionalidade,f1_0.ativo,f1_0.categoria,f1_0.chave,f1_0.descricao,f1_0.icone,f1_0.nomeAmigavel,f1_0.ordemExibicao,f1_0.pai from tbFuncionalidade f1_0 where f1_0.idFuncionalidade=?
+Hibernate: select f1_0.idFuncionalidade,f1_0.ativo,f1_0.categoria,f1_0.chave,f1_0.descricao,f1_0.icone,f1_0.nomeAmigavel,f1_0.ordemExibicao,f1_0.pai from tbFuncionalidade f1_0 where f1_0.idFuncionalidade=?
+Hibernate: select f1_0.idFuncionalidade,f1_0.ativo,f1_0.categoria,f1_0.chave,f1_0.descricao,f1_0.icone,f1_0.nomeAmigavel,f1_0.ordemExibicao,f1_0.pai from tbFuncionalidade f1_0 where f1_0.idFuncionalidade=?
+Hibernate: select f1_0.idFuncionalidade,f1_0.ativo,f1_0.categoria,f1_0.chave,f1_0.descricao,f1_0.icone,f1_0.nomeAmigavel,f1_0.ordemExibicao,f1_0.pai from tbFuncionalidade f1_0 where f1_0.idFuncionalidade=?
+Hibernate: select f1_0.idFuncionalidade,f1_0.ativo,f1_0.categoria,f1_0.chave,f1_0.descricao,f1_0.icone,f1_0.nomeAmigavel,f1_0.ordemExibicao,f1_0.pai from tbFuncionalidade f1_0 where f1_0.idFuncionalidade=?
+Hibernate: select f1_0.idFuncionalidade,f1_0.ativo,f1_0.categoria,f1_0.chave,f1_0.descricao,f1_0.icone,f1_0.nomeAmigavel,f1_0.ordemExibicao,f1_0.pai from tbFuncionalidade f1_0 where f1_0.idFuncionalidade=?
+Hibernate: select f1_0.idFuncionalidade,f1_0.ativo,f1_0.categoria,f1_0.chave,f1_0.descricao,f1_0.icone,f1_0.nomeAmigavel,f1_0.ordemExibicao,f1_0.pai from tbFuncionalidade f1_0 where f1_0.idFuncionalidade=?
+Hibernate: select f1_0.idFuncionalidade,f1_0.ativo,f1_0.categoria,f1_0.chave,f1_0.descricao,f1_0.icone,f1_0.nomeAmigavel,f1_0.ordemExibicao,f1_0.pai from tbFuncionalidade f1_0 where f1_0.idFuncionalidade=?
+Hibernate: select f1_0.idFuncionalidade,f1_0.ativo,f1_0.categoria,f1_0.chave,f1_0.descricao,f1_0.icone,f1_0.nomeAmigavel,f1_0.ordemExibicao,f1_0.pai from tbFuncionalidade f1_0 where f1_0.idFuncionalidade=?
+Hibernate: select f1_0.idFuncionalidade,f1_0.ativo,f1_0.categoria,f1_0.chave,f1_0.descricao,f1_0.icone,f1_0.nomeAmigavel,f1_0.ordemExibicao,f1_0.pai from tbFuncionalidade f1_0 where f1_0.idFuncionalidade=?
+Hibernate: select f1_0.idFuncionalidade,f1_0.ativo,f1_0.categoria,f1_0.chave,f1_0.descricao,f1_0.icone,f1_0.nomeAmigavel,f1_0.ordemExibicao,f1_0.pai from tbFuncionalidade f1_0 where f1_0.idFuncionalidade=?
+Hibernate: select f1_0.idFuncionalidade,f1_0.ativo,f1_0.categoria,f1_0.chave,f1_0.descricao,f1_0.icone,f1_0.nomeAmigavel,f1_0.ordemExibicao,f1_0.pai from tbFuncionalidade f1_0 where f1_0.idFuncionalidade=?
+Hibernate: select f1_0.idFuncionalidade,f1_0.ativo,f1_0.categoria,f1_0.chave,f1_0.descricao,f1_0.icone,f1_0.nomeAmigavel,f1_0.ordemExibicao,f1_0.pai from tbFuncionalidade f1_0 where f1_0.idFuncionalidade=?
+Hibernate: select f1_0.idFuncionalidade,f1_0.ativo,f1_0.categoria,f1_0.chave,f1_0.descricao,f1_0.icone,f1_0.nomeAmigavel,f1_0.ordemExibicao,f1_0.pai from tbFuncionalidade f1_0 where f1_0.idFuncionalidade=?
+Hibernate: select f1_0.idFuncionalidade,f1_0.ativo,f1_0.categoria,f1_0.chave,f1_0.descricao,f1_0.icone,f1_0.nomeAmigavel,f1_0.ordemExibicao,f1_0.pai from tbFuncionalidade f1_0 where f1_0.idFuncionalidade=?
+Hibernate: select f1_0.idFuncionalidade,f1_0.ativo,f1_0.categoria,f1_0.chave,f1_0.descricao,f1_0.icone,f1_0.nomeAmigavel,f1_0.ordemExibicao,f1_0.pai from tbFuncionalidade f1_0 where f1_0.idFuncionalidade=?
+Hibernate: select f1_0.idFuncionalidade,f1_0.ativo,f1_0.categoria,f1_0.chave,f1_0.descricao,f1_0.icone,f1_0.nomeAmigavel,f1_0.ordemExibicao,f1_0.pai from tbFuncionalidade f1_0 where f1_0.idFuncionalidade=?
+Hibernate: select f1_0.idFuncionalidade,f1_0.ativo,f1_0.categoria,f1_0.chave,f1_0.descricao,f1_0.icone,f1_0.nomeAmigavel,f1_0.ordemExibicao,f1_0.pai from tbFuncionalidade f1_0 where f1_0.idFuncionalidade=?
+Hibernate: select f1_0.idFuncionalidade,f1_0.ativo,f1_0.categoria,f1_0.chave,f1_0.descricao,f1_0.icone,f1_0.nomeAmigavel,f1_0.ordemExibicao,f1_0.pai from tbFuncionalidade f1_0 where f1_0.idFuncionalidade=?
+Hibernate: select f1_0.idFuncionalidade,f1_0.ativo,f1_0.categoria,f1_0.chave,f1_0.descricao,f1_0.icone,f1_0.nomeAmigavel,f1_0.ordemExibicao,f1_0.pai from tbFuncionalidade f1_0 where f1_0.idFuncionalidade=?
+Hibernate: select f1_0.idFuncionalidade,f1_0.ativo,f1_0.categoria,f1_0.chave,f1_0.descricao,f1_0.icone,f1_0.nomeAmigavel,f1_0.ordemExibicao,f1_0.pai from tbFuncionalidade f1_0 where f1_0.idFuncionalidade=?
+Hibernate: select f1_0.idFuncionalidade,f1_0.ativo,f1_0.categoria,f1_0.chave,f1_0.descricao,f1_0.icone,f1_0.nomeAmigavel,f1_0.ordemExibicao,f1_0.pai from tbFuncionalidade f1_0 where f1_0.idFuncionalidade=?
+Hibernate: select f1_0.idFuncionalidade,f1_0.ativo,f1_0.categoria,f1_0.chave,f1_0.descricao,f1_0.icone,f1_0.nomeAmigavel,f1_0.ordemExibicao,f1_0.pai from tbFuncionalidade f1_0 where f1_0.idFuncionalidade=?
+Hibernate: select f1_0.idFuncionalidade,f1_0.ativo,f1_0.categoria,f1_0.chave,f1_0.descricao,f1_0.icone,f1_0.nomeAmigavel,f1_0.ordemExibicao,f1_0.pai from tbFuncionalidade f1_0 where f1_0.idFuncionalidade=?
+Hibernate: select f1_0.idFuncionalidade,f1_0.ativo,f1_0.categoria,f1_0.chave,f1_0.descricao,f1_0.icone,f1_0.nomeAmigavel,f1_0.ordemExibicao,f1_0.pai from tbFuncionalidade f1_0 where f1_0.idFuncionalidade=?
+Hibernate: select f1_0.idFuncionalidade,f1_0.ativo,f1_0.categoria,f1_0.chave,f1_0.descricao,f1_0.icone,f1_0.nomeAmigavel,f1_0.ordemExibicao,f1_0.pai from tbFuncionalidade f1_0 where f1_0.idFuncionalidade=?
+Hibernate: select f1_0.idFuncionalidade,f1_0.ativo,f1_0.categoria,f1_0.chave,f1_0.descricao,f1_0.icone,f1_0.nomeAmigavel,f1_0.ordemExibicao,f1_0.pai from tbFuncionalidade f1_0 where f1_0.idFuncionalidade=?
+Hibernate: select f1_0.idFuncionalidade,f1_0.ativo,f1_0.categoria,f1_0.chave,f1_0.descricao,f1_0.icone,f1_0.nomeAmigavel,f1_0.ordemExibicao,f1_0.pai from tbFuncionalidade f1_0 where f1_0.idFuncionalidade=?
+Hibernate: select f1_0.idFuncionalidade,f1_0.ativo,f1_0.categoria,f1_0.chave,f1_0.descricao,f1_0.icone,f1_0.nomeAmigavel,f1_0.ordemExibicao,f1_0.pai from tbFuncionalidade f1_0 where f1_0.idFuncionalidade=?
+Hibernate: select f1_0.idFuncionalidade,f1_0.ativo,f1_0.categoria,f1_0.chave,f1_0.descricao,f1_0.icone,f1_0.nomeAmigavel,f1_0.ordemExibicao,f1_0.pai from tbFuncionalidade f1_0 where f1_0.idFuncionalidade=?
+Hibernate: select f1_0.idFuncionalidade,f1_0.ativo,f1_0.categoria,f1_0.chave,f1_0.descricao,f1_0.icone,f1_0.nomeAmigavel,f1_0.ordemExibicao,f1_0.pai from tbFuncionalidade f1_0 where f1_0.idFuncionalidade=?
+Hibernate: select l1_0.idtblogin,l1_0.tbPessoa_idPessoa,l1_0.senha,l1_0.usuario from tblogin l1_0
+Hibernate: select p1_0.idPermissao,p1_0.dataAtualizacao,p1_0.dataCriacao,p1_0.tbFuncionalidade_idFuncionalidade,p1_0.tbPessoa_idPessoa,p1_0.temPermissao from tbPermissao p1_0 where p1_0.tbPessoa_idPessoa=?
+Hibernate: select l1_0.idtblogin,l1_0.tbPessoa_idPessoa,l1_0.senha,l1_0.usuario from tblogin l1_0
+Hibernate: select p1_0.idPermissao,p1_0.dataAtualizacao,p1_0.dataCriacao,p1_0.tbFuncionalidade_idFuncionalidade,p1_0.tbPessoa_idPessoa,p1_0.temPermissao from tbPermissao p1_0 where p1_0.tbPessoa_idPessoa=?
+Hibernate: select im1_0.id,im1_0.bairro,im1_0.cep,im1_0.cidade,im1_0.codigoIbgeCidade,im1_0.codigoInepEscola,im1_0.complemento,im1_0.cpfAluno,im1_0.cpfResponsavel,im1_0.dataEnvio,im1_0.dataFinalizacao,im1_0.dataInicioMatricula,im1_0.dataNascimentoAluno,im1_0.dataNascimentoResponsavel,im1_0.emailResponsavel,im1_0.escolaAluno,im1_0.funcionarioResponsavel_idPessoa,im1_0.horariosSelecionados,im1_0.integrantesRenda,im1_0.logradouro,im1_0.municipioEscola,im1_0.nomeAluno,im1_0.nomeResponsavel,im1_0.numero,im1_0.numeroIntegrantes,im1_0.observacoesInternas,im1_0.observacoesResponsavel,im1_0.pontoReferencia,im1_0.profissaoResponsavel,im1_0.protocolo,im1_0.rendaResponsavel,im1_0.responsavelLogin_idPessoa,im1_0.status,im1_0.telefoneResponsavel,im1_0.tipoCota,im1_0.uf,im1_0.ufEscola from tbInteresseMatricula im1_0
+Hibernate: select p1_0.idPessoa,p1_0.ativo,p1_0.caminhoIdentidadePessoa,p1_0.caminhoImagem,p1_0.CpfPessoa,p1_0.dataCriacao,p1_0.dtNascPessoa,p1_0.email,p1_0.NmPessoa,p1_0.profissao,p1_0.renda,p1_0.telefone from tbPessoa p1_0 where p1_0.idPessoa=?
+Hibernate: select p1_0.idPessoa,p1_0.ativo,p1_0.caminhoIdentidadePessoa,p1_0.caminhoImagem,p1_0.CpfPessoa,p1_0.dataCriacao,p1_0.dtNascPessoa,p1_0.email,p1_0.NmPessoa,p1_0.profissao,p1_0.renda,p1_0.telefone from tbPessoa p1_0 where p1_0.idPessoa=?
+Hibernate: select td1_0.idTipoDocumento,td1_0.ativo,td1_0.dataAtualizacao,td1_0.dataCriacao,td1_0.descricao,td1_0.escopo,td1_0.nome,td1_0.tipoProcessamento from tbTipoDocumento td1_0 where td1_0.ativo order by td1_0.nome
+Hibernate: select cdc1_0.id,cdc1_0.dataAtualizacao,cdc1_0.documentosObrigatorios,cdc1_0.funcionarioResponsavel_idPessoa,cdc1_0.tipoCota from tbConfiguracaoDocumentosCota cdc1_0
+Hibernate: select t1_0.idtbTurma,t1_0.ativo,t1_0.capacidadeAtual,t1_0.capacidadeMaxima,t1_0.dataCriacao,t1_0.horarioFim,t1_0.horarioInicio,t1_0.nomeTurma,t1_0.observacoes from tbTurma t1_0
+Hibernate: select t1_0.idtbTurma,t1_0.ativo,t1_0.capacidadeAtual,t1_0.capacidadeMaxima,t1_0.dataCriacao,t1_0.horarioFim,t1_0.horarioInicio,t1_0.nomeTurma,t1_0.observacoes from tbTurma t1_0
+Hibernate: select td1_0.idTipoDocumento,td1_0.ativo,td1_0.dataAtualizacao,td1_0.dataCriacao,td1_0.descricao,td1_0.escopo,td1_0.nome,td1_0.tipoProcessamento from tbTipoDocumento td1_0 where (? is null or lower(td1_0.nome) like replace(lower(concat('%',?,'%')),'\\','\\\\')) and (? is null or td1_0.tipoProcessamento=?) and (? is null or td1_0.escopo=?) and (? is null or td1_0.ativo=?) order by td1_0.nome limit ?
+Hibernate: select td1_0.idTipoDocumento,td1_0.ativo,td1_0.dataAtualizacao,td1_0.dataCriacao,td1_0.descricao,td1_0.escopo,td1_0.nome,td1_0.tipoProcessamento from tbTipoDocumento td1_0 where (? is null or lower(td1_0.nome) like replace(lower(concat('%',?,'%')),'\\','\\\\')) and (? is null or td1_0.tipoProcessamento=?) and (? is null or td1_0.escopo=?) and (? is null or td1_0.ativo=?) order by td1_0.nome limit ?
+2025-09-04T10:32:39.788-03:00  WARN 48456 --- [nio-8080-exec-8] ration$PageModule$WarningLoggingModifier : Serializing PageImpl instances as-is is not supported, meaning that there is no guarantee about the stability of the resulting JSON structure!
+	For a stable JSON structure, please use Spring Data's PagedModel (globally via @EnableSpringDataWebSupport(pageSerializationMode = VIA_DTO))
+	or Spring HATEOAS and Spring Data's PagedResourcesAssembler as documented in https://docs.spring.io/spring-data/commons/reference/repositories/core-extensions.html#core.web.pageables.
+
+Hibernate: select p1_0.idPessoa,p1_0.ativo,p1_0.caminhoIdentidadePessoa,p1_0.caminhoImagem,p1_0.CpfPessoa,p1_0.dataCriacao,p1_0.dtNascPessoa,p1_0.email,p1_0.NmPessoa,p1_0.profissao,p1_0.renda,p1_0.telefone from tbPessoa p1_0 where p1_0.CpfPessoa=?
+Hibernate: select l1_0.idtblogin,l1_0.tbPessoa_idPessoa,l1_0.senha,l1_0.usuario from tblogin l1_0 where l1_0.usuario=?
+Hibernate: select p1_0.idPessoa,p1_0.ativo,p1_0.caminhoIdentidadePessoa,p1_0.caminhoImagem,p1_0.CpfPessoa,p1_0.dataCriacao,p1_0.dtNascPessoa,p1_0.email,p1_0.NmPessoa,p1_0.profissao,p1_0.renda,p1_0.telefone from tbPessoa p1_0 where p1_0.idPessoa=?
+Hibernate: select r1_0.tbPessoa_idPessoa,r1_0.tbFamilia_idtbFamilia from tbResponsavel r1_0 where r1_0.tbPessoa_idPessoa=?
+Hibernate: select p1_0.idPermissao,p1_0.dataAtualizacao,p1_0.dataCriacao,p1_0.tbFuncionalidade_idFuncionalidade,p1_0.tbPessoa_idPessoa,p1_0.temPermissao from tbPermissao p1_0 where p1_0.tbPessoa_idPessoa=? and p1_0.temPermissao=1
+Hibernate: select r1_0.tbPessoa_idPessoa,r1_0.tbFamilia_idtbFamilia from tbResponsavel r1_0 where r1_0.tbPessoa_idPessoa=?
+2025-09-04T10:34:30.416-03:00  INFO 48456 --- [   File Watcher] rtingClassPathChangeChangedEventListener : Restarting due to 28 class path changes (0 additions, 0 deletions, 28 modifications)
+2025-09-04T10:34:30.670-03:00  INFO 48456 --- [     Thread-323] o.s.b.w.e.tomcat.GracefulShutdown        : Commencing graceful shutdown. Waiting for active requests to complete
+2025-09-04T10:34:30.731-03:00  INFO 48456 --- [tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown        : Graceful shutdown complete
+2025-09-04T10:34:30.798-03:00  INFO 48456 --- [     Thread-323] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-09-04T10:34:30.895-03:00  INFO 48456 --- [     Thread-323] com.zaxxer.hikari.HikariDataSource       : HikariPool-86 - Shutdown initiated...
+2025-09-04T10:34:30.958-03:00  INFO 48456 --- [     Thread-323] com.zaxxer.hikari.HikariDataSource       : HikariPool-86 - Shutdown completed.
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v3.4.9)
+
+2025-09-04T10:34:33.144-03:00  INFO 48456 --- [  restartedMain] c.c.c.CipalamSistemaApplication          : Starting CipalamSistemaApplication using Java 21.0.6 with PID 48456 (/Applications/XAMPP/xamppfiles/htdocs/GitHub/Projeto-Pratico/Projeto-Pratico/Sistema/spring-cipalam/cipalam-sistema/target/classes started by arthuremanuel in /Applications/XAMPP/xamppfiles/htdocs/GitHub/Projeto-Pratico/Projeto-Pratico/Sistema/spring-cipalam/cipalam-sistema)
+2025-09-04T10:34:33.149-03:00  INFO 48456 --- [  restartedMain] c.c.c.CipalamSistemaApplication          : No active profile set, falling back to 1 default profile: "default"
+2025-09-04T10:34:34.067-03:00  INFO 48456 --- [  restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-09-04T10:34:34.126-03:00  INFO 48456 --- [  restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 57 ms. Found 13 JPA repository interfaces.
+2025-09-04T10:34:34.914-03:00  INFO 48456 --- [  restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2025-09-04T10:34:34.922-03:00  INFO 48456 --- [  restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-09-04T10:34:34.922-03:00  INFO 48456 --- [  restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.44]
+2025-09-04T10:34:34.965-03:00  INFO 48456 --- [  restartedMain] o.a.c.c.C.[Tomcat-32].[localhost].[/]    : Initializing Spring embedded WebApplicationContext
+2025-09-04T10:34:34.965-03:00  INFO 48456 --- [  restartedMain] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1808 ms
+2025-09-04T10:34:35.376-03:00  INFO 48456 --- [  restartedMain] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-09-04T10:34:35.385-03:00  INFO 48456 --- [  restartedMain] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-09-04T10:34:35.429-03:00  INFO 48456 --- [  restartedMain] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-09-04T10:34:35.444-03:00  INFO 48456 --- [  restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-87 - Starting...
+2025-09-04T10:34:35.842-03:00  INFO 48456 --- [  restartedMain] com.zaxxer.hikari.pool.HikariPool        : HikariPool-87 - Added connection com.mysql.cj.jdbc.ConnectionImpl@2495fb5c
+2025-09-04T10:34:35.844-03:00  INFO 48456 --- [  restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-87 - Start completed.
+2025-09-04T10:34:35.854-03:00  WARN 48456 --- [  restartedMain] org.hibernate.dialect.Dialect            : HHH000511: The 5.5.5 version for [org.hibernate.dialect.MySQLDialect] is no longer supported, hence certain features may not work properly. The minimum supported version is 8.0.0. Check the community dialects project for available legacy versions.
+2025-09-04T10:34:35.859-03:00  INFO 48456 --- [  restartedMain] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-87)']
+	Database driver: undefined/unknown
+	Database version: 5.5.5
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-09-04T10:34:36.476-03:00  INFO 48456 --- [  restartedMain] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-09-04T10:34:36.476-03:00  INFO 48456 --- [  restartedMain] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-09-04T10:34:36.652-03:00  INFO 48456 --- [  restartedMain] eAuthenticationProviderManagerConfigurer : Global AuthenticationManager configured with AuthenticationProvider bean with name authenticationProvider
+2025-09-04T10:34:36.652-03:00  WARN 48456 --- [  restartedMain] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with an AuthenticationProvider bean. UserDetailsService beans will not be used by Spring Security for automatically configuring username/password login. Consider removing the AuthenticationProvider bean. Alternatively, consider using the UserDetailsService in a manually instantiated DaoAuthenticationProvider. If the current configuration is intentional, to turn off this warning, increase the logging level of 'org.springframework.security.config.annotation.authentication.configuration.InitializeUserDetailsBeanManagerConfigurer' to ERROR
+2025-09-04T10:34:37.308-03:00  WARN 48456 --- [  restartedMain] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-09-04T10:34:37.693-03:00  INFO 48456 --- [  restartedMain] o.s.b.d.a.OptionalLiveReloadServer       : LiveReload server is running on port 35729
+2025-09-04T10:34:37.732-03:00  INFO 48456 --- [  restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/'
+2025-09-04T10:34:37.747-03:00  INFO 48456 --- [  restartedMain] c.c.c.CipalamSistemaApplication          : Started CipalamSistemaApplication in 4.863 seconds (process running for 21049.776)
+Hibernate: select l1_0.idtblogin,l1_0.tbPessoa_idPessoa,l1_0.senha,l1_0.usuario from tblogin l1_0 where l1_0.usuario=?
+Hibernate: select p1_0.idPessoa,p1_0.ativo,p1_0.caminhoIdentidadePessoa,p1_0.caminhoImagem,p1_0.CpfPessoa,p1_0.dataCriacao,p1_0.dtNascPessoa,p1_0.email,p1_0.NmPessoa,p1_0.profissao,p1_0.renda,p1_0.telefone from tbPessoa p1_0 where p1_0.idPessoa=?
+Hibernate: select l1_0.idtblogin,l1_0.tbPessoa_idPessoa,l1_0.senha,l1_0.usuario from tblogin l1_0 where l1_0.usuario=?
+Hibernate: select p1_0.idPessoa,p1_0.ativo,p1_0.caminhoIdentidadePessoa,p1_0.caminhoImagem,p1_0.CpfPessoa,p1_0.dataCriacao,p1_0.dtNascPessoa,p1_0.email,p1_0.NmPessoa,p1_0.profissao,p1_0.renda,p1_0.telefone from tbPessoa p1_0 where p1_0.idPessoa=?
+2025-09-04T10:34:37.934-03:00  INFO 48456 --- [  restartedMain] .ConditionEvaluationDeltaLoggingListener : Condition evaluation unchanged
+2025-09-04T10:34:47.760-03:00  INFO 48456 --- [nio-8080-exec-1] o.a.c.c.C.[Tomcat-32].[localhost].[/]    : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-09-04T10:34:47.764-03:00  INFO 48456 --- [nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2025-09-04T10:34:47.782-03:00  INFO 48456 --- [nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 18 ms

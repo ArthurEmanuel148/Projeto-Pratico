@@ -20,22 +20,22 @@ public interface IntegranteFamiliaRepository extends JpaRepository<IntegranteFam
      * Busca integrantes da família pelo ID do responsável
      */
     @Query("SELECT i FROM IntegranteFamilia i WHERE i.familiaId = " +
-           "(SELECT f.familiaId FROM IntegranteFamilia f WHERE f.pessoa.idPessoa = :idResponsavel AND f.responsavel = true)")
+            "(SELECT f.familiaId FROM IntegranteFamilia f WHERE f.pessoa.idPessoa = :idResponsavel AND f.responsavel = true)")
     List<IntegranteFamilia> findByResponsavelId(@Param("idResponsavel") Long idResponsavel);
 
     /**
      * Busca o responsável de uma família pelo ID de qualquer integrante
      */
     @Query("SELECT i FROM IntegranteFamilia i WHERE i.familiaId = " +
-           "(SELECT f.familiaId FROM IntegranteFamilia f WHERE f.pessoa.idPessoa = :idPessoa) " +
-           "AND i.responsavel = true")
+            "(SELECT f.familiaId FROM IntegranteFamilia f WHERE f.pessoa.idPessoa = :idPessoa) " +
+            "AND i.responsavel = true")
     IntegranteFamilia findResponsavelByIntegranteId(@Param("idPessoa") Long idPessoa);
 
     /**
      * Busca todos os integrantes da família de uma pessoa específica
      */
     @Query("SELECT i FROM IntegranteFamilia i WHERE i.familiaId = " +
-           "(SELECT f.familiaId FROM IntegranteFamilia f WHERE f.pessoa.idPessoa = :idPessoa)")
+            "(SELECT f.familiaId FROM IntegranteFamilia f WHERE f.pessoa.idPessoa = :idPessoa)")
     List<IntegranteFamilia> findFamiliaByPessoaId(@Param("idPessoa") Long idPessoa);
 
     /**

@@ -153,13 +153,13 @@ export class MatriculaFuncionarioPage implements OnInit {
   validarCPF(cpf: string): boolean {
     // Remove caracteres não numéricos
     cpf = cpf.replace(/\D/g, '');
-    
+
     // Verifica se tem 11 dígitos
     if (cpf.length !== 11) return false;
-    
+
     // Verifica se não são todos dígitos iguais
     if (/^(\d)\1{10}$/.test(cpf)) return false;
-    
+
     // Validação do primeiro dígito verificador
     let sum = 0;
     for (let i = 0; i < 9; i++) {
@@ -168,7 +168,7 @@ export class MatriculaFuncionarioPage implements OnInit {
     let remainder = (sum * 10) % 11;
     if (remainder === 10 || remainder === 11) remainder = 0;
     if (remainder !== parseInt(cpf.charAt(9))) return false;
-    
+
     // Validação do segundo dígito verificador
     sum = 0;
     for (let i = 0; i < 10; i++) {
@@ -177,7 +177,7 @@ export class MatriculaFuncionarioPage implements OnInit {
     remainder = (sum * 10) % 11;
     if (remainder === 10 || remainder === 11) remainder = 0;
     if (remainder !== parseInt(cpf.charAt(10))) return false;
-    
+
     return true;
   }
 

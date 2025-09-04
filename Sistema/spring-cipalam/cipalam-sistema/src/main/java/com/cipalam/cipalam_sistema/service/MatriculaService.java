@@ -116,11 +116,11 @@ public class MatriculaService {
                 // Verificar se a senha precisa ser criptografada
                 if (!login.getSenha().startsWith("$2")) {
                     System.out.println("Criptografando senha para usuário: " + usuario);
-                    
+
                     String senhaCriptografada = passwordEncoder.encode(senhaTextoClaro);
                     login.setSenha(senhaCriptografada);
                     loginRepository.save(login);
-                    
+
                     System.out.println("Senha criptografada com sucesso para: " + usuario);
                 } else {
                     System.out.println("Senha já criptografada para usuário: " + usuario);
@@ -144,13 +144,13 @@ public class MatriculaService {
 
             if (loginOptional.isPresent()) {
                 Login login = loginOptional.get();
-                
+
                 if (!login.getSenha().startsWith("$2")) {
                     String senhaTextoClaro = login.getSenha();
                     String senhaCriptografada = passwordEncoder.encode(senhaTextoClaro);
                     login.setSenha(senhaCriptografada);
                     loginRepository.save(login);
-                    
+
                     return "Senha criptografada com sucesso para usuário: " + usuario;
                 } else {
                     return "Senha já estava criptografada para usuário: " + usuario;

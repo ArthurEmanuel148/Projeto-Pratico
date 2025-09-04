@@ -92,9 +92,9 @@ export class MatriculaService {
   /**
    * Valida se a matrícula pode ser iniciada
    */
-  validarIniciarMatricula(idDeclaracao: number, idTurma: number, idFuncionario: number): Observable<{valido: boolean, mensagem: string}> {
+  validarIniciarMatricula(idDeclaracao: number, idTurma: number, idFuncionario: number): Observable<{ valido: boolean, mensagem: string }> {
     const request = { idDeclaracao, idTurma, idFuncionario };
-    return this.http.post<{valido: boolean, mensagem: string}>(`${this.API_BASE_URL}/validar`, request, this.httpOptions)
+    return this.http.post<{ valido: boolean, mensagem: string }>(`${this.API_BASE_URL}/validar`, request, this.httpOptions)
       .pipe(
         map(response => {
           console.log('✅ Validação recebida:', response);
@@ -102,7 +102,7 @@ export class MatriculaService {
         }),
         catchError(error => {
           console.error('❌ Erro na validação:', error);
-          return of({valido: false, mensagem: 'Erro na validação'});
+          return of({ valido: false, mensagem: 'Erro na validação' });
         })
       );
   }

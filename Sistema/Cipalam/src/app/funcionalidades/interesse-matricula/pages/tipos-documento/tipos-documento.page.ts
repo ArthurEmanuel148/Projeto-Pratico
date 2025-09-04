@@ -4,6 +4,7 @@ import { Component, OnInit } from '@angular/core';
   selector: 'app-tipos-documento',
   templateUrl: './tipos-documento.page.html',
   styleUrls: ['./tipos-documento.page.scss'],
+  standalone: false
 })
 export class TiposDocumentoPage implements OnInit {
 

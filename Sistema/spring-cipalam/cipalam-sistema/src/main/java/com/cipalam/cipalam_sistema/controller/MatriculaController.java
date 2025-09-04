@@ -516,15 +516,15 @@ public class MatriculaController {
             String senhaTexto = dados.get("senha");
 
             Optional<Login> loginOptional = loginRepository.findByUsuario(usuario);
-            
+
             Map<String, Object> response = new HashMap<>();
-            
+
             if (loginOptional.isPresent()) {
                 Login login = loginOptional.get();
                 String senhaHash = login.getSenha();
-                
+
                 boolean senhaValida = passwordEncoder.matches(senhaTexto, senhaHash);
-                
+
                 response.put("usuario", usuario);
                 response.put("senhaTexto", senhaTexto);
                 response.put("senhaHash", senhaHash);
@@ -534,7 +534,7 @@ public class MatriculaController {
                 response.put("success", false);
                 response.put("message", "Usuário não encontrado");
             }
-            
+
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             e.printStackTrace();

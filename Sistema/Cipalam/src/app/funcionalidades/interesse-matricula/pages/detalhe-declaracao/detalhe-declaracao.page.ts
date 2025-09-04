@@ -24,7 +24,7 @@ export class DetalheDeclaracaoPage implements OnInit {
   rendaFamiliarCalculada = 0;
   rendaPerCapitaCalculada = 0;
   enderecoCompleto = '';
-  
+
   // Novos campos para documentos enviados
   documentosEnviados: any[] = [];
   carregandoDocumentos = false;
@@ -125,7 +125,7 @@ export class DetalheDeclaracaoPage implements OnInit {
           };
           // Carregar documentos necessários baseado no tipo de cota
           this.carregarDocumentosNecessarios(declaracao.tipoVaga?.tipoCota || declaracao.tipoCota);
-          
+
           // Carregar documentos já enviados
           this.carregarDocumentosEnviados();
         }
@@ -313,7 +313,7 @@ export class DetalheDeclaracaoPage implements OnInit {
     // Por enquanto, vamos usar um ID fixo para teste (Ana Costa Lima)
     // Em um cenário real, você precisaria mapear o protocolo para o ID da pessoa
     let idResponsavel = 6; // Ana Costa Lima que tem matrícula iniciada
-    
+
     // Tentativa de encontrar ID baseado no protocolo
     if (this.declaracao?.protocolo === 'MAT-2025-001') {
       idResponsavel = 4; // Ana Silva Santos
@@ -327,7 +327,7 @@ export class DetalheDeclaracaoPage implements OnInit {
     this.responsavelDocumentosService.getDocumentosPorFamilia(idResponsavel).subscribe({
       next: (familiaDocumentos) => {
         console.log('📋 Documentos da família recebidos:', familiaDocumentos);
-        
+
         // Flatar todos os documentos de todas as pessoas
         this.documentosEnviados = [];
         familiaDocumentos.documentosPorPessoa.forEach(pessoaDoc => {
@@ -356,7 +356,7 @@ export class DetalheDeclaracaoPage implements OnInit {
    */
   abrirDocumento(documento: any) {
     console.log('🔑 Abrindo documento:', documento);
-    
+
     if (documento.nomeArquivo) {
       // Aqui você pode implementar a lógica para abrir/baixar o arquivo
       // Por exemplo, uma modal ou navegação para uma página de visualização

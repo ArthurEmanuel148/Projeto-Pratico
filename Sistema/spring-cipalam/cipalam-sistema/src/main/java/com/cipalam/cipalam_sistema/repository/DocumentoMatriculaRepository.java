@@ -41,9 +41,9 @@ public interface DocumentoMatriculaRepository extends JpaRepository<DocumentoMat
          * Busca documentos de uma família específica baseado no ID do responsável
          */
         @Query("SELECT dm FROM DocumentoMatricula dm " +
-               "JOIN dm.interesseMatricula im " +
-               "WHERE im.responsavelLogin.idPessoa = :idResponsavel " +
-               "ORDER BY dm.tipoDocumento.nome")
+                        "JOIN dm.interesseMatricula im " +
+                        "WHERE im.responsavelLogin.idPessoa = :idResponsavel " +
+                        "ORDER BY dm.tipoDocumento.nome")
         List<DocumentoMatricula> findDocumentosByResponsavelId(@Param("idResponsavel") Long idResponsavel);
 
         /**
@@ -56,15 +56,15 @@ public interface DocumentoMatriculaRepository extends JpaRepository<DocumentoMat
          * Busca documentos da família que são aplicáveis a uma pessoa específica
          */
         @Query("SELECT dm FROM DocumentoMatricula dm " +
-               "JOIN dm.interesseMatricula im " +
-               "WHERE (dm.tbPessoaIdPessoa = :idPessoa OR dm.tbPessoaIdPessoa IS NULL) " +
-               "AND im.responsavelLogin.idPessoa IN (" +
-               "  SELECT if1.pessoa.idPessoa FROM IntegranteFamilia if1 " +
-               "  WHERE if1.familiaId = (" +
-               "    SELECT if2.familiaId FROM IntegranteFamilia if2 " +
-               "    WHERE if2.pessoa.idPessoa = :idPessoa" +
-               "  )" +
-               ") " +
-               "ORDER BY dm.tipoDocumento.nome")
+                        "JOIN dm.interesseMatricula im " +
+                        "WHERE (dm.tbPessoaIdPessoa = :idPessoa OR dm.tbPessoaIdPessoa IS NULL) " +
+                        "AND im.responsavelLogin.idPessoa IN (" +
+                        "  SELECT if1.pessoa.idPessoa FROM IntegranteFamilia if1 " +
+                        "  WHERE if1.familiaId = (" +
+                        "    SELECT if2.familiaId FROM IntegranteFamilia if2 " +
+                        "    WHERE if2.pessoa.idPessoa = :idPessoa" +
+                        "  )" +
+                        ") " +
+                        "ORDER BY dm.tipoDocumento.nome")
         List<DocumentoMatricula> findDocumentosAplicaveisPorPessoa(@Param("idPessoa") Long idPessoa);
 }

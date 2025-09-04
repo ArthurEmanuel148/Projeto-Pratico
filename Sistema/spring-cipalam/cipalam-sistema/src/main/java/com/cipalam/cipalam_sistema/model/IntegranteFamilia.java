@@ -40,8 +40,8 @@ public class IntegranteFamilia {
     private Boolean aluno = false;
 
     public enum ParentescoEnum {
-        pai, mae, conjuge, filho, filha, irmao, irma, avo, ava, tio, tia, 
-        sobrinho, sobrinha, primo, prima, cunhado, cunhada, genro, nora, 
+        pai, mae, conjuge, filho, filha, irmao, irma, avo, ava, tio, tia,
+        sobrinho, sobrinha, primo, prima, cunhado, cunhada, genro, nora,
         sogro, sogra, padrasto, madrasta, enteado, enteada, outro
     }
 

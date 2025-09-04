@@ -321,7 +321,7 @@ public class DocumentoMatriculaService {
         try {
             // 1. Buscar todos os integrantes da família do responsável
             List<IntegranteFamilia> integrantesFamilia = integranteFamiliaRepository.findByResponsavelId(idResponsavel);
-            
+
             if (integrantesFamilia.isEmpty()) {
                 log.warn("Nenhum integrante encontrado para responsável ID: {}", idResponsavel);
                 return criarFamiliaVazia(idResponsavel);
@@ -329,69 +329,74 @@ public class DocumentoMatriculaService {
 
             // 2. Obter informações do responsável
             IntegranteFamilia responsavel = integrantesFamilia.stream()
-                .filter(i -> Boolean.TRUE.equals(i.getResponsavel()))
-                .findFirst()
-                .orElse(integrantesFamilia.get(0));
+                    .filter(i -> Boolean.TRUE.equals(i.getResponsavel()))
+                    .findFirst()
+                    .orElse(integrantesFamilia.get(0));
 
             // 3. Montar estrutura da família
             Map<String, Object> familiaDocumentos = new HashMap<>();
-            
+
             // Dados da família
             Map<String, Object> familia = new HashMap<>();
             familia.put("id", responsavel.getFamiliaId());
-            
+
             Map<String, Object> responsavelData = new HashMap<>();
-            responsavelData.put("id", responsavel.getPessoa() != null ? responsavel.getPessoa().getIdPessoa() : idResponsavel);
+            responsavelData.put("id",
+                    responsavel.getPessoa() != null ? responsavel.getPessoa().getIdPessoa() : idResponsavel);
             responsavelData.put("nome", responsavel.getNomeIntegrante());
             responsavelData.put("email", responsavel.getPessoa() != null ? responsavel.getPessoa().getEmail() : "");
             familia.put("responsavel", responsavelData);
-            
+
             familiaDocumentos.put("familia", familia);
 
             // 4. Buscar documentos da família
-            List<DocumentoMatricula> todosDocumentos = documentoMatriculaRepository.findDocumentosByResponsavelId(idResponsavel);
-            
+            List<DocumentoMatricula> todosDocumentos = documentoMatriculaRepository
+                    .findDocumentosByResponsavelId(idResponsavel);
+
             // 5. Organizar documentos por pessoa
             List<Map<String, Object>> documentosPorPessoa = new ArrayList<>();
-            
+
             for (IntegranteFamilia integrante : integrantesFamilia) {
                 Map<String, Object> pessoaData = new HashMap<>();
-                
+
                 // Dados da pessoa
                 Map<String, Object> pessoa = new HashMap<>();
-                pessoa.put("id", integrante.getPessoa() != null ? integrante.getPessoa().getIdPessoa() : integrante.getIdIntegrante());
+                pessoa.put("id", integrante.getPessoa() != null ? integrante.getPessoa().getIdPessoa()
+                        : integrante.getIdIntegrante());
                 pessoa.put("nome", integrante.getNomeIntegrante());
                 pessoa.put("parentesco", integrante.getTipoParentesco());
                 pessoaData.put("pessoa", pessoa);
-                
+
                 // Filtrar documentos específicos desta pessoa
                 List<Map<String, Object>> documentosPessoa = todosDocumentos.stream()
-                    .filter(doc -> {
-                        // Documentos específicos da pessoa OU documentos gerais aplicáveis
-                        Long docPessoaId = doc.getTbPessoaIdPessoa();
-                        Long pessoaId = integrante.getPessoa() != null ? integrante.getPessoa().getIdPessoa().longValue() : null;
-                        
-                        return (docPessoaId != null && docPessoaId.equals(pessoaId)) ||
-                               (docPessoaId == null && isDocumentoAplicavel(doc, integrante));
-                    })
-                    .map(this::convertDocumentoToMap)
-                    .collect(Collectors.toList());
-                
+                        .filter(doc -> {
+                            // Documentos específicos da pessoa OU documentos gerais aplicáveis
+                            Long docPessoaId = doc.getTbPessoaIdPessoa();
+                            Long pessoaId = integrante.getPessoa() != null
+                                    ? integrante.getPessoa().getIdPessoa().longValue()
+                                    : null;
+
+                            return (docPessoaId != null && docPessoaId.equals(pessoaId)) ||
+                                    (docPessoaId == null && isDocumentoAplicavel(doc, integrante));
+                        })
+                        .map(this::convertDocumentoToMap)
+                        .collect(Collectors.toList());
+
                 pessoaData.put("documentos", documentosPessoa);
                 documentosPorPessoa.add(pessoaData);
             }
-            
+
             familiaDocumentos.put("documentosPorPessoa", documentosPorPessoa);
-            
+
             // 6. Calcular resumo
             Map<String, Object> resumo = calcularResumoDocumentos(todosDocumentos);
             familiaDocumentos.put("resumo", resumo);
-            
-            log.info("Documentos reais da família carregados para responsável ID: {} - {} pessoas, {} documentos", 
-                idResponsavel, integrantesFamilia.size(), todosDocumentos.size());
-            
+
+            log.info("Documentos reais da família carregados para responsável ID: {} - {} pessoas, {} documentos",
+                    idResponsavel, integrantesFamilia.size(), todosDocumentos.size());
+
             return familiaDocumentos;
-            
+
         } catch (Exception e) {
             log.error("Erro ao buscar documentos reais da família para responsável ID: {}", idResponsavel, e);
             // Fallback para dados mock em caso de erro
@@ -403,11 +408,13 @@ public class DocumentoMatriculaService {
      * Verifica se um documento é aplicável a um integrante específico
      */
     private boolean isDocumentoAplicavel(DocumentoMatricula documento, IntegranteFamilia integrante) {
-        if (documento.getTipoDocumento() == null) return false;
-        
+        if (documento.getTipoDocumento() == null)
+            return false;
+
         String categoria = documento.getTipoDocumento().getEscopo().toString();
-        if (categoria == null) return false;
-        
+        if (categoria == null)
+            return false;
+
         switch (categoria.toUpperCase()) {
             case "FAMILIA":
             case "RESPONSAVEL":
@@ -435,7 +442,7 @@ public class DocumentoMatriculaService {
         documentoMap.put("dataAprovacao", doc.getDataAprovacao() != null ? doc.getDataAprovacao().toString() : null);
         documentoMap.put("observacoes", doc.getObservacoes());
         documentoMap.put("obrigatorio", true); // Assumir obrigatório por padrão
-        
+
         // Dados do tipo de documento
         Map<String, Object> tipoDocumento = new HashMap<>();
         if (doc.getTipoDocumento() != null) {
@@ -445,7 +452,7 @@ public class DocumentoMatriculaService {
             tipoDocumento.put("categoria", doc.getTipoDocumento().getEscopo().toString());
         }
         documentoMap.put("tipoDocumento", tipoDocumento);
-        
+
         return documentoMap;
     }
 
@@ -454,18 +461,18 @@ public class DocumentoMatriculaService {
      */
     private Map<String, Object> calcularResumoDocumentos(List<DocumentoMatricula> documentos) {
         Map<String, Object> resumo = new HashMap<>();
-        
+
         long pendentes = documentos.stream().filter(d -> "pendente".equals(d.getStatus())).count();
         long anexados = documentos.stream().filter(d -> "anexado".equals(d.getStatus())).count();
         long aprovados = documentos.stream().filter(d -> "aprovado".equals(d.getStatus())).count();
         long rejeitados = documentos.stream().filter(d -> "rejeitado".equals(d.getStatus())).count();
-        
+
         resumo.put("totalDocumentos", documentos.size());
         resumo.put("pendentes", (int) pendentes);
         resumo.put("anexados", (int) anexados);
         resumo.put("aprovados", (int) aprovados);
         resumo.put("rejeitados", (int) rejeitados);
-        
+
         return resumo;
     }
 
@@ -474,22 +481,22 @@ public class DocumentoMatriculaService {
      */
     private Map<String, Object> criarFamiliaVazia(Long idResponsavel) {
         Map<String, Object> familiaDocumentos = new HashMap<>();
-        
+
         // Buscar dados básicos da pessoa
         Optional<Pessoa> pessoaOpt = pessoaRepository.findById(idResponsavel.intValue());
-        
+
         Map<String, Object> familia = new HashMap<>();
         familia.put("id", 1);
-        
+
         Map<String, Object> responsavel = new HashMap<>();
         responsavel.put("id", idResponsavel);
         responsavel.put("nome", pessoaOpt.map(Pessoa::getNmPessoa).orElse("Responsável"));
         responsavel.put("email", pessoaOpt.map(Pessoa::getEmail).orElse(""));
         familia.put("responsavel", responsavel);
-        
+
         familiaDocumentos.put("familia", familia);
         familiaDocumentos.put("documentosPorPessoa", new ArrayList<>());
-        
+
         Map<String, Object> resumo = new HashMap<>();
         resumo.put("totalDocumentos", 0);
         resumo.put("pendentes", 0);
@@ -497,7 +504,7 @@ public class DocumentoMatriculaService {
         resumo.put("aprovados", 0);
         resumo.put("rejeitados", 0);
         familiaDocumentos.put("resumo", resumo);
-        
+
         return familiaDocumentos;
     }
 
@@ -505,15 +512,22 @@ public class DocumentoMatriculaService {
      * Converte status para descrição legível
      */
     private String getStatusDescricao(String status) {
-        if (status == null) return "Aguardando envio";
-        
+        if (status == null)
+            return "Aguardando envio";
+
         switch (status.toLowerCase()) {
-            case "pendente": return "Aguardando envio";
-            case "anexado": return "Documento enviado";
-            case "aprovado": return "Documento aprovado";
-            case "rejeitado": return "Documento rejeitado";
-            case "assinado": return "Documento assinado";
-            default: return "Status desconhecido";
+            case "pendente":
+                return "Aguardando envio";
+            case "anexado":
+                return "Documento enviado";
+            case "aprovado":
+                return "Documento aprovado";
+            case "rejeitado":
+                return "Documento rejeitado";
+            case "assinado":
+                return "Documento assinado";
+            default:
+                return "Status desconhecido";
         }
     }
 }

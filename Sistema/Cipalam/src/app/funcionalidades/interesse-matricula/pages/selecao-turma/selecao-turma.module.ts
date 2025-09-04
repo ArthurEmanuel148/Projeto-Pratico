@@ -7,12 +7,12 @@ import { SelecaoTurmaPageRoutingModule } from './selecao-turma-routing.module';
 import { SelecaoTurmaPage } from './selecao-turma.page';
 
 @NgModule({
-  imports: [
-    CommonModule,
-    FormsModule,
-    IonicModule,
-    SelecaoTurmaPageRoutingModule
-  ],
-  declarations: [SelecaoTurmaPage]
+    imports: [
+        CommonModule,
+        FormsModule,
+        IonicModule,
+        SelecaoTurmaPageRoutingModule
+    ],
+    declarations: [SelecaoTurmaPage]
 })
-export class SelecaoTurmaPageModule {}
+export class SelecaoTurmaPageModule { }

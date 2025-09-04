@@ -2,6 +2,7 @@ package com.cipalam.cipalam_sistema.controller;
 
 import com.cipalam.cipalam_sistema.service.auth.UserPrincipal;
 import com.cipalam.cipalam_sistema.service.DocumentoMatriculaService;
+import com.cipalam.cipalam_sistema.service.ResponsavelDocumentoService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +23,7 @@ import java.util.Map;
 public class ResponsavelController {
 
     private final DocumentoMatriculaService documentoMatriculaService;
+    private final ResponsavelDocumentoService responsavelDocumentoService;
 
     @GetMapping("/dashboard")
     public ResponseEntity<?> getDashboard(@AuthenticationPrincipal UserPrincipal userPrincipal) {
@@ -65,13 +67,14 @@ public class ResponsavelController {
         log.info("Buscando documentos da família para responsável ID: {}", idResponsavel);
 
         try {
-            Map<String, Object> familiaDocumentos = documentoMatriculaService.getDocumentosPorFamilia(idResponsavel);
+            Map<String, Object> familiaDocumentos = responsavelDocumentoService
+                    .buscarDocumentosPorFamilia(idResponsavel);
             return ResponseEntity.ok(familiaDocumentos);
         } catch (Exception e) {
             log.error("Erro ao buscar documentos da família para responsável ID: {}", idResponsavel, e);
             return ResponseEntity.badRequest().body(Map.of(
                     "success", false,
-                    "message", "Erro ao buscar documentos da família"));
+                    "message", "Erro ao buscar documentos da família: " + e.getMessage()));
         }
     }
 

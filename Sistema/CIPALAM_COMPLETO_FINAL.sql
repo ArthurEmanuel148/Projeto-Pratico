@@ -1028,7 +1028,7 @@ BEGIN
     
 END$$
 
-DELIMITER ;
+DELIMITER;
 
 -- ===================================================================
 -- INSERÇÃO DE FUNCIONALIDADES (SEM ROTAS)
@@ -2748,7 +2748,7 @@ BEGIN
 END$$
 
 -- ===================================================================
--- FUNCTION: fn_CriptografarSenha  
+-- FUNCTION: fn_CriptografarSenha
 -- Criptografa senha usando algoritmo compatível com BCrypt
 -- ===================================================================
 CREATE FUNCTION `fn_CriptografarSenha`(senha VARCHAR(255))
@@ -2834,7 +2834,7 @@ BEGIN
     RETURN v_total;
 END$$
 
-DELIMITER ;
+DELIMITER;
 
 -- ===================================================================
 -- DADOS DE TESTE REMOVIDOS - TURMAS SERÃO CRIADAS VIA INTERFACE

@@ -496,6 +496,7 @@ CREATE TABLE `tbDocumentoMatricula` (
     -- NOVOS CAMPOS: Para documentos específicos após matrícula iniciada
     `tbFamilia_idtbFamilia` INT NULL,
     `tbAluno_idPessoa` INT NULL, -- Para documentos específicos do aluno
+    `tbPessoa_idPessoa` INT NULL, -- Para documentos específicos de qualquer pessoa/integrante
     `status` ENUM(
         'pendente',
         'enviado',
@@ -526,6 +527,7 @@ CREATE TABLE `tbDocumentoMatricula` (
     ),
     INDEX `fk_tbDocumentoMatricula_familia_idx` (`tbFamilia_idtbFamilia`),
     INDEX `fk_tbDocumentoMatricula_aluno_idx` (`tbAluno_idPessoa`),
+    INDEX `fk_tbDocumentoMatricula_pessoa_idx` (`tbPessoa_idPessoa`),
     CONSTRAINT `fk_tbDocumentoMatricula_interesse` FOREIGN KEY (`tbInteresseMatricula_id`) REFERENCES `tbInteresseMatricula` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION,
     CONSTRAINT `fk_tbDocumentoMatricula_tipo` FOREIGN KEY (
         `tbTipoDocumento_idTipoDocumento`
@@ -534,7 +536,8 @@ CREATE TABLE `tbDocumentoMatricula` (
         `funcionarioAprovador_idPessoa`
     ) REFERENCES `tbPessoa` (`idPessoa`) ON DELETE SET NULL ON UPDATE NO ACTION,
     CONSTRAINT `fk_tbDocumentoMatricula_familia` FOREIGN KEY (`tbFamilia_idtbFamilia`) REFERENCES `tbFamilia` (`idtbFamilia`) ON DELETE CASCADE ON UPDATE NO ACTION,
-    CONSTRAINT `fk_tbDocumentoMatricula_aluno` FOREIGN KEY (`tbAluno_idPessoa`) REFERENCES `tbPessoa` (`idPessoa`) ON DELETE CASCADE ON UPDATE NO ACTION
+    CONSTRAINT `fk_tbDocumentoMatricula_aluno` FOREIGN KEY (`tbAluno_idPessoa`) REFERENCES `tbPessoa` (`idPessoa`) ON DELETE CASCADE ON UPDATE NO ACTION,
+    CONSTRAINT `fk_tbDocumentoMatricula_pessoa` FOREIGN KEY (`tbPessoa_idPessoa`) REFERENCES `tbPessoa` (`idPessoa`) ON DELETE CASCADE ON UPDATE NO ACTION
 ) ENGINE = InnoDB;
 
 -- -----------------------------------------------------
@@ -766,18 +769,30 @@ BEGIN
     INSERT INTO tbResponsavel (tbFamilia_idtbFamilia, tbPessoa_idPessoa)
     VALUES (v_idFamilia, v_idResponsavel);
     
-    -- 6. CRIAR PESSOA ALUNO
-    INSERT INTO tbPessoa (
-        NmPessoa, CpfPessoa, dtNascPessoa
-    )
-    SELECT 
-        COALESCE(nomeAluno, 'Nome do aluno não informado'), 
-        cpfAluno, 
-        COALESCE(dataNascimentoAluno, CURDATE())
-    FROM tbInteresseMatricula 
-    WHERE id = p_idDeclaracao;
+    -- 6. VERIFICAR SE ALUNO JÁ EXISTE E CRIAR SE NECESSÁRIO
+    -- Primeiro obter CPF do aluno
+    SELECT cpfAluno INTO @v_cpfAluno FROM tbInteresseMatricula WHERE id = p_idDeclaracao;
     
-    SET v_idAluno = LAST_INSERT_ID();
+    -- Verificar se pessoa com CPF do aluno já existe
+    SELECT idPessoa INTO v_idAluno
+    FROM tbPessoa 
+    WHERE CpfPessoa = @v_cpfAluno 
+    LIMIT 1;
+    
+    IF v_idAluno IS NULL THEN
+        -- CRIAR PESSOA ALUNO apenas se não existir
+        INSERT INTO tbPessoa (
+            NmPessoa, CpfPessoa, dtNascPessoa
+        )
+        SELECT 
+            COALESCE(nomeAluno, 'Nome do aluno não informado'), 
+            cpfAluno, 
+            COALESCE(dataNascimentoAluno, CURDATE())
+        FROM tbInteresseMatricula 
+        WHERE id = p_idDeclaracao;
+        
+        SET v_idAluno = LAST_INSERT_ID();
+    END IF;
     
     -- Capturar nome do aluno para evitar duplicatas
     SELECT nomeAluno INTO v_nomeAluno 
@@ -939,11 +954,21 @@ CREATE PROCEDURE `sp_CriarDocumentosPendentes`(
 )
 BEGIN
     DECLARE v_tipoCota ENUM('livre', 'economica', 'funcionario');
+    DECLARE v_idIntegrante INT;
+    DECLARE v_done INT DEFAULT FALSE;
+    
+    -- Cursor para integrantes da família
+    DECLARE cursor_integrantes CURSOR FOR 
+        SELECT itg.tbPessoa_idPessoa 
+        FROM tbIntegranteFamilia itg 
+        WHERE itg.tbFamilia_idtbFamilia = p_idFamilia;
+    
+    DECLARE CONTINUE HANDLER FOR NOT FOUND SET v_done = TRUE;
     
     -- Obter tipo de cota da família
     SELECT tipoCota INTO v_tipoCota FROM tbFamilia WHERE idtbFamilia = p_idFamilia;
     
-    -- Criar documentos da FAMÍLIA (escopo 'familia' ou 'ambos')
+    -- Criar documentos da FAMÍLIA (escopo 'FAMILIA')
     INSERT INTO tbDocumentoMatricula (
         tbFamilia_idtbFamilia, 
         tbTipoDocumento_idTipoDocumento, 
@@ -955,9 +980,9 @@ BEGIN
         'pendente'
     FROM tbTipoDocumento td
     WHERE td.ativo = TRUE 
-    AND td.escopo IN ('FAMILIA', 'TODOS_INTEGRANTES');
+    AND td.escopo = 'FAMILIA';
     
-    -- Criar documentos do ALUNO (escopo 'aluno' ou 'ambos')
+    -- Criar documentos do ALUNO (escopo 'ALUNO')
     INSERT INTO tbDocumentoMatricula (
         tbAluno_idPessoa,
         tbTipoDocumento_idTipoDocumento, 
@@ -971,9 +996,39 @@ BEGIN
     WHERE td.ativo = TRUE 
     AND td.escopo = 'ALUNO';
     
+    -- Criar documentos para TODOS OS INTEGRANTES (escopo 'TODOS_INTEGRANTES')
+    -- Para cada integrante da família, criar um documento individual
+    OPEN cursor_integrantes;
+    
+    read_loop: LOOP
+        FETCH cursor_integrantes INTO v_idIntegrante;
+        IF v_done THEN
+            LEAVE read_loop;
+        END IF;
+        
+        -- Criar documentos individuais para este integrante
+        INSERT INTO tbDocumentoMatricula (
+            tbFamilia_idtbFamilia,
+            tbPessoa_idPessoa,
+            tbTipoDocumento_idTipoDocumento, 
+            status
+        )
+        SELECT 
+            p_idFamilia,
+            v_idIntegrante,
+            td.idTipoDocumento,
+            'pendente'
+        FROM tbTipoDocumento td
+        WHERE td.ativo = TRUE 
+        AND td.escopo = 'TODOS_INTEGRANTES';
+        
+    END LOOP;
+    
+    CLOSE cursor_integrantes;
+    
 END$$
 
-DELIMITER ;
+DELIMITER;
 
 -- ===================================================================
 -- INSERÇÃO DE FUNCIONALIDADES (SEM ROTAS)
@@ -2758,7 +2813,7 @@ BEGIN
     RETURN v_total;
 END$$
 
-DELIMITER ;
+DELIMITER;
 
 -- ===================================================================
 -- DADOS DE TESTE REMOVIDOS - TURMAS SERÃO CRIADAS VIA INTERFACE

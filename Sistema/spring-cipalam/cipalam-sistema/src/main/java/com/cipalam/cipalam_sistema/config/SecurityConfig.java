@@ -60,7 +60,8 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth.requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api/public/**").permitAll()
-                        .requestMatchers("/api/matricula/**").permitAll() // Liberar todos os endpoints de matrícula
+                        .requestMatchers("/api/matricula/**").permitAll() // Endpoint do interesse em matrícula
+                        .requestMatchers("/api/matriculas/**").permitAll() // Endpoint de iniciar matrícula
                         .anyRequest().permitAll() // Liberar tudo temporariamente para testes
                 );
 

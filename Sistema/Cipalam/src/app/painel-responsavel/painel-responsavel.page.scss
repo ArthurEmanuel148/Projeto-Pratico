@@ -1,105 +1,628 @@
-/* Estilo geral da página - Tema Branco Limpo e Moderno */
-.responsavel-content {
+// Modern Light Theme Responsavel Page
+:host {
+  --primary-color: #3b82f6;
+  --primary-light: #60a5fa;
+  --primary-dark: #2563eb;
+  --success-color: #10b981;
+  --warning-color: #f59e0b;
+  --danger-color: #ef4444;
+  --medium-color: #6b7280;
+  --light-color: #f9fafb;
+  --background-light: #ffffff;
+  --text-primary: #111827;
+  --text-secondary: #6b7280;
+  --border-color: #e5e7eb;
+  --gradient-primary: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  --gradient-subtle: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+}
+
+// Global page background
+ion-content {
   --background: #f8fafc;
-  --ion-background-color: #ffffff;
-  min-height: 100vh;
 }
 
-/* Header de boas-vindas - Design Limpo */
-.welcome-container {
-  margin-bottom: 32px;
-}
-
-.welcome-header {
-  text-align: center;
-  padding: 40px 32px;
-  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
-  border: 1px solid #e2e8f0;
-  border-radius: 20px;
-  color: #1e293b;
-  margin-bottom: 32px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
-
-  .welcome-icon {
-    font-size: 3.5rem;
-    margin-bottom: 20px;
-    color: #4f46e5;
-    background: linear-gradient(135deg, #4f46e5, #7c3aed);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+// Header Styles
+ion-header {
+  ion-toolbar {
+    --background: white;
+    --color: var(--text-primary);
+    --border-color: var(--border-color);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   }
 
-  h1 {
-    margin: 0;
-    font-size: 2rem;
-    font-weight: 700;
-    color: #0f172a;
-    letter-spacing: -0.025em;
-    line-height: 1.2;
+  .header-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+    color: var(--text-primary);
   }
 
-  p {
-    margin: 16px 0 0 0;
-    color: #64748b;
-    font-size: 1.1rem;
-    font-weight: 400;
-    line-height: 1.5;
+  .header-icon {
+    font-size: 1.2rem;
+    color: var(--primary-color);
   }
 }
 
-/* Seções da página - Design Moderno */
-.section-container {
-  margin-bottom: 32px;
+.spin {
+  animation: spin 1s linear infinite;
+}
 
-  ion-card {
-    --background: #ffffff;
-    border: 1px solid #e2e8f0;
-    border-radius: 20px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
-    margin: 0;
-    transition: all 0.3s ease;
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
 
-    &:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+// Modern Content Layout
+.modern-content {
+  --background: linear-gradient(to bottom, #f8fafc 0%, #ffffff 100%);
+}
+
+// Hero Section - Light Theme
+.hero-section {
+  position: relative;
+  background: var(--gradient-primary);
+  padding: 50px 20px 40px;
+  color: white;
+  overflow: hidden;
+  margin-bottom: 30px;
+
+  .hero-content {
+    text-align: center;
+    position: relative;
+    z-index: 2;
+
+    .user-avatar {
+      margin-bottom: 20px;
+
+      ion-icon {
+        font-size: 3.5rem;
+        color: white;
+        background: rgba(255, 255, 255, 0.15);
+        border-radius: 50%;
+        padding: 20px;
+        backdrop-filter: blur(10px);
+        border: 2px solid rgba(255, 255, 255, 0.2);
+      }
     }
 
-    ion-card-header {
-      padding: 32px 32px 20px 32px;
+    h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      margin: 0 0 12px 0;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
 
-      ion-card-title {
-        color: #0f172a;
-        font-size: 1.4rem;
-        font-weight: 700;
+    p {
+      font-size: 1rem;
+      opacity: 0.9;
+      margin: 0;
+      font-weight: 400;
+    }
+  }
+
+  .hero-decoration {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+
+    .decoration-circle {
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.08);
+
+      &.circle-1 {
+        width: 100px;
+        height: 100px;
+        top: -50px;
+        right: -50px;
+      }
+
+      &.circle-2 {
+        width: 60px;
+        height: 60px;
+        bottom: -30px;
+        left: -30px;
+      }
+
+      &.circle-3 {
+        width: 180px;
+        height: 180px;
+        top: 50%;
+        right: -90px;
+        transform: translateY(-50%);
+        opacity: 0.03;
+      }
+    }
+  }
+}
+
+// Main Content - Light Theme
+.main-content {
+  padding: 0 20px 40px;
+}
+
+// Section Titles
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 20px;
+
+  ion-icon {
+    color: var(--primary-color);
+    font-size: 1.4rem;
+  }
+}
+
+// Loading Section
+.loading-section {
+  text-align: center;
+  padding: 60px 20px;
+  background: white;
+  border-radius: 16px;
+  margin: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+
+  .loading-content {
+    ion-spinner {
+      color: var(--primary-color);
+    }
+
+    h3 {
+      font-size: 1.2rem;
+      color: var(--text-primary);
+      margin: 20px 0 8px 0;
+      font-weight: 600;
+    }
+
+    p {
+      color: var(--text-secondary);
+      margin: 0;
+      font-size: 0.95rem;
+    }
+  }
+}
+
+// Stats Dashboard - Light Theme
+.stats-dashboard {
+  margin-bottom: 40px;
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 16px;
+
+    .stat-card {
+      background: white;
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+      border: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      transition: all 0.3s ease;
+
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+        border-color: var(--primary-color);
+      }
+
+      .stat-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
         display: flex;
         align-items: center;
-        gap: 16px;
-        letter-spacing: -0.02em;
+        justify-content: center;
 
         ion-icon {
-          color: #4f46e5;
-          font-size: 1.6rem;
-          background: #eef2ff;
-          padding: 8px;
-          border-radius: 12px;
+          font-size: 1.5rem;
+          color: white;
         }
       }
 
-      ion-card-subtitle {
-        color: #64748b;
-        font-size: 1rem;
-        margin-top: 12px;
-        font-weight: 400;
-        line-height: 1.5;
-      }
-    }
+      .stat-info {
+        flex: 1;
 
-    ion-card-content {
-      padding: 0 32px 32px 32px;
+        .stat-number {
+          display: block;
+          font-size: 1.8rem;
+          font-weight: 700;
+          color: var(--text-primary);
+          line-height: 1;
+        }
+
+        .stat-label {
+          font-size: 0.85rem;
+          color: var(--text-secondary);
+          font-weight: 500;
+          margin-top: 2px;
+        }
+      }
+
+      &.total .stat-icon {
+        background: var(--medium-color);
+      }
+
+      &.pending .stat-icon {
+        background: var(--warning-color);
+      }
+
+      &.sent .stat-icon {
+        background: var(--primary-color);
+      }
+
+      &.approved .stat-icon {
+        background: var(--success-color);
+      }
     }
   }
 }
+
+// Family Section
+.family-section {
+  margin-bottom: 40px;
+
+  .family-grid {
+    display: grid;
+    gap: 16px;
+
+    .member-card {
+      background: white;
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      border: 2px solid transparent;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+      }
+
+      &.selected {
+        border-color: var(--primary-color);
+        background: #f0f4ff;
+      }
+
+      .member-avatar {
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        background: var(--primary-color);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        ion-icon {
+          font-size: 1.8rem;
+          color: white;
+        }
+      }
+
+      .member-info {
+        flex: 1;
+
+        h3 {
+          font-size: 1.1rem;
+          font-weight: 600;
+          color: #1a202c;
+          margin: 0 0 4px 0;
+        }
+
+        .member-role {
+          font-size: 0.9rem;
+          color: #718096;
+          margin: 0 0 8px 0;
+        }
+
+        .member-stats {
+          display: flex;
+          gap: 12px;
+
+          .stat {
+            font-size: 0.8rem;
+            padding: 4px 8px;
+            border-radius: 8px;
+            font-weight: 500;
+
+            &.pending {
+              background: #fef3cd;
+              color: #8a6914;
+            }
+
+            &.approved {
+              background: #d1fae5;
+              color: #047857;
+            }
+          }
+        }
+      }
+
+      .member-indicator {
+        color: #cbd5e0;
+
+        ion-icon {
+          font-size: 1.2rem;
+        }
+      }
+    }
+  }
+}
+
+// Documents Section
+.documents-section {
+  margin-bottom: 40px;
+
+  .documents-list {
+    display: grid;
+    gap: 16px;
+
+    .document-card {
+      background: white;
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      border: 1px solid #e2e8f0;
+      transition: all 0.3s ease;
+
+      &:hover {
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+      }
+
+      .document-header {
+        display: flex;
+        align-items: flex-start;
+        gap: 16px;
+        margin-bottom: 16px;
+
+        .document-icon {
+          width: 48px;
+          height: 48px;
+          border-radius: 12px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+
+          ion-icon {
+            font-size: 1.5rem;
+            color: white;
+          }
+
+          &.pendente {
+            background: var(--warning-color);
+          }
+
+          &.anexado {
+            background: var(--primary-color);
+          }
+
+          &.aprovado {
+            background: var(--success-color);
+          }
+
+          &.rejeitado {
+            background: var(--danger-color);
+          }
+        }
+
+        .document-info {
+          flex: 1;
+
+          h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #1a202c;
+            margin: 0 0 4px 0;
+          }
+
+          p {
+            font-size: 0.9rem;
+            color: #718096;
+            margin: 0;
+            line-height: 1.4;
+          }
+        }
+
+        .document-status {
+          .status-chip {
+            font-weight: 600;
+          }
+        }
+      }
+
+      .document-details {
+        margin-bottom: 16px;
+
+        .detail-item {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          margin-bottom: 8px;
+          font-size: 0.9rem;
+          color: #4a5568;
+
+          ion-icon {
+            font-size: 1rem;
+            color: #718096;
+          }
+
+          &.warning {
+            color: #8a6914;
+
+            ion-icon {
+              color: var(--warning-color);
+            }
+          }
+
+          &.success {
+            color: #047857;
+
+            ion-icon {
+              color: var(--success-color);
+            }
+          }
+
+          &:last-child {
+            margin-bottom: 0;
+          }
+        }
+      }
+
+      .document-actions {
+        display: flex;
+        gap: 8px;
+        justify-content: flex-end;
+      }
+    }
+  }
+}
+
+// Empty States - Light Theme
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  background: white;
+  border-radius: 16px;
+  margin: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  border: 1px solid var(--border-color);
+
+  .empty-icon {
+    margin-bottom: 20px;
+
+    ion-icon {
+      font-size: 4rem;
+      color: var(--text-secondary);
+      opacity: 0.6;
+    }
+  }
+
+  h3 {
+    font-size: 1.2rem;
+    color: var(--text-primary);
+    margin: 0 0 8px 0;
+    font-weight: 600;
+  }
+
+  p {
+    color: var(--text-secondary);
+    margin: 0 0 20px 0;
+    line-height: 1.5;
+    font-size: 0.95rem;
+  }
+
+  ion-button {
+    --background: var(--primary-color);
+    --color: white;
+    --border-radius: 12px;
+    font-weight: 600;
+  }
+
+  &.main {
+    padding: 80px 20px;
+    margin: 0;
+    border-radius: 0;
+    box-shadow: none;
+    border: none;
+    background: transparent;
+  }
+}
+
+// Help Section - Light Theme
+.help-section {
+  .contact-grid {
+    display: grid;
+    gap: 16px;
+
+    .contact-item {
+      background: white;
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+      border: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      transition: all 0.3s ease;
+
+      &:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+      }
+
+      ion-icon {
+        font-size: 1.5rem;
+        color: var(--primary-color);
+      }
+
+      div {
+        h4 {
+          font-size: 1rem;
+          font-weight: 600;
+          color: var(--text-primary);
+          margin: 0 0 4px 0;
+        }
+
+        p {
+          font-size: 0.9rem;
+          color: var(--text-secondary);
+          margin: 0;
+        }
+      }
+    }
+  }
+}
+
+// Responsive Design
+@media (min-width: 768px) {
+  .main-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 40px 40px;
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .family-grid {
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  }
+
+  .contact-grid {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  }
+}
+
+@media (min-width: 1024px) {
+  .hero-section {
+    padding: 80px 40px 60px;
+  }
+
+  .documents-list {
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  }
+}
+
 
 /* Loading - Tema Limpo */
 .loading-container {

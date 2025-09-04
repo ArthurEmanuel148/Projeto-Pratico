@@ -88,32 +88,47 @@ public class ResponsavelDocumentoService {
      * Busca todos os membros da família
      */
     private List<Map<String, Object>> buscarMembrosFamilia(Long idResponsavel) {
+        // Primeiro, buscar a família do responsável
+        String sqlFamilia = """
+                SELECT r.tbFamilia_idtbFamilia as idFamilia
+                FROM tbResponsavel r
+                WHERE r.tbPessoa_idPessoa = ?
+                """;
+
+        List<Map<String, Object>> familiaResult = jdbcTemplate.queryForList(sqlFamilia, idResponsavel);
+        if (familiaResult.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        Long idFamilia = ((Number) familiaResult.get(0).get("idFamilia")).longValue();
+
+        // Agora buscar todos os membros desta família
         String sql = """
                     SELECT DISTINCT
                         p.idPessoa,
                         p.NmPessoa as nome,
                         CASE
                             WHEN r.tbPessoa_idPessoa = p.idPessoa THEN 'responsavel'
-                            WHEN a.idPessoa IS NOT NULL THEN 'aluno'
+                            WHEN a.tbPessoa_idPessoa IS NOT NULL THEN 'aluno'
                             ELSE 'integrante'
                         END as parentesco
                     FROM tbPessoa p
-                    LEFT JOIN tbResponsavel r ON r.tbPessoa_idPessoa = ?
-                    LEFT JOIN tbAluno a ON a.idPessoa = p.idPessoa
-                    LEFT JOIN tbIntegranteFamilia if_fam ON if_fam.tbPessoa_idPessoa = p.idPessoa
-                    WHERE (r.tbPessoa_idPessoa = p.idPessoa OR
-                           a.tbFamilia_idtbFamilia = r.tbFamilia_idtbFamilia OR
-                           if_fam.tbFamilia_idtbFamilia = r.tbFamilia_idtbFamilia)
+                    LEFT JOIN tbResponsavel r ON (r.tbPessoa_idPessoa = p.idPessoa AND r.tbFamilia_idtbFamilia = ?)
+                    LEFT JOIN tbAluno a ON (a.tbPessoa_idPessoa = p.idPessoa AND a.tbFamilia_idtbFamilia = ?)
+                    LEFT JOIN tbIntegranteFamilia if_fam ON (if_fam.tbPessoa_idPessoa = p.idPessoa AND if_fam.tbFamilia_idtbFamilia = ?)
+                    WHERE r.tbPessoa_idPessoa IS NOT NULL
+                        OR a.tbPessoa_idPessoa IS NOT NULL
+                        OR if_fam.tbPessoa_idPessoa IS NOT NULL
                     ORDER BY
                         CASE
                             WHEN r.tbPessoa_idPessoa = p.idPessoa THEN 1
-                            WHEN a.idPessoa IS NOT NULL THEN 2
+                            WHEN a.tbPessoa_idPessoa IS NOT NULL THEN 2
                             ELSE 3
                         END,
                         p.NmPessoa
                 """;
 
-        return jdbcTemplate.queryForList(sql, idResponsavel, idResponsavel);
+        return jdbcTemplate.queryForList(sql, idFamilia, idFamilia, idFamilia);
     }
 
     /**

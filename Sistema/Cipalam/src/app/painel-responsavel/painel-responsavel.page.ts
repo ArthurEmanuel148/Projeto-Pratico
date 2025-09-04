@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../core/services/auth.service';
 import { DocumentoService } from '../core/services/documento.service';
+import { ResponsavelDocumentosService, FamiliaDocumentos, DocumentoPorPessoa, DocumentoIndividual } from '../core/services/responsavel-documentos.service';
 import { AlertController, ToastController, LoadingController } from '@ionic/angular';
 
 @Component({
@@ -11,12 +12,14 @@ import { AlertController, ToastController, LoadingController } from '@ionic/angu
 })
 export class PainelResponsavelPage implements OnInit {
   usuarioLogado: any;
-  documentosPendentes: any[] = [];
+  familiaDocumentos: FamiliaDocumentos | null = null;
   documentosCarregando: boolean = false;
+  pessoaSelecionada: DocumentoPorPessoa | null = null;
 
   constructor(
     private authService: AuthService,
     private documentoService: DocumentoService,
+    private responsavelDocumentosService: ResponsavelDocumentosService,
     private alertController: AlertController,
     private toastController: ToastController,
     private loadingController: LoadingController
@@ -30,48 +33,37 @@ export class PainelResponsavelPage implements OnInit {
     if (!this.usuarioLogado || !this.usuarioLogado.pessoaId) {
       console.log('🧪 Simulando login da Ana Costa Lima para testes...');
       this.usuarioLogado = {
-        pessoaId: 4,
-        pessoa: { idPessoa: 4, nmPessoa: 'Ana Costa Lima' },
+        pessoaId: 6, // Ana Costa Lima que tem matrícula iniciada
+        pessoa: { idPessoa: 6, nmPessoa: 'Ana Costa Lima' },
         nomePessoa: 'Ana Costa Lima'
       };
     }
     
-    this.carregarDocumentosPendentes();
+    this.carregarDocumentosFamilia();
   }
 
-  async carregarDocumentosPendentes() {
-    console.log('🔍 Iniciando carregamento de documentos...');
-    console.log('🔍 Usuario logado completo:', JSON.stringify(this.usuarioLogado, null, 2));
+  /**
+   * Carrega todos os documentos da família organizados por pessoa
+   */
+  async carregarDocumentosFamilia() {
+    console.log('🔍 Iniciando carregamento de documentos da família...');
     
-    // Buscar ID da pessoa logada - verificar todas as possibilidades
-    let idPessoa = this.usuarioLogado?.pessoaId ||
+    // Buscar ID da pessoa logada
+    let idResponsavel = this.usuarioLogado?.pessoaId ||
       this.usuarioLogado?.pessoa?.idPessoa ||
       this.usuarioLogado?.usuarioId ||
       this.usuarioLogado?.idPessoa;
 
-    // Se não encontrou, tentar pegar do localStorage diretamente
-    if (!idPessoa) {
-      try {
-        const usuarioSalvo = localStorage.getItem('usuarioLogado');
-        if (usuarioSalvo) {
-          const usuario = JSON.parse(usuarioSalvo);
-          idPessoa = usuario?.pessoaId || usuario?.pessoa?.idPessoa || usuario?.usuarioId || usuario?.idPessoa;
-        }
-      } catch (error) {
-        console.error('Erro ao recuperar usuário do localStorage:', error);
-      }
-    }
-
     // TEMPORÁRIO: Para testes específicos da Ana Costa Lima
-    if (!idPessoa) {
+    if (!idResponsavel) {
       console.warn('⚠️ ID da pessoa não encontrado, usando ID de teste para Ana Costa Lima');
-      idPessoa = 4; // ID da Ana Costa Lima no banco
+      idResponsavel = 6; // ID da Ana Costa Lima no banco que tem matrícula iniciada
     }
 
-    console.log('🔍 ID da pessoa para carregar documentos:', idPessoa);
+    console.log('🔍 ID do responsável para carregar documentos:', idResponsavel);
 
-    if (!idPessoa) {
-      console.error('❌ ID da pessoa não encontrado para carregar documentos');
+    if (!idResponsavel) {
+      console.error('❌ ID do responsável não encontrado');
       await this.mostrarToast('Erro: ID do usuário não encontrado', 'danger');
       return;
     }
@@ -79,145 +71,97 @@ export class PainelResponsavelPage implements OnInit {
     this.documentosCarregando = true;
 
     try {
-      console.log('🌐 Fazendo chamada para API com ID:', idPessoa);
-      console.log('🌐 URL da API:', `${this.documentoService['apiUrl']}/pendentes/${idPessoa}`);
-
-      const documentos = await this.documentoService.listarDocumentosPendentes(idPessoa).toPromise();
-      console.log('📋 Documentos recebidos da API:', documentos);
-      console.log('📊 Quantidade de documentos:', documentos?.length || 0);
-
-      // Garantir que documentos é um array
-      this.documentosPendentes = Array.isArray(documentos) ? documentos : [];
-
-      console.log('📝 Documentos pendentes processados:', this.documentosPendentes);
-      console.log('📈 Total após processamento:', this.documentosPendentes.length);
-
-      // Log detalhado dos documentos por categoria
-      if (this.documentosPendentes.length > 0) {
-        const familiaCount = this.documentosPendentes.filter(doc => 
-          doc.categoria === 'familia' || doc.categoria === 'responsavel').length;
-        const alunoCount = this.documentosPendentes.filter(doc => doc.categoria === 'aluno').length;
-        const cotaCount = this.documentosPendentes.filter(doc => doc.categoria === 'cota').length;
-        
-        console.log('👨‍👩‍👧‍👦 Documentos família/responsável:', familiaCount);
-        console.log('🎓 Documentos aluno:', alunoCount);
-        console.log('🎯 Documentos cota:', cotaCount);
-
-        // Log das categorias encontradas
-        const categorias = [...new Set(this.documentosPendentes.map(doc => doc.categoria))];
-        console.log('📂 Categorias encontradas:', categorias);
-
-        // Log dos nomes dos documentos
-        this.documentosPendentes.forEach((doc, index) => {
-          console.log(`📄 Documento ${index + 1}:`, {
-            nome: doc.nomeDocumento,
-            categoria: doc.categoria,
-            status: doc.status,
-            id: doc.idDocumento
-          });
-        });
-
-        console.log('✅ Documentos carregados com sucesso!');
-      } else {
-        console.warn('⚠️ Nenhum documento foi retornado da API');
-        await this.mostrarToast('Nenhum documento pendente encontrado', 'warning');
-      }
-    } catch (error: any) {
-      console.error('❌ Erro ao carregar documentos:', error);
-      console.error('❌ Detalhes do erro:', {
-        message: error?.message,
-        status: error?.status,
-        statusText: error?.statusText,
-        url: error?.url
+      this.responsavelDocumentosService.getDocumentosPorFamilia(idResponsavel).subscribe({
+        next: (familiaDocumentos) => {
+          console.log('📋 Documentos da família recebidos:', familiaDocumentos);
+          this.familiaDocumentos = familiaDocumentos;
+          
+          // Seleciona a primeira pessoa por padrão
+          if (this.familiaDocumentos.documentosPorPessoa.length > 0) {
+            this.pessoaSelecionada = this.familiaDocumentos.documentosPorPessoa[0];
+          }
+          
+          this.documentosCarregando = false;
+          console.log('✅ Documentos da família carregados com sucesso!');
+        },
+        error: (error: any) => {
+          console.error('❌ Erro ao carregar documentos da família:', error);
+          this.documentosCarregando = false;
+          this.mostrarToast('Erro ao carregar documentos da família', 'danger');
+        }
       });
-      await this.mostrarToast('Erro ao carregar documentos pendentes', 'danger');
-    } finally {
+
+    } catch (error) {
       this.documentosCarregando = false;
+      this.mostrarToast('Erro inesperado ao carregar documentos', 'danger');
     }
   }
 
-  obterDocumentosPorCategoria(categoria: string): any[] {
-    if (!this.documentosPendentes || this.documentosPendentes.length === 0) {
-      console.log(`🔍 Categoria '${categoria}': Nenhum documento pendente disponível`);
-      return [];
-    }
-
-    const documentosFiltrados = this.documentosPendentes.filter(doc => {
-      if (!doc || !doc.categoria) {
-        console.warn('Documento sem categoria encontrado:', doc);
-        return false;
-      }
-
-      const categoriaDoc = doc.categoria.toLowerCase().trim();
-      const categoriaFiltro = categoria.toLowerCase().trim();
-
-      console.log(`🔍 Comparando categoria '${categoriaDoc}' com filtro '${categoriaFiltro}' para documento '${doc.nomeDocumento}'`);
-      return categoriaDoc === categoriaFiltro;
-    });
-
-    console.log(`📊 Documentos da categoria '${categoria}':`, documentosFiltrados.length, 'encontrados');
-    console.log(`📋 Lista detalhada:`, documentosFiltrados.map(d => ({ nome: d.nomeDocumento, categoria: d.categoria })));
-    return documentosFiltrados;
+  /**
+   * Seleciona uma pessoa para visualizar os documentos
+   */
+  selecionarPessoa(pessoa: DocumentoPorPessoa) {
+    this.pessoaSelecionada = pessoa;
+    console.log('👤 Pessoa selecionada:', pessoa.pessoa.nome);
   }
 
-  obterDocumentosResponsavelFamilia(): any[] {
-    if (!this.documentosPendentes || this.documentosPendentes.length === 0) {
-      console.log('🔍 ResponsavelFamilia: Nenhum documento pendente disponível');
-      return [];
-    }
-
-    const documentosFiltrados = this.documentosPendentes.filter(doc => {
-      if (!doc || !doc.categoria) {
-        console.warn('Documento sem categoria encontrado:', doc);
-        return false;
-      }
-
-      const categoriaDoc = doc.categoria.toLowerCase().trim();
-      // Buscar por 'familia' ao invés de 'responsavel'
-      const isResponsavelOuFamilia = categoriaDoc === 'responsavel' || categoriaDoc === 'familia';
-
-      console.log(`🔍 Documento '${doc.nomeDocumento}' com categoria '${categoriaDoc}' - É responsável/família: ${isResponsavelOuFamilia}`);
-      return isResponsavelOuFamilia;
-    });
-
-    console.log(`📊 Documentos de responsável/família:`, documentosFiltrados.length, 'encontrados');
-    console.log(`📋 Lista detalhada:`, documentosFiltrados.map(d => ({ nome: d.nomeDocumento, categoria: d.categoria })));
-    return documentosFiltrados;
-  }
-
-  obterIconeDocumento(categoria: string): string {
-    if (this.documentoService.obterIconeDocumento) {
-      return this.documentoService.obterIconeDocumento(categoria);
-    }
-
-    // Fallback para ícones baseados na categoria
-    switch (categoria.toLowerCase()) {
-      case 'familia': return 'people-outline';
-      case 'aluno': return 'person-outline';
-      case 'cota': return 'document-text-outline';
-      default: return 'document-outline';
+  /**
+   * Retorna o ícone baseado no parentesco da pessoa
+   */
+  obterIconeParentesco(parentesco: string): string {
+    switch (parentesco) {
+      case 'responsavel': return 'person-circle-outline';
+      case 'aluno': return 'school-outline';
+      case 'integrante': return 'people-outline';
+      default: return 'person-outline';
     }
   }
 
-  obterCorStatus(status: string): string {
-    if (this.documentoService.obterCorStatus) {
-      return this.documentoService.obterCorStatus(status);
-    }
-
-    // Fallback para cores baseadas no status
-    switch (status?.toLowerCase()) {
-      case 'pendente': return 'warning';
-      case 'anexado': return 'primary';
-      case 'aprovado': return 'success';
-      case 'rejeitado': return 'danger';
+  /**
+   * Retorna a cor baseada no parentesco da pessoa
+   */
+  obterCorParentesco(parentesco: string): string {
+    switch (parentesco) {
+      case 'responsavel': return 'primary';
+      case 'aluno': return 'secondary';
+      case 'integrante': return 'tertiary';
       default: return 'medium';
     }
   }
 
-  async anexarDocumento(documento: any) {
+  /**
+   * Retorna a descrição do parentesco
+   */
+  obterDescricaoParentesco(parentesco: string): string {
+    switch (parentesco) {
+      case 'responsavel': return 'Responsável';
+      case 'aluno': return 'Aluno';
+      case 'integrante': return 'Integrante da Família';
+      default: return 'Membro';
+    }
+  }
+
+  /**
+   * Retorna ícone baseado na categoria do documento
+   */
+  obterIconeDocumento(categoria: string): string {
+    return this.responsavelDocumentosService.obterIconeCategoria(categoria);
+  }
+
+  /**
+   * Retorna cor baseada no status do documento
+   */
+  obterCorStatus(status: string): string {
+    return this.responsavelDocumentosService.obterCorStatus(status);
+  }
+
+  /**
+   * Anexa um documento
+   */
+  async anexarDocumento(documento: DocumentoIndividual) {
     const alert = await this.alertController.create({
       header: 'Anexar Documento',
-      message: `Selecionar arquivo para: ${documento.nomeDocumento || documento}`,
+      message: `Selecionar arquivo para: ${documento.tipoDocumento.nome}`,
       buttons: [
         { text: 'Cancelar', role: 'cancel' },
         { text: 'Selecionar Arquivo', handler: () => { this.selecionarArquivo(documento); } }
@@ -226,7 +170,10 @@ export class PainelResponsavelPage implements OnInit {
     await alert.present();
   }
 
-  private async selecionarArquivo(documento: any) {
+  /**
+   * Seleciona arquivo para upload
+   */
+  private async selecionarArquivo(documento: DocumentoIndividual) {
     const input = document.createElement('input');
     input.type = 'file';
     input.accept = '.pdf,.jpg,.jpeg,.png';
@@ -242,19 +189,32 @@ export class PainelResponsavelPage implements OnInit {
     document.body.removeChild(input);
   }
 
-  private async enviarArquivo(arquivo: File, documento: any) {
-    const validacao = this.documentoService.validarArquivo ? this.documentoService.validarArquivo(arquivo) : { valido: true };
+  /**
+   * Envia arquivo para o servidor
+   */
+  private async enviarArquivo(arquivo: File, documento: DocumentoIndividual) {
+    const validacao = this.responsavelDocumentosService.validarArquivo(arquivo);
     if (!validacao.valido) {
       await this.mostrarToast(validacao.erro!, 'danger');
       return;
     }
-    const loading = await this.loadingController.create({ message: 'Enviando documento...', spinner: 'crescent' });
+
+    const loading = await this.loadingController.create({ 
+      message: 'Enviando documento...', 
+      spinner: 'crescent' 
+    });
     await loading.present();
+
     try {
-      const idDocumento = documento.idDocumento || documento;
-      await this.documentoService.anexarDocumento(arquivo, idDocumento, this.usuarioLogado.idPessoa).toPromise();
+      const idPessoa = this.pessoaSelecionada!.pessoa.id;
+      await this.responsavelDocumentosService.anexarDocumento(
+        arquivo, 
+        documento.idDocumentoMatricula, 
+        idPessoa
+      ).toPromise();
+      
       await this.mostrarToast(`Documento ${arquivo.name} anexado com sucesso!`, 'success');
-      await this.carregarDocumentosPendentes();
+      await this.carregarDocumentosFamilia();
     } catch (error: any) {
       console.error('Erro ao anexar documento:', error);
       const mensagem = error?.error?.erro || 'Erro ao anexar documento';
@@ -264,27 +224,37 @@ export class PainelResponsavelPage implements OnInit {
     }
   }
 
-  async baixarDocumento(documento: any) {
+  /**
+   * Baixa um documento
+   */
+  async baixarDocumento(documento: DocumentoIndividual) {
     if (documento.status === 'pendente') {
       await this.mostrarToast('Documento ainda não foi anexado', 'warning');
       return;
     }
-    const loading = await this.loadingController.create({ message: 'Baixando documento...', spinner: 'crescent' });
+
+    const loading = await this.loadingController.create({ 
+      message: 'Baixando documento...', 
+      spinner: 'crescent' 
+    });
     await loading.present();
+
     try {
-      const blob = await this.documentoService.baixarDocumento(documento.idDocumento).toPromise();
+      const blob = await this.responsavelDocumentosService.baixarDocumento(documento.idDocumentoMatricula).toPromise();
       if (!blob) {
         await this.mostrarToast('Erro ao baixar documento', 'danger');
         return;
       }
+
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
-      link.download = documento.nomeArquivoOriginal || `documento_${documento.idDocumento}`;
+      link.download = documento.nomeArquivo || `documento_${documento.idDocumentoMatricula}`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
+      
       await this.mostrarToast('Download concluído!', 'success');
     } catch (error: any) {
       console.error('Erro ao baixar documento:', error);
@@ -294,14 +264,18 @@ export class PainelResponsavelPage implements OnInit {
     }
   }
 
-  async removerDocumento(documento: any) {
+  /**
+   * Remove um documento
+   */
+  async removerDocumento(documento: DocumentoIndividual) {
     if (documento.status === 'pendente') {
       await this.mostrarToast('Documento não foi anexado ainda', 'warning');
       return;
     }
+
     const alert = await this.alertController.create({
       header: 'Remover Documento',
-      message: `Tem certeza que deseja remover o documento: ${documento.nomeDocumento}?`,
+      message: `Tem certeza que deseja remover o documento: ${documento.tipoDocumento.nome}?`,
       buttons: [
         { text: 'Cancelar', role: 'cancel' },
         { text: 'Remover', cssClass: 'danger', handler: async () => { await this.confirmarRemocao(documento); } }
@@ -310,36 +284,62 @@ export class PainelResponsavelPage implements OnInit {
     await alert.present();
   }
 
-  private async confirmarRemocao(documento: any) {
+  /**
+   * Confirma remoção do documento
+   */
+  private async confirmarRemocao(documento: DocumentoIndividual) {
     try {
-      await this.documentoService.removerDocumento(documento.idDocumento, this.usuarioLogado.idPessoa).toPromise();
+      const idPessoa = this.pessoaSelecionada!.pessoa.id;
+      await this.responsavelDocumentosService.removerDocumento(
+        documento.idDocumentoMatricula, 
+        idPessoa
+      ).toPromise();
+      
       await this.mostrarToast('Documento removido com sucesso!', 'success');
-      await this.carregarDocumentosPendentes();
+      await this.carregarDocumentosFamilia();
     } catch (error: any) {
       console.error('Erro ao remover documento:', error);
       await this.mostrarToast('Erro ao remover documento', 'danger');
     }
   }
 
-  async mostrarToast(mensagem: string, cor: string) {
-    const toast = await this.toastController.create({ message: mensagem, color: cor, duration: 2500 });
+  /**
+   * Mostra toast com mensagem
+   */
+  async mostrarToast(mensagem: string, cor: string = 'primary') {
+    const toast = await this.toastController.create({ 
+      message: mensagem, 
+      color: cor, 
+      duration: 2500 
+    });
     await toast.present();
   }
 
-  // Método de debug para testar dados
+  /**
+   * Obtém estatísticas de documentos para uma pessoa
+   */
+  obterEstatisticasPessoa(pessoa: DocumentoPorPessoa): { pendentes: number; total: number } {
+    const pendentes = pessoa.documentos.filter(doc => doc.status === 'pendente').length;
+    const total = pessoa.documentos.length;
+    return { pendentes, total };
+  }
+
+  /**
+   * Método de debug para testar dados
+   */
   debugDados() {
     console.log('🐛 DEBUG - Estado atual:');
-    console.log('📊 Documentos pendentes:', this.documentosPendentes.length);
-    console.log('📋 Documentos família/responsável:', this.obterDocumentosResponsavelFamilia().length);
-    console.log('🎓 Documentos aluno:', this.obterDocumentosPorCategoria('aluno').length);
-    console.log('🎯 Documentos cota:', this.obterDocumentosPorCategoria('cota').length);
     console.log('👤 Usuário logado:', this.usuarioLogado);
+    console.log('👨‍👩‍👧‍👦 Família documentos:', this.familiaDocumentos);
+    console.log('👤 Pessoa selecionada:', this.pessoaSelecionada);
     console.log('⏳ Carregando documentos:', this.documentosCarregando);
     
-    if (this.documentosPendentes.length > 0) {
-      console.log('📄 Lista completa de documentos:');
-      this.documentosPendentes.forEach((doc, index) => {
-        console.log(`${index + 1}. ${doc.nomeDocumento} (${doc.categoria}) - ${doc.status}`);
+    if (this.familiaDocumentos) {
+      console.log('📊 Resumo:', this.familiaDocumentos.resumo);
+      console.log('👥 Pessoas da família:', this.familiaDocumentos.documentosPorPessoa.length);
+      
+      this.familiaDocumentos.documentosPorPessoa.forEach((pessoa, index) => {
+        console.log(`${index + 1}. ${pessoa.pessoa.nome} (${pessoa.pessoa.parentesco}) - ${pessoa.documentos.length} documentos`);
       });
     }
   }

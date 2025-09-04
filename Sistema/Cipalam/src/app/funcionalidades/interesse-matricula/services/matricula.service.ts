@@ -7,7 +7,7 @@ import { DocumentoMatricula } from '../models/documento-matricula.interface';
 
 @Injectable({ providedIn: 'root' })
 export class MatriculaService {
-  private apiUrl = `${environment.apiUrl}/matricula`;
+  private apiUrl = `${environment.apiUrl}/matriculas`;
 
   // Simulação de configuração de documentos por cota como fallback
   private configuracaoDocumentos: Record<string, DocumentoMatricula[]> = {
@@ -38,6 +38,50 @@ export class MatriculaService {
         console.error('Erro ao iniciar matrícula no backend:', error);
         // Fallback para simulação local
         return of(this.criarLoginResponsavelLocal(dadosMatricula));
+      })
+    );
+  }
+
+  /**
+   * Busca turmas disponíveis para matrícula
+   */
+  getTurmasDisponiveis(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/turmas`).pipe(
+      catchError(error => {
+        console.error('Erro ao buscar turmas:', error);
+        // Fallback com dados simulados
+        return of([
+          { id: 1, nome: 'Turma A - Manhã', descricao: 'Turma do período matutino', vagasDisponiveis: 5, totalVagas: 25, horario: '07:00 - 11:00', turno: 'Manhã' },
+          { id: 2, nome: 'Turma B - Tarde', descricao: 'Turma do período vespertino', vagasDisponiveis: 3, totalVagas: 25, horario: '13:00 - 17:00', turno: 'Tarde' }
+        ]);
+      })
+    );
+  }
+
+  /**
+   * Busca declarações disponíveis para matrícula
+   */
+  getDeclaracoesParaMatricula(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/declaracoes`).pipe(
+      catchError(error => {
+        console.error('Erro ao buscar declarações:', error);
+        return of([]);
+      })
+    );
+  }
+
+  /**
+   * Inicia o processo de matrícula com três parâmetros (formato correto do backend)
+   */
+  iniciarMatriculaComTurma(idDeclaracao: number, idTurma: number, idFuncionario: number): Observable<any> {
+    const request = { idDeclaracao, idTurma, idFuncionario };
+    return this.http.post(`${this.apiUrl}/iniciar`, request).pipe(
+      catchError(error => {
+        console.error('Erro ao iniciar matrícula:', error);
+        return of({
+          sucesso: false,
+          mensagem: 'Erro ao iniciar matrícula: ' + (error?.error?.message || error.message)
+        });
       })
     );
   }

@@ -16,24 +16,24 @@ public interface TipoDocumentoRepository extends JpaRepository<TipoDocumento, Lo
        // Buscar todos os tipos ativos ordenados por nome
        List<TipoDocumento> findByAtivoTrueOrderByNomeAsc();
 
-       // Buscar por modalidade de entrega
-       List<TipoDocumento> findByModalidadeEntregaAndAtivoTrueOrderByNomeAsc(
-                     TipoDocumento.ModalidadeEntrega modalidadeEntrega);
+       // Buscar por tipo de processamento
+       List<TipoDocumento> findByTipoProcessamentoAndAtivoTrueOrderByNomeAsc(
+                     TipoDocumento.TipoProcessamento tipoProcessamento);
 
-       // Buscar por quem deve fornecer
-       List<TipoDocumento> findByQuemDeveFornencerAndAtivoTrueOrderByNomeAsc(
-                     TipoDocumento.QuemDeveFornencer quemDeveFornencer);
+       // Buscar por escopo
+       List<TipoDocumento> findByEscopoAndAtivoTrueOrderByNomeAsc(
+                     TipoDocumento.Escopo escopo);
 
        // Buscar documentos para FAMILIA e TODOS_INTEGRANTES
-       @Query("SELECT td FROM TipoDocumento td WHERE td.ativo = true AND td.quemDeveFornencer IN ('FAMILIA', 'TODOS_INTEGRANTES') ORDER BY td.nome ASC")
+       @Query("SELECT td FROM TipoDocumento td WHERE td.ativo = true AND td.escopo IN ('FAMILIA', 'TODOS_INTEGRANTES') ORDER BY td.nome ASC")
        List<TipoDocumento> findDocumentosParaFamilia();
 
        // Buscar documentos para ALUNO
-       @Query("SELECT td FROM TipoDocumento td WHERE td.ativo = true AND td.quemDeveFornencer = 'ALUNO' ORDER BY td.nome ASC")
+       @Query("SELECT td FROM TipoDocumento td WHERE td.ativo = true AND td.escopo = 'ALUNO' ORDER BY td.nome ASC")
        List<TipoDocumento> findDocumentosParaAluno();
 
        // Buscar documentos de TODOS_INTEGRANTES
-       @Query("SELECT td FROM TipoDocumento td WHERE td.ativo = true AND td.quemDeveFornencer = 'TODOS_INTEGRANTES' ORDER BY td.nome ASC")
+       @Query("SELECT td FROM TipoDocumento td WHERE td.ativo = true AND td.escopo = 'TODOS_INTEGRANTES' ORDER BY td.nome ASC")
        List<TipoDocumento> findDocumentosParaTodosIntegrantes();
 
        // Buscar por nome (case insensitive)
@@ -42,14 +42,14 @@ public interface TipoDocumentoRepository extends JpaRepository<TipoDocumento, Lo
        // Buscar com filtros múltiplos
        @Query("SELECT td FROM TipoDocumento td WHERE " +
                      "(:nome IS NULL OR LOWER(td.nome) LIKE LOWER(CONCAT('%', :nome, '%'))) AND " +
-                     "(:modalidadeEntrega IS NULL OR td.modalidadeEntrega = :modalidadeEntrega) AND " +
-                     "(:quemDeveFornencer IS NULL OR td.quemDeveFornencer = :quemDeveFornencer) AND " +
+                     "(:tipoProcessamento IS NULL OR td.tipoProcessamento = :tipoProcessamento) AND " +
+                     "(:escopo IS NULL OR td.escopo = :escopo) AND " +
                      "(:ativo IS NULL OR td.ativo = :ativo) " +
                      "ORDER BY td.nome ASC")
        Page<TipoDocumento> findWithFilters(
                      @Param("nome") String nome,
-                     @Param("modalidadeEntrega") TipoDocumento.ModalidadeEntrega modalidadeEntrega,
-                     @Param("quemDeveFornencer") TipoDocumento.QuemDeveFornencer quemDeveFornencer,
+                     @Param("tipoProcessamento") TipoDocumento.TipoProcessamento tipoProcessamento,
+                     @Param("escopo") TipoDocumento.Escopo escopo,
                      @Param("ativo") Boolean ativo,
                      Pageable pageable);
 
@@ -57,8 +57,8 @@ public interface TipoDocumentoRepository extends JpaRepository<TipoDocumento, Lo
        @Query("SELECT CASE WHEN COUNT(dm) > 0 THEN false ELSE true END FROM DocumentoMatricula dm WHERE dm.tipoDocumento.idTipoDocumento = :idTipoDocumento")
        boolean podeRemoverTipoDocumento(@Param("idTipoDocumento") Long idTipoDocumento);
 
-       // Buscar documentos por quem deve fornecer organizados
-       @Query("SELECT td FROM TipoDocumento td WHERE td.ativo = true AND td.quemDeveFornencer = :quemDeveFornencer ORDER BY td.modalidadeEntrega ASC, td.nome ASC")
-       List<TipoDocumento> findByQuemDeveFornencerOrganizado(
-                     @Param("quemDeveFornencer") TipoDocumento.QuemDeveFornencer quemDeveFornencer);
+       // Buscar documentos por escopo organizados
+       @Query("SELECT td FROM TipoDocumento td WHERE td.ativo = true AND td.escopo = :escopo ORDER BY td.tipoProcessamento ASC, td.nome ASC")
+       List<TipoDocumento> findByEscopoOrganizado(
+                     @Param("escopo") TipoDocumento.Escopo escopo);
 }

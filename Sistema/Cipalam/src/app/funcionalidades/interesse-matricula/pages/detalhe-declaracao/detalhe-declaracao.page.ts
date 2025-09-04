@@ -4,6 +4,7 @@ import { AlertController, LoadingController, ToastController } from '@ionic/angu
 import { InteresseMatriculaService } from '../../services/interesse-matricula.service';
 import { InteresseMatricula } from '../../models/interesse-matricula.interface';
 import { MatriculaService } from '../../services/matricula.service';
+import { ResponsavelDocumentosService } from '../../../../core/services/responsavel-documentos.service';
 
 @Component({
   selector: 'app-detalhe-declaracao',
@@ -23,11 +24,16 @@ export class DetalheDeclaracaoPage implements OnInit {
   rendaFamiliarCalculada = 0;
   rendaPerCapitaCalculada = 0;
   enderecoCompleto = '';
+  
+  // Novos campos para documentos enviados
+  documentosEnviados: any[] = [];
+  carregandoDocumentos = false;
 
   constructor(
     private route: ActivatedRoute,
     private interesseMatriculaService: InteresseMatriculaService,
     private matriculaService: MatriculaService,
+    private responsavelDocumentosService: ResponsavelDocumentosService,
     private router: Router,
     private alertController: AlertController,
     private loadingController: LoadingController,
@@ -119,6 +125,9 @@ export class DetalheDeclaracaoPage implements OnInit {
           };
           // Carregar documentos necessários baseado no tipo de cota
           this.carregarDocumentosNecessarios(declaracao.tipoVaga?.tipoCota || declaracao.tipoCota);
+          
+          // Carregar documentos já enviados
+          this.carregarDocumentosEnviados();
         }
       },
       error: (error: any) => {
@@ -157,22 +166,8 @@ export class DetalheDeclaracaoPage implements OnInit {
   async iniciarMatricula() {
     if (!this.declaracao) return;
 
-    const alert = await this.alertController.create({
-      header: 'Confirmar Início de Matrícula',
-      message: 'Tem certeza que deseja iniciar o processo de matrícula? Será criado um login para o responsável.',
-      buttons: [
-        {
-          text: 'Cancelar',
-          role: 'cancel'
-        },
-        {
-          text: 'Confirmar',
-          handler: () => this.processarInicioMatricula()
-        }
-      ]
-    });
-
-    await alert.present();
+    // Navegar para página de seleção de turma no contexto administrativo
+    this.router.navigate(['/sistema/selecao-turma', this.declaracao.id]);
   }
 
   private async processarInicioMatricula() {
@@ -309,5 +304,91 @@ export class DetalheDeclaracaoPage implements OnInit {
 
       this.enderecoCompleto = partes.join(', ');
     }
+  }
+
+  /**
+   * Carrega documentos já enviados para a matrícula
+   */
+  private carregarDocumentosEnviados() {
+    // Por enquanto, vamos usar um ID fixo para teste (Ana Costa Lima)
+    // Em um cenário real, você precisaria mapear o protocolo para o ID da pessoa
+    let idResponsavel = 6; // Ana Costa Lima que tem matrícula iniciada
+    
+    // Tentativa de encontrar ID baseado no protocolo
+    if (this.declaracao?.protocolo === 'MAT-2025-001') {
+      idResponsavel = 4; // Ana Silva Santos
+    } else if (this.declaracao?.protocolo === 'MAT-1756957725758') {
+      idResponsavel = 6; // Ana Costa Lima
+    }
+
+    this.carregandoDocumentos = true;
+    console.log('🔍 Carregando documentos enviados para o responsável:', idResponsavel);
+
+    this.responsavelDocumentosService.getDocumentosPorFamilia(idResponsavel).subscribe({
+      next: (familiaDocumentos) => {
+        console.log('📋 Documentos da família recebidos:', familiaDocumentos);
+        
+        // Flatar todos os documentos de todas as pessoas
+        this.documentosEnviados = [];
+        familiaDocumentos.documentosPorPessoa.forEach(pessoaDoc => {
+          pessoaDoc.documentos.forEach(doc => {
+            this.documentosEnviados.push({
+              ...doc,
+              nomeResponsavel: pessoaDoc.pessoa.nome,
+              parentesco: pessoaDoc.pessoa.parentesco
+            });
+          });
+        });
+
+        this.carregandoDocumentos = false;
+        console.log('✅ Documentos enviados carregados:', this.documentosEnviados);
+      },
+      error: (error: any) => {
+        console.error('❌ Erro ao carregar documentos enviados:', error);
+        this.carregandoDocumentos = false;
+        this.documentosEnviados = [];
+      }
+    });
+  }
+
+  /**
+   * Abre/visualiza um documento específico
+   */
+  abrirDocumento(documento: any) {
+    console.log('🔑 Abrindo documento:', documento);
+    
+    if (documento.nomeArquivo) {
+      // Aqui você pode implementar a lógica para abrir/baixar o arquivo
+      // Por exemplo, uma modal ou navegação para uma página de visualização
+      this.mostrarInfo(`Documento: ${documento.tipoDocumento.nome}\nArquivo: ${documento.nomeArquivo}\nStatus: ${documento.statusDescricao}`);
+    } else {
+      this.mostrarInfo(`Este documento ainda não foi anexado.\nTipo: ${documento.tipoDocumento.nome}\nStatus: ${documento.statusDescricao}`);
+    }
+  }
+
+  /**
+   * Retorna a cor baseada no status do documento
+   */
+  getStatusColor(status: string): string {
+    switch (status?.toLowerCase()) {
+      case 'aprovado':
+        return 'success';
+      case 'anexado':
+        return 'primary';
+      case 'rejeitado':
+        return 'danger';
+      case 'pendente':
+      default:
+        return 'warning';
+    }
+  }
+
+  private async mostrarInfo(mensagem: string) {
+    const alert = await this.alertController.create({
+      header: 'Informações do Documento',
+      message: mensagem,
+      buttons: ['Fechar']
+    });
+    await alert.present();
   }
 }

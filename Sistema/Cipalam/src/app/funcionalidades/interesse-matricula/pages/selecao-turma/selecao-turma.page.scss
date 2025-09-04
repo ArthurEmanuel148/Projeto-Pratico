@@ -1,0 +1,258 @@
+/* Estilo geral da página */
+.content-container {
+  padding: 16px;
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+  text-align: center;
+  
+  p {
+    margin-top: 16px;
+    color: var(--ion-color-medium);
+  }
+}
+
+/* Card da declaração */
+.declaracao-card {
+  margin-bottom: 16px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  
+  ion-card-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 1.2rem;
+    font-weight: 600;
+  }
+}
+
+.info-item {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 12px;
+  
+  .label {
+    font-size: 0.85rem;
+    color: var(--ion-color-medium);
+    font-weight: 500;
+    margin-bottom: 4px;
+  }
+  
+  .value {
+    font-size: 1rem;
+    color: var(--ion-color-dark);
+    font-weight: 500;
+  }
+}
+
+/* Card das turmas */
+.turmas-card {
+  margin-bottom: 16px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  
+  ion-card-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 1.2rem;
+    font-weight: 600;
+  }
+  
+  ion-card-subtitle {
+    margin-top: 8px;
+    color: var(--ion-color-medium);
+    font-size: 0.9rem;
+  }
+}
+
+/* Quando não há turmas */
+.no-turmas {
+  text-align: center;
+  padding: 32px 16px;
+  
+  ion-icon {
+    margin-bottom: 16px;
+  }
+  
+  h3 {
+    margin: 0 0 12px 0;
+    color: var(--ion-color-dark);
+    font-size: 1.1rem;
+    font-weight: 600;
+  }
+  
+  p {
+    margin: 0;
+    color: var(--ion-color-medium);
+    font-size: 0.9rem;
+    line-height: 1.4;
+  }
+}
+
+/* Lista de turmas */
+.turmas-list {
+  padding: 0;
+}
+
+.turma-item {
+  margin-bottom: 12px;
+  border-radius: 8px;
+  border: 2px solid var(--ion-color-light);
+  transition: all 0.2s ease;
+  
+  &.selected {
+    border-color: var(--ion-color-primary);
+    background-color: var(--ion-color-primary-tint);
+  }
+  
+  &:hover {
+    border-color: var(--ion-color-primary-shade);
+  }
+  
+  ion-item {
+    --border-width: 0;
+    --background: transparent;
+    --padding: 16px;
+    
+    ion-radio {
+      --color: var(--ion-color-primary);
+      --color-checked: var(--ion-color-primary);
+      margin-right: 16px;
+    }
+  }
+}
+
+.turma-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  
+  h2 {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--ion-color-dark);
+  }
+}
+
+.vagas-badge {
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  
+  &.vagas-muitas {
+    background-color: var(--ion-color-success-tint);
+    color: var(--ion-color-success-contrast);
+  }
+  
+  &.vagas-moderadas {
+    background-color: var(--ion-color-warning-tint);
+    color: var(--ion-color-warning-contrast);
+  }
+  
+  &.vagas-poucas {
+    background-color: var(--ion-color-danger-tint);
+    color: var(--ion-color-danger-contrast);
+  }
+}
+
+.turma-details {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  
+  p {
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.85rem;
+    color: var(--ion-color-medium);
+    
+    ion-icon {
+      font-size: 0.9rem;
+    }
+  }
+  
+  .turno {
+    color: var(--ion-color-secondary);
+    font-weight: 500;
+  }
+  
+  .descricao {
+    color: var(--ion-color-medium-shade);
+    font-style: italic;
+    margin-top: 4px;
+  }
+}
+
+/* Botões de ação */
+.action-buttons {
+  margin-top: 24px;
+  padding: 16px 0;
+  
+  ion-button {
+    margin-bottom: 12px;
+    --border-radius: 8px;
+    height: 48px;
+    font-weight: 600;
+    
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+}
+
+/* Responsividade */
+@media (min-width: 768px) {
+  .content-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 24px;
+  }
+  
+  .turma-details {
+    flex-direction: row;
+    gap: 16px;
+    
+    p {
+      margin-right: 16px;
+    }
+  }
+  
+  .action-buttons {
+    display: flex;
+    gap: 16px;
+    
+    ion-button {
+      margin-bottom: 0;
+      flex: 1;
+    }
+  }
+}
+
+/* Animações */
+.turma-item {
+  animation: slideInUp 0.3s ease-out;
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

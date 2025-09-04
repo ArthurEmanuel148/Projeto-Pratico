@@ -20,13 +20,13 @@ import java.util.Optional;
 public class MatriculaService {
 
     @Autowired
-    private JdbcTemplate jdbcTemplate;
-
-    @Autowired
     private TurmaRepository turmaRepository;
 
     @Autowired
     private LoginRepository loginRepository;
+
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
 
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
@@ -43,7 +43,6 @@ public class MatriculaService {
     @Transactional
     public IniciarMatriculaResponse iniciarMatricula(IniciarMatriculaRequest request) {
         try {
-            // Teste simples sem validações para isolar problema
             System.out.println("=== INICIANDO MATRICULA ===");
             System.out.println("ID Declaracao: " + request.getIdDeclaracao());
             System.out.println("ID Turma: " + request.getIdTurma());
@@ -57,7 +56,6 @@ public class MatriculaService {
                     request.getIdTurma(),
                     request.getIdFuncionario());
 
-            // Verificar se houve retorno da procedure
             if (resultados.isEmpty()) {
                 return new IniciarMatriculaResponse("Erro ao executar procedure - nenhum resultado retornado");
             }
@@ -72,8 +70,13 @@ public class MatriculaService {
             String loginResponsavel = (String) resultado.get("loginResponsavel");
             String senhaTemporaria = (String) resultado.get("senhaTemporaria");
 
+            System.out.println("=== DADOS DA PROCEDURE ===");
+            System.out.println("Login Responsavel: " + loginResponsavel);
+            System.out.println("Senha Temporaria (raw): " + senhaTemporaria);
+            System.out.println("Resultado completo: " + resultado);
+
             // Criptografar senha se necessário
-            this.criptografarSenhaSeNecessario(loginResponsavel, senhaTemporaria);
+            this.criptografarSenhaImediatamente(loginResponsavel, senhaTemporaria);
 
             return new IniciarMatriculaResponse(
                     idFamilia, idResponsavel, idAluno,
@@ -100,22 +103,63 @@ public class MatriculaService {
     }
 
     /**
-     * Criptografa a senha de um login se ela estiver em texto claro
+     * Criptografa a senha imediatamente após a criação
      */
-    private void criptografarSenhaSeNecessario(String usuario, String senhaTextoClaro) {
-        // Execute em uma nova transação separada
-        Optional<Login> loginOptional = loginRepository.findByUsuario(usuario);
+    @Transactional
+    private void criptografarSenhaImediatamente(String usuario, String senhaTextoClaro) {
+        try {
+            Optional<Login> loginOptional = loginRepository.findByUsuario(usuario);
 
-        if (loginOptional.isPresent()) {
-            Login login = loginOptional.get();
+            if (loginOptional.isPresent()) {
+                Login login = loginOptional.get();
 
-            // Verificar se a senha está em texto claro (não é um hash BCrypt)
-            if (!login.getSenha().startsWith("$2") && login.getSenha().length() <= 10) {
-                // Criptografar a senha
-                String senhaCriptografada = passwordEncoder.encode(senhaTextoClaro);
-                login.setSenha(senhaCriptografada);
-                loginRepository.save(login);
+                // Verificar se a senha precisa ser criptografada
+                if (!login.getSenha().startsWith("$2")) {
+                    System.out.println("Criptografando senha para usuário: " + usuario);
+                    
+                    String senhaCriptografada = passwordEncoder.encode(senhaTextoClaro);
+                    login.setSenha(senhaCriptografada);
+                    loginRepository.save(login);
+                    
+                    System.out.println("Senha criptografada com sucesso para: " + usuario);
+                } else {
+                    System.out.println("Senha já criptografada para usuário: " + usuario);
+                }
+            } else {
+                System.out.println("Login não encontrado para usuário: " + usuario);
             }
+        } catch (Exception e) {
+            System.err.println("Erro ao criptografar senha para usuário " + usuario + ": " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Endpoint para criptografar senha de usuário específico
+     */
+    @Transactional
+    public String criptografarSenhaUsuario(String usuario) {
+        try {
+            Optional<Login> loginOptional = loginRepository.findByUsuario(usuario);
+
+            if (loginOptional.isPresent()) {
+                Login login = loginOptional.get();
+                
+                if (!login.getSenha().startsWith("$2")) {
+                    String senhaTextoClaro = login.getSenha();
+                    String senhaCriptografada = passwordEncoder.encode(senhaTextoClaro);
+                    login.setSenha(senhaCriptografada);
+                    loginRepository.save(login);
+                    
+                    return "Senha criptografada com sucesso para usuário: " + usuario;
+                } else {
+                    return "Senha já estava criptografada para usuário: " + usuario;
+                }
+            } else {
+                return "Usuário não encontrado: " + usuario;
+            }
+        } catch (Exception e) {
+            return "Erro ao criptografar senha: " + e.getMessage();
         }
     }
 }

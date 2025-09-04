@@ -46,6 +46,12 @@ const routes: Routes = [
         data: { requiredPermission: 'declaracoesInteresse' }
       },
       {
+        path: 'selecao-turma/:idDeclaracao',
+        loadChildren: () => import('../funcionalidades/interesse-matricula/pages/selecao-turma/selecao-turma.module').then(m => m.SelecaoTurmaPageModule),
+        canActivate: [RoleGuard],
+        data: { requiredPermission: 'declaracoesInteresse' }
+      },
+      {
         path: 'iniciar-matricula',
         loadChildren: () => import('../funcionalidades/iniciar-matricula/iniciar-matricula.module').then(m => m.IniciarMatriculaModule),
         canActivate: [RoleGuard],

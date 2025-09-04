@@ -28,12 +28,12 @@ public class TipoDocumento {
     private String descricao;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "modalidadeEntrega", nullable = false, columnDefinition = "ENUM('ASSINADO', 'ANEXADO') DEFAULT 'ANEXADO'")
-    private ModalidadeEntrega modalidadeEntrega = ModalidadeEntrega.ANEXADO;
+    @Column(name = "tipoProcessamento", nullable = false, columnDefinition = "ENUM('ANEXACAO', 'ASSINATURA') DEFAULT 'ANEXACAO'")
+    private TipoProcessamento tipoProcessamento = TipoProcessamento.ANEXACAO;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "quemDeveFornencer", nullable = false, columnDefinition = "ENUM('RESPONSAVEL', 'ALUNO', 'TODOS_INTEGRANTES', 'FAMILIA') DEFAULT 'RESPONSAVEL'")
-    private QuemDeveFornencer quemDeveFornencer = QuemDeveFornencer.RESPONSAVEL;
+    @Column(name = "escopo", nullable = false, columnDefinition = "ENUM('FAMILIA', 'ALUNO', 'TODOS_INTEGRANTES') DEFAULT 'FAMILIA'")
+    private Escopo escopo = Escopo.FAMILIA;
 
     @Column(name = "ativo", nullable = false, columnDefinition = "BOOLEAN DEFAULT TRUE")
     private Boolean ativo = true;
@@ -55,22 +55,22 @@ public class TipoDocumento {
         dataAtualizacao = LocalDateTime.now();
     }
 
-    public enum ModalidadeEntrega {
-        ASSINADO, ANEXADO
+    public enum TipoProcessamento {
+        ANEXACAO, ASSINATURA
     }
 
-    public enum QuemDeveFornencer {
-        RESPONSAVEL, ALUNO, TODOS_INTEGRANTES, FAMILIA
+    public enum Escopo {
+        FAMILIA, ALUNO, TODOS_INTEGRANTES
     }
 
     // Método helper para verificar se requer anexação
     public boolean requerAnexacao() {
-        return modalidadeEntrega == ModalidadeEntrega.ANEXADO;
+        return tipoProcessamento == TipoProcessamento.ANEXACAO;
     }
 
     // Método helper para verificar se requer assinatura
     public boolean requerAssinatura() {
-        return modalidadeEntrega == ModalidadeEntrega.ASSINADO;
+        return tipoProcessamento == TipoProcessamento.ASSINATURA;
     }
 
     // Método helper para verificar se é documento de identidade
@@ -90,12 +90,12 @@ public class TipoDocumento {
 
     @Deprecated
     public Boolean getRequerAssinatura() {
-        return modalidadeEntrega == ModalidadeEntrega.ASSINADO;
+        return tipoProcessamento == TipoProcessamento.ASSINATURA;
     }
 
     @Deprecated
     public Boolean getRequerAnexo() {
-        return modalidadeEntrega == ModalidadeEntrega.ANEXADO;
+        return tipoProcessamento == TipoProcessamento.ANEXACAO;
     }
 
     @Deprecated

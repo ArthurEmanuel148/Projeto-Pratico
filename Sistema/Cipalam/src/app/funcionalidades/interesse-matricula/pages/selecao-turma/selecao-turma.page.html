@@ -1,0 +1,162 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-button (click)="voltar()">
+        <ion-icon name="arrow-back"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Selecionar Turma</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">Selecionar Turma</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <!-- Loading -->
+  <div *ngIf="isLoading" class="loading-container">
+    <ion-spinner></ion-spinner>
+    <p>Carregando turmas disponíveis...</p>
+  </div>
+
+  <!-- Conteúdo principal -->
+  <div *ngIf="!isLoading" class="content-container">
+    
+    <!-- Informações da declaração -->
+    <ion-card *ngIf="declaracaoSelecionada" class="declaracao-card">
+      <ion-card-header>
+        <ion-card-title>
+          <ion-icon name="document-text" color="primary"></ion-icon>
+          Declaração Selecionada
+        </ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-grid>
+          <ion-row>
+            <ion-col size="12" size-md="6">
+              <div class="info-item">
+                <span class="label">Protocolo:</span>
+                <span class="value">{{ declaracaoSelecionada.protocolo }}</span>
+              </div>
+            </ion-col>
+            <ion-col size="12" size-md="6">
+              <div class="info-item">
+                <span class="label">Tipo de Cota:</span>
+                <span class="value">{{ declaracaoSelecionada.tipoCotaDescricao }}</span>
+              </div>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col size="12" size-md="6">
+              <div class="info-item">
+                <span class="label">Aluno:</span>
+                <span class="value">{{ declaracaoSelecionada.nomeAluno }}</span>
+              </div>
+            </ion-col>
+            <ion-col size="12" size-md="6">
+              <div class="info-item">
+                <span class="label">Responsável:</span>
+                <span class="value">{{ declaracaoSelecionada.nomeResponsavel }}</span>
+              </div>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col size="12">
+              <div class="info-item">
+                <span class="label">Aguardando há:</span>
+                <span class="value">{{ declaracaoSelecionada.diasAguardando }} dias</span>
+              </div>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Lista de turmas disponíveis -->
+    <ion-card class="turmas-card">
+      <ion-card-header>
+        <ion-card-title>
+          <ion-icon name="school" color="secondary"></ion-icon>
+          Turmas Disponíveis
+        </ion-card-title>
+        <ion-card-subtitle>
+          {{ turmasDisponiveis.length }} turma(s) com vagas disponíveis
+        </ion-card-subtitle>
+      </ion-card-header>
+      <ion-card-content>
+        
+        <!-- Nenhuma turma disponível -->
+        <div *ngIf="turmasDisponiveis.length === 0" class="no-turmas">
+          <ion-icon name="alert-circle" color="warning" size="large"></ion-icon>
+          <h3>Nenhuma turma disponível</h3>
+          <p>No momento não há turmas com vagas disponíveis. Tente novamente mais tarde.</p>
+        </div>
+
+        <!-- Lista de turmas -->
+        <div *ngIf="turmasDisponiveis.length > 0" class="turmas-list">
+          <ion-radio-group [(ngModel)]="turmaSelecionada" (ionChange)="selecionarTurma($event.detail.value)">
+            
+            <div *ngFor="let turma of turmasDisponiveis" class="turma-item" 
+                 [class.selected]="turmaSelecionada?.id === turma.id">
+              
+              <ion-item>
+                <ion-radio [value]="turma" slot="start"></ion-radio>
+                
+                <ion-label>
+                  <div class="turma-header">
+                    <h2>{{ turma.nome }}</h2>
+                    <div class="vagas-badge" [ngClass]="getVagasClass(turma.vagasDisponiveis)">
+                      {{ turma.vagasDisponiveis }} vagas
+                    </div>
+                  </div>
+                  
+                  <div class="turma-details">
+                    <p class="turno">
+                      <ion-icon name="time" color="medium"></ion-icon>
+                      {{ turma.turno }}
+                    </p>
+                    
+                    <p class="capacidade">
+                      <ion-icon name="people" color="medium"></ion-icon>
+                      {{ turma.capacidadeMaxima - turma.vagasDisponiveis }}/{{ turma.capacidadeMaxima }} matriculados
+                    </p>
+                    
+                    <p *ngIf="turma.descricaoCompleta" class="descricao">
+                      {{ turma.descricaoCompleta }}
+                    </p>
+                  </div>
+                </ion-label>
+              </ion-item>
+              
+            </div>
+            
+          </ion-radio-group>
+        </div>
+        
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Botões de ação -->
+    <div class="action-buttons" *ngIf="turmasDisponiveis.length > 0">
+      <ion-button expand="full" 
+                  color="primary" 
+                  [disabled]="!turmaSelecionada"
+                  (click)="confirmarSelecao()">
+        <ion-icon name="checkmark-circle" slot="start"></ion-icon>
+        Confirmar Seleção
+      </ion-button>
+      
+      <ion-button expand="full" 
+                  fill="outline" 
+                  color="medium"
+                  (click)="voltar()">
+        <ion-icon name="arrow-back" slot="start"></ion-icon>
+        Voltar para Lista
+      </ion-button>
+    </div>
+
+  </div>
+</ion-content>

@@ -225,10 +225,9 @@
 
     <!-- Botão de iniciar matrícula -->
     <div class="action-section">
-      <ion-button expand="block" color="success" (click)="iniciarMatricula()" *ngIf="!matriculaIniciada"
-        [disabled]="processandoMatricula">
-        <ion-icon name="document-attach-outline" slot="start"></ion-icon>
-        {{ processandoMatricula ? 'Processando...' : 'Iniciar Matrícula' }}
+      <ion-button expand="block" color="success" (click)="iniciarMatricula()" *ngIf="!matriculaIniciada">
+        <ion-icon name="school-outline" slot="start"></ion-icon>
+        Selecionar Turma e Iniciar Matrícula
       </ion-button>
     </div>
 
@@ -273,6 +272,42 @@
             </ion-label>
           </ion-item>
         </ion-list>
+      </div>
+
+      <!-- Nova seção para documentos enviados -->
+      <div class="documents-section" *ngIf="!carregandoDocumentos">
+        <h3>Documentos Enviados</h3>
+        <div *ngIf="documentosEnviados.length > 0; else nenhumDocumentoEnviado">
+          <ion-list>
+            <ion-item *ngFor="let doc of documentosEnviados" lines="full">
+              <ion-icon name="document-text-outline" slot="start" [color]="getStatusColor(doc.status)"></ion-icon>
+              <ion-label>
+                <h4>{{ doc.tipoDocumento.nome }}</h4>
+                <p><strong>Responsável:</strong> {{ doc.nomeResponsavel }} ({{ doc.parentesco }})</p>
+                <p><strong>Status:</strong> 
+                  <ion-badge [color]="getStatusColor(doc.status)">{{ doc.statusDescricao }}</ion-badge>
+                </p>
+                <p *ngIf="doc.nomeArquivo"><strong>Arquivo:</strong> {{ doc.nomeArquivo }}</p>
+                <p *ngIf="doc.dataEnvio"><strong>Enviado em:</strong> {{ doc.dataEnvio | date:'dd/MM/yyyy HH:mm' }}</p>
+              </ion-label>
+              <!-- Botão da chavinha para abrir documento -->
+              <ion-button slot="end" fill="clear" color="primary" (click)="abrirDocumento(doc)">
+                <ion-icon name="key-outline" slot="icon-only"></ion-icon>
+              </ion-button>
+            </ion-item>
+          </ion-list>
+        </div>
+        <ng-template #nenhumDocumentoEnviado>
+          <ion-note color="medium" class="ion-margin">
+            <ion-icon name="information-circle-outline" slot="start"></ion-icon>
+            Nenhum documento foi enviado ainda.
+          </ion-note>
+        </ng-template>
+      </div>
+      
+      <div *ngIf="carregandoDocumentos" class="ion-text-center ion-margin">
+        <ion-spinner></ion-spinner>
+        <p>Carregando documentos enviados...</p>
       </div>
 
       <ion-note color="primary" class="ion-margin-top">

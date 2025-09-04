@@ -38,6 +38,10 @@ const routes: Routes = [
   {
     path: 'inicio-matricula',
     loadChildren: () => import('./pages/inicio-matricula/inicio-matricula.module').then(m => m.InicioMatriculaPageModule)
+  },
+  {
+    path: 'selecao-turma/:idDeclaracao',
+    loadChildren: () => import('./pages/selecao-turma/selecao-turma.module').then(m => m.SelecaoTurmaPageModule)
   }
 
 

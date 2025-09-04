@@ -59,6 +59,22 @@ public class ResponsavelController {
         }
     }
 
+    @GetMapping("/{idResponsavel}/documentos")
+    @PreAuthorize("permitAll()") // Permitir acesso sem autenticação para testes
+    public ResponseEntity<?> getDocumentosPorFamilia(@PathVariable Long idResponsavel) {
+        log.info("Buscando documentos da família para responsável ID: {}", idResponsavel);
+
+        try {
+            Map<String, Object> familiaDocumentos = documentoMatriculaService.getDocumentosPorFamilia(idResponsavel);
+            return ResponseEntity.ok(familiaDocumentos);
+        } catch (Exception e) {
+            log.error("Erro ao buscar documentos da família para responsável ID: {}", idResponsavel, e);
+            return ResponseEntity.badRequest().body(Map.of(
+                    "success", false,
+                    "message", "Erro ao buscar documentos da família"));
+        }
+    }
+
     @PostMapping("/anexar-documento")
     public ResponseEntity<?> anexarDocumento(
             @RequestParam("documentoId") Long documentoId,

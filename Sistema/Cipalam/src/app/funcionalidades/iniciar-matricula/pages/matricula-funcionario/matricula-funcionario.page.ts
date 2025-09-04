@@ -1,10 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ModalController, AlertController, LoadingController, ToastController } from '@ionic/angular';
-import { MatriculaService } from '../../services/matricula.service';
+import { MatriculaService, TurmaDisponivel as TurmaDisponivelService } from '../../services/matricula.service';
 import {
   Turma,
-  TurmaDisponivel,
   IniciarMatriculaRequest,
   IniciarMatriculaResponse
 } from '../../models/turma.model';
@@ -18,8 +17,8 @@ import {
 export class MatriculaFuncionarioPage implements OnInit {
 
   matriculaForm!: FormGroup;
-  turmaSelecionada: Turma | null = null;
-  turmasDisponiveis: TurmaDisponivel[] = [];
+  turmaSelecionada: TurmaDisponivelService | null = null;
+  turmasDisponiveis: TurmaDisponivelService[] = [];
   isLoading = false;
   maxDate = new Date().toISOString();
 
@@ -92,11 +91,11 @@ export class MatriculaFuncionarioPage implements OnInit {
     const alert = await this.alertController.create({
       header: 'Selecionar Turma',
       inputs: this.turmasDisponiveis
-        .filter(t => t.disponivel)
+        .filter(t => t.temVagas > 0)
         .map(turmaDisp => ({
           type: 'radio',
-          label: `${turmaDisp.turma.nomeTurma} - ${turmaDisp.turma.atividade} (${turmaDisp.turma.vagasDisponiveis} vagas)`,
-          value: turmaDisp.turma,
+          label: `${turmaDisp.nome} - ${turmaDisp.turno} (${turmaDisp.vagasDisponiveis} vagas)`,
+          value: turmaDisp,
           checked: false
         })),
       buttons: [
@@ -152,7 +151,34 @@ export class MatriculaFuncionarioPage implements OnInit {
   }
 
   validarCPF(cpf: string): boolean {
-    return this.matriculaService.validarCPF(cpf);
+    // Remove caracteres não numéricos
+    cpf = cpf.replace(/\D/g, '');
+    
+    // Verifica se tem 11 dígitos
+    if (cpf.length !== 11) return false;
+    
+    // Verifica se não são todos dígitos iguais
+    if (/^(\d)\1{10}$/.test(cpf)) return false;
+    
+    // Validação do primeiro dígito verificador
+    let sum = 0;
+    for (let i = 0; i < 9; i++) {
+      sum += parseInt(cpf.charAt(i)) * (10 - i);
+    }
+    let remainder = (sum * 10) % 11;
+    if (remainder === 10 || remainder === 11) remainder = 0;
+    if (remainder !== parseInt(cpf.charAt(9))) return false;
+    
+    // Validação do segundo dígito verificador
+    sum = 0;
+    for (let i = 0; i < 10; i++) {
+      sum += parseInt(cpf.charAt(i)) * (11 - i);
+    }
+    remainder = (sum * 10) % 11;
+    if (remainder === 10 || remainder === 11) remainder = 0;
+    if (remainder !== parseInt(cpf.charAt(10))) return false;
+    
+    return true;
   }
 
   // Submissão do formulário
@@ -187,7 +213,7 @@ export class MatriculaFuncionarioPage implements OnInit {
       header: 'Confirmar Matrícula',
       message: `
         <div class="confirmacao-matricula">
-          <p><strong>Turma:</strong> ${this.turmaSelecionada?.nomeTurma}</p>
+          <p><strong>Turma:</strong> ${this.turmaSelecionada?.nome}</p>
           <p><strong>Responsável:</strong> ${this.matriculaForm.get('nomeResponsavel')?.value}</p>
           <p><strong>Aluno:</strong> ${this.matriculaForm.get('nomeAluno')?.value}</p>
           <br>
@@ -226,8 +252,8 @@ export class MatriculaFuncionarioPage implements OnInit {
     const formValues = this.matriculaForm.value;
 
     const request: IniciarMatriculaRequest = {
-      idTurma: this.turmaSelecionada!.idtbTurma,
-      nomeTurma: this.turmaSelecionada!.nomeTurma,
+      idTurma: this.turmaSelecionada!.id,
+      nomeTurma: this.turmaSelecionada!.nome,
       nomeResponsavel: formValues.nomeResponsavel,
       cpfResponsavel: formValues.cpfResponsavel.replace(/\D/g, ''),
       emailResponsavel: formValues.emailResponsavel,
@@ -238,12 +264,16 @@ export class MatriculaFuncionarioPage implements OnInit {
       observacoes: formValues.observacoes || undefined
     };
 
-    this.matriculaService.iniciarMatriculaProcedural(request).subscribe({
-      next: async (response) => {
+    this.matriculaService.iniciarMatricula(
+      1, // ID da declaração padrão (pode ser ajustado conforme necessário)
+      this.turmaSelecionada!.id,
+      1  // ID do funcionário padrão (pode ser ajustado conforme necessário)
+    ).subscribe({
+      next: async (response: any) => {
         loading.dismiss();
         await this.exibirResultadoMatricula(response);
       },
-      error: async (error) => {
+      error: async (error: any) => {
         loading.dismiss();
         console.error('Erro na matrícula:', error);
         this.showErrorToast('Erro ao processar matrícula. Tente novamente.');

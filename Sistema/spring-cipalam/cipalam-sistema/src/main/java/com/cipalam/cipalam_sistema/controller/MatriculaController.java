@@ -505,4 +505,43 @@ public class MatriculaController {
             return ResponseEntity.internalServerError().body(errorResponse);
         }
     }
+
+    /**
+     * Endpoint de teste para verificar criptografia de senha
+     */
+    @PostMapping("/teste-senha")
+    public ResponseEntity<?> testarSenha(@RequestBody Map<String, String> dados) {
+        try {
+            String usuario = dados.get("usuario");
+            String senhaTexto = dados.get("senha");
+
+            Optional<Login> loginOptional = loginRepository.findByUsuario(usuario);
+            
+            Map<String, Object> response = new HashMap<>();
+            
+            if (loginOptional.isPresent()) {
+                Login login = loginOptional.get();
+                String senhaHash = login.getSenha();
+                
+                boolean senhaValida = passwordEncoder.matches(senhaTexto, senhaHash);
+                
+                response.put("usuario", usuario);
+                response.put("senhaTexto", senhaTexto);
+                response.put("senhaHash", senhaHash);
+                response.put("senhaValida", senhaValida);
+                response.put("success", true);
+            } else {
+                response.put("success", false);
+                response.put("message", "Usuário não encontrado");
+            }
+            
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            e.printStackTrace();
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("message", "Erro: " + e.getMessage());
+            return ResponseEntity.internalServerError().body(errorResponse);
+        }
+    }
 }

@@ -23,11 +23,11 @@ public class TipoDocumentoService {
      * Lista todos os tipos de documentos com paginação e filtros
      */
     public Page<TipoDocumento> listarTiposDocumentos(int page, int size, String nome,
-            TipoDocumento.ModalidadeEntrega modalidadeEntrega,
-            TipoDocumento.QuemDeveFornencer quemDeveFornencer,
+            TipoDocumento.TipoProcessamento tipoProcessamento,
+            TipoDocumento.Escopo escopo,
             Boolean ativo) {
         Pageable pageable = PageRequest.of(page, size);
-        return tipoDocumentoRepository.findWithFilters(nome, modalidadeEntrega, quemDeveFornencer, ativo, pageable);
+        return tipoDocumentoRepository.findWithFilters(nome, tipoProcessamento, escopo, ativo, pageable);
     }
 
     /**
@@ -43,12 +43,12 @@ public class TipoDocumentoService {
     public DocumentosOrganizados listarDocumentosOrganizados() {
         return new DocumentosOrganizados(
                 tipoDocumentoRepository
-                        .findByQuemDeveFornencerAndAtivoTrueOrderByNomeAsc(TipoDocumento.QuemDeveFornencer.FAMILIA),
+                        .findByEscopoAndAtivoTrueOrderByNomeAsc(TipoDocumento.Escopo.FAMILIA),
                 tipoDocumentoRepository
-                        .findByQuemDeveFornencerAndAtivoTrueOrderByNomeAsc(TipoDocumento.QuemDeveFornencer.ALUNO),
+                        .findByEscopoAndAtivoTrueOrderByNomeAsc(TipoDocumento.Escopo.ALUNO),
                 tipoDocumentoRepository
-                        .findByQuemDeveFornencerAndAtivoTrueOrderByNomeAsc(
-                                TipoDocumento.QuemDeveFornencer.TODOS_INTEGRANTES));
+                        .findByEscopoAndAtivoTrueOrderByNomeAsc(
+                                TipoDocumento.Escopo.TODOS_INTEGRANTES));
     }
 
     /**
@@ -78,8 +78,8 @@ public class TipoDocumentoService {
         // Atualiza os campos
         tipoDocumentoExistente.setNome(tipoDocumentoAtualizado.getNome());
         tipoDocumentoExistente.setDescricao(tipoDocumentoAtualizado.getDescricao());
-        tipoDocumentoExistente.setModalidadeEntrega(tipoDocumentoAtualizado.getModalidadeEntrega());
-        tipoDocumentoExistente.setQuemDeveFornencer(tipoDocumentoAtualizado.getQuemDeveFornencer());
+        tipoDocumentoExistente.setTipoProcessamento(tipoDocumentoAtualizado.getTipoProcessamento());
+        tipoDocumentoExistente.setEscopo(tipoDocumentoAtualizado.getEscopo());
         tipoDocumentoExistente.setAtivo(tipoDocumentoAtualizado.getAtivo());
 
         // Validações
@@ -116,17 +116,17 @@ public class TipoDocumentoService {
     }
 
     /**
-     * Busca documentos por modalidade de entrega
+     * Busca documentos por tipo de processamento
      */
-    public List<TipoDocumento> buscarPorModalidadeEntrega(TipoDocumento.ModalidadeEntrega modalidadeEntrega) {
-        return tipoDocumentoRepository.findByModalidadeEntregaAndAtivoTrueOrderByNomeAsc(modalidadeEntrega);
+    public List<TipoDocumento> buscarPorTipoProcessamento(TipoDocumento.TipoProcessamento tipoProcessamento) {
+        return tipoDocumentoRepository.findByTipoProcessamentoAndAtivoTrueOrderByNomeAsc(tipoProcessamento);
     }
 
     /**
-     * Busca documentos por quem deve fornecer
+     * Busca documentos por escopo
      */
-    public List<TipoDocumento> buscarPorQuemDeveFornencer(TipoDocumento.QuemDeveFornencer quemDeveFornencer) {
-        return tipoDocumentoRepository.findByQuemDeveFornencerAndAtivoTrueOrderByNomeAsc(quemDeveFornencer);
+    public List<TipoDocumento> buscarPorEscopo(TipoDocumento.Escopo escopo) {
+        return tipoDocumentoRepository.findByEscopoAndAtivoTrueOrderByNomeAsc(escopo);
     }
 
     /**
@@ -144,12 +144,12 @@ public class TipoDocumentoService {
             throw new RuntimeException("Nome do tipo de documento é obrigatório");
         }
 
-        if (tipoDocumento.getModalidadeEntrega() == null) {
-            throw new RuntimeException("Modalidade de entrega é obrigatória");
+        if (tipoDocumento.getTipoProcessamento() == null) {
+            throw new RuntimeException("Tipo de processamento é obrigatório");
         }
 
-        if (tipoDocumento.getQuemDeveFornencer() == null) {
-            throw new RuntimeException("Quem deve fornecer é obrigatório");
+        if (tipoDocumento.getEscopo() == null) {
+            throw new RuntimeException("Escopo é obrigatório");
         }
 
         // Verificar se já existe outro tipo com o mesmo nome (considerando apenas

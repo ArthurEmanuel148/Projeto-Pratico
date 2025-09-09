@@ -142,7 +142,8 @@
 
         <!-- Botões de ação -->
         <div class="action-buttons" *ngIf="turmasDisponiveis.length > 0">
-            <ion-button expand="full" color="primary" [disabled]="!turmaSelecionada" (click)="confirmarSelecao()">
+            <ion-button expand="full" fill="outline" color="primary" [disabled]="!turmaSelecionada"
+                (click)="confirmarSelecao()">
                 <ion-icon name="checkmark-circle" slot="start"></ion-icon>
                 Confirmar Seleção
             </ion-button>

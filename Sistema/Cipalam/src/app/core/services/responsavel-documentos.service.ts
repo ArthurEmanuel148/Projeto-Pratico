@@ -54,7 +54,7 @@ export interface FamiliaDocumentos {
     providedIn: 'root'
 })
 export class ResponsavelDocumentosService {
-    private readonly API_BASE_URL = `${environment.apiUrl}/api/responsavel`;
+    private readonly API_BASE_URL = `${environment.apiUrl}/responsavel-documentos`;
 
     private httpOptions = {
         headers: new HttpHeaders({
@@ -68,7 +68,10 @@ export class ResponsavelDocumentosService {
      * Busca todos os documentos da família organizados por pessoa
      */
     getDocumentosPorFamilia(idResponsavel: number): Observable<FamiliaDocumentos> {
-        return this.http.get<FamiliaDocumentos>(`${this.API_BASE_URL}/${idResponsavel}/documentos`, this.httpOptions)
+        const url = `${this.API_BASE_URL}/${idResponsavel}/familia/documentos`;
+        console.log(`🌐 Fazendo requisição para: ${url}`);
+
+        return this.http.get<FamiliaDocumentos>(url, this.httpOptions)
             .pipe(
                 map(response => {
                     console.log('✅ Documentos por família recebidos do backend:', response);
@@ -76,7 +79,10 @@ export class ResponsavelDocumentosService {
                 }),
                 catchError(error => {
                     console.error('❌ Erro ao buscar documentos por família:', error);
-                    throw error; // Propagar o erro em vez de usar dados mock
+                    console.error('URL tentativa:', `${this.API_BASE_URL}/${idResponsavel}/documentos`);
+                    console.error('Status:', error.status);
+                    console.error('Mensagem:', error.message);
+                    throw error; // Propagar o erro real
                 })
             );
     }
@@ -178,128 +184,4 @@ export class ResponsavelDocumentosService {
         }
     }
 
-    /**
-     * Dados mock para desenvolvimento/teste
-     */
-    private getMockFamiliaDocumentos(): FamiliaDocumentos {
-        return {
-            familia: {
-                id: 1,
-                responsavel: {
-                    id: 4,
-                    nome: 'Ana Costa Lima',
-                    email: 'ana.costa@email.com'
-                }
-            },
-            documentosPorPessoa: [
-                {
-                    pessoa: {
-                        id: 4,
-                        nome: 'Ana Costa Lima',
-                        parentesco: 'responsavel'
-                    },
-                    documentos: [
-                        {
-                            id: 1,
-                            idDocumentoMatricula: 101,
-                            tipoDocumento: {
-                                id: 1,
-                                nome: 'CPF do Responsável',
-                                descricao: 'Cópia do CPF do responsável pela matrícula',
-                                categoria: 'FAMILIA'
-                            },
-                            status: 'pendente',
-                            statusDescricao: 'Aguardando envio',
-                            obrigatorio: true
-                        },
-                        {
-                            id: 2,
-                            idDocumentoMatricula: 102,
-                            tipoDocumento: {
-                                id: 2,
-                                nome: 'Comprovante de Residência',
-                                descricao: 'Conta de luz, água ou telefone (máximo 3 meses)',
-                                categoria: 'FAMILIA'
-                            },
-                            status: 'anexado',
-                            statusDescricao: 'Documento enviado',
-                            nomeArquivo: 'comprovante_residencia.pdf',
-                            dataEnvio: '2025-01-15',
-                            obrigatorio: true
-                        }
-                    ]
-                },
-                {
-                    pessoa: {
-                        id: 5,
-                        nome: 'Pedro Costa Lima',
-                        parentesco: 'aluno'
-                    },
-                    documentos: [
-                        {
-                            id: 3,
-                            idDocumentoMatricula: 103,
-                            tipoDocumento: {
-                                id: 3,
-                                nome: 'Certidão de Nascimento',
-                                descricao: 'Certidão de nascimento do aluno',
-                                categoria: 'ALUNO'
-                            },
-                            status: 'aprovado',
-                            statusDescricao: 'Documento aprovado',
-                            nomeArquivo: 'certidao_nascimento.pdf',
-                            dataEnvio: '2025-01-14',
-                            dataAprovacao: '2025-01-15',
-                            obrigatorio: true
-                        },
-                        {
-                            id: 4,
-                            idDocumentoMatricula: 104,
-                            tipoDocumento: {
-                                id: 4,
-                                nome: 'Atestado Médico',
-                                descricao: 'Atestado médico para atividades esportivas',
-                                categoria: 'TODOS_INTEGRANTES'
-                            },
-                            status: 'pendente',
-                            statusDescricao: 'Aguardando envio',
-                            obrigatorio: true
-                        }
-                    ]
-                },
-                {
-                    pessoa: {
-                        id: 6,
-                        nome: 'Carlos Lima',
-                        parentesco: 'integrante'
-                    },
-                    documentos: [
-                        {
-                            id: 5,
-                            idDocumentoMatricula: 105,
-                            tipoDocumento: {
-                                id: 4,
-                                nome: 'Atestado Médico',
-                                descricao: 'Atestado médico para atividades esportivas',
-                                categoria: 'TODOS_INTEGRANTES'
-                            },
-                            status: 'rejeitado',
-                            statusDescricao: 'Documento rejeitado - arquivo ilegível',
-                            nomeArquivo: 'atestado_carlos.jpg',
-                            dataEnvio: '2025-01-13',
-                            observacoes: 'Arquivo muito escuro, favor reenviar com melhor qualidade',
-                            obrigatorio: true
-                        }
-                    ]
-                }
-            ],
-            resumo: {
-                totalDocumentos: 5,
-                pendentes: 2,
-                anexados: 1,
-                aprovados: 1,
-                rejeitados: 1
-            }
-        };
-    }
 }

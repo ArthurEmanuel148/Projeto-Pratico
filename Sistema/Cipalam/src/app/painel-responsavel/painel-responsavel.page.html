@@ -208,15 +208,18 @@
     </div>
 
     <!-- No Family Data -->
-    <div class="empty-state main" *ngIf="!familiaDocumentos">
+    <div class="empty-state main" *ngIf="!familiaDocumentos && !carregando">
       <div class="empty-icon">
         <ion-icon name="folder-open-outline"></ion-icon>
       </div>
       <h3>Nenhum documento encontrado</h3>
-      <p>Não foram encontrados documentos para sua família.</p>
+      <p>
+        Não foram encontrados documentos configurados para sua família.<br>
+        Verifique se você está logado como responsável ou se há documentos configurados para sua matrícula.
+      </p>
       <ion-button fill="outline" (click)="carregarDocumentosFamilia()">
         <ion-icon name="refresh" slot="start"></ion-icon>
-        Recarregar
+        Tentar Novamente
       </ion-button>
     </div>
 

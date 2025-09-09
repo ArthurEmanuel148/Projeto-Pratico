@@ -8,12 +8,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/responsavel")
+@RequestMapping("/api/responsavel-documentos")
 @CrossOrigin(origins = "*")
 public class ResponsavelDocumentosController {
 
@@ -24,9 +25,9 @@ public class ResponsavelDocumentosController {
 
     /**
      * Busca todos os documentos da família organizados por pessoa
-     * GET /api/responsavel/{idResponsavel}/documentos
+     * GET /api/responsavel/{idResponsavel}/familia/documentos
      */
-    @GetMapping("/{idResponsavel}/documentos")
+    @GetMapping("/{idResponsavel}/familia/documentos")
     public ResponseEntity<?> buscarDocumentosFamilia(@PathVariable Long idResponsavel) {
         try {
             logger.info("🔍 Buscando documentos da família para responsável ID: {}", idResponsavel);
@@ -154,6 +155,182 @@ public class ResponsavelDocumentosController {
             error.put("codigo", "INTERNAL_SERVER_ERROR");
             error.put("detalhes", e.getMessage());
 
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
+        }
+    }
+
+    /**
+     * Anexa um documento
+     * POST /api/responsavel/familia/anexar-documento
+     */
+    @PostMapping("/familia/anexar-documento")
+    public ResponseEntity<?> anexarDocumento(
+            @RequestParam("arquivo") MultipartFile arquivo,
+            @RequestParam("idDocumentoMatricula") Long idDocumentoMatricula,
+            @RequestParam("idPessoa") Long idPessoa) {
+        try {
+            logger.info("📎 Anexando documento - ID Documento: {}, ID Pessoa: {}, Arquivo: {}",
+                    idDocumentoMatricula, idPessoa, arquivo.getOriginalFilename());
+
+            // Validar parâmetros
+            if (arquivo.isEmpty()) {
+                Map<String, Object> error = new HashMap<>();
+                error.put("erro", "Arquivo é obrigatório");
+                error.put("codigo", "FILE_REQUIRED");
+                return ResponseEntity.badRequest().body(error);
+            }
+
+            // Validar tipo de arquivo
+            String contentType = arquivo.getContentType();
+            if (!isValidFileType(contentType)) {
+                Map<String, Object> error = new HashMap<>();
+                error.put("erro", "Tipo de arquivo não permitido. Use PDF, JPG ou PNG");
+                error.put("codigo", "INVALID_FILE_TYPE");
+                return ResponseEntity.badRequest().body(error);
+            }
+
+            // Validar tamanho (5MB)
+            if (arquivo.getSize() > 5 * 1024 * 1024) {
+                Map<String, Object> error = new HashMap<>();
+                error.put("erro", "Arquivo muito grande. Máximo permitido: 5MB");
+                error.put("codigo", "FILE_TOO_LARGE");
+                return ResponseEntity.badRequest().body(error);
+            }
+
+            // Anexar documento
+            boolean sucesso = responsavelDocumentosService.anexarDocumento(arquivo, idDocumentoMatricula, idPessoa);
+
+            if (sucesso) {
+                Map<String, Object> response = new HashMap<>();
+                response.put("sucesso", true);
+                response.put("mensagem", "Documento anexado com sucesso");
+                return ResponseEntity.ok(response);
+            } else {
+                Map<String, Object> error = new HashMap<>();
+                error.put("erro", "Erro ao anexar documento");
+                error.put("codigo", "ATTACHMENT_FAILED");
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
+            }
+
+        } catch (Exception e) {
+            logger.error("❌ Erro ao anexar documento: {}", e.getMessage(), e);
+            Map<String, Object> error = new HashMap<>();
+            error.put("erro", "Erro interno do servidor");
+            error.put("codigo", "INTERNAL_SERVER_ERROR");
+            error.put("detalhes", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
+        }
+    }
+
+    /**
+     * Remove um documento
+     * DELETE
+     * /api/responsavel/familia/remover-documento/{idDocumentoMatricula}/{idPessoa}
+     */
+    @DeleteMapping("/familia/remover-documento/{idDocumentoMatricula}/{idPessoa}")
+    public ResponseEntity<?> removerDocumento(
+            @PathVariable Long idDocumentoMatricula,
+            @PathVariable Long idPessoa) {
+        try {
+            logger.info("🗑️ Removendo documento - ID Documento: {}, ID Pessoa: {}", idDocumentoMatricula, idPessoa);
+
+            boolean sucesso = responsavelDocumentosService.removerDocumento(idDocumentoMatricula, idPessoa);
+
+            if (sucesso) {
+                Map<String, Object> response = new HashMap<>();
+                response.put("sucesso", true);
+                response.put("mensagem", "Documento removido com sucesso");
+                return ResponseEntity.ok(response);
+            } else {
+                Map<String, Object> error = new HashMap<>();
+                error.put("erro", "Documento não encontrado ou erro ao remover");
+                error.put("codigo", "REMOVAL_FAILED");
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+            }
+
+        } catch (Exception e) {
+            logger.error("❌ Erro ao remover documento: {}", e.getMessage(), e);
+            Map<String, Object> error = new HashMap<>();
+            error.put("erro", "Erro interno do servidor");
+            error.put("codigo", "INTERNAL_SERVER_ERROR");
+            error.put("detalhes", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
+        }
+    }
+
+    /**
+     * Baixa um documento
+     * GET /api/responsavel/familia/baixar-documento/{idDocumentoMatricula}
+     */
+    @GetMapping("/familia/baixar-documento/{idDocumentoMatricula}")
+    public ResponseEntity<?> baixarDocumento(@PathVariable Long idDocumentoMatricula) {
+        try {
+            logger.info("⬇️ Baixando documento ID: {}", idDocumentoMatricula);
+
+            byte[] arquivoBytes = responsavelDocumentosService.baixarDocumento(idDocumentoMatricula);
+
+            if (arquivoBytes != null && arquivoBytes.length > 0) {
+                return ResponseEntity.ok()
+                        .header("Content-Disposition", "attachment; filename=\"documento.pdf\"")
+                        .header("Content-Type", "application/octet-stream")
+                        .body(arquivoBytes);
+            } else {
+                Map<String, Object> error = new HashMap<>();
+                error.put("erro", "Documento não encontrado");
+                error.put("codigo", "DOCUMENT_NOT_FOUND");
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+            }
+
+        } catch (Exception e) {
+            logger.error("❌ Erro ao baixar documento: {}", e.getMessage(), e);
+            Map<String, Object> error = new HashMap<>();
+            error.put("erro", "Erro interno do servidor");
+            error.put("codigo", "INTERNAL_SERVER_ERROR");
+            error.put("detalhes", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
+        }
+    }
+
+    /**
+     * Valida tipo de arquivo
+     */
+    private boolean isValidFileType(String contentType) {
+        return contentType != null && (contentType.equals("application/pdf") ||
+                contentType.equals("image/jpeg") ||
+                contentType.equals("image/jpg") ||
+                contentType.equals("image/png"));
+    }
+
+    /**
+     * Gera documentos de matrícula para um interesse específico
+     * POST /api/responsavel/gerar-documentos/{interesseId}
+     */
+    @PostMapping("/gerar-documentos/{interesseId}")
+    public ResponseEntity<?> gerarDocumentosMatricula(@PathVariable Long interesseId) {
+        try {
+            logger.info("📋 Gerando documentos para interesse ID: {}", interesseId);
+
+            boolean sucesso = responsavelDocumentosService.gerarDocumentosMatricula(interesseId);
+
+            if (sucesso) {
+                Map<String, Object> response = new HashMap<>();
+                response.put("sucesso", true);
+                response.put("mensagem", "Documentos de matrícula gerados com sucesso");
+                response.put("interesseId", interesseId);
+                return ResponseEntity.ok(response);
+            } else {
+                Map<String, Object> error = new HashMap<>();
+                error.put("erro", "Erro ao gerar documentos de matrícula");
+                error.put("codigo", "GENERATION_FAILED");
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
+            }
+
+        } catch (Exception e) {
+            logger.error("❌ Erro ao gerar documentos: {}", e.getMessage(), e);
+            Map<String, Object> error = new HashMap<>();
+            error.put("erro", "Erro interno do servidor");
+            error.put("codigo", "INTERNAL_SERVER_ERROR");
+            error.put("detalhes", e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
         }
     }

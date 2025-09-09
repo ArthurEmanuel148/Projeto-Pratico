@@ -1,4 +1,4 @@
-// Modern Light Theme Responsavel Page
+// Painel do Responsável - Tema Claro Exclusivo
 :host {
   --primary-color: #3b82f6;
   --primary-light: #60a5fa;
@@ -14,19 +14,35 @@
   --border-color: #e5e7eb;
   --gradient-primary: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
   --gradient-subtle: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+
+  // Forçar tema claro sempre
+  color-scheme: light !important;
+  background-color: #f8fafc !important;
+  color: #111827 !important;
+}
+
+// Forçar tema claro globalmente
+ion-app {
+  color-scheme: light !important;
+  background-color: #f8fafc !important;
 }
 
 // Global page background
 ion-content {
-  --background: #f8fafc;
+  --background: #f8fafc !important;
+  background-color: #f8fafc !important;
 }
 
 // Header Styles
 ion-header {
+  background-color: white !important;
+
   ion-toolbar {
-    --background: white;
-    --color: var(--text-primary);
+    --background: white !important;
+    --color: var(--text-primary) !important;
     --border-color: var(--border-color);
+    background-color: white !important;
+    color: #111827 !important;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   }
 
@@ -35,12 +51,12 @@ ion-header {
     align-items: center;
     gap: 8px;
     font-weight: 600;
-    color: var(--text-primary);
+    color: var(--text-primary) !important;
   }
 
   .header-icon {
     font-size: 1.2rem;
-    color: var(--primary-color);
+    color: var(--primary-color) !important;
   }
 }
 
@@ -500,39 +516,40 @@ ion-header {
 .empty-state {
   text-align: center;
   padding: 60px 20px;
-  background: white;
+  background: white !important;
   border-radius: 16px;
   margin: 20px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
   border: 1px solid var(--border-color);
+  color: var(--text-primary) !important;
 
   .empty-icon {
     margin-bottom: 20px;
 
     ion-icon {
       font-size: 4rem;
-      color: var(--text-secondary);
+      color: var(--text-secondary) !important;
       opacity: 0.6;
     }
   }
 
   h3 {
     font-size: 1.2rem;
-    color: var(--text-primary);
+    color: var(--text-primary) !important;
     margin: 0 0 8px 0;
     font-weight: 600;
   }
 
   p {
-    color: var(--text-secondary);
+    color: var(--text-secondary) !important;
     margin: 0 0 20px 0;
     line-height: 1.5;
     font-size: 0.95rem;
   }
 
   ion-button {
-    --background: var(--primary-color);
-    --color: white;
+    --background: var(--primary-color) !important;
+    --color: white !important;
     --border-radius: 12px;
     font-weight: 600;
   }
@@ -543,7 +560,7 @@ ion-header {
     border-radius: 0;
     box-shadow: none;
     border: none;
-    background: transparent;
+    background: #f8fafc !important;
   }
 }
 

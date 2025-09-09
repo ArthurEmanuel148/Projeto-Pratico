@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../core/services/auth.service';
 import { ResponsavelDocumentosService, FamiliaDocumentos, DocumentoPorPessoa, DocumentoIndividual } from '../core/services/responsavel-documentos.service';
+import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'app-painel-responsavel',
@@ -33,19 +34,30 @@ export class PainelResponsavelPage implements OnInit {
     try {
       // Buscar dados reais do backend usando o ID do usuário logado
       const usuarioLogado = this.authService.getFuncionarioLogado();
+      console.log('👤 Dados completos do usuário logado:', usuarioLogado);
 
       if (!usuarioLogado?.pessoaId && !usuarioLogado?.usuarioId) {
-        console.error('Usuário não está logado ou ID não disponível');
+        console.error('❌ Usuário não está logado ou ID não disponível');
+        console.error('Dados do usuário:', usuarioLogado);
         this.familiaDocumentos = null;
         this.carregando = false;
         return;
       }
 
       const idUsuario = usuarioLogado.pessoaId || usuarioLogado.usuarioId;
-      console.log('🔍 Buscando documentos para responsável ID:', idUsuario);
+
+      if (!idUsuario) {
+        console.error('❌ ID do usuário não disponível');
+        this.familiaDocumentos = null;
+        this.carregando = false;
+        return;
+      }
+
+      console.log('🔍 Carregando documentos para usuário ID:', idUsuario);
+      console.log('📍 URL da requisição:', `${environment.apiUrl}/api/responsavel/${idUsuario}/familia/documentos`);
 
       // Chamar o serviço que busca dados reais do backend
-      this.responsavelDocumentosService.getDocumentosPorFamilia(idUsuario!).subscribe({
+      this.responsavelDocumentosService.getDocumentosPorFamilia(idUsuario).subscribe({
         next: (documentos) => {
           console.log('✅ Documentos recebidos do backend:', documentos);
           this.familiaDocumentos = documentos;
@@ -58,6 +70,18 @@ export class PainelResponsavelPage implements OnInit {
         },
         error: (error) => {
           console.error('❌ Erro ao carregar documentos da família:', error);
+          console.error('Detalhes do erro:', {
+            status: error.status,
+            message: error.message,
+            url: error.url,
+            error: error.error
+          });
+
+          // Verificar se é erro 404 (não encontrado)
+          if (error.status === 404) {
+            console.warn('⚠️ Responsável não encontrado ou sem documentos configurados');
+          }
+
           this.familiaDocumentos = null;
           this.carregando = false;
         }
@@ -174,24 +198,96 @@ export class PainelResponsavelPage implements OnInit {
   /**
    * Anexar documento
    */
-  anexarDocumento(documento: DocumentoIndividual) {
-    console.log('📎 Anexar documento:', documento);
-    // TODO: Implementar modal de upload de arquivo
+  async anexarDocumento(documento: DocumentoIndividual) {
+    console.log('📎 Iniciando anexo de documento:', documento);
+
+    // Criar input file temporário
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.pdf,.jpg,.jpeg,.png';
+
+    input.onchange = async (event: any) => {
+      const arquivo = event.target.files[0];
+      if (!arquivo) return;
+
+      // Validar arquivo
+      const validacao = this.responsavelDocumentosService.validarArquivo(arquivo);
+      if (!validacao.valido) {
+        console.error('Arquivo inválido:', validacao.erro);
+        // TODO: Mostrar toast de erro
+        return;
+      }
+
+      try {
+        console.log('📤 Enviando arquivo:', arquivo.name);
+        await this.responsavelDocumentosService.anexarDocumento(
+          arquivo,
+          documento.idDocumentoMatricula,
+          this.pessoaSelecionada!.pessoa.id
+        ).toPromise();
+
+        console.log('✅ Documento anexado com sucesso');
+        // Recarregar dados
+        this.carregarDocumentosFamilia();
+
+      } catch (error) {
+        console.error('❌ Erro ao anexar documento:', error);
+        // TODO: Mostrar toast de erro
+      }
+    };
+
+    input.click();
   }
 
   /**
    * Baixar documento
    */
-  baixarDocumento(documento: DocumentoIndividual) {
-    console.log('⬇️ Baixar documento:', documento);
-    // TODO: Implementar download do documento
+  async baixarDocumento(documento: DocumentoIndividual) {
+    console.log('⬇️ Baixando documento:', documento);
+
+    try {
+      const blob = await this.responsavelDocumentosService.baixarDocumento(
+        documento.idDocumentoMatricula
+      ).toPromise();
+
+      if (blob) {
+        // Criar URL temporária e fazer download
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = documento.nomeArquivo || 'documento.pdf';
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+
+        console.log('✅ Download iniciado');
+      }
+    } catch (error) {
+      console.error('❌ Erro ao baixar documento:', error);
+      // TODO: Mostrar toast de erro
+    }
   }
 
   /**
    * Remover documento
    */
-  removerDocumento(documento: DocumentoIndividual) {
-    console.log('🗑️ Remover documento:', documento);
-    // TODO: Implementar remoção do documento
+  async removerDocumento(documento: DocumentoIndividual) {
+    console.log('🗑️ Removendo documento:', documento);
+
+    try {
+      await this.responsavelDocumentosService.removerDocumento(
+        documento.idDocumentoMatricula,
+        this.pessoaSelecionada!.pessoa.id
+      ).toPromise();
+
+      console.log('✅ Documento removido com sucesso');
+      // Recarregar dados
+      this.carregarDocumentosFamilia();
+
+    } catch (error) {
+      console.error('❌ Erro ao remover documento:', error);
+      // TODO: Mostrar toast de erro
+    }
   }
 }

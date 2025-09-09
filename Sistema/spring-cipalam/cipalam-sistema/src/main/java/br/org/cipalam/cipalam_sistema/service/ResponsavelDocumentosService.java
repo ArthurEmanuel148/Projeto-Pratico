@@ -2,14 +2,14 @@ package br.org.cipalam.cipalam_sistema.service;
 
 import br.org.cipalam.cipalam_sistema.dto.FamiliaDocumentosDTO;
 import br.org.cipalam.cipalam_sistema.dto.FamiliaDocumentosDTO.*;
+import br.org.cipalam.cipalam_sistema.dto.FamiliaDocumentosDTO.TipoDocumento;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -82,46 +82,59 @@ public class ResponsavelDocumentosService {
      */
     private List<DocumentoPorPessoa> buscarDocumentosPorPessoa(Long idResponsavel) {
         try {
-            // SQL para buscar todas as pessoas da família
+            // Primeiro, buscar o ID da família do responsável
+            String sqlFamilia = """
+                    SELECT f.idtbFamilia
+                    FROM tbFamilia f
+                    INNER JOIN tbResponsavel r ON f.idtbFamilia = r.tbFamilia_idtbFamilia
+                    WHERE r.tbPessoa_idPessoa = ?
+                    """;
+
+            List<Map<String, Object>> familiaResult = jdbcTemplate.queryForList(sqlFamilia, idResponsavel);
+            if (familiaResult.isEmpty()) {
+                logger.warn("⚠️ Família não encontrada para o responsável ID: {}", idResponsavel);
+                return new ArrayList<>();
+            }
+
+            Long idFamilia = ((Number) familiaResult.get(0).get("idtbFamilia")).longValue();
+            logger.info("📋 Família encontrada ID: {} para responsável ID: {}", idFamilia, idResponsavel);
+
+            // Buscar pessoas da família (responsável + alunos)
             String sqlPessoas = """
                     SELECT DISTINCT
                         p.idPessoa,
                         p.nmPessoa,
                         CASE
-                            WHEN r.tbPessoa_idPessoa = p.idPessoa THEN 'responsavel'
-                            WHEN a.idPessoa = p.idPessoa THEN 'aluno'
+                            WHEN r.tbPessoa_idPessoa IS NOT NULL THEN 'responsavel'
+                            WHEN a.tbPessoa_idPessoa IS NOT NULL THEN 'aluno'
                             ELSE 'integrante'
                         END as parentesco
                     FROM tbPessoa p
-                    LEFT JOIN tbResponsavel r ON r.tbPessoa_idPessoa = p.idPessoa AND r.tbPessoa_idPessoa = ?
-                    LEFT JOIN tbAluno a ON a.idPessoa = p.idPessoa
-                    LEFT JOIN tbIntegranteFamilia if_fam ON if_fam.tbPessoa_idPessoa = p.idPessoa
-                    WHERE (r.tbPessoa_idPessoa = ? OR
-                           EXISTS(SELECT 1 FROM tbResponsavel r2 WHERE r2.tbPessoa_idPessoa = ? AND
-                                  (a.tbFamilia_idtbFamilia = r2.tbFamilia_idtbFamilia OR
-                                   if_fam.tbFamilia_idtbFamilia = r2.tbFamilia_idtbFamilia)))
+                    LEFT JOIN tbResponsavel r ON p.idPessoa = r.tbPessoa_idPessoa AND r.tbFamilia_idtbFamilia = ?
+                    LEFT JOIN tbAluno a ON p.idPessoa = a.tbPessoa_idPessoa AND a.tbFamilia_idtbFamilia = ?
+                    WHERE (r.tbPessoa_idPessoa IS NOT NULL OR a.tbPessoa_idPessoa IS NOT NULL)
                     ORDER BY
                         CASE
-                            WHEN r.tbPessoa_idPessoa = p.idPessoa THEN 1
-                            WHEN a.idPessoa = p.idPessoa THEN 2
+                            WHEN r.tbPessoa_idPessoa IS NOT NULL THEN 1
+                            WHEN a.tbPessoa_idPessoa IS NOT NULL THEN 2
                             ELSE 3
                         END,
                         p.nmPessoa
                     """;
 
-            List<PessoaInfo> pessoas = jdbcTemplate.query(sqlPessoas,
-                    (rs, rowNum) -> new PessoaInfo(
-                            rs.getLong("idPessoa"),
-                            rs.getString("nmPessoa"),
-                            rs.getString("parentesco")),
-                    idResponsavel, idResponsavel, idResponsavel);
+            List<Map<String, Object>> resultados = jdbcTemplate.queryForList(sqlPessoas, idFamilia, idFamilia);
 
-            logger.info("📋 Encontradas {} pessoas na família", pessoas.size());
+            logger.info("📋 Encontradas {} pessoas na família ID: {}", resultados.size(), idFamilia);
 
             // Para cada pessoa, buscar seus documentos
             List<DocumentoPorPessoa> documentosPorPessoa = new ArrayList<>();
-            for (PessoaInfo pessoa : pessoas) {
-                List<DocumentoIndividual> documentos = buscarDocumentosPessoa(pessoa.getId(), idResponsavel);
+            for (Map<String, Object> linha : resultados) {
+                Long pessoaId = ((Number) linha.get("idPessoa")).longValue();
+                String nome = (String) linha.get("nmPessoa");
+                String parentesco = (String) linha.get("parentesco");
+
+                PessoaInfo pessoa = new PessoaInfo(pessoaId, nome, parentesco);
+                List<DocumentoIndividual> documentos = buscarDocumentosMatricula(idFamilia, pessoaId, parentesco);
                 documentosPorPessoa.add(new DocumentoPorPessoa(pessoa, documentos));
             }
 
@@ -131,6 +144,82 @@ public class ResponsavelDocumentosService {
             logger.error("❌ Erro ao buscar documentos por pessoa: {}", e.getMessage(), e);
             return new ArrayList<>();
         }
+    }
+
+    /**
+     * Busca documentos de matrícula por família e pessoa
+     */
+    private List<DocumentoIndividual> buscarDocumentosMatricula(Long idFamilia, Long pessoaId, String parentesco) {
+        try {
+            String sql = """
+                    SELECT
+                        dm.idDocumentoMatricula,
+                        dm.caminhoArquivo as nomeArquivo,
+                        dm.dataEnvio,
+                        dm.dataAprovacao,
+                        dm.observacoes,
+                        dm.status,
+                        td.idTipoDocumento,
+                        td.nome as tipoNome,
+                        td.descricao as tipoDescricao,
+                        td.escopo as categoria
+                    FROM tbDocumentoMatricula dm
+                    INNER JOIN tbTipoDocumento td ON dm.tbTipoDocumento_idTipoDocumento = td.idTipoDocumento
+                    WHERE (
+                        (dm.tbFamilia_idtbFamilia = ? AND td.escopo = 'FAMILIA')
+                        OR
+                        (dm.tbAluno_idPessoa = ? AND td.escopo = 'INDIVIDUAL')
+                    )
+                    ORDER BY td.nome
+                    """;
+
+            return jdbcTemplate.query(sql, (rs, rowNum) -> {
+                TipoDocumento tipoDocumento = new TipoDocumento();
+                tipoDocumento.setId(rs.getLong("idTipoDocumento"));
+                tipoDocumento.setNome(rs.getString("tipoNome"));
+                tipoDocumento.setDescricao(rs.getString("tipoDescricao"));
+                tipoDocumento.setCategoria(rs.getString("categoria"));
+
+                DocumentoIndividual documento = new DocumentoIndividual();
+                documento.setId(rs.getLong("idDocumentoMatricula"));
+                documento.setIdDocumentoMatricula(rs.getLong("idDocumentoMatricula"));
+                documento.setTipoDocumento(tipoDocumento);
+                documento.setStatus(rs.getString("status"));
+                documento.setStatusDescricao(mapearStatusDescricao(rs.getString("status")));
+                documento.setNomeArquivo(rs.getString("nomeArquivo"));
+                documento.setObservacoes(rs.getString("observacoes"));
+
+                // Converter datas se existirem
+                if (rs.getTimestamp("dataEnvio") != null) {
+                    documento.setDataEnvio(rs.getTimestamp("dataEnvio").toLocalDateTime());
+                }
+                if (rs.getTimestamp("dataAprovacao") != null) {
+                    documento.setDataAprovacao(rs.getTimestamp("dataAprovacao").toLocalDateTime());
+                }
+
+                return documento;
+            }, idFamilia, pessoaId);
+
+        } catch (Exception e) {
+            logger.error("❌ Erro ao buscar documentos de matrícula: {}", e.getMessage(), e);
+            return new ArrayList<>();
+        }
+    }
+
+    /**
+     * Mapeia status para descrição legível
+     */
+    private String mapearStatusDescricao(String status) {
+        if (status == null)
+            return "Status desconhecido";
+
+        return switch (status.toLowerCase()) {
+            case "pendente" -> "Aguardando envio";
+            case "anexado", "enviado" -> "Documento enviado";
+            case "aprovado" -> "Documento aprovado";
+            case "rejeitado" -> "Documento rejeitado";
+            default -> status;
+        };
     }
 
     /**
@@ -314,6 +403,282 @@ public class ResponsavelDocumentosService {
         } catch (Exception e) {
             logger.error("❌ Erro ao buscar estatísticas para responsável ID {}: {}", idResponsavel, e.getMessage(), e);
             return new HashMap<>();
+        }
+    }
+
+    /**
+     * Anexa um documento a uma matrícula
+     */
+    public boolean anexarDocumento(MultipartFile arquivo, Long idDocumentoMatricula, Long idPessoa) {
+        try {
+            logger.info("📎 Anexando documento para ID Documento: {}, ID Pessoa: {}", idDocumentoMatricula, idPessoa);
+
+            // Simular salvamento do arquivo - em produção, salvar no filesystem ou cloud
+            // storage
+            String nomeArquivo = arquivo.getOriginalFilename();
+            String caminhoArquivo = "/cipalam_documentos/" + UUID.randomUUID().toString() + "_" + nomeArquivo;
+
+            // Atualizar registro na base com o caminho do arquivo
+            String sql = """
+                        UPDATE tbDocumentoMatricula
+                        SET caminhoArquivo = ?,
+                            dataUpload = NOW(),
+                            statusDocumento = 'ANEXADO',
+                            tamanhoArquivo = ?
+                        WHERE idDocumentoMatricula = ?
+                        AND idPessoa = ?
+                    """;
+
+            int rowsAffected = jdbcTemplate.update(sql, caminhoArquivo, arquivo.getSize(), idDocumentoMatricula,
+                    idPessoa);
+
+            if (rowsAffected > 0) {
+                logger.info("✅ Documento anexado com sucesso: {}", caminhoArquivo);
+                return true;
+            } else {
+                logger.warn("⚠️ Nenhum registro encontrado para anexar documento");
+                return false;
+            }
+
+        } catch (Exception e) {
+            logger.error("❌ Erro ao anexar documento: {}", e.getMessage(), e);
+            return false;
+        }
+    }
+
+    /**
+     * Cria documentos de matrícula para um interesse específico
+     */
+    public boolean criarDocumentosMatricula(Long interesseId) {
+        try {
+            logger.info("📋 Criando documentos de matrícula para interesse ID: {}", interesseId);
+
+            // Buscar dados do interesse de matrícula
+            String sqlInteresse = """
+                    SELECT i.id, i.responsavelLogin_idPessoa, i.tbAluno_idPessoa, r.tbFamilia_idtbFamilia
+                    FROM tbInteresseMatricula i
+                    JOIN tbResponsavel r ON r.tbPessoa_idPessoa = i.responsavelLogin_idPessoa
+                    WHERE i.id = ?
+                    """;
+
+            Map<String, Object> interesse = jdbcTemplate.queryForMap(sqlInteresse, interesseId);
+            Long familiaId = ((Number) interesse.get("tbFamilia_idtbFamilia")).longValue();
+            Long alunoId = interesse.get("tbAluno_idPessoa") != null
+                    ? ((Number) interesse.get("tbAluno_idPessoa")).longValue()
+                    : null;
+            Long responsavelId = ((Number) interesse.get("responsavelLogin_idPessoa")).longValue();
+
+            // Buscar todos os tipos de documentos ativos
+            String sqlTipos = """
+                    SELECT idTipoDocumento, nome, escopo
+                    FROM tbTipoDocumento
+                    WHERE ativo = 1
+                    ORDER BY nome
+                    """;
+
+            List<Map<String, Object>> tiposDocumento = jdbcTemplate.queryForList(sqlTipos);
+
+            logger.info("📄 Encontrados {} tipos de documentos para criar", tiposDocumento.size());
+
+            // Criar documentos baseados no escopo
+            int documentosCriados = 0;
+            for (Map<String, Object> tipo : tiposDocumento) {
+                Long tipoId = ((Number) tipo.get("idTipoDocumento")).longValue();
+                String escopo = (String) tipo.get("escopo");
+                String nome = (String) tipo.get("nome");
+
+                // Verificar se já existe documento deste tipo para este interesse
+                String sqlVerifica = """
+                        SELECT COUNT(*) FROM tbDocumentoMatricula
+                        WHERE tbInteresseMatricula_id = ? AND tbTipoDocumento_idTipoDocumento = ?
+                        """;
+
+                int existe = jdbcTemplate.queryForObject(sqlVerifica, Integer.class, interesseId, tipoId);
+
+                if (existe == 0) {
+                    // Criar documento baseado no escopo
+                    String sqlInsert = """
+                            INSERT INTO tbDocumentoMatricula
+                            (tbInteresseMatricula_id, tbTipoDocumento_idTipoDocumento, tbFamilia_idtbFamilia,
+                             tbAluno_idPessoa, tbPessoa_idPessoa, status)
+                            VALUES (?, ?, ?, ?, ?, 'pendente')
+                            """;
+
+                    Long pessoaId = null;
+                    Long alunoDocId = null;
+
+                    switch (escopo) {
+                        case "FAMILIA":
+                            pessoaId = responsavelId;
+                            break;
+                        case "ALUNO":
+                            pessoaId = alunoId;
+                            alunoDocId = alunoId;
+                            break;
+                        case "TODOS_INTEGRANTES":
+                            pessoaId = responsavelId; // Por padrão, responsável
+                            break;
+                    }
+
+                    jdbcTemplate.update(sqlInsert, interesseId, tipoId, familiaId, alunoDocId, pessoaId);
+                    documentosCriados++;
+                    logger.debug("✅ Criado documento: {} (escopo: {})", nome, escopo);
+                }
+            }
+
+            logger.info("✅ Criados {} documentos de matrícula para interesse ID {}", documentosCriados, interesseId);
+            return documentosCriados > 0;
+
+        } catch (Exception e) {
+            logger.error("❌ Erro ao criar documentos de matrícula: {}", e.getMessage(), e);
+            return false;
+        }
+    }
+
+    /**
+     * Remove um documento anexado
+     */
+    public boolean removerDocumento(Long idDocumentoMatricula, Long idPessoa) {
+        try {
+            logger.info("🗑️ Removendo documento ID: {}, Pessoa: {}", idDocumentoMatricula, idPessoa);
+
+            // Primeiro buscar o caminho do arquivo para deletar fisicamente (se necessário
+            // no futuro)
+            // List<String> caminhos = jdbcTemplate.queryForList(sqlBuscar, String.class,
+            // idDocumentoMatricula, idPessoa);
+
+            // Atualizar registro removendo o arquivo
+            String sqlRemover = """
+                        UPDATE tbDocumentoMatricula
+                        SET caminhoArquivo = NULL,
+                            dataUpload = NULL,
+                            statusDocumento = 'PENDENTE',
+                            tamanhoArquivo = NULL
+                        WHERE idDocumentoMatricula = ?
+                        AND idPessoa = ?
+                    """;
+
+            int rowsAffected = jdbcTemplate.update(sqlRemover, idDocumentoMatricula, idPessoa);
+
+            if (rowsAffected > 0) {
+                logger.info("✅ Documento removido com sucesso");
+                // TODO: Deletar arquivo físico se existir
+                return true;
+            } else {
+                logger.warn("⚠️ Nenhum registro encontrado para remover");
+                return false;
+            }
+
+        } catch (Exception e) {
+            logger.error("❌ Erro ao remover documento: {}", e.getMessage(), e);
+            return false;
+        }
+    }
+
+    /**
+     * Baixa um documento anexado
+     */
+    public byte[] baixarDocumento(Long idDocumentoMatricula) {
+        try {
+            logger.info("⬇️ Baixando documento ID: {}", idDocumentoMatricula);
+
+            // Buscar caminho do arquivo
+            String sql = """
+                        SELECT caminhoArquivo
+                        FROM tbDocumentoMatricula
+                        WHERE idDocumentoMatricula = ?
+                        AND caminhoArquivo IS NOT NULL
+                    """;
+
+            List<String> caminhos = jdbcTemplate.queryForList(sql, String.class, idDocumentoMatricula);
+
+            if (caminhos.isEmpty()) {
+                logger.warn("⚠️ Documento não encontrado ou não anexado para ID: {}", idDocumentoMatricula);
+                return null;
+            }
+
+            // TODO: Implementar leitura do arquivo físico
+            // Por enquanto, retornar um PDF simples para teste
+            String conteudoPdf = "Documento de teste - ID: " + idDocumentoMatricula;
+            return conteudoPdf.getBytes();
+
+        } catch (Exception e) {
+            logger.error("❌ Erro ao baixar documento: {}", e.getMessage(), e);
+            return null;
+        }
+    }
+
+    /**
+     * Gera documentos de matrícula para um interesse específico
+     */
+    public boolean gerarDocumentosMatricula(Long interesseId) {
+        try {
+            logger.info("📋 Gerando documentos de matrícula para interesse ID: {}", interesseId);
+
+            // Verificar se o interesse existe
+            String sqlInteresse = "SELECT id FROM tbInteresseMatricula WHERE id = ?";
+            List<Map<String, Object>> interesses = jdbcTemplate.queryForList(sqlInteresse, interesseId);
+
+            if (interesses.isEmpty()) {
+                logger.warn("⚠️ Interesse de matrícula não encontrado: {}", interesseId);
+                return false;
+            }
+
+            // Verificar se já existem documentos para este interesse
+            String sqlVerificar = "SELECT COUNT(*) as total FROM tbDocumentoMatricula WHERE tbInteresseMatricula_id = ?";
+            Integer totalExistente = jdbcTemplate.queryForObject(sqlVerificar, Integer.class, interesseId);
+
+            if (totalExistente > 0) {
+                logger.info("📄 Já existem {} documentos para o interesse ID: {}", totalExistente, interesseId);
+                return true;
+            }
+
+            // Buscar todos os tipos de documentos ativos
+            String sqlTipos = """
+                        SELECT idTipoDocumento, nome, descricao, escopo, tipoProcessamento
+                        FROM tbTipoDocumento
+                        WHERE ativo = 1
+                        ORDER BY nome
+                    """;
+
+            List<Map<String, Object>> tiposDocumentos = jdbcTemplate.queryForList(sqlTipos);
+
+            if (tiposDocumentos.isEmpty()) {
+                logger.warn("⚠️ Nenhum tipo de documento ativo encontrado");
+                return false;
+            }
+
+            logger.info("📋 Encontrados {} tipos de documentos ativos", tiposDocumentos.size());
+
+            // Para cada tipo de documento, criar um registro na tbDocumentoMatricula
+            String sqlInserir = """
+                        INSERT INTO tbDocumentoMatricula
+                        (tbInteresseMatricula_id, tbTipoDocumento_idTipoDocumento, status, dataCriacao, dataAtualizacao)
+                        VALUES (?, ?, 'pendente', NOW(), NOW())
+                    """;
+
+            int documentosCriados = 0;
+            for (Map<String, Object> tipo : tiposDocumentos) {
+                Long idTipoDocumento = ((Number) tipo.get("idTipoDocumento")).longValue();
+                String nomeTipo = (String) tipo.get("nome");
+
+                try {
+                    int rowsAffected = jdbcTemplate.update(sqlInserir, interesseId, idTipoDocumento);
+                    if (rowsAffected > 0) {
+                        documentosCriados++;
+                        logger.debug("✅ Documento criado: {} para interesse {}", nomeTipo, interesseId);
+                    }
+                } catch (Exception e) {
+                    logger.error("❌ Erro ao criar documento {}: {}", nomeTipo, e.getMessage());
+                }
+            }
+
+            logger.info("✅ Criados {} documentos de matrícula para interesse ID: {}", documentosCriados, interesseId);
+            return documentosCriados > 0;
+
+        } catch (Exception e) {
+            logger.error("❌ Erro ao gerar documentos de matrícula: {}", e.getMessage(), e);
+            return false;
         }
     }
 }

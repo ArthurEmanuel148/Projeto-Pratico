@@ -1,0 +1,74 @@
+{
+    "protocolo": "MAT-2025-005",
+    "etapaAtual": "finalizado",
+    "nomeResponsavel": "Ana Costa Lima",
+    "cpfResponsavel": "111.222.655-44",
+    "dataNascimentoResponsavel": "1988-03-10",
+    "telefoneResponsavel": "(11) 98765-4321",
+    "emailResponsavel": "ana.costa@email.com",
+    "rendaResponsavel": 1320.00,
+    "profissaoResponsavel": "Auxiliar Administrativa",
+    "responsavelExistente": false,
+    "senhaTemporariaEnviada": false,
+    "responsavelAutenticado": false,
+    "nomeAluno": "Pedro Costa Lima",
+    "dataNascimentoAluno": "2016-12-05",
+    "cpfAluno": "444.555.444-77",
+    "escolaAluno": "EMEF Prof. Carlos Drummond",
+    "codigoInepEscola": "35987654",
+    "municipioEscola": "São Paulo",
+    "ufEscola": "SP",
+    "cep": "02345-678",
+    "logradouro": "Avenida Paulista",
+    "numero": "456",
+    "complemento": "Casa",
+    "bairro": "Bela Vista",
+    "cidade": "São Paulo",
+    "uf": "SP",
+    "codigoIbgeCidade": "3550308",
+    "pontoReferencia": "Em frente à padaria Central",
+    "tipoCota": "economica",
+    "numeroIntegrantes": 4,
+    "integrantesRenda": [
+        {
+            "nome": "Ana Costa Lima",
+            "parentesco": "responsavel",
+            "idade": 36,
+            "renda": 1320.00,
+            "tipoRenda": "salario",
+            "observacoes": "Auxiliar administrativa"
+        },
+        {
+            "nome": "Carlos Lima",
+            "parentesco": "conjuge",
+            "idade": 40,
+            "renda": 1200.00,
+            "tipoRenda": "autonomo",
+            "observacoes": "Eletricista autônomo"
+        },
+        {
+            "nome": "Pedro Costa Lima",
+            "parentesco": "filho",
+            "idade": 8,
+            "renda": 0.00,
+            "tipoRenda": "nenhuma",
+            "observacoes": "Estudante a ser matriculado"
+        },
+        {
+            "nome": "Maria Lima",
+            "parentesco": "filha",
+            "idade": 12,
+            "renda": 0.00,
+            "tipoRenda": "nenhuma",
+            "observacoes": "Estudante ensino fundamental"
+        }
+    ],
+    "dadosFamiliaresPreenchidos": true,
+    "horariosSelecionados": [
+        "tarde-13h-17h",
+        "ter-qui-tarde-13h-17h"
+    ],
+    "observacoesResponsavel": "Família de baixa renda, necessitamos muito desta vaga para o Pedro. Ele é um menino muito esforçado e tem interesse em aprender música.",
+    "status": "interesse_declarado",
+    "dataEnvio": "2025-09-08 10:30:00"
+}

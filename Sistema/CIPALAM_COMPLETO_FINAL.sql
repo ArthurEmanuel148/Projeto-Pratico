@@ -753,6 +753,16 @@ BEGIN
         VALUES (v_usuarioLogin, v_senhaLogin, v_idResponsavel);
     END IF;
     
+    -- 4.1. VERIFICAR E CRIAR LOGIN MESMO SE RESPONSÁVEL JÁ EXISTIA
+    -- (Para casos onde a pessoa já existia mas não tinha login)
+    IF NOT EXISTS (SELECT 1 FROM tblogin WHERE tbPessoa_idPessoa = v_idResponsavel) THEN
+        SET v_usuarioLogin = REPLACE(REPLACE(v_cpfResponsavel, '.', ''), '-', '');
+        SET v_senhaLogin = RIGHT(REPLACE(REPLACE(v_cpfResponsavel, '.', ''), '-', ''), 4);
+        
+        INSERT INTO tblogin (usuario, senha, tbPessoa_idPessoa)
+        VALUES (v_usuarioLogin, v_senhaLogin, v_idResponsavel);
+    END IF;
+    
     -- 5. VINCULAR RESPONSÁVEL À FAMÍLIA
     -- Verificar se a família foi criada com sucesso
     IF v_idFamilia IS NULL OR v_idFamilia = 0 THEN
@@ -880,12 +890,6 @@ BEGIN
                         
                         SET v_idPessoaIntegrante = LAST_INSERT_ID();
                     END IF;
-                END IF;
-                
-                -- Se for responsável adicional, vincular à família
-                IF v_parentescoIntegrante IN ('pai', 'mae', 'tutor', 'conjuge') THEN
-                    INSERT IGNORE INTO tbResponsavel (tbFamilia_idtbFamilia, tbPessoa_idPessoa)
-                    VALUES (v_idFamilia, v_idPessoaIntegrante);
                 END IF;
             END IF;
             
@@ -1559,6 +1563,40 @@ VALUES (
         '(11) 99999-2222'
     );
 
+-- Ana Silva Santos (para teste de declaração de interesse)
+INSERT INTO
+    `tbPessoa` (
+        `NmPessoa`,
+        `CpfPessoa`,
+        `dtNascPessoa`,
+        `email`,
+        `telefone`
+    )
+VALUES (
+        'Ana Silva Santos',
+        '444.444.444-44',
+        '1985-06-15',
+        'ana.santos@email.com',
+        '(11) 99999-4444'
+    );
+
+-- Fernanda Costa (funcionária com declaração de interesse)
+INSERT INTO
+    `tbPessoa` (
+        `NmPessoa`,
+        `CpfPessoa`,
+        `dtNascPessoa`,
+        `email`,
+        `telefone`
+    )
+VALUES (
+        'Fernanda Costa',
+        '666.666.666-66',
+        '1987-12-05',
+        'fernanda.costa@email.com',
+        '(11) 99999-6666'
+    );
+
 -- Logins de teste
 INSERT INTO
     `tblogin` (
@@ -1575,6 +1613,16 @@ VALUES (
         'maria.responsavel',
         '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',
         3
+    ),
+    (
+        'ana.santos',
+        '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',
+        4
+    ),
+    (
+        'fernanda.costa',
+        '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',
+        5
     );
 
 -- João como funcionário
@@ -1689,6 +1737,21 @@ INSERT INTO
     )
 VALUES (1, 3);
 
+-- Família para Ana Silva Santos
+INSERT INTO
+    `tbFamilia` (`observacoes`)
+VALUES (
+        'Família da Ana Silva Santos para teste de declaração de interesse'
+    );
+
+-- Ana Silva Santos como responsável
+INSERT INTO
+    `tbResponsavel` (
+        `tbFamilia_idtbFamilia`,
+        `tbPessoa_idPessoa`
+    )
+VALUES (2, 4);
+
 -- ===================================================================
 -- DECLARAÇÕES DE INTERESSE DE TESTE
 -- ===================================================================
@@ -1722,11 +1785,14 @@ INSERT INTO
         `uf`,
         `codigoIbgeCidade`,
         `tipoCota`,
+        `numeroIntegrantes`,
+        `integrantesRenda`,
         `horariosSelecionados`,
         `observacoesResponsavel`,
         `status`,
         `dataEnvio`,
-        `dadosFamiliaresPreenchidos`
+        `dadosFamiliaresPreenchidos`,
+        `responsavelLogin_idPessoa`
     )
 VALUES (
         'MAT-2025-001',
@@ -1756,11 +1822,14 @@ VALUES (
         'SP',
         '3550308',
         'livre',
+        NULL, -- numeroIntegrantes
+        NULL, -- integrantesRenda
         JSON_ARRAY('manha-8h-12h'),
         'Criança muito ativa e interessada em aprender. Tem facilidade com matemática.',
         'interesse_declarado',
         NOW(),
-        FALSE
+        FALSE,
+        4 -- responsavelLogin_idPessoa: Ana Silva Santos
     ),
     (
         'MAT-2025-002',
@@ -1790,11 +1859,57 @@ VALUES (
         'SP',
         '3550308',
         'economica',
+        3, -- numeroIntegrantes
+        JSON_ARRAY(
+            JSON_OBJECT(
+                'nome',
+                'Carlos Oliveira',
+                'parentesco',
+                'responsavel',
+                'idade',
+                43,
+                'renda',
+                1800.00,
+                'tipoRenda',
+                'salario',
+                'observacoes',
+                'Pedreiro'
+            ),
+            JSON_OBJECT(
+                'nome',
+                'Maria Oliveira',
+                'parentesco',
+                'conjuge',
+                'idade',
+                39,
+                'renda',
+                800.00,
+                'tipoRenda',
+                'autonomo',
+                'observacoes',
+                'Costureira'
+            ),
+            JSON_OBJECT(
+                'nome',
+                'Pedro Oliveira',
+                'parentesco',
+                'filho',
+                'idade',
+                7,
+                'renda',
+                0.00,
+                'tipoRenda',
+                'nenhuma',
+                'observacoes',
+                'Estudante'
+            )
+        ), -- integrantesRenda
         JSON_ARRAY('tarde-13h-17h'),
         'Pedro é uma criança calma e gosta muito de desenhar. Tem interesse em artes.',
         'interesse_declarado',
         NOW(),
-        TRUE
+        TRUE,
+        NULL -- responsavelLogin_idPessoa: Carlos Oliveira não tem login
     ),
     (
         'MAT-2025-003',
@@ -1824,11 +1939,14 @@ VALUES (
         'SP',
         '3550308',
         'funcionario',
+        NULL, -- numeroIntegrantes (não precisa para funcionário)
+        NULL, -- integrantesRenda (não precisa para funcionário)
         JSON_ARRAY('manha-8h-12h'),
         'Lucas é filho de funcionária do instituto. Muito participativo e gosta de esportes.',
         'interesse_declarado',
         NOW(),
-        TRUE
+        TRUE,
+        NULL -- responsavelLogin_idPessoa: Fernanda Costa precisa de login
     );
 
 -- Inserir histórico de etapas para as declarações completas

@@ -8,28 +8,28 @@
   --input-spacing: 1.5rem;
   --border-radius: 12px;
   --animation-duration: 0.3s;
-  
+
   // Cores dinâmicas que funcionam em ambos os temas
   --custom-primary: var(--ion-color-primary);
   --custom-success: var(--ion-color-success);
   --custom-danger: var(--ion-color-danger);
   --custom-warning: var(--ion-color-warning);
   --custom-dark-text: #2c3e50; // Cor mais escura para textos importantes
-  
+
   // Backgrounds e superfícies
   --custom-background: var(--ion-background-color, #ffffff);
   --custom-surface: var(--ion-item-background, #ffffff);
   --custom-surface-variant: var(--ion-color-light, #f8f9fa);
-  
+
   // Textos
   --custom-text: var(--ion-text-color, #000000);
   --custom-text-secondary: var(--ion-color-medium, #6c757d);
   --custom-text-muted: var(--ion-color-medium-shade, #9e9e9e);
-  
+
   // Bordas
   --custom-border: var(--ion-color-light-shade, #e0e0e0);
   --custom-border-focus: var(--ion-color-primary);
-  
+
   // Sombras
   --custom-shadow-light: 0 2px 8px rgba(0, 0, 0, 0.08);
   --custom-shadow-medium: 0 4px 16px rgba(0, 0, 0, 0.12);
@@ -83,7 +83,7 @@ ion-header {
   ion-toolbar {
     --min-height: 44px;
     --height: 44px;
-    
+
     @media (max-width: 768px) {
       --min-height: 44px;
       --height: 44px;
@@ -132,6 +132,7 @@ ion-header {
     }
   }
 }
+
 // =============================================================================
 // LAYOUT PRINCIPAL
 // =============================================================================
@@ -153,7 +154,7 @@ ion-content {
 
 .back-link {
   margin-bottom: 1rem;
-  
+
   ion-button {
     --padding-start: 8px;
     --padding-end: 16px;
@@ -165,13 +166,13 @@ ion-content {
     font-weight: 500;
     height: auto;
     min-height: 44px;
-    
+
     ion-icon {
       margin-right: 8px;
       font-size: 1.3rem;
       vertical-align: middle;
     }
-    
+
     &:hover {
       --background: rgba(var(--ion-color-primary-rgb), 0.1);
     }
@@ -236,7 +237,7 @@ ion-card {
       margin-bottom: 12px !important;
       padding: 8px 0 !important;
       border-bottom: 1px solid var(--custom-border);
-      
+
       .valor-nome {
         display: block;
         margin-top: 8px;
@@ -247,7 +248,7 @@ ion-card {
         color: var(--custom-text);
         box-shadow: var(--custom-shadow-light);
         transition: all var(--animation-duration) ease;
-        
+
         &:hover {
           background: var(--custom-border);
           transform: translateY(-1px);
@@ -352,7 +353,7 @@ ion-card {
         font-weight: 600;
         box-shadow: var(--custom-shadow-light);
         transition: all var(--animation-duration) ease;
-        
+
         &:hover {
           background: var(--custom-border);
           transform: translateY(-1px);
@@ -591,7 +592,7 @@ ion-card {
 
   .documento-acoes {
     justify-content: center;
-    
+
     ion-button {
       width: 100%;
       margin: 0;
@@ -629,7 +630,8 @@ ion-card {
   .tabela-integrantes {
     font-size: 12px;
 
-    th, td {
+    th,
+    td {
       padding: 8px 4px;
     }
 

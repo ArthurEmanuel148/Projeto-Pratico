@@ -332,7 +332,7 @@ export class DetalheDeclaracaoPage implements OnInit {
     // O backend está retornando o caminho completo no campo 'nomeArquivo'
     // mas deveríamos verificar se existe arquivo anexado
     let caminhoCompleto = documento.nomeArquivo; // Este campo tem o caminho completo do backend
-    
+
     if (!caminhoCompleto || caminhoCompleto === 'null') {
       this.mostrarInfo(`Este documento ainda não foi anexado.\nTipo: ${documento.tipoDocumento?.nome || documento.nomeDocumento}\nStatus: ${documento.statusDescricao}`);
       return;
@@ -342,21 +342,21 @@ export class DetalheDeclaracaoPage implements OnInit {
       // Extrair apenas o nome do arquivo do caminho completo
       const nomeArquivoFinal = caminhoCompleto.split('/').pop();
       const urlArquivo = `http://localhost:8080/cipalam_documentos/${nomeArquivoFinal}`;
-      
+
       console.log('🔗 Abrindo URL:', urlArquivo);
       console.log('📄 Tipo de arquivo:', documento.tipoArquivo);
       console.log('📁 Caminho completo:', caminhoCompleto);
       console.log('📄 Nome do arquivo extraído:', nomeArquivoFinal);
-      
+
       // Detectar o tipo de arquivo para abrir adequadamente
       const tipoArquivo = documento.tipoArquivo?.toLowerCase() || '';
       const nomeArquivoLower = nomeArquivoFinal.toLowerCase();
-      
+
       if (tipoArquivo.includes('pdf') || nomeArquivoLower.endsWith('.pdf')) {
         // PDFs: abrir diretamente no visualizador do navegador
         window.open(urlArquivo, '_blank');
-      } else if (tipoArquivo.includes('image') || 
-                 nomeArquivoLower.match(/\.(jpg|jpeg|png|gif|bmp|webp)$/)) {
+      } else if (tipoArquivo.includes('image') ||
+        nomeArquivoLower.match(/\.(jpg|jpeg|png|gif|bmp|webp)$/)) {
         // Imagens (câmera, galeria, etc): abrir em uma página customizada
         const newTab = window.open('', '_blank');
         if (newTab) {

@@ -11,6 +11,7 @@ public class WebConfig implements WebMvcConfigurer {
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         // Configurar para servir arquivos da pasta cipalam_documentos
         registry.addResourceHandler("/cipalam_documentos/**")
-                .addResourceLocations("file:/Applications/XAMPP/xamppfiles/htdocs/GitHub/Projeto-Pratico/Projeto-Pratico/cipalam_documentos/");
+                .addResourceLocations(
+                        "file:/Applications/XAMPP/xamppfiles/htdocs/GitHub/Projeto-Pratico/Projeto-Pratico/cipalam_documentos/");
     }
 }

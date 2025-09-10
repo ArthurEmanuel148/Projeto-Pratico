@@ -216,17 +216,19 @@ public class DocumentoMatriculaService {
             // Buscar e atualizar documento no banco de dados
             log.info("🔍 Buscando documento com ID: {}", documentoId);
             Optional<DocumentoMatricula> documentoOpt = documentoMatriculaRepository.findById(documentoId);
-            
+
             log.info("📋 Resultado da busca: documento encontrado = {}", documentoOpt.isPresent());
             if (documentoOpt.isEmpty()) {
                 // Debug: verificar se existem documentos na base
                 long totalDocumentos = documentoMatriculaRepository.count();
                 log.info("📊 Total de documentos na base: {}", totalDocumentos);
-                
+
                 // Listar alguns IDs para debug
-                List<DocumentoMatricula> primeirosDocumentos = documentoMatriculaRepository.findAll().stream().limit(10).toList();
-                log.info("📋 IDs disponíveis: {}", primeirosDocumentos.stream().map(DocumentoMatricula::getIdDocumentoMatricula).toList());
-                
+                List<DocumentoMatricula> primeirosDocumentos = documentoMatriculaRepository.findAll().stream().limit(10)
+                        .toList();
+                log.info("📋 IDs disponíveis: {}",
+                        primeirosDocumentos.stream().map(DocumentoMatricula::getIdDocumentoMatricula).toList());
+
                 throw new RuntimeException("Documento não encontrado");
             }
 
@@ -606,7 +608,7 @@ public class DocumentoMatriculaService {
             resultado.put("tipoMime", tipoMime);
             resultado.put("documento", documento);
 
-            log.info("Documento obtido com sucesso. Arquivo: {}, Tamanho: {} bytes", 
+            log.info("Documento obtido com sucesso. Arquivo: {}, Tamanho: {} bytes",
                     documento.getNomeArquivoOriginal(), conteudo.length);
 
             return resultado;
@@ -625,7 +627,7 @@ public class DocumentoMatriculaService {
      */
     private String determineTipoMime(String nomeArquivo) {
         String extensao = nomeArquivo.substring(nomeArquivo.lastIndexOf('.') + 1).toLowerCase();
-        
+
         switch (extensao) {
             case "pdf":
                 return "application/pdf";

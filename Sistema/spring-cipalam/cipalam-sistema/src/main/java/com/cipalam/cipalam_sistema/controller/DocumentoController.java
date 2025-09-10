@@ -21,7 +21,7 @@ public class DocumentoController {
 
     @Autowired
     private DocumentoService documentoService;
-    
+
     @Autowired
     private DocumentoMatriculaService documentoMatriculaService;
 
@@ -246,7 +246,7 @@ public class DocumentoController {
             String tipoMime = (String) documento.get("tipoMime");
 
             HttpHeaders headers = new HttpHeaders();
-            
+
             // Para visualização inline (não download)
             if (tipoMime.equals("application/pdf")) {
                 headers.setContentType(MediaType.APPLICATION_PDF);

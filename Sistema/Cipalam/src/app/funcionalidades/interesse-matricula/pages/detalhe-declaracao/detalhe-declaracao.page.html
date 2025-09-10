@@ -87,14 +87,16 @@
             </div>
             <div class="campo-linha">
               <ion-label class="label-campo">Email:</ion-label>
-              <ion-text class="valor-campo">{{ declaracao.emailResponsavel || declaracao.email || (declaracao.dadosResponsavel
+              <ion-text class="valor-campo">{{ declaracao.emailResponsavel || declaracao.email ||
+                (declaracao.dadosResponsavel
                 &&
                 declaracao.dadosResponsavel.emailResponsavel) || 'Não informado' }}</ion-text>
             </div>
             <div class="campo-linha">
               <ion-label class="label-campo">Telefone:</ion-label>
               <ion-text class="valor-campo">{{ declaracao.telefoneResponsavel || declaracao.telefone ||
-                (declaracao.dadosResponsavel && declaracao.dadosResponsavel.telefoneResponsavel) || 'Não informado' }}</ion-text>
+                (declaracao.dadosResponsavel && declaracao.dadosResponsavel.telefoneResponsavel) || 'Não informado'
+                }}</ion-text>
             </div>
           </div>
         </ion-card-content>
@@ -319,7 +321,7 @@
                       </ion-badge>
                     </div>
                   </div>
-                  
+
                   <div class="documento-info">
                     <div class="info-linha">
                       <span class="label">Responsável:</span>
@@ -334,13 +336,9 @@
                       <span class="valor">{{ doc.dataEnvio | date:'dd/MM/yyyy HH:mm' }}</span>
                     </div>
                   </div>
-                  
+
                   <div class="documento-acoes">
-                    <ion-button 
-                      size="small" 
-                      fill="outline" 
-                      color="primary" 
-                      (click)="abrirDocumento(doc)"
+                    <ion-button size="small" fill="outline" color="primary" (click)="abrirDocumento(doc)"
                       [disabled]="!doc.nomeArquivo || doc.nomeArquivo === 'null'">
                       <ion-icon name="open-outline" slot="start"></ion-icon>
                       {{ (doc.nomeArquivo && doc.nomeArquivo !== 'null') ? 'Abrir Documento' : 'Não anexado' }}

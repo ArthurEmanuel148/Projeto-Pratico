@@ -37,6 +37,45 @@
 }
 
 // =============================================================================
+// ESTILOS PARA DADOS PESSOAIS REORGANIZADOS
+// =============================================================================
+
+.dados-pessoais {
+  margin: 15px 0;
+}
+
+.campo-linha {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+  min-height: 35px;
+  padding: 8px 0;
+}
+
+.label-campo {
+  font-weight: bold;
+  color: var(--custom-text-secondary);
+  width: 160px;
+  flex-shrink: 0;
+  margin-right: 20px;
+  display: inline-block;
+  font-size: 0.95em;
+}
+
+.valor-campo {
+  color: var(--custom-text);
+  flex: 1;
+  display: inline-block;
+  font-size: 1em;
+}
+
+.nome-destaque {
+  font-size: 1.1em;
+  font-weight: 600;
+  color: var(--custom-primary);
+}
+
+// =============================================================================
 // CONFIGURAÇÃO DA BARRA VERMELHA (PADRÃO DO SISTEMA)
 // =============================================================================
 
@@ -369,6 +408,123 @@ ion-card {
   }
 }
 
+// =============================================================================
+// ESTILOS PARA DOCUMENTOS ENVIADOS
+// =============================================================================
+
+.documents-section {
+  margin-top: 20px;
+
+  h3 {
+    color: var(--custom-primary);
+    margin-bottom: 15px;
+    font-size: 1.2em;
+    font-weight: 600;
+  }
+}
+
+.documentos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 15px;
+  margin-top: 15px;
+}
+
+.documento-card {
+  background: var(--custom-surface);
+  border: 1px solid var(--custom-border);
+  border-radius: var(--border-radius);
+  padding: 15px;
+  box-shadow: var(--custom-shadow-light);
+  transition: all var(--animation-duration) ease;
+
+  &:hover {
+    box-shadow: var(--custom-shadow-medium);
+    transform: translateY(-2px);
+  }
+}
+
+.documento-header {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 15px;
+  gap: 12px;
+
+  ion-icon {
+    font-size: 24px;
+    margin-top: 2px;
+  }
+}
+
+.documento-title {
+  flex: 1;
+
+  h4 {
+    margin: 0 0 6px 0;
+    color: var(--custom-text);
+    font-size: 1.1em;
+    font-weight: 600;
+    line-height: 1.3;
+  }
+
+  .status-badge {
+    font-size: 0.75em;
+    padding: 4px 8px;
+  }
+}
+
+.documento-info {
+  margin-bottom: 15px;
+}
+
+.info-linha {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+  gap: 10px;
+
+  .label {
+    font-weight: 600;
+    color: var(--custom-text-secondary);
+    min-width: 90px;
+    font-size: 0.9em;
+  }
+
+  .valor {
+    color: var(--custom-text);
+    flex: 1;
+    font-size: 0.9em;
+
+    &.arquivo-nome {
+      font-family: monospace;
+      background: var(--custom-surface-variant);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.85em;
+    }
+  }
+}
+
+.documento-acoes {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 10px;
+  border-top: 1px solid var(--custom-border);
+
+  ion-button {
+    --padding-start: 12px;
+    --padding-end: 12px;
+    height: 32px;
+    font-size: 0.85em;
+
+    &[disabled] {
+      --color: var(--custom-text-muted);
+      --background: transparent;
+      --border-color: var(--custom-border);
+    }
+  }
+}
+
 // Container de loading
 .loading-container {
   display: flex;
@@ -393,6 +549,55 @@ ion-card {
 // =============================================================================
 
 @media (max-width: 768px) {
+  .documentos-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .documento-card {
+    padding: 12px;
+  }
+
+  .documento-header {
+    flex-direction: column;
+    gap: 8px;
+    text-align: center;
+
+    ion-icon {
+      align-self: center;
+    }
+  }
+
+  .info-linha {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+
+    .label {
+      min-width: auto;
+      font-size: 0.85em;
+    }
+
+    .valor {
+      font-size: 0.9em;
+      padding-left: 10px;
+
+      &.arquivo-nome {
+        word-break: break-all;
+        font-size: 0.8em;
+      }
+    }
+  }
+
+  .documento-acoes {
+    justify-content: center;
+    
+    ion-button {
+      width: 100%;
+      margin: 0;
+    }
+  }
+
   .page-header {
     padding: 0.25rem 1rem;
 

@@ -13,7 +13,7 @@ public class DocumentoMatricula {
     private Long idDocumentoMatricula;
 
     @ManyToOne
-    @JoinColumn(name = "tbInteresseMatricula_id", nullable = false)
+    @JoinColumn(name = "tbInteresseMatricula_id", nullable = true)
     private InteresseMatricula interesseMatricula;
 
     @ManyToOne

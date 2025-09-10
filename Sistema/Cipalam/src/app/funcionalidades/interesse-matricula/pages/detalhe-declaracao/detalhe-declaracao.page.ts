@@ -18,14 +18,14 @@ export class DetalheDeclaracaoPage implements OnInit {
   loginGerado?: { usuario: string, senha: string };
   matriculaIniciada = false;
   processandoMatricula = false;
-  documentosNecessarios: any[] = [];
+  // Campos para documentos enviados (removido documentosNecessarios)
   integrantesRenda: any[] = [];
   horariosSelecionados: string[] = [];
   rendaFamiliarCalculada = 0;
   rendaPerCapitaCalculada = 0;
   enderecoCompleto = '';
 
-  // Novos campos para documentos enviados
+  // Campos para documentos enviados
   documentosEnviados: any[] = [];
   carregandoDocumentos = false;
 
@@ -123,9 +123,6 @@ export class DetalheDeclaracaoPage implements OnInit {
             usuario: declaracao.dadosResponsavel?.emailResponsavel || declaracao.email || 'usuario@temp.com',
             senha: 'temp123456'
           };
-          // Carregar documentos necessários baseado no tipo de cota
-          this.carregarDocumentosNecessarios(declaracao.tipoVaga?.tipoCota || declaracao.tipoCota);
-
           // Carregar documentos já enviados
           this.carregarDocumentosEnviados();
         }
@@ -136,31 +133,6 @@ export class DetalheDeclaracaoPage implements OnInit {
         this.mostrarErro('Erro ao carregar declaração');
       }
     });
-  }
-
-  private carregarDocumentosNecessarios(tipoCota: string | undefined) {
-    // Documentos baseados no tipo de cota
-    const documentosPorCota: Record<string, any[]> = {
-      funcionario: [
-        { nome: 'RG do Responsável', obrigatorio: true },
-        { nome: 'CPF do Responsável', obrigatorio: true },
-        { nome: 'Comprovante de Vínculo Empregatício', obrigatorio: true },
-        { nome: 'Declaração de Parentesco', obrigatorio: true }
-      ],
-      economica: [
-        { nome: 'RG do Responsável', obrigatorio: true },
-        { nome: 'CPF do Responsável', obrigatorio: true },
-        { nome: 'Comprovante de Renda', obrigatorio: true },
-        { nome: 'Declaração de Dependentes', obrigatorio: true }
-      ],
-      livre: [
-        { nome: 'RG do Responsável', obrigatorio: true },
-        { nome: 'CPF do Responsável', obrigatorio: true },
-        { nome: 'Certidão de Nascimento', obrigatorio: true }
-      ]
-    };
-
-    this.documentosNecessarios = documentosPorCota[tipoCota || 'livre'] || documentosPorCota['livre'];
   }
 
   async iniciarMatricula() {
@@ -196,7 +168,6 @@ export class DetalheDeclaracaoPage implements OnInit {
 
       if (response.success) {
         this.loginGerado = response.credenciaisResponsavel;
-        this.documentosNecessarios = response.documentosNecessarios || [];
         this.matriculaIniciada = true;
 
         await this.mostrarSucesso('Matrícula iniciada com sucesso! O responsável já pode fazer login no sistema.');
@@ -354,15 +325,140 @@ export class DetalheDeclaracaoPage implements OnInit {
   /**
    * Abre/visualiza um documento específico
    */
-  abrirDocumento(documento: any) {
-    console.log('🔑 Abrindo documento:', documento);
+  async abrirDocumento(documento: any) {
+    console.log('🔑 Abrindo documento completo:', documento);
+    console.log('📂 Campos disponíveis:', Object.keys(documento));
 
-    if (documento.nomeArquivo) {
-      // Aqui você pode implementar a lógica para abrir/baixar o arquivo
-      // Por exemplo, uma modal ou navegação para uma página de visualização
-      this.mostrarInfo(`Documento: ${documento.tipoDocumento.nome}\nArquivo: ${documento.nomeArquivo}\nStatus: ${documento.statusDescricao}`);
-    } else {
-      this.mostrarInfo(`Este documento ainda não foi anexado.\nTipo: ${documento.tipoDocumento.nome}\nStatus: ${documento.statusDescricao}`);
+    // O backend está retornando o caminho completo no campo 'nomeArquivo'
+    // mas deveríamos verificar se existe arquivo anexado
+    let caminhoCompleto = documento.nomeArquivo; // Este campo tem o caminho completo do backend
+    
+    if (!caminhoCompleto || caminhoCompleto === 'null') {
+      this.mostrarInfo(`Este documento ainda não foi anexado.\nTipo: ${documento.tipoDocumento?.nome || documento.nomeDocumento}\nStatus: ${documento.statusDescricao}`);
+      return;
+    }
+
+    try {
+      // Extrair apenas o nome do arquivo do caminho completo
+      const nomeArquivoFinal = caminhoCompleto.split('/').pop();
+      const urlArquivo = `http://localhost:8080/cipalam_documentos/${nomeArquivoFinal}`;
+      
+      console.log('🔗 Abrindo URL:', urlArquivo);
+      console.log('📄 Tipo de arquivo:', documento.tipoArquivo);
+      console.log('📁 Caminho completo:', caminhoCompleto);
+      console.log('📄 Nome do arquivo extraído:', nomeArquivoFinal);
+      
+      // Detectar o tipo de arquivo para abrir adequadamente
+      const tipoArquivo = documento.tipoArquivo?.toLowerCase() || '';
+      const nomeArquivoLower = nomeArquivoFinal.toLowerCase();
+      
+      if (tipoArquivo.includes('pdf') || nomeArquivoLower.endsWith('.pdf')) {
+        // PDFs: abrir diretamente no visualizador do navegador
+        window.open(urlArquivo, '_blank');
+      } else if (tipoArquivo.includes('image') || 
+                 nomeArquivoLower.match(/\.(jpg|jpeg|png|gif|bmp|webp)$/)) {
+        // Imagens (câmera, galeria, etc): abrir em uma página customizada
+        const newTab = window.open('', '_blank');
+        if (newTab) {
+          newTab.document.write(`
+            <!DOCTYPE html>
+            <html>
+              <head>
+                <title>${documento.tipoDocumento?.nome || documento.nomeDocumento} - ${nomeArquivoFinal}</title>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <style>
+                  body { 
+                    margin: 0; 
+                    padding: 20px;
+                    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); 
+                    font-family: 'Segoe UI', Arial, sans-serif;
+                    display: flex; 
+                    flex-direction: column;
+                    align-items: center; 
+                    min-height: 100vh;
+                    color: white;
+                  }
+                  .header {
+                    text-align: center;
+                    margin-bottom: 20px;
+                  }
+                  .header h1 {
+                    margin: 0;
+                    font-size: 1.5em;
+                    font-weight: 300;
+                  }
+                  .header p {
+                    margin: 5px 0;
+                    opacity: 0.8;
+                  }
+                  .image-container {
+                    background: white;
+                    border-radius: 12px;
+                    padding: 20px;
+                    box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+                    max-width: 90vw;
+                    max-height: 80vh;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                  }
+                  img { 
+                    max-width: 100%; 
+                    max-height: 70vh; 
+                    object-fit: contain; 
+                    border-radius: 8px;
+                    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+                  }
+                  .loading {
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    gap: 10px;
+                  }
+                  .spinner {
+                    border: 3px solid rgba(255,255,255,0.3);
+                    border-top: 3px solid white;
+                    border-radius: 50%;
+                    width: 30px;
+                    height: 30px;
+                    animation: spin 1s linear infinite;
+                  }
+                  @keyframes spin {
+                    0% { transform: rotate(0deg); }
+                    100% { transform: rotate(360deg); }
+                  }
+                </style>
+              </head>
+              <body>
+                <div class="header">
+                  <h1>${documento.tipoDocumento?.nome || documento.nomeDocumento}</h1>
+                  <p>📱 ${nomeArquivoFinal}</p>
+                </div>
+                <div class="image-container">
+                  <div class="loading" id="loading">
+                    <div class="spinner"></div>
+                    <p>Carregando imagem...</p>
+                  </div>
+                  <img id="document-image" src="${urlArquivo}" alt="${documento.tipoDocumento?.nome || documento.nomeDocumento}" 
+                       style="display: none;" 
+                       onload="document.getElementById('loading').style.display='none'; this.style.display='block';"
+                       onerror="document.getElementById('loading').innerHTML='<p>❌ Erro ao carregar imagem</p>';" />
+                </div>
+              </body>
+            </html>
+          `);
+        } else {
+          this.mostrarErro('Erro ao abrir documento. Verifique se o bloqueador de pop-ups está desabilitado.');
+        }
+      } else {
+        // Outros tipos de arquivo: abrir diretamente
+        window.open(urlArquivo, '_blank');
+      }
+
+    } catch (error) {
+      console.error('Erro ao abrir documento:', error);
+      this.mostrarErro('Erro ao carregar documento. Tente novamente.');
     }
   }
 

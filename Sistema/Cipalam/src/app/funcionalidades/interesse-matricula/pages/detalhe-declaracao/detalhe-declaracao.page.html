@@ -33,17 +33,32 @@
           <ion-card-title>Dados do Aluno</ion-card-title>
         </ion-card-header>
         <ion-card-content>
-          <p class="nome-destaque"><strong>Nome:</strong> <span class="valor-nome">{{ declaracao.nomeAluno ||
-              declaracao.nomeCompleto || (declaracao.dadosAluno &&
-              declaracao.dadosAluno.nomeAluno) || 'Não informado' }}</span></p>
-          <p><strong>Data de Nascimento:</strong> {{ (declaracao.dataNascimentoAluno || (declaracao.dadosAluno &&
-            declaracao.dadosAluno.dataNascimentoAluno)) | date:'dd/MM/yyyy' }}</p>
-          <p><strong>CPF:</strong> {{ declaracao.cpfAluno || declaracao.cpf || (declaracao.dadosAluno &&
-            declaracao.dadosAluno.cpfAluno) || 'Não informado' }}</p>
-          <p><strong>Protocolo:</strong> {{ declaracao.protocolo }}</p>
-          <p><strong>Status:</strong>
-            <ion-badge color="primary">{{ declaracao.status || 'interesse_declarado' }}</ion-badge>
-          </p>
+          <div class="dados-pessoais">
+            <div class="campo-linha">
+              <ion-label class="label-campo">Nome:</ion-label>
+              <ion-text class="valor-campo nome-destaque">{{ declaracao.nomeAluno ||
+                declaracao.nomeCompleto || (declaracao.dadosAluno &&
+                declaracao.dadosAluno.nomeAluno) || 'Não informado' }}</ion-text>
+            </div>
+            <div class="campo-linha">
+              <ion-label class="label-campo">Data de Nascimento:</ion-label>
+              <ion-text class="valor-campo">{{ (declaracao.dataNascimentoAluno || (declaracao.dadosAluno &&
+                declaracao.dadosAluno.dataNascimentoAluno)) | date:'dd/MM/yyyy' }}</ion-text>
+            </div>
+            <div class="campo-linha">
+              <ion-label class="label-campo">CPF:</ion-label>
+              <ion-text class="valor-campo">{{ declaracao.cpfAluno || declaracao.cpf || (declaracao.dadosAluno &&
+                declaracao.dadosAluno.cpfAluno) || 'Não informado' }}</ion-text>
+            </div>
+            <div class="campo-linha">
+              <ion-label class="label-campo">Protocolo:</ion-label>
+              <ion-text class="valor-campo">{{ declaracao.protocolo }}</ion-text>
+            </div>
+            <div class="campo-linha">
+              <ion-label class="label-campo">Status:</ion-label>
+              <ion-badge color="primary">{{ declaracao.status || 'interesse_declarado' }}</ion-badge>
+            </div>
+          </div>
         </ion-card-content>
       </ion-card>
 
@@ -52,19 +67,36 @@
           <ion-card-title>Dados do Responsável</ion-card-title>
         </ion-card-header>
         <ion-card-content>
-          <p class="nome-destaque"><strong>Nome:</strong> <span class="valor-nome">{{ declaracao.nomeResponsavel ||
-              (declaracao.dadosResponsavel &&
-              declaracao.dadosResponsavel.nomeResponsavel) || 'Não informado' }}</span></p>
-          <p><strong>CPF:</strong> {{ declaracao.cpfResponsavel || (declaracao.dadosResponsavel &&
-            declaracao.dadosResponsavel.cpfResponsavel) || 'Não informado' }}</p>
-          <p><strong>Data de Nascimento:</strong> {{ (declaracao.dataNascimentoResponsavel ||
-            (declaracao.dadosResponsavel
-            && declaracao.dadosResponsavel.dataNascimentoResponsavel)) | date:'dd/MM/yyyy' }}</p>
-          <p><strong>Email:</strong> {{ declaracao.emailResponsavel || declaracao.email || (declaracao.dadosResponsavel
-            &&
-            declaracao.dadosResponsavel.emailResponsavel) || 'Não informado' }}</p>
-          <p><strong>Telefone:</strong> {{ declaracao.telefoneResponsavel || declaracao.telefone ||
-            (declaracao.dadosResponsavel && declaracao.dadosResponsavel.telefoneResponsavel) || 'Não informado' }}</p>
+          <div class="dados-pessoais">
+            <div class="campo-linha">
+              <ion-label class="label-campo">Nome:</ion-label>
+              <ion-text class="valor-campo nome-destaque">{{ declaracao.nomeResponsavel ||
+                (declaracao.dadosResponsavel &&
+                declaracao.dadosResponsavel.nomeResponsavel) || 'Não informado' }}</ion-text>
+            </div>
+            <div class="campo-linha">
+              <ion-label class="label-campo">CPF:</ion-label>
+              <ion-text class="valor-campo">{{ declaracao.cpfResponsavel || (declaracao.dadosResponsavel &&
+                declaracao.dadosResponsavel.cpfResponsavel) || 'Não informado' }}</ion-text>
+            </div>
+            <div class="campo-linha">
+              <ion-label class="label-campo">Data de Nascimento:</ion-label>
+              <ion-text class="valor-campo">{{ (declaracao.dataNascimentoResponsavel ||
+                (declaracao.dadosResponsavel
+                && declaracao.dadosResponsavel.dataNascimentoResponsavel)) | date:'dd/MM/yyyy' }}</ion-text>
+            </div>
+            <div class="campo-linha">
+              <ion-label class="label-campo">Email:</ion-label>
+              <ion-text class="valor-campo">{{ declaracao.emailResponsavel || declaracao.email || (declaracao.dadosResponsavel
+                &&
+                declaracao.dadosResponsavel.emailResponsavel) || 'Não informado' }}</ion-text>
+            </div>
+            <div class="campo-linha">
+              <ion-label class="label-campo">Telefone:</ion-label>
+              <ion-text class="valor-campo">{{ declaracao.telefoneResponsavel || declaracao.telefone ||
+                (declaracao.dadosResponsavel && declaracao.dadosResponsavel.telefoneResponsavel) || 'Não informado' }}</ion-text>
+            </div>
+          </div>
         </ion-card-content>
       </ion-card>
 
@@ -270,44 +302,52 @@
             </ion-button>
           </div>
 
-          <div class="documents-section" *ngIf="documentosNecessarios.length > 0">
-            <h3>Documentos Necessários</h3>
-            <ion-list>
-              <ion-item *ngFor="let doc of documentosNecessarios">
-                <ion-icon name="document-outline" slot="start"></ion-icon>
-                <ion-label>
-                  <h4>{{ doc.nome }}</h4>
-                  <p *ngIf="doc.obrigatorio">
-                    <ion-badge color="danger">Obrigatório</ion-badge>
-                  </p>
-                </ion-label>
-              </ion-item>
-            </ion-list>
-          </div>
+          <!-- Seção removida: Documentos Necessários não fazem parte do sistema -->
 
           <!-- Nova seção para documentos enviados -->
           <div class="documents-section" *ngIf="!carregandoDocumentos">
             <h3>Documentos Enviados</h3>
             <div *ngIf="documentosEnviados.length > 0; else nenhumDocumentoEnviado">
-              <ion-list>
-                <ion-item *ngFor="let doc of documentosEnviados" lines="full">
-                  <ion-icon name="document-text-outline" slot="start" [color]="getStatusColor(doc.status)"></ion-icon>
-                  <ion-label>
-                    <h4>{{ doc.tipoDocumento.nome }}</h4>
-                    <p><strong>Responsável:</strong> {{ doc.nomeResponsavel }} ({{ doc.parentesco }})</p>
-                    <p><strong>Status:</strong>
-                      <ion-badge [color]="getStatusColor(doc.status)">{{ doc.statusDescricao }}</ion-badge>
-                    </p>
-                    <p *ngIf="doc.nomeArquivo"><strong>Arquivo:</strong> {{ doc.nomeArquivo }}</p>
-                    <p *ngIf="doc.dataEnvio"><strong>Enviado em:</strong> {{ doc.dataEnvio | date:'dd/MM/yyyy HH:mm' }}
-                    </p>
-                  </ion-label>
-                  <!-- Botão da chavinha para abrir documento -->
-                  <ion-button slot="end" fill="clear" color="primary" (click)="abrirDocumento(doc)">
-                    <ion-icon name="key-outline" slot="icon-only"></ion-icon>
-                  </ion-button>
-                </ion-item>
-              </ion-list>
+              <div class="documentos-grid">
+                <div class="documento-card" *ngFor="let doc of documentosEnviados">
+                  <div class="documento-header">
+                    <ion-icon name="document-text-outline" [color]="getStatusColor(doc.status)"></ion-icon>
+                    <div class="documento-title">
+                      <h4>{{ doc.tipoDocumento.nome }}</h4>
+                      <ion-badge [color]="getStatusColor(doc.status)" class="status-badge">
+                        {{ doc.statusDescricao }}
+                      </ion-badge>
+                    </div>
+                  </div>
+                  
+                  <div class="documento-info">
+                    <div class="info-linha">
+                      <span class="label">Responsável:</span>
+                      <span class="valor">{{ doc.nomeResponsavel }}</span>
+                    </div>
+                    <div class="info-linha">
+                      <span class="label">Parentesco:</span>
+                      <span class="valor">{{ doc.parentesco }}</span>
+                    </div>
+                    <div class="info-linha" *ngIf="doc.dataEnvio">
+                      <span class="label">Enviado em:</span>
+                      <span class="valor">{{ doc.dataEnvio | date:'dd/MM/yyyy HH:mm' }}</span>
+                    </div>
+                  </div>
+                  
+                  <div class="documento-acoes">
+                    <ion-button 
+                      size="small" 
+                      fill="outline" 
+                      color="primary" 
+                      (click)="abrirDocumento(doc)"
+                      [disabled]="!doc.nomeArquivo || doc.nomeArquivo === 'null'">
+                      <ion-icon name="open-outline" slot="start"></ion-icon>
+                      {{ (doc.nomeArquivo && doc.nomeArquivo !== 'null') ? 'Abrir Documento' : 'Não anexado' }}
+                    </ion-button>
+                  </div>
+                </div>
+              </div>
             </div>
             <ng-template #nenhumDocumentoEnviado>
               <ion-note color="medium" class="ion-margin">

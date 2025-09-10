@@ -202,25 +202,73 @@ public class DocumentoMatriculaService {
             Long usuarioId) throws IOException {
         log.info("Anexando documento {} para usuário {}", documentoId, usuarioId);
 
-        // Validações já realizadas no controller
-        // Aqui implementaríamos a lógica de salvar no banco de dados
+        try {
+            // Salvar arquivo no diretório
+            String nomeArquivo = "doc_" + documentoId + "_" + System.currentTimeMillis() + "_"
+                    + arquivo.getOriginalFilename();
+            String caminhoArquivo = "/Applications/XAMPP/xamppfiles/htdocs/GitHub/Projeto-Pratico/Projeto-Pratico/cipalam_documentos/"
+                    + nomeArquivo;
 
-        Map<String, Object> documento = new HashMap<>();
-        documento.put("idDocumentoMatricula", documentoId);
-        documento.put("status", "anexado");
-        documento.put("nomeArquivoOriginal", arquivo.getOriginalFilename());
-        documento.put("tipoArquivo", arquivo.getContentType());
-        documento.put("tamanhoArquivo", arquivo.getSize());
-        documento.put("dataEnvio", LocalDateTime.now());
-        documento.put("observacoes", observacoes);
-        documento.put("usuarioId", usuarioId);
+            Path caminhoDestino = Paths.get(caminhoArquivo);
+            Files.createDirectories(caminhoDestino.getParent());
+            Files.copy(arquivo.getInputStream(), caminhoDestino, StandardCopyOption.REPLACE_EXISTING);
 
-        Map<String, Object> response = new HashMap<>();
-        response.put("success", true);
-        response.put("message", "Documento anexado com sucesso!");
-        response.put("documento", documento);
+            // Buscar e atualizar documento no banco de dados usando JPA
+            log.info("Buscando documento com ID: {}", documentoId);
 
-        return response;
+            // Teste: buscar usando query nativa para debug
+            List<DocumentoMatricula> todosDocumentos = documentoMatriculaRepository.findAll();
+            log.info("Total de documentos na base: {}", todosDocumentos.size());
+
+            // Buscar especificamente
+            Optional<DocumentoMatricula> documentoOpt = documentoMatriculaRepository.findById(documentoId);
+
+            if (documentoOpt.isEmpty()) {
+                log.error("Documento com ID {} não encontrado no banco", documentoId);
+
+                // Debug: listar alguns documentos
+                todosDocumentos.stream().limit(5).forEach(doc -> log.info("Documento encontrado: ID = {}, Status = {}",
+                        doc.getIdDocumentoMatricula(), doc.getStatus()));
+
+                throw new RuntimeException("Documento não encontrado");
+            }
+
+            log.info("Documento encontrado: {}", documentoOpt.get().getIdDocumentoMatricula());
+
+            DocumentoMatricula documento = documentoOpt.get();
+            documento.setStatus("enviado");
+            documento.setNomeArquivoOriginal(arquivo.getOriginalFilename());
+            documento.setCaminhoArquivo(caminhoArquivo);
+            documento.setTipoArquivo(arquivo.getContentType());
+            documento.setTamanhoArquivo((int) arquivo.getSize());
+            documento.setDataEnvio(LocalDateTime.now());
+            documento.setObservacoes(observacoes);
+
+            documentoMatriculaRepository.save(documento);
+
+            log.info("Documento {} atualizado no banco com sucesso", documentoId);
+
+            Map<String, Object> documentoResponse = new HashMap<>();
+            documentoResponse.put("idDocumentoMatricula", documentoId);
+            documentoResponse.put("status", "enviado");
+            documentoResponse.put("nomeArquivoOriginal", arquivo.getOriginalFilename());
+            documentoResponse.put("tipoArquivo", arquivo.getContentType());
+            documentoResponse.put("tamanhoArquivo", arquivo.getSize());
+            documentoResponse.put("dataEnvio", LocalDateTime.now());
+            documentoResponse.put("observacoes", observacoes);
+            documentoResponse.put("usuarioId", usuarioId);
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("message", "Documento anexado com sucesso!");
+            response.put("documento", documentoResponse);
+
+            return response;
+
+        } catch (Exception e) {
+            log.error("Erro ao anexar documento {}: {}", documentoId, e.getMessage(), e);
+            throw new IOException("Erro ao salvar documento: " + e.getMessage());
+        }
     }
 
     /**

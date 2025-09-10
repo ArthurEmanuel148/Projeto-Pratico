@@ -18,6 +18,8 @@ export interface LoginResponse {
   usuarioId?: number;
   nomePessoa: string;
   token: string;
+  accessToken?: string;  // Adicionar para compatibilidade com backend
+  refreshToken?: string; // Adicionar para compatibilidade com backend
   funcionalidades: any[];
   pessoa?: {
     idPessoa: number;
@@ -48,56 +50,7 @@ export class AuthService {
   }
 
   login(usuario: string, senha: string): Observable<LoginResponse> {
-    // Primeiro, tentar autenticar como responsável (usando CPF)
-    return this.loginResponsavel(usuario, senha).pipe(
-      catchError(responsavelError => {
-        console.log('Falha na autenticação de responsável, tentando funcionário...');
-        // Se falhar, tentar como funcionário/admin
-        return this.loginFuncionario(usuario, senha);
-      })
-    );
-  }
-
-  // Método específico para login de responsável
-  private loginResponsavel(cpf: string, senha: string): Observable<LoginResponse> {
-    return this.http.post<any>(`${environment.apiUrl}/interesse-matricula/autenticar-responsavel`, { cpf, senha })
-      .pipe(
-        switchMap(response => {
-          if (response.autenticado) {
-            // Converter resposta do responsável para formato esperado
-            const normalizedResponse: LoginResponse = {
-              success: true,
-              message: response.message,
-              usuario: cpf,
-              token: '',
-              pessoa: {
-                idPessoa: response.dadosResponsavel.idPessoa || 0,
-                nmPessoa: response.dadosResponsavel.nome || '',
-                cpfPessoa: response.dadosResponsavel.cpf || cpf,
-              },
-              pessoaId: response.dadosResponsavel.idPessoa || 0,
-              usuarioId: response.dadosResponsavel.idPessoa || 0,
-              nomePessoa: response.dadosResponsavel.nome || '',
-              tipo: 'responsavel',
-              funcionalidades: [],
-              permissoes: {}
-            };
-
-            // Salvar usuário logado
-            console.log('Login de responsável realizado com sucesso:', normalizedResponse);
-            localStorage.setItem('usuarioLogado', JSON.stringify(normalizedResponse));
-            this.usuarioLogadoSubject.next(normalizedResponse);
-
-            return of(normalizedResponse);
-          } else {
-            return throwError(new Error(response.message || 'Falha na autenticação de responsável'));
-          }
-        })
-      );
-  }
-
-  // Método específico para login de funcionário/admin  
-  private loginFuncionario(usuario: string, senha: string): Observable<LoginResponse> {
+    // Usar sempre o endpoint JWT unificado
     const loginRequest: LoginRequest = { usuario, senha };
 
     return this.http.post<LoginResponse>(this.apiConfig.getLoginUrl(), loginRequest)
@@ -106,6 +59,7 @@ export class AuthService {
           // Converter resposta do backend para formato esperado pelo front-end
           const normalizedResponse: LoginResponse = {
             ...response,
+            token: response.accessToken || response.token || '', // Mapear accessToken para token
             pessoa: {
               idPessoa: response.pessoaId || response.usuarioId || 0,
               nmPessoa: response.nomePessoa || '',
@@ -116,11 +70,21 @@ export class AuthService {
           };
 
           // Salvar usuário logado
-          console.log('Login de funcionário realizado. Tipo de usuário determinado:', normalizedResponse.tipo);
-          console.log('Permissões do usuário:', normalizedResponse.permissoes);
+          console.log('Login realizado com sucesso:', normalizedResponse);
           localStorage.setItem('usuarioLogado', JSON.stringify(normalizedResponse));
           this.usuarioLogadoSubject.next(normalizedResponse);
-        })
+        }),
+        map(response => ({
+          ...response,
+          token: response.accessToken || response.token || '', // Garantir que o token seja mapeado
+          pessoa: {
+            idPessoa: response.pessoaId || response.usuarioId || 0,
+            nmPessoa: response.nomePessoa || '',
+            cpfPessoa: '',
+          },
+          tipo: this.determineTipoUsuario(response),
+          permissoes: this.buildPermissionsFromFuncionalidades(response.funcionalidades)
+        }))
       );
   }
 
@@ -175,6 +139,11 @@ export class AuthService {
     }
 
     return permissoes;
+  }
+
+  getToken(): string | null {
+    const usuario = this.usuarioLogadoSubject.value;
+    return usuario?.token || null;
   }
 
   getFuncionarioLogado(): LoginResponse | null {

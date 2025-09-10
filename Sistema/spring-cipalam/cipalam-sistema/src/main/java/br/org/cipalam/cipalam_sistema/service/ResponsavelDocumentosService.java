@@ -406,6 +406,7 @@ public class ResponsavelDocumentosService {
                         pendentes++;
                         break;
                     case "anexado":
+                    case "enviado":
                         anexados++;
                         break;
                     case "aprovado":

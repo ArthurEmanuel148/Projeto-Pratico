@@ -508,7 +508,8 @@ ion-card {
 
 .documento-acoes {
   display: flex;
-  justify-content: flex-end;
+  flex-direction: column;
+  gap: 10px;
   padding-top: 10px;
   border-top: 1px solid var(--custom-border);
 
@@ -522,6 +523,37 @@ ion-card {
       --color: var(--custom-text-muted);
       --background: transparent;
       --border-color: var(--custom-border);
+    }
+  }
+
+  .acoes-funcionario {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+    margin-top: 8px;
+
+    ion-button {
+      height: 36px;
+      font-size: 0.9em;
+      font-weight: 500;
+
+      &[color="success"] {
+        --background: var(--ion-color-success);
+        --color: white;
+
+        &:hover {
+          --background: var(--ion-color-success-shade);
+        }
+      }
+
+      &[color="danger"] {
+        --background: var(--ion-color-danger);
+        --color: white;
+
+        &:hover {
+          --background: var(--ion-color-danger-shade);
+        }
+      }
     }
   }
 }

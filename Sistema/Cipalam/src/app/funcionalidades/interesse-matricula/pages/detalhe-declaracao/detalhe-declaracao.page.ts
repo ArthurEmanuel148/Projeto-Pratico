@@ -5,6 +5,8 @@ import { InteresseMatriculaService } from '../../services/interesse-matricula.se
 import { InteresseMatricula } from '../../models/interesse-matricula.interface';
 import { MatriculaService } from '../../services/matricula.service';
 import { ResponsavelDocumentosService } from '../../../../core/services/responsavel-documentos.service';
+import { AuthService } from '../../../../core/services/auth.service';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-detalhe-declaracao',
@@ -34,6 +36,8 @@ export class DetalheDeclaracaoPage implements OnInit {
     private interesseMatriculaService: InteresseMatriculaService,
     private matriculaService: MatriculaService,
     private responsavelDocumentosService: ResponsavelDocumentosService,
+    private authService: AuthService,
+    private http: HttpClient,
     private router: Router,
     private alertController: AlertController,
     private loadingController: LoadingController,
@@ -206,26 +210,6 @@ export class DetalheDeclaracaoPage implements OnInit {
   voltarLista() {
     // Usar rota absoluta correta
     this.router.navigate(['/sistema/matriculas/declaracoes']);
-  }
-
-  private async mostrarSucesso(mensagem: string) {
-    const toast = await this.toastController.create({
-      message: mensagem,
-      duration: 3000,
-      color: 'success',
-      position: 'top'
-    });
-    await toast.present();
-  }
-
-  private async mostrarErro(mensagem: string) {
-    const toast = await this.toastController.create({
-      message: mensagem,
-      duration: 4000,
-      color: 'danger',
-      position: 'top'
-    });
-    await toast.present();
   }
 
   private calcularRendas() {
@@ -477,6 +461,200 @@ export class DetalheDeclaracaoPage implements OnInit {
       default:
         return 'warning';
     }
+  }
+
+  /**
+   * Verifica se o usuário logado é funcionário
+   */
+  isFuncionario(): boolean {
+    const userType = this.authService.getUserType();
+    return userType === 'funcionario' || userType === 'admin';
+  }
+
+  /**
+   * Aprovar um documento
+   */
+  async aprovarDocumento(documento: any) {
+    const alert = await this.alertController.create({
+      header: 'Aprovar Documento',
+      message: `Deseja aprovar o documento "${documento.tipoDocumento?.nome}"?`,
+      inputs: [
+        {
+          name: 'observacoes',
+          type: 'textarea',
+          placeholder: 'Observações (opcional)',
+          attributes: {
+            maxlength: 500
+          }
+        }
+      ],
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel'
+        },
+        {
+          text: 'Aprovar',
+          handler: async (data) => {
+            await this.processarAprovacao(documento.id, data.observacoes);
+          }
+        }
+      ]
+    });
+
+    await alert.present();
+  }
+
+  /**
+   * Rejeitar um documento
+   */
+  async rejeitarDocumento(documento: any) {
+    const alert = await this.alertController.create({
+      header: 'Rejeitar Documento',
+      message: `Deseja rejeitar o documento "${documento.tipoDocumento?.nome}"?`,
+      inputs: [
+        {
+          name: 'motivoRejeicao',
+          type: 'textarea',
+          placeholder: 'Motivo da rejeição (obrigatório)',
+          attributes: {
+            required: true,
+            maxlength: 1000
+          }
+        }
+      ],
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel'
+        },
+        {
+          text: 'Rejeitar',
+          handler: async (data) => {
+            if (!data.motivoRejeicao || data.motivoRejeicao.trim() === '') {
+              this.mostrarErro('Motivo da rejeição é obrigatório');
+              return false;
+            }
+            await this.processarRejeicao(documento.id, data.motivoRejeicao);
+            return true;
+          }
+        }
+      ]
+    });
+
+    await alert.present();
+  }
+
+  /**
+   * Processar aprovação do documento
+   */
+  private async processarAprovacao(documentoId: number, observacoes?: string) {
+    const loading = await this.loadingController.create({
+      message: 'Aprovando documento...'
+    });
+    await loading.present();
+
+    try {
+      const token = this.authService.getToken();
+      const response = await this.http.post(
+        'http://localhost:8080/api/funcionario/aprovar-documento',
+        {
+          documentoId: documentoId,
+          observacoes: observacoes
+        },
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        }
+      ).toPromise();
+
+      await loading.dismiss();
+
+      this.mostrarSucesso('Documento aprovado com sucesso!');
+
+      // Recarregar documentos
+      if (this.declaracao) {
+        this.carregarDocumentosEnviados();
+      }
+
+    } catch (error: any) {
+      await loading.dismiss();
+      console.error('Erro ao aprovar documento:', error);
+
+      const errorMessage = error.error?.message || 'Erro ao aprovar documento';
+      this.mostrarErro(errorMessage);
+    }
+  }
+
+  /**
+   * Processar rejeição do documento
+   */
+  private async processarRejeicao(documentoId: number, motivoRejeicao: string) {
+    const loading = await this.loadingController.create({
+      message: 'Rejeitando documento...'
+    });
+    await loading.present();
+
+    try {
+      const token = this.authService.getToken();
+      const response = await this.http.post(
+        'http://localhost:8080/api/funcionario/rejeitar-documento',
+        {
+          documentoId: documentoId,
+          motivoRejeicao: motivoRejeicao
+        },
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        }
+      ).toPromise();
+
+      await loading.dismiss();
+
+      this.mostrarSucesso('Documento rejeitado com sucesso!');
+
+      // Recarregar documentos
+      if (this.declaracao) {
+        this.carregarDocumentosEnviados();
+      }
+
+    } catch (error: any) {
+      await loading.dismiss();
+      console.error('Erro ao rejeitar documento:', error);
+
+      const errorMessage = error.error?.message || 'Erro ao rejeitar documento';
+      this.mostrarErro(errorMessage);
+    }
+  }
+
+  /**
+   * Mostrar mensagem de sucesso
+   */
+  private async mostrarSucesso(mensagem: string) {
+    const toast = await this.toastController.create({
+      message: mensagem,
+      duration: 3000,
+      color: 'success',
+      position: 'top'
+    });
+    await toast.present();
+  }
+
+  /**
+   * Mostrar mensagem de erro
+   */
+  private async mostrarErro(mensagem: string) {
+    const toast = await this.toastController.create({
+      message: mensagem,
+      duration: 4000,
+      color: 'danger',
+      position: 'top'
+    });
+    await toast.present();
   }
 
   private async mostrarInfo(mensagem: string) {

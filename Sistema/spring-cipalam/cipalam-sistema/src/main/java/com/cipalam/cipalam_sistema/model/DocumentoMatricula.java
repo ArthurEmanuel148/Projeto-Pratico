@@ -50,6 +50,9 @@ public class DocumentoMatricula {
     @Column(name = "observacoes", length = 2000)
     private String observacoes;
 
+    @Column(name = "motivoRejeicao", length = 2000)
+    private String motivoRejeicao;
+
     @ManyToOne
     @JoinColumn(name = "funcionarioAprovador_idPessoa")
     private Pessoa funcionarioAprovador;

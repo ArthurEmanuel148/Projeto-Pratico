@@ -67,4 +67,9 @@ public interface DocumentoMatriculaRepository extends JpaRepository<DocumentoMat
                         ") " +
                         "ORDER BY dm.tipoDocumento.nome")
         List<DocumentoMatricula> findDocumentosAplicaveisPorPessoa(@Param("idPessoa") Long idPessoa);
+
+        /**
+         * Conta documentos por status
+         */
+        long countByStatus(String status);
 }

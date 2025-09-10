@@ -343,6 +343,18 @@
                       <ion-icon name="open-outline" slot="start"></ion-icon>
                       {{ (doc.nomeArquivo && doc.nomeArquivo !== 'null') ? 'Abrir Documento' : 'Não anexado' }}
                     </ion-button>
+
+                    <!-- Botões de aprovação/rejeição para funcionários -->
+                    <div class="acoes-funcionario" *ngIf="isFuncionario() && doc.status === 'enviado'">
+                      <ion-button size="small" fill="solid" color="success" (click)="aprovarDocumento(doc)">
+                        <ion-icon name="checkmark-outline" slot="start"></ion-icon>
+                        Aprovar
+                      </ion-button>
+                      <ion-button size="small" fill="solid" color="danger" (click)="rejeitarDocumento(doc)">
+                        <ion-icon name="close-outline" slot="start"></ion-icon>
+                        Rejeitar
+                      </ion-button>
+                    </div>
                   </div>
                 </div>
               </div>

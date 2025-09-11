@@ -111,11 +111,91 @@ export class ListaTiposDocumentosPage implements OnInit {
         this.router.navigate(['/sistema/tipos-documento/cadastro']);
     }
 
-    editarTipoDocumento(id: number) {
+    private async showToast(message: string, color: string) {
+        const toast = await this.toastController.create({
+            message,
+            duration: 3000,
+            color,
+            position: 'top'
+        });
+        await toast.present();
+    }
+
+    // Métodos helper para templates
+    getModalidadeLabel(modalidade: string): string {
+        console.log('Modalidade recebida:', modalidade);
+        switch (modalidade) {
+            case 'ASSINADO': return 'Assinado - Documento para assinatura digital';
+            case 'ANEXADO': return 'Anexado - Arquivo para upload';
+            case 'FISICO': return 'Físico - Documento impresso/assinado';
+            case 'DIGITAL': return 'Digital - Arquivo eletrônico';
+            case 'AMBOS': return 'Físico e Digital - Ambas as formas';
+            default: return modalidade || 'Não informado';
+        }
+    }
+
+    getQuemDeveFornecerLabel(fornecedor: string): string {
+        console.log('Fornecedor recebido:', fornecedor);
+        switch (fornecedor) {
+            case 'RESPONSAVEL': return 'Responsável - Pai/Mãe/Tutor';
+            case 'ALUNO': return 'Aluno - O próprio estudante';
+            case 'TODOS_INTEGRANTES': return 'Todos Integrantes - Família toda';
+            case 'FAMILIA': return 'Família - Documento familiar';
+            case 'AMBOS': return 'Responsável ou Aluno - Qualquer um';
+            default: return fornecedor || 'Não informado';
+        }
+    }
+
+    formatarDataCriacao(data: Date): string {
+        return new Date(data).toLocaleDateString('pt-BR');
+    }
+
+    // Novos métodos para o layout atualizado
+    temFiltrosAtivos(): boolean {
+        return !!(this.filtros.nome || 
+                  this.filtros.modalidadeEntrega || 
+                  this.filtros.quemDeveFornencer || 
+                  this.filtros.ativo !== null);
+    }
+
+    getCorModalidade(modalidade: string): string {
+        switch (modalidade) {
+            case 'ASSINADO': return 'primary';
+            case 'ANEXADO': return 'secondary';
+            case 'FISICO': return 'warning';
+            case 'DIGITAL': return 'secondary';
+            case 'AMBOS': return 'tertiary';
+            default: return 'medium';
+        }
+    }
+
+    getCorFornecedor(fornecedor: string): string {
+        switch (fornecedor) {
+            case 'RESPONSAVEL': return 'primary';
+            case 'ALUNO': return 'success';
+            case 'TODOS_INTEGRANTES': return 'warning';
+            case 'FAMILIA': return 'tertiary';
+            case 'AMBOS': return 'tertiary';
+            default: return 'medium';
+        }
+    }
+
+    visualizarTipoDocumento(tipoDocumento: TipoDocumento): void {
+        this.router.navigate(['/sistema/tipos-documento/visualizar', tipoDocumento.idTipoDocumento]);
+    }
+
+    editarTipoDocumento(id: number, event?: Event): void {
+        if (event) {
+            event.stopPropagation();
+        }
         this.router.navigate(['/sistema/tipos-documento/editar', id]);
     }
 
-    async alternarStatus(tipoDocumento: TipoDocumento) {
+    async alternarStatus(tipoDocumento: TipoDocumento, event?: Event): Promise<void> {
+        if (event) {
+            event.stopPropagation();
+        }
+        
         const loading = await this.loadingController.create({
             message: tipoDocumento.ativo ? 'Desativando...' : 'Ativando...'
         });
@@ -143,28 +223,48 @@ export class ListaTiposDocumentosPage implements OnInit {
         }
     }
 
-    private async showToast(message: string, color: string) {
-        const toast = await this.toastController.create({
-            message,
-            duration: 3000,
-            color,
-            position: 'top'
+    async excluirTipoDocumento(tipoDocumento: TipoDocumento, event: Event): Promise<void> {
+        event.stopPropagation();
+        
+        const alert = await this.alertController.create({
+            header: 'Confirmar Desativação',
+            message: `Tem certeza que deseja desativar o tipo de documento "${tipoDocumento.nome}"?`,
+            buttons: [
+                {
+                    text: 'Cancelar',
+                    role: 'cancel'
+                },
+                {
+                    text: 'Desativar',
+                    handler: async () => {
+                        const loading = await this.loadingController.create({
+                            message: 'Desativando tipo de documento...'
+                        });
+                        await loading.present();
+
+                        try {
+                            await this.tipoDocumentoService.desativarTipoDocumento(tipoDocumento.idTipoDocumento!).toPromise();
+                            await this.showToast('Tipo de documento desativado com sucesso!', 'success');
+                            this.carregarTiposDocumentos();
+                        } catch (error) {
+                            console.error('Erro ao desativar tipo de documento:', error);
+                            await this.showToast('Erro ao desativar tipo de documento', 'danger');
+                        } finally {
+                            await loading.dismiss();
+                        }
+                    }
+                }
+            ]
         });
-        await toast.present();
+
+        await alert.present();
     }
 
-    // Métodos helper para templates
-    getModalidadeLabel(modalidade: string): string {
-        const modalidades = this.modalidadesEntrega.find(m => m.value === modalidade);
-        return modalidades?.label || modalidade;
+    get tiposDocumentosCarregados(): boolean {
+        return !this.loading;
     }
 
-    getQuemDeveFornecerLabel(fornecedor: string): string {
-        const fornecedores = this.quemDeveFornecerOpcoes.find(f => f.value === fornecedor);
-        return fornecedores?.label || fornecedor;
-    }
-
-    formatarDataCriacao(data: Date): string {
-        return new Date(data).toLocaleDateString('pt-BR');
+    get carregando(): boolean {
+        return this.loading;
     }
 }

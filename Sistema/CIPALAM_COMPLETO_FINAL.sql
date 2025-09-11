@@ -984,21 +984,35 @@ BEGIN
         'pendente'
     FROM tbTipoDocumento td
     WHERE td.ativo = TRUE 
-    AND td.escopo = 'FAMILIA';
+    AND td.escopo = 'FAMILIA'
+    AND NOT EXISTS (
+        SELECT 1 FROM tbDocumentoMatricula dm2 
+        WHERE dm2.tbFamilia_idtbFamilia = p_idFamilia 
+        AND dm2.tbTipoDocumento_idTipoDocumento = td.idTipoDocumento
+        AND dm2.tbPessoa_idPessoa IS NULL 
+        AND dm2.tbAluno_idPessoa IS NULL
+    );
     
     -- Criar documentos do ALUNO (escopo 'ALUNO')
-    INSERT INTO tbDocumentoMatricula (
-        tbAluno_idPessoa,
-        tbTipoDocumento_idTipoDocumento, 
-        status
-    )
-    SELECT 
-        p_idAluno,
-        td.idTipoDocumento,
-        'pendente'
-    FROM tbTipoDocumento td
-    WHERE td.ativo = TRUE 
-    AND td.escopo = 'ALUNO';
+    IF p_idAluno IS NOT NULL THEN
+        INSERT INTO tbDocumentoMatricula (
+            tbAluno_idPessoa,
+            tbTipoDocumento_idTipoDocumento, 
+            status
+        )
+        SELECT 
+            p_idAluno,
+            td.idTipoDocumento,
+            'pendente'
+        FROM tbTipoDocumento td
+        WHERE td.ativo = TRUE 
+        AND td.escopo = 'ALUNO'
+        AND NOT EXISTS (
+            SELECT 1 FROM tbDocumentoMatricula dm2 
+            WHERE dm2.tbAluno_idPessoa = p_idAluno 
+            AND dm2.tbTipoDocumento_idTipoDocumento = td.idTipoDocumento
+        );
+    END IF;
     
     -- Criar documentos para TODOS OS INTEGRANTES (escopo 'TODOS_INTEGRANTES')
     -- Para cada integrante da família, criar um documento individual
@@ -1024,7 +1038,13 @@ BEGIN
             'pendente'
         FROM tbTipoDocumento td
         WHERE td.ativo = TRUE 
-        AND td.escopo = 'TODOS_INTEGRANTES';
+        AND td.escopo = 'TODOS_INTEGRANTES'
+        AND NOT EXISTS (
+            SELECT 1 FROM tbDocumentoMatricula dm2 
+            WHERE dm2.tbFamilia_idtbFamilia = p_idFamilia 
+            AND dm2.tbPessoa_idPessoa = v_idIntegrante
+            AND dm2.tbTipoDocumento_idTipoDocumento = td.idTipoDocumento
+        );
         
     END LOOP;
     

@@ -196,31 +196,67 @@ public class DocumentoMatriculaService {
     }
 
     /**
-     * Anexa documento com validações de segurança
+     * Anexa documento - versão temporária mantendo compatibilidade
      */
     public Map<String, Object> anexarDocumento(Long documentoId, MultipartFile arquivo, String observacoes,
             Long usuarioId) throws IOException {
         log.info("Anexando documento {} para usuário {}", documentoId, usuarioId);
 
-        // Validações já realizadas no controller
-        // Aqui implementaríamos a lógica de salvar no banco de dados
+        try {
+            // Salvar arquivo no diretório (método original temporário)
+            String nomeArquivo = "doc_" + documentoId + "_" + System.currentTimeMillis() + "_"
+                    + arquivo.getOriginalFilename();
+            String caminhoArquivo = "/Applications/XAMPP/xamppfiles/htdocs/GitHub/Projeto-Pratico/Projeto-Pratico/cipalam_documentos/"
+                    + nomeArquivo;
 
-        Map<String, Object> documento = new HashMap<>();
-        documento.put("idDocumentoMatricula", documentoId);
-        documento.put("status", "anexado");
-        documento.put("nomeArquivoOriginal", arquivo.getOriginalFilename());
-        documento.put("tipoArquivo", arquivo.getContentType());
-        documento.put("tamanhoArquivo", arquivo.getSize());
-        documento.put("dataEnvio", LocalDateTime.now());
-        documento.put("observacoes", observacoes);
-        documento.put("usuarioId", usuarioId);
+            Path caminhoDestino = Paths.get(caminhoArquivo);
+            Files.createDirectories(caminhoDestino.getParent());
+            Files.copy(arquivo.getInputStream(), caminhoDestino, StandardCopyOption.REPLACE_EXISTING);
 
-        Map<String, Object> response = new HashMap<>();
-        response.put("success", true);
-        response.put("message", "Documento anexado com sucesso!");
-        response.put("documento", documento);
+            // Buscar e atualizar documento no banco de dados
+            log.info("🔍 Buscando documento com ID: {}", documentoId);
+            Optional<DocumentoMatricula> documentoOpt = documentoMatriculaRepository.findById(documentoId);
 
-        return response;
+            log.info("📋 Resultado da busca: documento encontrado = {}", documentoOpt.isPresent());
+            if (documentoOpt.isEmpty()) {
+                // Debug: verificar se existem documentos na base
+                long totalDocumentos = documentoMatriculaRepository.count();
+                log.info("📊 Total de documentos na base: {}", totalDocumentos);
+
+                // Listar alguns IDs para debug
+                List<DocumentoMatricula> primeirosDocumentos = documentoMatriculaRepository.findAll().stream().limit(10)
+                        .toList();
+                log.info("📋 IDs disponíveis: {}",
+                        primeirosDocumentos.stream().map(DocumentoMatricula::getIdDocumentoMatricula).toList());
+
+                throw new RuntimeException("Documento não encontrado");
+            }
+
+            DocumentoMatricula documento = documentoOpt.get();
+            documento.setStatus("enviado");
+            documento.setNomeArquivoOriginal(arquivo.getOriginalFilename());
+            documento.setCaminhoArquivo(caminhoArquivo);
+            documento.setTipoArquivo(arquivo.getContentType());
+            documento.setTamanhoArquivo((int) arquivo.getSize());
+            documento.setDataEnvio(LocalDateTime.now());
+            documento.setObservacoes(observacoes);
+
+            documentoMatriculaRepository.save(documento);
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("message", "Documento anexado com sucesso!");
+            response.put("arquivo", caminhoArquivo);
+
+            return response;
+
+        } catch (Exception e) {
+            log.error("Erro ao anexar documento: {}", e.getMessage(), e);
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("message", "Erro interno: " + e.getMessage());
+            return errorResponse;
+        }
     }
 
     /**
@@ -528,6 +564,265 @@ public class DocumentoMatriculaService {
                 return "Documento assinado";
             default:
                 return "Status desconhecido";
+        }
+    }
+
+    /**
+     * Obter documento para visualização pelos funcionários
+     */
+    public Map<String, Object> obterDocumentoParaVisualizacao(Long idDocumento) {
+        log.info("Obtendo documento para visualização. ID: {}", idDocumento);
+
+        try {
+            Optional<DocumentoMatricula> documentoOpt = documentoMatriculaRepository.findById(idDocumento);
+
+            if (documentoOpt.isEmpty()) {
+                log.warn("Documento não encontrado. ID: {}", idDocumento);
+                return null;
+            }
+
+            DocumentoMatricula documento = documentoOpt.get();
+
+            if (documento.getCaminhoArquivo() == null || documento.getCaminhoArquivo().isEmpty()) {
+                log.warn("Documento não possui arquivo anexado. ID: {}", idDocumento);
+                return null;
+            }
+
+            // Usar o caminho do arquivo diretamente
+            Path caminhoArquivo = Paths.get(documento.getCaminhoArquivo());
+
+            if (!Files.exists(caminhoArquivo)) {
+                log.error("Arquivo físico não encontrado: {}", caminhoArquivo);
+                return null;
+            }
+
+            // Ler o conteúdo do arquivo
+            byte[] conteudo = Files.readAllBytes(caminhoArquivo);
+
+            // Determinar o tipo MIME
+            String tipoMime = determineTipoMime(documento.getNomeArquivoOriginal());
+
+            Map<String, Object> resultado = new HashMap<>();
+            resultado.put("conteudo", conteudo);
+            resultado.put("nomeArquivo", documento.getNomeArquivoOriginal());
+            resultado.put("tipoMime", tipoMime);
+            resultado.put("documento", documento);
+
+            log.info("Documento obtido com sucesso. Arquivo: {}, Tamanho: {} bytes",
+                    documento.getNomeArquivoOriginal(), conteudo.length);
+
+            return resultado;
+
+        } catch (IOException e) {
+            log.error("Erro ao ler arquivo do documento {}: {}", idDocumento, e.getMessage());
+            return null;
+        } catch (Exception e) {
+            log.error("Erro inesperado ao obter documento {}: {}", idDocumento, e.getMessage());
+            return null;
+        }
+    }
+
+    /**
+     * Determinar tipo MIME baseado na extensão do arquivo
+     */
+    private String determineTipoMime(String nomeArquivo) {
+        String extensao = nomeArquivo.substring(nomeArquivo.lastIndexOf('.') + 1).toLowerCase();
+
+        switch (extensao) {
+            case "pdf":
+                return "application/pdf";
+            case "jpg":
+            case "jpeg":
+                return "image/jpeg";
+            case "png":
+                return "image/png";
+            case "gif":
+                return "image/gif";
+            default:
+                return "application/octet-stream";
+        }
+    }
+
+    /**
+     * Aprovar um documento de matrícula
+     */
+    public Map<String, Object> aprovarDocumento(Long documentoId, String observacoes, Long funcionarioId) {
+        log.info("Aprovando documento ID: {} pelo funcionário ID: {}", documentoId, funcionarioId);
+
+        try {
+            Optional<DocumentoMatricula> documentoOpt = documentoMatriculaRepository.findById(documentoId);
+            if (documentoOpt.isEmpty()) {
+                throw new RuntimeException("Documento não encontrado");
+            }
+
+            DocumentoMatricula documento = documentoOpt.get();
+
+            // Verificar se o documento pode ser aprovado
+            if (!"enviado".equals(documento.getStatus())) {
+                throw new RuntimeException("Documento deve estar com status 'enviado' para ser aprovado");
+            }
+
+            // Verificar se há arquivo anexado
+            if (documento.getCaminhoArquivo() == null || documento.getCaminhoArquivo().isEmpty()) {
+                throw new RuntimeException("Documento não possui arquivo anexado");
+            }
+
+            // Buscar funcionário
+            Optional<Pessoa> funcionarioOpt = pessoaRepository.findById(funcionarioId.intValue());
+            if (funcionarioOpt.isEmpty()) {
+                throw new RuntimeException("Funcionário não encontrado");
+            }
+
+            // Atualizar status para aprovado
+            documento.setStatus("aprovado");
+            documento.setDataAprovacao(LocalDateTime.now());
+            documento.setFuncionarioAprovador(funcionarioOpt.get());
+
+            if (observacoes != null && !observacoes.trim().isEmpty()) {
+                documento.setObservacoes(observacoes.trim());
+            }
+
+            documentoMatriculaRepository.save(documento);
+
+            log.info("Documento {} aprovado com sucesso pelo funcionário {}", documentoId, funcionarioId);
+
+            Map<String, Object> resultado = new HashMap<>();
+            resultado.put("success", true);
+            resultado.put("message", "Documento aprovado com sucesso");
+            resultado.put("documentoId", documentoId);
+            resultado.put("novoStatus", "aprovado");
+            resultado.put("dataAprovacao", documento.getDataAprovacao());
+
+            return resultado;
+
+        } catch (Exception e) {
+            log.error("Erro ao aprovar documento {}: {}", documentoId, e.getMessage());
+            throw new RuntimeException("Erro ao aprovar documento: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Rejeitar um documento de matrícula
+     */
+    public Map<String, Object> rejeitarDocumento(Long documentoId, String motivoRejeicao, Long funcionarioId) {
+        log.info("Rejeitando documento ID: {} pelo funcionário ID: {}", documentoId, funcionarioId);
+
+        try {
+            Optional<DocumentoMatricula> documentoOpt = documentoMatriculaRepository.findById(documentoId);
+            if (documentoOpt.isEmpty()) {
+                throw new RuntimeException("Documento não encontrado");
+            }
+
+            DocumentoMatricula documento = documentoOpt.get();
+
+            // Verificar se o documento pode ser rejeitado
+            if (!"enviado".equals(documento.getStatus())) {
+                throw new RuntimeException("Documento deve estar com status 'enviado' para ser rejeitado");
+            }
+
+            // Atualizar status para rejeitado
+            documento.setStatus("rejeitado");
+            documento.setDataAprovacao(LocalDateTime.now()); // Usar mesmo campo para data da rejeição
+
+            // Buscar funcionário
+            Optional<Pessoa> funcionarioOpt = pessoaRepository.findById(funcionarioId.intValue());
+            if (funcionarioOpt.isPresent()) {
+                documento.setFuncionarioAprovador(funcionarioOpt.get());
+            }
+            documento.setMotivoRejeicao(motivoRejeicao.trim());
+
+            documentoMatriculaRepository.save(documento);
+
+            log.info("Documento {} rejeitado com sucesso pelo funcionário {}", documentoId, funcionarioId);
+
+            Map<String, Object> resultado = new HashMap<>();
+            resultado.put("success", true);
+            resultado.put("message", "Documento rejeitado com sucesso");
+            resultado.put("documentoId", documentoId);
+            resultado.put("novoStatus", "rejeitado");
+            resultado.put("motivoRejeicao", motivoRejeicao);
+            resultado.put("dataRejeicao", documento.getDataAprovacao());
+
+            return resultado;
+
+        } catch (Exception e) {
+            log.error("Erro ao rejeitar documento {}: {}", documentoId, e.getMessage());
+            throw new RuntimeException("Erro ao rejeitar documento: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Buscar documentos aguardando aprovação
+     */
+    public List<Map<String, Object>> buscarDocumentosParaAprovacao() {
+        log.info("Buscando documentos aguardando aprovação");
+
+        try {
+            List<DocumentoMatricula> documentos = documentoMatriculaRepository.findByStatus("enviado");
+
+            return documentos.stream().map(doc -> {
+                Map<String, Object> item = new HashMap<>();
+                item.put("id", doc.getIdDocumentoMatricula());
+                item.put("tipoDocumento", Map.of(
+                        "id", doc.getTipoDocumento().getIdTipoDocumento(),
+                        "nome", doc.getTipoDocumento().getNome()));
+                item.put("status", doc.getStatus());
+                item.put("statusDescricao", getStatusDescricao(doc.getStatus()));
+                item.put("dataEnvio", doc.getDataEnvio());
+                item.put("nomeArquivo", doc.getCaminhoArquivo());
+                item.put("nomeArquivoOriginal", doc.getNomeArquivoOriginal());
+                item.put("tipoArquivo", doc.getTipoArquivo());
+                item.put("tamanhoArquivo", doc.getTamanhoArquivo());
+
+                // Buscar informações do responsável
+                if (doc.getInteresseMatricula() != null) {
+                    item.put("interesseMatricula", Map.of(
+                            "id", doc.getInteresseMatricula().getId(),
+                            "protocolo", doc.getInteresseMatricula().getProtocolo(),
+                            "nomeCrianca", doc.getInteresseMatricula().getNomeAluno(),
+                            "nomeResponsavel", doc.getInteresseMatricula().getNomeResponsavel()));
+                }
+
+                return item;
+            }).collect(Collectors.toList());
+
+        } catch (Exception e) {
+            log.error("Erro ao buscar documentos para aprovação: {}", e.getMessage());
+            throw new RuntimeException("Erro ao buscar documentos para aprovação: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Dashboard para funcionários
+     */
+    public Map<String, Object> getDashboardFuncionario(Long funcionarioId) {
+        log.info("Buscando dados do dashboard para funcionário: {}", funcionarioId);
+
+        try {
+            Map<String, Object> dashboard = new HashMap<>();
+
+            // Contar documentos por status
+            long pendentes = documentoMatriculaRepository.countByStatus("pendente");
+            long enviados = documentoMatriculaRepository.countByStatus("enviado");
+            long aprovados = documentoMatriculaRepository.countByStatus("aprovado");
+            long rejeitados = documentoMatriculaRepository.countByStatus("rejeitado");
+
+            dashboard.put("documentosPendentes", pendentes);
+            dashboard.put("documentosEnviados", enviados);
+            dashboard.put("documentosAprovados", aprovados);
+            dashboard.put("documentosRejeitados", rejeitados);
+            dashboard.put("totalDocumentos", pendentes + enviados + aprovados + rejeitados);
+
+            // Documentos aguardando aprovação (detalhados)
+            List<Map<String, Object>> aguardandoAprovacao = buscarDocumentosParaAprovacao();
+            dashboard.put("aguardandoAprovacao", aguardandoAprovacao);
+            dashboard.put("totalAguardandoAprovacao", aguardandoAprovacao.size());
+
+            return dashboard;
+
+        } catch (Exception e) {
+            log.error("Erro ao buscar dados do dashboard para funcionário {}: {}", funcionarioId, e.getMessage());
+            throw new RuntimeException("Erro ao buscar dados do dashboard: " + e.getMessage());
         }
     }
 }

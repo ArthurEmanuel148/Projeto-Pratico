@@ -8,32 +8,71 @@
   --input-spacing: 1.5rem;
   --border-radius: 12px;
   --animation-duration: 0.3s;
-  
+
   // Cores dinâmicas que funcionam em ambos os temas
   --custom-primary: var(--ion-color-primary);
   --custom-success: var(--ion-color-success);
   --custom-danger: var(--ion-color-danger);
   --custom-warning: var(--ion-color-warning);
   --custom-dark-text: #2c3e50; // Cor mais escura para textos importantes
-  
+
   // Backgrounds e superfícies
   --custom-background: var(--ion-background-color, #ffffff);
   --custom-surface: var(--ion-item-background, #ffffff);
   --custom-surface-variant: var(--ion-color-light, #f8f9fa);
-  
+
   // Textos
   --custom-text: var(--ion-text-color, #000000);
   --custom-text-secondary: var(--ion-color-medium, #6c757d);
   --custom-text-muted: var(--ion-color-medium-shade, #9e9e9e);
-  
+
   // Bordas
   --custom-border: var(--ion-color-light-shade, #e0e0e0);
   --custom-border-focus: var(--ion-color-primary);
-  
+
   // Sombras
   --custom-shadow-light: 0 2px 8px rgba(0, 0, 0, 0.08);
   --custom-shadow-medium: 0 4px 16px rgba(0, 0, 0, 0.12);
   --custom-shadow-heavy: 0 8px 32px rgba(0, 0, 0, 0.16);
+}
+
+// =============================================================================
+// ESTILOS PARA DADOS PESSOAIS REORGANIZADOS
+// =============================================================================
+
+.dados-pessoais {
+  margin: 15px 0;
+}
+
+.campo-linha {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+  min-height: 35px;
+  padding: 8px 0;
+}
+
+.label-campo {
+  font-weight: bold;
+  color: var(--custom-text-secondary);
+  width: 160px;
+  flex-shrink: 0;
+  margin-right: 20px;
+  display: inline-block;
+  font-size: 0.95em;
+}
+
+.valor-campo {
+  color: var(--custom-text);
+  flex: 1;
+  display: inline-block;
+  font-size: 1em;
+}
+
+.nome-destaque {
+  font-size: 1.1em;
+  font-weight: 600;
+  color: var(--custom-primary);
 }
 
 // =============================================================================
@@ -44,7 +83,7 @@ ion-header {
   ion-toolbar {
     --min-height: 44px;
     --height: 44px;
-    
+
     @media (max-width: 768px) {
       --min-height: 44px;
       --height: 44px;
@@ -93,6 +132,7 @@ ion-header {
     }
   }
 }
+
 // =============================================================================
 // LAYOUT PRINCIPAL
 // =============================================================================
@@ -114,7 +154,7 @@ ion-content {
 
 .back-link {
   margin-bottom: 1rem;
-  
+
   ion-button {
     --padding-start: 8px;
     --padding-end: 16px;
@@ -126,13 +166,13 @@ ion-content {
     font-weight: 500;
     height: auto;
     min-height: 44px;
-    
+
     ion-icon {
       margin-right: 8px;
       font-size: 1.3rem;
       vertical-align: middle;
     }
-    
+
     &:hover {
       --background: rgba(var(--ion-color-primary-rgb), 0.1);
     }
@@ -197,7 +237,7 @@ ion-card {
       margin-bottom: 12px !important;
       padding: 8px 0 !important;
       border-bottom: 1px solid var(--custom-border);
-      
+
       .valor-nome {
         display: block;
         margin-top: 8px;
@@ -208,7 +248,7 @@ ion-card {
         color: var(--custom-text);
         box-shadow: var(--custom-shadow-light);
         transition: all var(--animation-duration) ease;
-        
+
         &:hover {
           background: var(--custom-border);
           transform: translateY(-1px);
@@ -313,7 +353,7 @@ ion-card {
         font-weight: 600;
         box-shadow: var(--custom-shadow-light);
         transition: all var(--animation-duration) ease;
-        
+
         &:hover {
           background: var(--custom-border);
           transform: translateY(-1px);
@@ -369,6 +409,155 @@ ion-card {
   }
 }
 
+// =============================================================================
+// ESTILOS PARA DOCUMENTOS ENVIADOS
+// =============================================================================
+
+.documents-section {
+  margin-top: 20px;
+
+  h3 {
+    color: var(--custom-primary);
+    margin-bottom: 15px;
+    font-size: 1.2em;
+    font-weight: 600;
+  }
+}
+
+.documentos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 15px;
+  margin-top: 15px;
+}
+
+.documento-card {
+  background: var(--custom-surface);
+  border: 1px solid var(--custom-border);
+  border-radius: var(--border-radius);
+  padding: 15px;
+  box-shadow: var(--custom-shadow-light);
+  transition: all var(--animation-duration) ease;
+
+  &:hover {
+    box-shadow: var(--custom-shadow-medium);
+    transform: translateY(-2px);
+  }
+}
+
+.documento-header {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 15px;
+  gap: 12px;
+
+  ion-icon {
+    font-size: 24px;
+    margin-top: 2px;
+  }
+}
+
+.documento-title {
+  flex: 1;
+
+  h4 {
+    margin: 0 0 6px 0;
+    color: var(--custom-text);
+    font-size: 1.1em;
+    font-weight: 600;
+    line-height: 1.3;
+  }
+
+  .status-badge {
+    font-size: 0.75em;
+    padding: 4px 8px;
+  }
+}
+
+.documento-info {
+  margin-bottom: 15px;
+}
+
+.info-linha {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+  gap: 10px;
+
+  .label {
+    font-weight: 600;
+    color: var(--custom-text-secondary);
+    min-width: 90px;
+    font-size: 0.9em;
+  }
+
+  .valor {
+    color: var(--custom-text);
+    flex: 1;
+    font-size: 0.9em;
+
+    &.arquivo-nome {
+      font-family: monospace;
+      background: var(--custom-surface-variant);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.85em;
+    }
+  }
+}
+
+.documento-acoes {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--custom-border);
+
+  ion-button {
+    --padding-start: 12px;
+    --padding-end: 12px;
+    height: 32px;
+    font-size: 0.85em;
+
+    &[disabled] {
+      --color: var(--custom-text-muted);
+      --background: transparent;
+      --border-color: var(--custom-border);
+    }
+  }
+
+  .acoes-funcionario {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+    margin-top: 8px;
+
+    ion-button {
+      height: 36px;
+      font-size: 0.9em;
+      font-weight: 500;
+
+      &[color="success"] {
+        --background: var(--ion-color-success);
+        --color: white;
+
+        &:hover {
+          --background: var(--ion-color-success-shade);
+        }
+      }
+
+      &[color="danger"] {
+        --background: var(--ion-color-danger);
+        --color: white;
+
+        &:hover {
+          --background: var(--ion-color-danger-shade);
+        }
+      }
+    }
+  }
+}
+
 // Container de loading
 .loading-container {
   display: flex;
@@ -393,6 +582,55 @@ ion-card {
 // =============================================================================
 
 @media (max-width: 768px) {
+  .documentos-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .documento-card {
+    padding: 12px;
+  }
+
+  .documento-header {
+    flex-direction: column;
+    gap: 8px;
+    text-align: center;
+
+    ion-icon {
+      align-self: center;
+    }
+  }
+
+  .info-linha {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+
+    .label {
+      min-width: auto;
+      font-size: 0.85em;
+    }
+
+    .valor {
+      font-size: 0.9em;
+      padding-left: 10px;
+
+      &.arquivo-nome {
+        word-break: break-all;
+        font-size: 0.8em;
+      }
+    }
+  }
+
+  .documento-acoes {
+    justify-content: center;
+
+    ion-button {
+      width: 100%;
+      margin: 0;
+    }
+  }
+
   .page-header {
     padding: 0.25rem 1rem;
 
@@ -424,7 +662,8 @@ ion-card {
   .tabela-integrantes {
     font-size: 12px;
 
-    th, td {
+    th,
+    td {
       padding: 8px 4px;
     }
 

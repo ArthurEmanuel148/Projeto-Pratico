@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { ToastController } from '@ionic/angular';
 import { AuthService } from '../core/services/auth.service';
 import { ResponsavelDocumentosService, FamiliaDocumentos, DocumentoPorPessoa, DocumentoIndividual } from '../core/services/responsavel-documentos.service';
 import { environment } from '../../environments/environment';
@@ -17,7 +18,8 @@ export class PainelResponsavelPage implements OnInit {
 
   constructor(
     private authService: AuthService,
-    private responsavelDocumentosService: ResponsavelDocumentosService
+    private responsavelDocumentosService: ResponsavelDocumentosService,
+    private toastController: ToastController
   ) { }
 
   ngOnInit() {
@@ -68,7 +70,7 @@ export class PainelResponsavelPage implements OnInit {
             this.selecionarPessoa(documentos.documentosPorPessoa[0]);
           }
         },
-        error: (error) => {
+        error: async (error) => {
           console.error('❌ Erro ao carregar documentos da família:', error);
           console.error('Detalhes do erro:', {
             status: error.status,
@@ -80,6 +82,9 @@ export class PainelResponsavelPage implements OnInit {
           // Verificar se é erro 404 (não encontrado)
           if (error.status === 404) {
             console.warn('⚠️ Responsável não encontrado ou sem documentos configurados');
+            await this.mostrarToastErro('Nenhum documento encontrado para este responsável');
+          } else {
+            await this.mostrarToastErro('Erro ao carregar documentos. Tente novamente.');
           }
 
           this.familiaDocumentos = null;
@@ -214,7 +219,7 @@ export class PainelResponsavelPage implements OnInit {
       const validacao = this.responsavelDocumentosService.validarArquivo(arquivo);
       if (!validacao.valido) {
         console.error('Arquivo inválido:', validacao.erro);
-        // TODO: Mostrar toast de erro
+        await this.mostrarToastErro(`Arquivo inválido: ${validacao.erro}`);
         return;
       }
 
@@ -227,12 +232,13 @@ export class PainelResponsavelPage implements OnInit {
         ).toPromise();
 
         console.log('✅ Documento anexado com sucesso');
+        await this.mostrarToastSucesso('Documento anexado com sucesso!');
         // Recarregar dados
         this.carregarDocumentosFamilia();
 
       } catch (error) {
         console.error('❌ Erro ao anexar documento:', error);
-        // TODO: Mostrar toast de erro
+        await this.mostrarToastErro('Erro ao anexar documento. Tente novamente.');
       }
     };
 
@@ -262,10 +268,11 @@ export class PainelResponsavelPage implements OnInit {
         document.body.removeChild(a);
 
         console.log('✅ Download iniciado');
+        await this.mostrarToastSucesso('Download iniciado!');
       }
     } catch (error) {
       console.error('❌ Erro ao baixar documento:', error);
-      // TODO: Mostrar toast de erro
+      await this.mostrarToastErro('Erro ao baixar documento');
     }
   }
 
@@ -282,12 +289,41 @@ export class PainelResponsavelPage implements OnInit {
       ).toPromise();
 
       console.log('✅ Documento removido com sucesso');
+      await this.mostrarToastSucesso('Documento removido com sucesso!');
       // Recarregar dados
       this.carregarDocumentosFamilia();
 
     } catch (error) {
       console.error('❌ Erro ao remover documento:', error);
-      // TODO: Mostrar toast de erro
+      await this.mostrarToastErro('Erro ao remover documento');
     }
+  }
+
+  /**
+   * Mostrar toast de sucesso
+   */
+  private async mostrarToastSucesso(mensagem: string) {
+    const toast = await this.toastController.create({
+      message: mensagem,
+      duration: 3000,
+      position: 'top',
+      color: 'success',
+      icon: 'checkmark-circle'
+    });
+    await toast.present();
+  }
+
+  /**
+   * Mostrar toast de erro
+   */
+  private async mostrarToastErro(mensagem: string) {
+    const toast = await this.toastController.create({
+      message: mensagem,
+      duration: 4000,
+      position: 'top',
+      color: 'danger',
+      icon: 'alert-circle'
+    });
+    await toast.present();
   }
 }

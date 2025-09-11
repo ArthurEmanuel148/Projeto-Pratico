@@ -1,6 +1,7 @@
 package com.cipalam.cipalam_sistema.controller;
 
 import com.cipalam.cipalam_sistema.service.DocumentoService;
+import com.cipalam.cipalam_sistema.service.DocumentoMatriculaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -20,6 +21,9 @@ public class DocumentoController {
 
     @Autowired
     private DocumentoService documentoService;
+
+    @Autowired
+    private DocumentoMatriculaService documentoMatriculaService;
 
     /**
      * Listar documentos pendentes para um responsável
@@ -220,6 +224,48 @@ public class DocumentoController {
         } catch (Exception e) {
             Map<String, Object> error = new HashMap<>();
             error.put("erro", "Erro ao buscar documentos da família");
+            error.put("detalhes", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
+        }
+    }
+
+    /**
+     * Visualizar documento de matrícula
+     */
+    @GetMapping("/matricula/visualizar/{idDocumento}")
+    public ResponseEntity<?> visualizarDocumentoMatricula(@PathVariable Long idDocumento) {
+        try {
+            Map<String, Object> documento = documentoMatriculaService.obterDocumentoParaVisualizacao(idDocumento);
+
+            if (documento == null) {
+                return ResponseEntity.notFound().build();
+            }
+
+            byte[] conteudo = (byte[]) documento.get("conteudo");
+            String nomeArquivo = (String) documento.get("nomeArquivo");
+            String tipoMime = (String) documento.get("tipoMime");
+
+            HttpHeaders headers = new HttpHeaders();
+
+            // Para visualização inline (não download)
+            if (tipoMime.equals("application/pdf")) {
+                headers.setContentType(MediaType.APPLICATION_PDF);
+                headers.setContentDispositionFormData("inline", nomeArquivo);
+            } else if (tipoMime.startsWith("image/")) {
+                headers.setContentType(MediaType.parseMediaType(tipoMime));
+                headers.setContentDispositionFormData("inline", nomeArquivo);
+            } else {
+                headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+                headers.setContentDispositionFormData("attachment", nomeArquivo);
+            }
+
+            return ResponseEntity.ok()
+                    .headers(headers)
+                    .body(conteudo);
+
+        } catch (Exception e) {
+            Map<String, Object> error = new HashMap<>();
+            error.put("erro", "Erro ao visualizar documento");
             error.put("detalhes", e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
         }

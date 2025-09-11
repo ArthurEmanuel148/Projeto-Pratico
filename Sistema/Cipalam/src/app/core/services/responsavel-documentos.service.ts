@@ -3,6 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
+import { AuthService } from './auth.service';
 
 export interface DocumentoPorPessoa {
     pessoa: {
@@ -56,13 +57,21 @@ export interface FamiliaDocumentos {
 export class ResponsavelDocumentosService {
     private readonly API_BASE_URL = `${environment.apiUrl}/responsavel-documentos`;
 
-    private httpOptions = {
-        headers: new HttpHeaders({
-            'Content-Type': 'application/json'
-        })
-    };
+    constructor(private http: HttpClient, private authService: AuthService) { }
 
-    constructor(private http: HttpClient) { }
+    private getHttpOptions(): { headers: HttpHeaders } {
+        const usuario = this.authService.getFuncionarioLogado();
+        const token = usuario?.token || '';
+
+        console.log('🔑 Token para requisição:', token ? 'Token presente' : 'Token ausente');
+
+        const headers = new HttpHeaders({
+            'Content-Type': 'application/json',
+            ...(token && { 'Authorization': `Bearer ${token}` })
+        });
+
+        return { headers };
+    }
 
     /**
      * Busca todos os documentos da família organizados por pessoa
@@ -71,7 +80,7 @@ export class ResponsavelDocumentosService {
         const url = `${this.API_BASE_URL}/${idResponsavel}/familia/documentos`;
         console.log(`🌐 Fazendo requisição para: ${url}`);
 
-        return this.http.get<FamiliaDocumentos>(url, this.httpOptions)
+        return this.http.get<FamiliaDocumentos>(url, this.getHttpOptions())
             .pipe(
                 map(response => {
                     console.log('✅ Documentos por família recebidos do backend:', response);
@@ -93,10 +102,22 @@ export class ResponsavelDocumentosService {
     anexarDocumento(arquivo: File, idDocumentoMatricula: number, idPessoa: number): Observable<any> {
         const formData = new FormData();
         formData.append('arquivo', arquivo);
-        formData.append('idDocumentoMatricula', idDocumentoMatricula.toString());
-        formData.append('idPessoa', idPessoa.toString());
+        formData.append('documentoId', idDocumentoMatricula.toString());
 
-        return this.http.post(`${this.API_BASE_URL}/anexar-documento`, formData)
+        const usuario = this.authService.getFuncionarioLogado();
+        const token = usuario?.token || '';
+
+        console.log('🔑 Token para anexo:', token ? 'Token presente' : 'Token ausente');
+
+        // Para FormData, não definir Content-Type para deixar o browser definir automaticamente
+        const headers = new HttpHeaders({
+            ...(token && { 'Authorization': `Bearer ${token}` })
+        });
+
+        const url = `${environment.apiUrl}/responsavel/anexar-documento`;
+        console.log(`🌐 Anexando documento via: ${url}`);
+
+        return this.http.post(url, formData, { headers })
             .pipe(
                 map(response => {
                     console.log('✅ Documento anexado:', response);
@@ -113,7 +134,7 @@ export class ResponsavelDocumentosService {
      * Remove um documento anexado
      */
     removerDocumento(idDocumentoMatricula: number, idPessoa: number): Observable<any> {
-        return this.http.delete(`${this.API_BASE_URL}/remover-documento/${idDocumentoMatricula}/${idPessoa}`, this.httpOptions)
+        return this.http.delete(`${this.API_BASE_URL}/remover-documento/${idDocumentoMatricula}/${idPessoa}`, this.getHttpOptions())
             .pipe(
                 map(response => {
                     console.log('✅ Documento removido:', response);

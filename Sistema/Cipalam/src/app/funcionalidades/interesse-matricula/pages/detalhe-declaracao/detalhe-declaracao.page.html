@@ -378,6 +378,19 @@
             pendentes.
           </ion-note>
 
+          <!-- Botão Finalizar Matrícula -->
+          <div class="ion-margin-top" *ngIf="podeFinalizarMatricula()">
+            <ion-button expand="block" color="success" (click)="finalizarMatricula()"
+              [disabled]="processandoFinalizacao">
+              <ion-icon name="checkmark-circle-outline" slot="start"></ion-icon>
+              {{ processandoFinalizacao ? 'Finalizando...' : 'Finalizar Matrícula' }}
+            </ion-button>
+            <ion-note color="medium" class="ion-margin-top">
+              <ion-icon name="information-circle-outline" slot="start"></ion-icon>
+              Ao finalizar, a matrícula será concluída e o aluno aparecerá na listagem de turmas.
+            </ion-note>
+          </div>
+
           <div class="ion-margin-top">
             <ion-button expand="block" color="primary" (click)="voltarLista()">
               <ion-icon name="arrow-back-outline" slot="start"></ion-icon>

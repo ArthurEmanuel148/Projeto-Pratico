@@ -40,6 +40,12 @@ const routes: Routes = [
         data: { requiredPermission: 'turmas' }
       },
       {
+        path: 'gestao-turmas',
+        loadChildren: () => import('../funcionalidades/turmas/turmas.module').then(m => m.TurmasModule),
+        canActivate: [RoleGuard],
+        data: { requiredPermission: 'declaracoesInteresse' }
+      },
+      {
         path: 'matriculas',
         loadChildren: () => import('../funcionalidades/interesse-matricula/interesse-matricula.module').then(m => m.InteresseMatriculaModule),
         canActivate: [RoleGuard],

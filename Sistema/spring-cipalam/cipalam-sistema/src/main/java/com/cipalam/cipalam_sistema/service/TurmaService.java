@@ -3,10 +3,12 @@ package com.cipalam.cipalam_sistema.service;
 import com.cipalam.cipalam_sistema.model.Turma;
 import com.cipalam.cipalam_sistema.repository.TurmaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -14,6 +16,9 @@ public class TurmaService {
 
     @Autowired
     private TurmaRepository turmaRepository;
+
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
 
     /**
      * Lista todas as turmas
@@ -160,5 +165,48 @@ public class TurmaService {
         }
 
         turmaRepository.deleteById(Long.valueOf(id));
+    }
+
+    /**
+     * Lista turmas com contador de alunos matriculados
+     */
+    public List<Map<String, Object>> listarTurmasComContadorAlunos() {
+        String sql = """
+                SELECT
+                    t.idtbTurma,
+                    t.nomeTurma,
+                    t.capacidadeMaxima,
+                    t.capacidadeAtual,
+                    (t.capacidadeMaxima - t.capacidadeAtual) as vagasDisponiveis,
+                    t.horarioInicio,
+                    t.horarioFim,
+                    CONCAT(
+                        DATE_FORMAT(t.horarioInicio, '%H:%i'),
+                        ' às ',
+                        DATE_FORMAT(t.horarioFim, '%H:%i')
+                    ) as horarioFormatado,
+                    CASE
+                        WHEN TIME(t.horarioInicio) >= '06:00:00' AND TIME(t.horarioInicio) < '12:00:00' THEN 'Manhã'
+                        WHEN TIME(t.horarioInicio) >= '12:00:00' AND TIME(t.horarioInicio) < '18:00:00' THEN 'Tarde'
+                        WHEN TIME(t.horarioInicio) >= '18:00:00' OR TIME(t.horarioInicio) < '06:00:00' THEN 'Noite'
+                        WHEN TIME(t.horarioInicio) >= '06:00:00' AND TIME(t.horarioFim) >= '17:00:00' THEN 'Integral'
+                        ELSE 'Não definido'
+                    END as periodo,
+                    t.ativo,
+                    t.observacoes,
+                    t.dataCriacao,
+                    -- Contadores
+                    COUNT(a.tbPessoa_idPessoa) as totalAlunosMatriculados,
+                    SUM(CASE WHEN a.statusAluno = 'cursando' THEN 1 ELSE 0 END) as alunosCursando,
+                    SUM(CASE WHEN a.statusAluno = 'matriculado' THEN 1 ELSE 0 END) as alunosMatriculados
+                FROM tbTurma t
+                LEFT JOIN tbAluno a ON t.idtbTurma = a.tbTurma_idtbTurma AND a.ativo = TRUE
+                WHERE t.ativo = TRUE
+                GROUP BY t.idtbTurma, t.nomeTurma, t.capacidadeMaxima, t.capacidadeAtual,
+                         t.horarioInicio, t.horarioFim, t.ativo, t.observacoes, t.dataCriacao
+                ORDER BY t.horarioInicio, t.nomeTurma
+                """;
+
+        return jdbcTemplate.queryForList(sql);
     }
 }

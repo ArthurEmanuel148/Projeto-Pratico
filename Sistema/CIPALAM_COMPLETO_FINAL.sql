@@ -363,7 +363,8 @@ CREATE TABLE `tbInteresseMatricula` (
     'documentos_pendentes',
     'documentos_completos',
     'matricula_aprovada',
-    'matricula_cancelada'
+    'matricula_cancelada',
+    'matriculado'
 ) DEFAULT 'em_preenchimento',
 
 -- CONTROLE DE DATAS

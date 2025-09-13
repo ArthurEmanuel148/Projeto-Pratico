@@ -225,4 +225,11 @@ export class ListaTurmasPage implements OnInit {
         });
         toast.present();
     }
+
+    /**
+     * Navega para a página de gestão de turmas para ver alunos matriculados
+     */
+    verAlunosMatriculados(turmaId: number) {
+        this.router.navigate(['/sistema/gestao-turmas/detalhe', turmaId]);
+    }
 }

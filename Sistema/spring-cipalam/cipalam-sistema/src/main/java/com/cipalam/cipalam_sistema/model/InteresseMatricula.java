@@ -166,6 +166,7 @@ public class InteresseMatricula {
         documentos_pendentes,
         documentos_completos,
         matricula_aprovada,
-        matricula_cancelada
+        matricula_cancelada,
+        matriculado
     }
 }

@@ -1,0 +1,703 @@
+<ion-header>
+    <ion-toolbar>
+        <ion-title>Detalhes do Aluno</ion-title>
+        <ion-buttons slot="start">
+            <ion-back-button></ion-back-button>
+        </ion-buttons>
+    </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+    <div class="container">
+
+        <!-- Loading -->
+        <div *ngIf="carregando" class="loading-container">
+            <ion-spinner name="crescent"></ion-spinner>
+            <p>Carregando detalhes do aluno...</p>
+        </div>
+
+        <!-- Detalhes do aluno -->
+        <div *ngIf="!carregando && aluno" class="detalhes-container">
+
+            <!-- Header do aluno -->
+            <div class="aluno-header">
+                <div class="aluno-avatar">
+                    <ion-icon name="person-circle-outline" size="large"></ion-icon>
+                </div>
+                <div class="aluno-info">
+                    <h1>{{ aluno.nomeAluno }}</h1>
+                    <p>{{ aluno.cpfAluno }} • {{ aluno.matricula }}</p>
+                    <ion-badge [color]="aluno.statusAluno === 'matriculado' ? 'success' : 'primary'">
+                        {{ formatarStatus(aluno.statusAluno) }}
+                    </ion-badge>
+                </div>
+            </div>
+
+            <!-- Menu de navegação por seções -->
+            <div class="secoes-menu">
+                <ion-segment [(ngModel)]="secaoAtiva" (ionChange)="mudarSecao($event)">
+                    <ion-segment-button value="estudante">
+                        <ion-icon name="person-outline"></ion-icon>
+                        <ion-label>Estudante</ion-label>
+                    </ion-segment-button>
+                    <ion-segment-button value="responsavel">
+                        <ion-icon name="people-outline"></ion-icon>
+                        <ion-label>Responsável</ion-label>
+                    </ion-segment-button>
+                    <ion-segment-button value="familia">
+                        <ion-icon name="home-outline"></ion-icon>
+                        <ion-label>Família</ion-label>
+                    </ion-segment-button>
+                    <ion-segment-button value="documentos">
+                        <ion-icon name="document-text-outline"></ion-icon>
+                        <ion-label>Documentos</ion-label>
+                    </ion-segment-button>
+                </ion-segment>
+            </div>
+
+            <!-- Seção: Dados do Estudante -->
+            <div *ngIf="secaoAtiva === 'estudante'" class="secao-content">
+
+                <!-- Dados Pessoais -->
+                <ion-card class="section-card">
+                    <ion-card-header>
+                        <ion-card-title>
+                            <ion-icon name="person-outline" color="primary"></ion-icon>
+                            Dados Pessoais
+                        </ion-card-title>
+                    </ion-card-header>
+                    <ion-card-content>
+                        <div class="detail-grid">
+                            <div class="detail-item">
+                                <label>Nome Completo:</label>
+                                <span>{{ aluno.nomeAluno }}</span>
+                            </div>
+                            <div class="detail-item">
+                                <label>CPF:</label>
+                                <span>{{ aluno.cpfAluno }}</span>
+                            </div>
+                            <div class="detail-item">
+                                <label>Data de Nascimento:</label>
+                                <span>{{ aluno.dataNascimentoAluno | date:'dd/MM/yyyy' }}</span>
+                            </div>
+                            <div class="detail-item">
+                                <label>Idade:</label>
+                                <span>{{ calcularIdade(aluno.dataNascimentoAluno) }} anos</span>
+                            </div>
+                        </div>
+                    </ion-card-content>
+                </ion-card>
+
+                <!-- Informações Acadêmicas -->
+                <ion-card class="section-card">
+                    <ion-card-header>
+                        <ion-card-title>
+                            <ion-icon name="school-outline" color="primary"></ion-icon>
+                            Informações Acadêmicas
+                        </ion-card-title>
+                    </ion-card-header>
+                    <ion-card-content>
+                        <div class="detail-grid">
+                            <div class="detail-item">
+                                <label>Matrícula:</label>
+                                <span>{{ aluno.matricula }}</span>
+                            </div>
+                            <div class="detail-item">
+                                <label>Data da Matrícula:</label>
+                                <span>{{ aluno.dataMatricula | date:'dd/MM/yyyy' }}</span>
+                            </div>
+                            <div class="detail-item">
+                                <label>Tipo de Cota:</label>
+                                <span>{{ formatarTipoCota(aluno.tipoCota) }}</span>
+                            </div>
+                            <div class="detail-item">
+                                <label>Status:</label>
+                                <ion-badge [color]="aluno.statusAluno === 'matriculado' ? 'success' : 'primary'">
+                                    {{ formatarStatus(aluno.statusAluno) }}
+                                </ion-badge>
+                            </div>
+                        </div>
+                    </ion-card-content>
+                </ion-card>
+
+                <!-- Escola Atual -->
+                <ion-card class="section-card">
+                    <ion-card-header>
+                        <ion-card-title>
+                            <ion-icon name="library-outline" color="primary"></ion-icon>
+                            Escola Atual
+                        </ion-card-title>
+                    </ion-card-header>
+                    <ion-card-content>
+                        <div class="detail-grid">
+                            <div class="detail-item">
+                                <label>Nome da Escola:</label>
+                                <span>{{ aluno.escolaAluno }}</span>
+                            </div>
+                            <div class="detail-item">
+                                <label>Código INEP:</label>
+                                <span>{{ aluno.codigoInepEscola }}</span>
+                            </div>
+                            <div class="detail-item">
+                                <label>Município:</label>
+                                <span>{{ aluno.municipioEscola }}/{{ aluno.ufEscola }}</span>
+                            </div>
+                        </div>
+                    </ion-card-content>
+                </ion-card>
+
+                <!-- Turma Atual -->
+                <ion-card class="section-card">
+                    <ion-card-header>
+                        <ion-card-title>
+                            <ion-icon name="time-outline" color="primary"></ion-icon>
+                            Turma Atual
+                        </ion-card-title>
+                    </ion-card-header>
+                    <ion-card-content>
+                        <div class="detail-grid">
+                            <div class="detail-item">
+                                <label>Nome da Turma:</label>
+                                <span>{{ aluno.nomeTurma }}</span>
+                            </div>
+                            <div class="detail-item">
+                                <label>Horário:</label>
+                                <span>{{ aluno.horarioTurmaFormatado }}</span>
+                            </div>
+                            <div class="detail-item">
+                                <label>Protocolo da Declaração:</label>
+                                <span>{{ aluno.protocoloDeclaracao }}</span>
+                            </div>
+                        </div>
+                    </ion-card-content>
+                </ion-card>
+
+            </div>
+
+            <!-- Seção: Dados do Responsável -->
+            <div *ngIf="secaoAtiva === 'responsavel'" class="secao-content">
+
+                <ion-card class="section-card">
+                    <ion-card-header>
+                        <ion-card-title>
+                            <ion-icon name="person-outline" color="primary"></ion-icon>
+                            Dados Pessoais do Responsável
+                        </ion-card-title>
+                    </ion-card-header>
+                    <ion-card-content>
+                        <div class="detail-grid">
+                            <div class="detail-item">
+                                <label>Nome:</label>
+                                <span>{{ aluno.nomeResponsavel }}</span>
+                            </div>
+                            <div class="detail-item">
+                                <label>CPF:</label>
+                                <span>{{ aluno.cpfResponsavel }}</span>
+                            </div>
+                            <div class="detail-item">
+                                <label>Data de Nascimento:</label>
+                                <span>{{ aluno.dataNascimentoResponsavel | date:'dd/MM/yyyy' }}</span>
+                            </div>
+                            <div class="detail-item">
+                                <label>Idade:</label>
+                                <span>{{ calcularIdade(aluno.dataNascimentoResponsavel) }} anos</span>
+                            </div>
+                        </div>
+                    </ion-card-content>
+                </ion-card>
+
+                <ion-card class="section-card">
+                    <ion-card-header>
+                        <ion-card-title>
+                            <ion-icon name="call-outline" color="primary"></ion-icon>
+                            Contato
+                        </ion-card-title>
+                    </ion-card-header>
+                    <ion-card-content>
+                        <div class="detail-grid">
+                            <div class="detail-item">
+                                <label>Email:</label>
+                                <span>{{ aluno.emailResponsavel }}</span>
+                            </div>
+                            <div class="detail-item">
+                                <label>Telefone:</label>
+                                <span>{{ aluno.telefoneResponsavel }}</span>
+                            </div>
+                        </div>
+                    </ion-card-content>
+                </ion-card>
+
+                <ion-card class="section-card" *ngIf="aluno.rendaResponsavel">
+                    <ion-card-header>
+                        <ion-card-title>
+                            <ion-icon name="wallet-outline" color="primary"></ion-icon>
+                            Informações Financeiras
+                        </ion-card-title>
+                    </ion-card-header>
+                    <ion-card-content>
+                        <div class="detail-grid">
+                            <div class="detail-item">
+                                <label>Renda:</label>
+                                <span>{{ aluno.rendaResponsavel | currency:'BRL':'symbol':'1.2-2' }}</span>
+                            </div>
+                            <div class="detail-item" *ngIf="aluno.profissaoResponsavel">
+                                <label>Profissão:</label>
+                                <span>{{ aluno.profissaoResponsavel }}</span>
+                            </div>
+                        </div>
+                    </ion-card-content>
+                </ion-card>
+
+                <!-- Endereço -->
+                <ion-card class="section-card">
+                    <ion-card-header>
+                        <ion-card-title>
+                            <ion-icon name="location-outline" color="primary"></ion-icon>
+                            Endereço
+                        </ion-card-title>
+                    </ion-card-header>
+                    <ion-card-content>
+                        <div class="detail-grid">
+                            <div class="detail-item">
+                                <label>Logradouro:</label>
+                                <span>{{ aluno.logradouro }}, {{ aluno.numero }}</span>
+                            </div>
+                            <div class="detail-item" *ngIf="aluno.complemento">
+                                <label>Complemento:</label>
+                                <span>{{ aluno.complemento }}</span>
+                            </div>
+                            <div class="detail-item">
+                                <label>Bairro:</label>
+                                <span>{{ aluno.bairro }}</span>
+                            </div>
+                            <div class="detail-item">
+                                <label>Cidade/Estado:</label>
+                                <span>{{ aluno.cidade }}/{{ aluno.uf }}</span>
+                            </div>
+                            <div class="detail-item">
+                                <label>CEP:</label>
+                                <span>{{ aluno.cep }}</span>
+                            </div>
+                            <div class="detail-item" *ngIf="aluno.pontoReferencia">
+                                <label>Ponto de Referência:</label>
+                                <span>{{ aluno.pontoReferencia }}</span>
+                            </div>
+                        </div>
+                    </ion-card-content>
+                </ion-card>
+
+                <!-- Observações do Responsável -->
+                <ion-card class="section-card" *ngIf="aluno.observacoesResponsavel">
+                    <ion-card-header>
+                        <ion-card-title>
+                            <ion-icon name="chatbubble-outline" color="primary"></ion-icon>
+                            Observações
+                        </ion-card-title>
+                    </ion-card-header>
+                    <ion-card-content>
+                        <p class="observacoes-text">{{ aluno.observacoesResponsavel }}</p>
+                    </ion-card-content>
+                </ion-card>
+
+            </div>
+
+            <!-- Seção: Composição Familiar -->
+            <div *ngIf="secaoAtiva === 'familia'" class="secao-content">
+
+                <ion-card class="section-card" *ngIf="aluno.integrantesRenda">
+                    <ion-card-header>
+                        <ion-card-title>
+                            <ion-icon name="home-outline" color="primary"></ion-icon>
+                            Integrantes da Família ({{ getIntegrantes(aluno.integrantesRenda).length }} pessoas)
+                        </ion-card-title>
+                    </ion-card-header>
+                    <ion-card-content>
+
+                        <!-- Seletor de integrante -->
+                        <div class="integrante-selector" *ngIf="getIntegrantes(aluno.integrantesRenda).length > 1">
+                            <ion-segment [(ngModel)]="integranteSelecionado" (ionChange)="mudarIntegrante($event)">
+                                <ion-segment-button
+                                    *ngFor="let integrante of getIntegrantes(aluno.integrantesRenda); let i = index"
+                                    [value]="i">
+                                    <ion-label>{{ integrante.nome.split(' ')[0] }}</ion-label>
+                                </ion-segment-button>
+                            </ion-segment>
+                        </div>
+
+                        <!-- Detalhes do integrante selecionado -->
+                        <div *ngIf="integranteAtual" class="integrante-detalhes">
+                            <div class="integrante-header">
+                                <h3>{{ integranteAtual.nome }}</h3>
+                                <ion-badge color="primary">{{ integranteAtual.parentesco }}</ion-badge>
+                            </div>
+
+                            <div class="detail-grid">
+                                <div class="detail-item">
+                                    <label>Nome Completo:</label>
+                                    <span>{{ integranteAtual.nome }}</span>
+                                </div>
+                                <div class="detail-item">
+                                    <label>Parentesco:</label>
+                                    <span>{{ integranteAtual.parentesco }}</span>
+                                </div>
+                                <div class="detail-item">
+                                    <label>Idade:</label>
+                                    <span>{{ integranteAtual.idade }} anos</span>
+                                </div>
+                                <div class="detail-item">
+                                    <label>Renda Mensal:</label>
+                                    <span>{{ integranteAtual.renda | currency:'BRL':'symbol':'1.2-2' }}</span>
+                                </div>
+                                <div class="detail-item">
+                                    <label>Tipo de Renda:</label>
+                                    <span>{{ integranteAtual.tipoRenda }}</span>
+                                </div>
+                                <div class="detail-item" *ngIf="integranteAtual.observacoes">
+                                    <label>Observações:</label>
+                                    <span>{{ integranteAtual.observacoes }}</span>
+                                </div>
+                            </div>
+
+                            <!-- Botão para ver documentos deste integrante -->
+                            <div class="integrante-actions">
+                                <ion-button fill="outline" color="primary"
+                                    (click)="verDocumentosIntegrante(integranteAtual)">
+                                    <ion-icon name="document-text-outline" slot="start"></ion-icon>
+                                    Ver Documentos de {{ integranteAtual.nome.split(' ')[0] }}
+                                </ion-button>
+                            </div>
+                        </div>
+
+                        <!-- Resumo da renda familiar -->
+                        <div class="renda-familiar-resumo">
+                            <h4>Resumo da Renda Familiar</h4>
+                            <div class="renda-total">
+                                <span class="label">Renda Total:</span>
+                                <span class="valor">{{ calcularRendaTotal() | currency:'BRL':'symbol':'1.2-2' }}</span>
+                            </div>
+                            <div class="renda-per-capita">
+                                <span class="label">Renda Per Capita:</span>
+                                <span class="valor">{{ calcularRendaPerCapita() | currency:'BRL':'symbol':'1.2-2'
+                                    }}</span>
+                            </div>
+                        </div>
+
+                    </ion-card-content>
+                </ion-card>
+
+            </div>
+
+            <!-- Seção: Documentos -->
+            <div *ngIf="secaoAtiva === 'documentos'" class="secao-content">
+
+                <ion-card class="section-card">
+                    <ion-card-header>
+                        <ion-card-title>
+                            <ion-icon name="document-text-outline" color="primary"></ion-icon>
+                            Documentos da Família
+                        </ion-card-title>
+                    </ion-card-header>
+                    <ion-card-content>
+
+                        <!-- Filtro por categoria -->
+                        <div class="documentos-filtro">
+                            <ion-segment [(ngModel)]="categoriaDocumentos"
+                                (ionChange)="filtrarDocumentosPorCategoria($event)">
+                                <ion-segment-button value="todos">
+                                    <ion-label>TODOS</ion-label>
+                                </ion-segment-button>
+                                <ion-segment-button value="familia">
+                                    <ion-label>FAMÍLIA</ion-label>
+                                </ion-segment-button>
+                                <ion-segment-button value="aluno">
+                                    <ion-label>ALUNO</ion-label>
+                                </ion-segment-button>
+                                <ion-segment-button value="integrantes">
+                                    <ion-label>INTEGRANTES</ion-label>
+                                </ion-segment-button>
+                            </ion-segment>
+                        </div>
+
+                        <!-- Loading -->
+                        <div *ngIf="carregandoDocumentos" class="loading-container">
+                            <ion-spinner name="circular"></ion-spinner>
+                            <p>Carregando documentos...</p>
+                        </div>
+
+                        <!-- Conteúdo baseado na categoria selecionada -->
+                        <div *ngIf="!carregandoDocumentos">
+
+                            <!-- TODOS OS DOCUMENTOS -->
+                            <div *ngIf="categoriaDocumentos === 'todos'">
+
+                                <!-- Documentos da Família -->
+                                <div *ngIf="documentosFamilia.length > 0" class="categoria-secao">
+                                    <h3 class="categoria-titulo">
+                                        <ion-icon name="home-outline"></ion-icon>
+                                        Documentos da Família ({{ documentosFamilia.length }})
+                                    </h3>
+                                    <div class="documentos-grid">
+                                        <ion-card *ngFor="let documento of documentosFamilia"
+                                            class="documento-card familia">
+                                            <ion-card-content>
+                                                <div class="documento-header">
+                                                    <h4>{{ documento.tipoDocumento }}</h4>
+                                                    <ion-badge [color]="getCorStatus(documento.status)">
+                                                        {{ documento.status }}
+                                                    </ion-badge>
+                                                </div>
+                                                <p class="documento-descricao">{{ documento.descricao }}</p>
+                                                <div class="documento-acoes">
+                                                    <ion-button *ngIf="documento.caminhoArquivo" fill="clear"
+                                                        size="small" (click)="visualizarDocumento(documento)">
+                                                        <ion-icon name="eye-outline" slot="icon-only"></ion-icon>
+                                                    </ion-button>
+                                                    <ion-button *ngIf="documento.status === 'enviado'" fill="clear"
+                                                        color="success" size="small"
+                                                        (click)="aprovarDocumento(documento)">
+                                                        <ion-icon name="checkmark-circle-outline"
+                                                            slot="icon-only"></ion-icon>
+                                                    </ion-button>
+                                                    <ion-button *ngIf="documento.status === 'enviado'" fill="clear"
+                                                        color="danger" size="small"
+                                                        (click)="rejeitarDocumento(documento)">
+                                                        <ion-icon name="close-circle-outline"
+                                                            slot="icon-only"></ion-icon>
+                                                    </ion-button>
+                                                </div>
+                                            </ion-card-content>
+                                        </ion-card>
+                                    </div>
+                                </div>
+
+                                <!-- Documentos do Aluno -->
+                                <div *ngIf="documentosAluno.length > 0" class="categoria-secao">
+                                    <h3 class="categoria-titulo">
+                                        <ion-icon name="person-outline"></ion-icon>
+                                        Documentos do Aluno ({{ documentosAluno.length }})
+                                    </h3>
+                                    <div class="documentos-grid">
+                                        <ion-card *ngFor="let documento of documentosAluno"
+                                            class="documento-card aluno">
+                                            <ion-card-content>
+                                                <div class="documento-header">
+                                                    <h4>{{ documento.tipoDocumento }}</h4>
+                                                    <ion-badge [color]="getCorStatus(documento.status)">
+                                                        {{ documento.status }}
+                                                    </ion-badge>
+                                                </div>
+                                                <p class="documento-descricao">{{ documento.descricao }}</p>
+                                                <div class="documento-acoes">
+                                                    <ion-button *ngIf="documento.caminhoArquivo" fill="clear"
+                                                        size="small" (click)="visualizarDocumento(documento)">
+                                                        <ion-icon name="eye-outline" slot="icon-only"></ion-icon>
+                                                    </ion-button>
+                                                    <ion-button *ngIf="documento.status === 'enviado'" fill="clear"
+                                                        color="success" size="small"
+                                                        (click)="aprovarDocumento(documento)">
+                                                        <ion-icon name="checkmark-circle-outline"
+                                                            slot="icon-only"></ion-icon>
+                                                    </ion-button>
+                                                    <ion-button *ngIf="documento.status === 'enviado'" fill="clear"
+                                                        color="danger" size="small"
+                                                        (click)="rejeitarDocumento(documento)">
+                                                        <ion-icon name="close-circle-outline"
+                                                            slot="icon-only"></ion-icon>
+                                                    </ion-button>
+                                                </div>
+                                            </ion-card-content>
+                                        </ion-card>
+                                    </div>
+                                </div>
+
+                                <!-- Documentos por Integrante -->
+                                <div *ngIf="documentosIntegrantes.size > 0" class="categoria-secao">
+                                    <h3 class="categoria-titulo">
+                                        <ion-icon name="people-outline"></ion-icon>
+                                        Documentos dos Integrantes
+                                    </h3>
+
+                                    <div *ngFor="let integrante of documentosIntegrantes | keyvalue"
+                                        class="integrante-secao">
+                                        <h4 class="integrante-nome">
+                                            <ion-icon name="person-circle-outline"></ion-icon>
+                                            {{ integrante.key }} ({{ integrante.value.length }} documentos)
+                                        </h4>
+                                        <div class="documentos-grid">
+                                            <ion-card *ngFor="let documento of integrante.value"
+                                                class="documento-card integrante">
+                                                <ion-card-content>
+                                                    <div class="documento-header">
+                                                        <h5>{{ documento.tipoDocumento }}</h5>
+                                                        <ion-badge [color]="getCorStatus(documento.status)">
+                                                            {{ documento.status }}
+                                                        </ion-badge>
+                                                    </div>
+                                                    <p class="documento-descricao">{{ documento.descricao }}</p>
+                                                    <div class="documento-acoes">
+                                                        <ion-button *ngIf="documento.caminhoArquivo" fill="clear"
+                                                            size="small" (click)="visualizarDocumento(documento)">
+                                                            <ion-icon name="eye-outline" slot="icon-only"></ion-icon>
+                                                        </ion-button>
+                                                        <ion-button *ngIf="documento.status === 'enviado'" fill="clear"
+                                                            color="success" size="small"
+                                                            (click)="aprovarDocumento(documento)">
+                                                            <ion-icon name="checkmark-circle-outline"
+                                                                slot="icon-only"></ion-icon>
+                                                        </ion-button>
+                                                        <ion-button *ngIf="documento.status === 'enviado'" fill="clear"
+                                                            color="danger" size="small"
+                                                            (click)="rejeitarDocumento(documento)">
+                                                            <ion-icon name="close-circle-outline"
+                                                                slot="icon-only"></ion-icon>
+                                                        </ion-button>
+                                                    </div>
+                                                </ion-card-content>
+                                            </ion-card>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <!-- APENAS DOCUMENTOS DA FAMÍLIA -->
+                            <div *ngIf="categoriaDocumentos === 'familia'" class="documentos-grid">
+                                <ion-card *ngFor="let documento of documentosFamilia" class="documento-card familia">
+                                    <ion-card-content>
+                                        <div class="documento-header">
+                                            <h4>{{ documento.tipoDocumento }}</h4>
+                                            <ion-badge [color]="getCorStatus(documento.status)">
+                                                {{ documento.status }}
+                                            </ion-badge>
+                                        </div>
+                                        <p class="documento-descricao">{{ documento.descricao }}</p>
+                                        <div class="documento-acoes">
+                                            <ion-button *ngIf="documento.caminhoArquivo" fill="clear" size="small"
+                                                (click)="visualizarDocumento(documento)">
+                                                <ion-icon name="eye-outline" slot="icon-only"></ion-icon>
+                                            </ion-button>
+                                            <ion-button *ngIf="documento.status === 'enviado'" fill="clear"
+                                                color="success" size="small" (click)="aprovarDocumento(documento)">
+                                                <ion-icon name="checkmark-circle-outline" slot="icon-only"></ion-icon>
+                                            </ion-button>
+                                            <ion-button *ngIf="documento.status === 'enviado'" fill="clear"
+                                                color="danger" size="small" (click)="rejeitarDocumento(documento)">
+                                                <ion-icon name="close-circle-outline" slot="icon-only"></ion-icon>
+                                            </ion-button>
+                                        </div>
+                                    </ion-card-content>
+                                </ion-card>
+                            </div>
+
+                            <!-- APENAS DOCUMENTOS DO ALUNO -->
+                            <div *ngIf="categoriaDocumentos === 'aluno'" class="documentos-grid">
+                                <ion-card *ngFor="let documento of documentosAluno" class="documento-card aluno">
+                                    <ion-card-content>
+                                        <div class="documento-header">
+                                            <h4>{{ documento.tipoDocumento }}</h4>
+                                            <ion-badge [color]="getCorStatus(documento.status)">
+                                                {{ documento.status }}
+                                            </ion-badge>
+                                        </div>
+                                        <p class="documento-descricao">{{ documento.descricao }}</p>
+                                        <div class="documento-acoes">
+                                            <ion-button *ngIf="documento.caminhoArquivo" fill="clear" size="small"
+                                                (click)="visualizarDocumento(documento)">
+                                                <ion-icon name="eye-outline" slot="icon-only"></ion-icon>
+                                            </ion-button>
+                                            <ion-button *ngIf="documento.status === 'enviado'" fill="clear"
+                                                color="success" size="small" (click)="aprovarDocumento(documento)">
+                                                <ion-icon name="checkmark-circle-outline" slot="icon-only"></ion-icon>
+                                            </ion-button>
+                                            <ion-button *ngIf="documento.status === 'enviado'" fill="clear"
+                                                color="danger" size="small" (click)="rejeitarDocumento(documento)">
+                                                <ion-icon name="close-circle-outline" slot="icon-only"></ion-icon>
+                                            </ion-button>
+                                        </div>
+                                    </ion-card-content>
+                                </ion-card>
+                            </div>
+
+                            <!-- APENAS DOCUMENTOS DOS INTEGRANTES -->
+                            <div *ngIf="categoriaDocumentos === 'integrantes'">
+                                <div *ngFor="let integrante of documentosIntegrantes | keyvalue"
+                                    class="integrante-secao">
+                                    <h4 class="integrante-nome">
+                                        <ion-icon name="person-circle-outline"></ion-icon>
+                                        {{ integrante.key }} ({{ integrante.value.length }} documentos)
+                                    </h4>
+                                    <div class="documentos-grid">
+                                        <ion-card *ngFor="let documento of integrante.value"
+                                            class="documento-card integrante">
+                                            <ion-card-content>
+                                                <div class="documento-header">
+                                                    <h5>{{ documento.tipoDocumento }}</h5>
+                                                    <ion-badge [color]="getCorStatus(documento.status)">
+                                                        {{ documento.status }}
+                                                    </ion-badge>
+                                                </div>
+                                                <p class="documento-descricao">{{ documento.descricao }}</p>
+                                                <div class="documento-acoes">
+                                                    <ion-button *ngIf="documento.caminhoArquivo" fill="clear"
+                                                        size="small" (click)="visualizarDocumento(documento)">
+                                                        <ion-icon name="eye-outline" slot="icon-only"></ion-icon>
+                                                    </ion-button>
+                                                    <ion-button *ngIf="documento.status === 'enviado'" fill="clear"
+                                                        color="success" size="small"
+                                                        (click)="aprovarDocumento(documento)">
+                                                        <ion-icon name="checkmark-circle-outline"
+                                                            slot="icon-only"></ion-icon>
+                                                    </ion-button>
+                                                    <ion-button *ngIf="documento.status === 'enviado'" fill="clear"
+                                                        color="danger" size="small"
+                                                        (click)="rejeitarDocumento(documento)">
+                                                        <ion-icon name="close-circle-outline"
+                                                            slot="icon-only"></ion-icon>
+                                                    </ion-button>
+                                                </div>
+                                            </ion-card-content>
+                                        </ion-card>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Estado vazio -->
+                            <div *ngIf="documentos.length === 0" class="empty-state">
+                                <ion-icon name="document-outline" size="large"></ion-icon>
+                                <h3>Nenhum documento encontrado</h3>
+                                <p>Não há documentos cadastrados para esta família ainda.</p>
+                            </div>
+
+                        </div>
+
+                        <!-- Resumo geral -->
+                        <div *ngIf="!carregandoDocumentos && documentos.length > 0" class="resumo-documentos">
+                            <h4>Resumo Geral</h4>
+                            <div class="resumo-grid">
+                                <div class="resumo-item">
+                                    <div class="resumo-numero">{{ documentos.length }}</div>
+                                    <div class="resumo-label">TOTAL</div>
+                                </div>
+                                <div class="resumo-item">
+                                    <div class="resumo-numero">{{ documentosFamilia.length }}</div>
+                                    <div class="resumo-label">FAMÍLIA</div>
+                                </div>
+                                <div class="resumo-item">
+                                    <div class="resumo-numero">{{ documentosAluno.length }}</div>
+                                    <div class="resumo-label">ALUNO</div>
+                                </div>
+                                <div class="resumo-item">
+                                    <div class="resumo-numero">{{ getTotalDocumentosIntegrantes() }}</div>
+                                    <div class="resumo-label">INTEGRANTES</div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </ion-card-content>
+                </ion-card>
+            </div>
+
+        </div>
+
+    </div>
+</ion-content>

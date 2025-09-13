@@ -1,0 +1,61 @@
+<ion-header>
+    <ion-toolbar>
+        <ion-title>Gestão de Turmas</ion-title>
+        <ion-buttons slot="start">
+            <ion-back-button></ion-back-button>
+        </ion-buttons>
+    </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+    <div class="container">
+
+        <!-- Header com informações gerais -->
+        <div class="header-info">
+            <h2>Turmas e Alunos Matriculados</h2>
+            <p>Gerencie as turmas e visualize os detalhes dos alunos matriculados</p>
+        </div>
+
+        <!-- Loading -->
+        <div *ngIf="carregando" class="loading-container">
+            <ion-spinner name="crescent"></ion-spinner>
+            <p>Carregando turmas...</p>
+        </div>
+
+        <!-- Lista de turmas -->
+        <div *ngIf="!carregando" class="turmas-container">
+
+            <!-- Caso não há turmas -->
+            <div *ngIf="turmas.length === 0" class="empty-state">
+                <ion-icon name="school-outline" size="large"></ion-icon>
+                <h3>Nenhuma turma encontrada</h3>
+                <p>Não há turmas com alunos matriculados no momento.</p>
+            </div>
+
+            <!-- Lista de turmas com alunos -->
+            <div *ngIf="turmas.length > 0" class="turmas-grid">
+                <ion-card *ngFor="let turma of turmas" button (click)="abrirDetalheTurma(turma)" class="turma-card">
+                    <ion-card-header>
+                        <div class="turma-header">
+                            <ion-card-title>{{ turma.nome }}</ion-card-title>
+                            <ion-badge color="primary">{{ turma.totalAlunos || 0 }} alunos</ion-badge>
+                        </div>
+                    </ion-card-header>
+
+                    <ion-card-content>
+                        <div class="turma-info">
+                            <ion-icon name="people-outline" color="medium"></ion-icon>
+                            <span>{{ turma.totalAlunos || 0 }} aluno(s) matriculado(s)</span>
+                        </div>
+
+                        <ion-button fill="clear" color="primary" size="small">
+                            <ion-icon name="arrow-forward-outline" slot="end"></ion-icon>
+                            Ver detalhes
+                        </ion-button>
+                    </ion-card-content>
+                </ion-card>
+            </div>
+        </div>
+
+    </div>
+</ion-content>

@@ -172,17 +172,24 @@
                 </div>
 
                 <!-- Ações -->
-                <div class="acoes-turma" *ngIf="podeGerenciarTurmas">
-                    <ion-button fill="outline" size="small" (click)="editarTurma(turma.id!)">
-                        <ion-icon name="create" slot="start"></ion-icon>
-                        Editar
+                <div class="acoes-turma">
+                    <ion-button fill="solid" size="small" color="primary" (click)="verAlunosMatriculados(turma.id!)">
+                        <ion-icon name="people" slot="start"></ion-icon>
+                        Ver Alunos
                     </ion-button>
 
-                    <ion-button fill="outline" size="small" color="danger" (click)="confirmarExclusao(turma)"
-                        [disabled]="turma.capacidadeAtual > 0">
-                        <ion-icon name="trash" slot="start"></ion-icon>
-                        Excluir
-                    </ion-button>
+                    <div *ngIf="podeGerenciarTurmas" class="acoes-admin">
+                        <ion-button fill="outline" size="small" (click)="editarTurma(turma.id!)">
+                            <ion-icon name="create" slot="start"></ion-icon>
+                            Editar
+                        </ion-button>
+
+                        <ion-button fill="outline" size="small" color="danger" (click)="confirmarExclusao(turma)"
+                            [disabled]="turma.capacidadeAtual > 0">
+                            <ion-icon name="trash" slot="start"></ion-icon>
+                            Excluir
+                        </ion-button>
+                    </div>
                 </div>
             </ion-card-content>
         </ion-card>

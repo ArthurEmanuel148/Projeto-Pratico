@@ -3,53 +3,36 @@
 // =============================================================================
 
 :host {
-  --form-max-width: 900px;
+  --form-max-width: 800px; // Diminuído de 900px para 800px
   --section-spacing: 2.25rem;
   --input-spacing: 1.5rem;
   --border-radius: 12px;
   --animation-duration: 0.3s;
-  
+
   // Cores dinâmicas que funcionam em ambos os temas
   --custom-primary: var(--ion-color-primary);
   --custom-success: var(--ion-color-success);
   --custom-danger: var(--ion-color-danger);
   --custom-warning: var(--ion-color-warning);
-  --custom-dark-text: #2c3e50;
-  
+
   // Backgrounds e superfícies
   --custom-background: var(--ion-background-color, #ffffff);
   --custom-surface: var(--ion-item-background, #ffffff);
   --custom-surface-variant: var(--ion-color-light, #f8f9fa);
-  
+
   // Textos
   --custom-text: var(--ion-text-color, #000000);
   --custom-text-secondary: var(--ion-color-medium, #6c757d);
   --custom-text-muted: var(--ion-color-medium-shade, #9e9e9e);
-  
+
   // Bordas
   --custom-border: var(--ion-color-light-shade, #e0e0e0);
   --custom-border-focus: var(--ion-color-primary);
-  
+
   // Sombras
   --custom-shadow-light: 0 2px 8px rgba(0, 0, 0, 0.08);
   --custom-shadow-medium: 0 4px 16px rgba(0, 0, 0, 0.12);
   --custom-shadow-heavy: 0 8px 32px rgba(0, 0, 0, 0.16);
-}
-
-// =============================================================================
-// CONFIGURAÇÃO DA BARRA VERMELHA (PADRÃO DO SISTEMA)
-// =============================================================================
-
-ion-header {
-  ion-toolbar {
-    --min-height: 44px;
-    --height: 44px;
-    
-    @media (max-width: 768px) {
-      --min-height: 44px;
-      --height: 44px;
-    }
-  }
 }
 
 // =============================================================================
@@ -63,7 +46,7 @@ ion-header {
   margin-bottom: 0.5rem;
   position: relative;
   overflow: hidden;
-  text-align: center; // Centralizando o texto
+  text-align: center; // Centralizando como nas páginas de funcionário
 
   .header-content {
     display: flex;
@@ -81,7 +64,6 @@ ion-header {
         margin: 0 0 0.5rem 0;
         letter-spacing: -0.5px;
         color: var(--custom-text);
-        text-align: center; // Garantindo centralização
       }
 
       p {
@@ -90,7 +72,6 @@ ion-header {
         margin: 0;
         font-weight: 400;
         color: var(--custom-text-secondary);
-        text-align: center; // Garantindo centralização
       }
     }
 
@@ -106,7 +87,7 @@ ion-header {
         padding: 1rem;
         box-shadow: 0 4px 12px rgba(var(--ion-color-primary-rgb), 0.3);
         transition: all 0.3s ease;
-        
+
         &:hover {
           transform: scale(1.05);
           box-shadow: 0 6px 20px rgba(var(--ion-color-primary-rgb), 0.4);
@@ -120,26 +101,29 @@ ion-header {
 // LAYOUT PRINCIPAL
 // =============================================================================
 
+// Espaçamento lateral e layout responsivo
 ion-content {
-  --padding-top: 0;
-  --padding-bottom: 20px;
-}
-
-.content-container {
-  max-width: var(--form-max-width);
-  margin: 0 auto;
-  padding: 0 1rem 2rem;
-
-  @media (max-width: 768px) {
-    padding: 0 0.5rem 2rem;
+  --padding-start: 1rem;
+  --padding-end: 1rem;
+  
+  // Container principal com largura limitada
+  .content-container {
+    max-width: var(--form-max-width);
+    margin: 0 auto;
+    width: 100%;
   }
 }
 
-// =============================================================================
-// COMPONENTES ESPECÍFICOS
-// =============================================================================
+// Lista de funcionários com espaçamento
+.funcionarios-lista {
+  padding: 0;
 
-// Lista de funcionários
+  .lista-header {
+    margin-bottom: 1rem;
+    padding: 0 1rem;
+  }
+}
+
 .funcionarios-lista {
   .lista-header {
     display: flex;
@@ -154,7 +138,7 @@ ion-content {
       align-items: center;
       gap: 0.5rem;
       margin: 0;
-      color: var(--custom-text);
+      color: var(--ion-color-dark);
     }
 
     @media (max-width: 768px) {
@@ -164,6 +148,19 @@ ion-content {
       ion-button {
         width: 100%;
       }
+    }
+  }
+
+  .loading-container {
+    text-align: center;
+    padding: 3rem 1rem;
+
+    ion-spinner {
+      margin-bottom: 1rem;
+    }
+
+    p {
+      color: var(--ion-color-medium);
     }
   }
 
@@ -177,107 +174,164 @@ ion-content {
     }
 
     h3 {
-      color: var(--custom-text);
+      color: var(--ion-color-dark);
       margin-bottom: 1rem;
     }
 
     p {
-      color: var(--custom-text-secondary);
+      color: var(--ion-color-medium);
       line-height: 1.5;
     }
   }
 }
 
-// Loading container
-.loading-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 200px;
-  padding: 20px;
-  color: var(--custom-text-secondary);
+// =============================================================================
+// ESTILOS DA TABELA DE FUNCIONÁRIOS
+// =============================================================================
 
-  ion-spinner {
-    margin-bottom: 16px;
-    --color: var(--custom-primary);
+.tabela-container {
+  background: white;
+  border-radius: 12px;
+  box-shadow: var(--custom-shadow-light);
+  overflow: hidden;
+  border: 1px solid var(--custom-border);
+  width: 100%;
+  margin: 0;
+}
+
+.funcionarios-table {
+  width: 100%;
+  border-collapse: collapse;
+  
+  thead {
+    background: linear-gradient(135deg, 
+        color-mix(in srgb, var(--custom-primary) 8%, white), 
+        color-mix(in srgb, var(--custom-primary) 4%, white));
+    
+    th {
+      padding: 1rem;
+      text-align: left;
+      font-weight: 600;
+      color: var(--custom-text);
+      border-bottom: 2px solid var(--custom-border);
+      font-size: 0.9rem;
+      
+      &:first-child {
+        border-top-left-radius: 12px;
+      }
+      
+      &:last-child {
+        border-top-right-radius: 12px;
+        text-align: center;
+      }
+    }
   }
-
-  p {
-    margin: 0;
-    opacity: 0.8;
+  
+  tbody {
+    .funcionario-row {
+      border-bottom: 1px solid var(--custom-border);
+      transition: all 0.2s ease;
+      
+      &:hover {
+        background: color-mix(in srgb, var(--custom-primary) 2%, white);
+      }
+      
+      &:last-child {
+        border-bottom: none;
+      }
+      
+      td {
+        padding: 1rem;
+        vertical-align: top;
+        
+        &.nome-funcionario {
+          .funcionario-info {
+            h3 {
+              margin: 0;
+              font-size: 1.1rem;
+              font-weight: 600;
+              color: var(--custom-text);
+            }
+          }
+        }
+        
+        &.email {
+          .email-info {
+            font-size: 0.9rem;
+            color: var(--custom-text-secondary);
+            line-height: 1.4;
+          }
+        }
+        
+        &.usuario {
+          .usuario-info {
+            font-size: 0.9rem;
+            color: var(--custom-text-secondary);
+            line-height: 1.4;
+            font-weight: 500;
+          }
+        }
+        
+        &.status {
+          text-align: center;
+        }
+        
+        &.acoes {
+          text-align: center;
+          
+          .acoes-container {
+            display: flex;
+            gap: 0.25rem;
+            justify-content: center;
+            align-items: center;
+            
+            ion-button {
+              --border-radius: 6px;
+              
+              &[color="primary"] {
+                --color: var(--custom-primary);
+              }
+              
+              &[color="danger"] {
+                --color: var(--custom-danger);
+              }
+            }
+          }
+        }
+      }
+    }
   }
 }
 
-// Cards dos funcionários
-.funcionario-card {
-  margin-bottom: 1rem;
-  border-radius: var(--border-radius);
-  overflow: hidden;
-  border: 1px solid var(--custom-border);
-  transition: all var(--animation-duration) ease;
-
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--custom-shadow-medium);
-  }
-
-  ion-card-header {
-    padding-bottom: 0.5rem;
-
-    ion-card-subtitle {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.5rem;
-      margin-bottom: 0.5rem;
-    }
-
-    ion-card-title {
-      font-size: 1.3rem;
-      font-weight: 600;
-      color: var(--custom-text);
-      text-align: center; // Centralizando o nome
-      padding: 0.5rem 0;
-      background: var(--custom-surface-variant);
-      border-radius: 8px;
-      margin: 0.5rem 0;
-    }
-  }
-
-  .funcionario-info {
-    .info-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 0.5rem;
-      padding: 0.25rem 0;
-
-      .label {
-        font-weight: 500;
-        color: var(--custom-text-secondary);
-        font-size: 0.9rem;
-      }
-
-      .value {
-        color: var(--custom-text);
-        font-weight: 500;
-        text-align: right;
-        flex: 1;
-        margin-left: 1rem;
+// Responsividade da tabela
+@media (max-width: 768px) {
+  .tabela-container {
+    overflow-x: auto;
+    
+    .funcionarios-table {
+      min-width: 700px;
+      
+      th, td {
+        padding: 0.75rem 0.5rem;
+        font-size: 0.85rem;
       }
     }
   }
+}
 
-  .acoes-funcionario {
-    margin-top: 1rem;
-    padding-top: 1rem;
-    border-top: 1px solid var(--custom-border);
-    display: flex;
-    gap: 0.5rem;
-    justify-content: flex-end;
-
-    ion-button {
-      --border-radius: 8px;
+@media (max-width: 480px) {
+  .tabela-container {
+    .funcionarios-table {
+      min-width: 600px;
+      
+      th, td {
+        padding: 0.5rem 0.25rem;
+        font-size: 0.8rem;
+      }
+      
+      .nome-funcionario .funcionario-info h3 {
+        font-size: 0.95rem;
+      }
     }
   }
 }
@@ -288,72 +342,150 @@ ion-chip {
   --color: var(--ion-color-primary);
   font-size: 0.8rem;
   font-weight: 500;
-  border-radius: 20px; // Mais arredondado
 
   ion-icon {
     margin-right: 0.25rem;
   }
 }
 
-// Botões de ação
-.action-buttons {
-  margin-bottom: 1.5rem;
-  
-  ion-button {
-    --border-radius: var(--border-radius);
-    margin: 0.5rem 0;
+// Responsividade
+@media (max-width: 768px) {
+  .page-header {
+    .header-content {
+      flex-direction: column;
+      text-align: center;
+      
+      .header-info h1 {
+        font-size: 1.5rem;
+      }
+      
+      .header-illustration {
+        margin: 1rem 0 0 0;
+        
+        ion-icon {
+          font-size: 2rem;
+        }
+      }
+    }
   }
 }
 
-// =============================================================================
-// RESPONSIVIDADE
-// =============================================================================
-
-@media (max-width: 768px) {
-  .page-header {
-    padding: 0.25rem 1rem;
-
-    .header-content {
-      .header-illustration {
-        margin-left: 1rem;
-
-        ion-icon {
-          font-size: 1.75rem;
-          padding: 0.875rem;
+// Pesquisa Estilo Gmail
+.pesquisa-gmail {
+  padding: 1rem 0;
+  width: 100%;
+  
+  .search-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    
+    .gmail-search {
+      flex: 1;
+      --background: white;
+      --border-radius: 24px;
+      --box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+      --color: var(--custom-text);
+      --placeholder-color: var(--custom-text-muted);
+      --icon-color: var(--custom-text-muted);
+      --clear-button-color: var(--custom-text-muted);
+      margin: 0;
+      height: 48px;
+      
+      .searchbar-input-container {
+        border: 2px solid #e0e0e0;
+        border-radius: 24px;
+        background: white;
+        
+        .searchbar-input {
+          padding: 0 20px;
+          height: 44px;
+          font-size: 16px;
+        }
+        
+        &:hover {
+          border-color: #d0d0d0;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
       }
-
-      .header-info {
-        h1 {
-          font-size: 1.5rem;
+      
+      &.searchbar-has-focus {
+        .searchbar-input-container {
+          border-color: var(--custom-primary) !important;
+          box-shadow: 0 4px 12px rgba(var(--custom-primary-rgb), 0.2) !important;
         }
-
-        p {
-          font-size: 0.9rem;
+      }
+    }
+    
+    .filtros-toggle {
+      --color: var(--custom-text-muted);
+      --border-radius: 50%;
+      width: 48px;
+      height: 48px;
+      background: transparent;
+      
+      &.ativo {
+        --color: var(--custom-primary);
+        --background: color-mix(in srgb, var(--custom-primary) 10%, white);
+      }
+      
+      &:hover {
+        --background: var(--custom-surface-variant);
+      }
+      
+      ion-icon {
+        font-size: 20px;
+      }
+    }
+  }
+  
+  .filtros-inline {
+    margin-top: 16px;
+    animation: slideDown 0.3s ease-out;
+    
+    .filtro-chips {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      
+      ion-chip {
+        --border-radius: 20px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        height: 36px;
+        font-weight: 500;
+        
+        &:hover {
+          transform: translateY(-1px);
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+      }
+      
+      ion-button {
+        --color: var(--custom-text-muted);
+        height: 36px;
+        --border-radius: 18px;
+        --border-color: #e0e0e0;
+        
+        &:hover {
+          --color: var(--ion-color-danger);
+          --border-color: var(--ion-color-danger);
         }
       }
     }
   }
+}
 
-  .funcionario-card {
-    ion-card-header {
-      ion-card-subtitle {
-        ion-chip {
-          font-size: 0.7rem;
-        }
-      }
-
-      ion-card-title {
-        font-size: 1.1rem;
-      }
-    }
-
-    .acoes-funcionario {
-      flex-direction: column;
-
-      ion-button {
-        width: 100%;
-      }
-    }
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }

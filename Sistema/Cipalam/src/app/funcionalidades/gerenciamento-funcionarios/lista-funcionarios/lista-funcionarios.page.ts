@@ -11,8 +11,14 @@ import { FuncionarioService } from '../../../core/services/funcionario.service';
 })
 export class ListaFuncionariosPage implements OnInit {
     funcionarios: any[] = [];
+    funcionariosFiltrados: any[] = [];
     loading = false;
     podeGerenciarFuncionarios = false;
+
+    // Propriedades de filtro
+    filtroTexto: string = '';
+    filtroStatus: string = '';
+    mostrarFiltrosAvancados = false;
 
     constructor(
         private authService: AuthService,
@@ -45,6 +51,7 @@ export class ListaFuncionariosPage implements OnInit {
                     usuario: func.usuario || 'Usuário não informado'
                 }));
                 console.log('Funcionários mapeados:', this.funcionarios);
+                this.funcionariosFiltrados = [...this.funcionarios];
                 this.loading = false;
             },
             error: (error) => {
@@ -54,6 +61,7 @@ export class ListaFuncionariosPage implements OnInit {
                     { id: 1, nome: 'João Silva', email: 'joao@exemplo.com', usuario: 'joao.silva' },
                     { id: 2, nome: 'Maria Santos', email: 'maria@exemplo.com', usuario: 'maria.santos' }
                 ];
+                this.funcionariosFiltrados = [...this.funcionarios];
                 this.loading = false;
             }
         });
@@ -69,5 +77,47 @@ export class ListaFuncionariosPage implements OnInit {
 
     ionViewWillEnter() {
         this.carregarFuncionarios();
+    }
+
+    // Métodos de filtro
+    aplicarFiltros() {
+        let funcionariosFiltrados = [...this.funcionarios];
+
+        // Filtro por texto (nome, email ou usuário)
+        if (this.filtroTexto && this.filtroTexto.trim()) {
+            const texto = this.filtroTexto.toLowerCase().trim();
+            funcionariosFiltrados = funcionariosFiltrados.filter(funcionario =>
+                funcionario.nome.toLowerCase().includes(texto) ||
+                funcionario.email.toLowerCase().includes(texto) ||
+                funcionario.usuario.toLowerCase().includes(texto)
+            );
+        }
+
+        // Filtro por status (todos ativos por enquanto)
+        if (this.filtroStatus === 'ativo') {
+            // Como todos os funcionários estão ativos, não filtra nada por enquanto
+            funcionariosFiltrados = funcionariosFiltrados;
+        }
+
+        this.funcionariosFiltrados = funcionariosFiltrados;
+    }
+
+    toggleFiltrosAvancados() {
+        this.mostrarFiltrosAvancados = !this.mostrarFiltrosAvancados;
+    }
+
+    toggleFiltroStatus(status: string) {
+        if (this.filtroStatus === status) {
+            this.filtroStatus = '';
+        } else {
+            this.filtroStatus = status;
+        }
+        this.aplicarFiltros();
+    }
+
+    limparFiltros() {
+        this.filtroTexto = '';
+        this.filtroStatus = '';
+        this.aplicarFiltros();
     }
 }

@@ -229,6 +229,23 @@ export class CadastroTipoDocumentoPage implements OnInit {
         });
     }
 
+    // Métodos para focus/blur dos inputs (igual ao cadastro de funcionários)
+    onInputFocus(event: any) {
+        // Adiciona classe para estilização quando o campo recebe foco
+        const item = event.target.closest('ion-item');
+        if (item) {
+            item.classList.add('item-has-focus');
+        }
+    }
+
+    onInputBlur(event: any) {
+        // Remove classe quando o campo perde foco
+        const item = event.target.closest('ion-item');
+        if (item) {
+            item.classList.remove('item-has-focus');
+        }
+    }
+
     // Validações de campo
     get nome() {
         return this.tipoDocumentoForm.get('nome');

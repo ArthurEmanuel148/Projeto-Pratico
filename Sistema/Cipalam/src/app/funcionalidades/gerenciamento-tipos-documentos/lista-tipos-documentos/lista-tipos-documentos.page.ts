@@ -17,25 +17,19 @@ export class ListaTiposDocumentosPage implements OnInit {
     tiposDocumentos: TipoDocumento[] = [];
     tiposDocumentosFiltrados: TipoDocumento[] = [];
     loading = false;
+    mostrarFiltrosAvancados = false;
 
     filtros = {
         nome: '',
-        modalidadeEntrega: '',
-        quemDeveFornencer: '',
+        escopo: '',
         ativo: null as boolean | null
     };
 
     // Opções para filtros
-    modalidadesEntrega = [
-        { value: 'ASSINADO', label: 'Assinado' },
-        { value: 'ANEXADO', label: 'Anexado' }
-    ];
-
-    quemDeveFornecerOpcoes = [
-        { value: 'RESPONSAVEL', label: 'Responsável' },
+    escopoOpcoes = [
+        { value: 'FAMILIA', label: 'Família' },
         { value: 'ALUNO', label: 'Aluno' },
-        { value: 'TODOS_INTEGRANTES', label: 'Todos os Integrantes' },
-        { value: 'FAMILIA', label: 'Família' }
+        { value: 'TODOS_INTEGRANTES', label: 'Todos os Integrantes' }
     ];
 
     statusOptions = [
@@ -84,24 +78,20 @@ export class ListaTiposDocumentosPage implements OnInit {
             const nomeMatch = !this.filtros.nome ||
                 tipo.nome.toLowerCase().includes(this.filtros.nome.toLowerCase());
 
-            const modalidadeMatch = !this.filtros.modalidadeEntrega ||
-                tipo.modalidadeEntrega === this.filtros.modalidadeEntrega;
-
-            const fornecedorMatch = !this.filtros.quemDeveFornencer ||
-                tipo.quemDeveFornencer === this.filtros.quemDeveFornencer;
+            const escopoMatch = !this.filtros.escopo ||
+                tipo.escopo === this.filtros.escopo;
 
             const ativoMatch = this.filtros.ativo === null ||
                 tipo.ativo === this.filtros.ativo;
 
-            return nomeMatch && modalidadeMatch && fornecedorMatch && ativoMatch;
+            return nomeMatch && escopoMatch && ativoMatch;
         });
     }
 
     limparFiltros() {
         this.filtros = {
             nome: '',
-            modalidadeEntrega: '',
-            quemDeveFornencer: '',
+            escopo: '',
             ativo: null
         };
         this.aplicarFiltros();
@@ -121,63 +111,21 @@ export class ListaTiposDocumentosPage implements OnInit {
         await toast.present();
     }
 
-    // Métodos helper para templates
-    getModalidadeLabel(modalidade: string): string {
-        console.log('Modalidade recebida:', modalidade);
-        switch (modalidade) {
-            case 'ASSINADO': return 'Assinado - Documento para assinatura digital';
-            case 'ANEXADO': return 'Anexado - Arquivo para upload';
-            case 'FISICO': return 'Físico - Documento impresso/assinado';
-            case 'DIGITAL': return 'Digital - Arquivo eletrônico';
-            case 'AMBOS': return 'Físico e Digital - Ambas as formas';
-            default: return modalidade || 'Não informado';
-        }
+    // Novos métodos para os filtros estilo Gmail
+    toggleFiltrosAvancados(): void {
+        this.mostrarFiltrosAvancados = !this.mostrarFiltrosAvancados;
     }
 
-    getQuemDeveFornecerLabel(fornecedor: string): string {
-        console.log('Fornecedor recebido:', fornecedor);
-        switch (fornecedor) {
-            case 'RESPONSAVEL': return 'Responsável - Pai/Mãe/Tutor';
-            case 'ALUNO': return 'Aluno - O próprio estudante';
-            case 'TODOS_INTEGRANTES': return 'Todos Integrantes - Família toda';
-            case 'FAMILIA': return 'Família - Documento familiar';
-            case 'AMBOS': return 'Responsável ou Aluno - Qualquer um';
-            default: return fornecedor || 'Não informado';
-        }
-    }
-
-    formatarDataCriacao(data: Date): string {
-        return new Date(data).toLocaleDateString('pt-BR');
+    toggleFiltroStatus(status: boolean): void {
+        this.filtros.ativo = this.filtros.ativo === status ? null : status;
+        this.aplicarFiltros();
     }
 
     // Novos métodos para o layout atualizado
     temFiltrosAtivos(): boolean {
         return !!(this.filtros.nome || 
-                  this.filtros.modalidadeEntrega || 
-                  this.filtros.quemDeveFornencer || 
+                  this.filtros.escopo || 
                   this.filtros.ativo !== null);
-    }
-
-    getCorModalidade(modalidade: string): string {
-        switch (modalidade) {
-            case 'ASSINADO': return 'primary';
-            case 'ANEXADO': return 'secondary';
-            case 'FISICO': return 'warning';
-            case 'DIGITAL': return 'secondary';
-            case 'AMBOS': return 'tertiary';
-            default: return 'medium';
-        }
-    }
-
-    getCorFornecedor(fornecedor: string): string {
-        switch (fornecedor) {
-            case 'RESPONSAVEL': return 'primary';
-            case 'ALUNO': return 'success';
-            case 'TODOS_INTEGRANTES': return 'warning';
-            case 'FAMILIA': return 'tertiary';
-            case 'AMBOS': return 'tertiary';
-            default: return 'medium';
-        }
     }
 
     visualizarTipoDocumento(tipoDocumento: TipoDocumento): void {

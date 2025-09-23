@@ -168,17 +168,14 @@ ion-content {
             --border-radius: 50%;
             width: 48px;
             height: 48px;
-            border: 2px solid #e0e0e0;
-            background: white;
+            background: transparent;
             
             &.ativo {
                 --color: var(--custom-primary);
                 --background: color-mix(in srgb, var(--custom-primary) 10%, white);
-                border-color: var(--custom-primary);
             }
             
             &:hover {
-                border-color: #d0d0d0;
                 --background: var(--custom-surface-variant);
             }
             

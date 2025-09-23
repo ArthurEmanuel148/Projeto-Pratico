@@ -7,33 +7,70 @@
 </ion-header>
 
 <ion-content class="ion-padding-horizontal">
-  <!-- Header com título e descrição centralizados -->
-  <div class="page-header">
-    <div class="header-content">
-      <div class="header-info">
-        <h1>Lista de Funcionários</h1>
-        <p>Gerencie todos os funcionários do sistema</p>
-      </div>
-      <div class="header-illustration">
-        <ion-icon name="people-outline"></ion-icon>
-      </div>
-    </div>
-  </div>
-
-  <!-- Conteúdo principal -->
   <div class="content-container">
-    <!-- Loading -->
-    <div *ngIf="loading" class="loading-container">
-      <ion-spinner name="crescent"></ion-spinner>
-      <p>Carregando funcionários...</p>
+    <!-- Header com título e descrição -->
+    <div class="page-header">
+      <div class="header-content">
+        <div class="header-info">
+          <h1>Lista de Funcionários</h1>
+          <p>Gerencie todos os funcionários do sistema</p>
+        </div>
+        <div class="header-illustration">
+          <ion-icon name="people-outline"></ion-icon>
+        </div>
+      </div>
     </div>
 
-    <!-- Lista de funcionários -->
-    <div *ngIf="!loading && funcionarios.length > 0" class="funcionarios-lista">
+    <!-- Pesquisa Estilo Gmail -->
+    <div class="pesquisa-gmail">
+      <div class="search-container">
+        <ion-searchbar 
+          [(ngModel)]="filtroTexto" 
+          (ionInput)="aplicarFiltros()"
+          placeholder="Pesquisar funcionários" 
+          debounce="300"
+          show-clear-button="focus"
+          class="gmail-search">
+        </ion-searchbar>
+        
+        <ion-button 
+          fill="clear" 
+          size="small" 
+          class="filtros-toggle"
+          (click)="toggleFiltrosAvancados()"
+          [class.ativo]="mostrarFiltrosAvancados">
+          <ion-icon name="options-outline"></ion-icon>
+        </ion-button>
+      </div>
+      
+      <!-- Filtros integrados -->
+      <div class="filtros-inline" *ngIf="mostrarFiltrosAvancados">
+        <div class="filtro-chips">
+          <ion-chip 
+            [color]="filtroStatus === 'ativo' ? 'success' : 'medium'"
+            (click)="toggleFiltroStatus('ativo')"
+            [outline]="filtroStatus !== 'ativo'">
+            <ion-label>Ativos</ion-label>
+          </ion-chip>
+          
+          <ion-button 
+            fill="clear" 
+            size="small" 
+            (click)="limparFiltros()"
+            *ngIf="filtroStatus || filtroTexto">
+            <ion-icon name="close" slot="start"></ion-icon>
+            Limpar
+          </ion-button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Lista de Funcionários em Tabela -->
+    <div class="funcionarios-lista">
       <div class="lista-header">
         <h2>
           Funcionários Cadastrados
-          <ion-badge color="primary">{{ funcionarios.length }}</ion-badge>
+          <ion-badge color="primary">{{ funcionariosFiltrados.length }}</ion-badge>
         </h2>
 
         <ion-button *ngIf="podeGerenciarFuncionarios" (click)="navegarParaCadastro()" color="primary">
@@ -41,60 +78,79 @@
           Novo Funcionário
         </ion-button>
       </div>
-      
-      <!-- Cards dos funcionários -->
-      <ion-card *ngFor="let funcionario of funcionarios" class="funcionario-card" button (click)="editarFuncionario(funcionario.id)">
-        <ion-card-header>
-          <ion-card-subtitle>
-            <ion-chip color="primary" outline>
-              <ion-icon name="person-outline"></ion-icon>
-              <ion-label>Funcionário</ion-label>
-            </ion-chip>
 
-            <ion-chip color="success" outline>
-              <ion-icon name="checkmark-circle"></ion-icon>
-              <ion-label>Ativo</ion-label>
-            </ion-chip>
-          </ion-card-subtitle>
+      <!-- Loading -->
+      <div *ngIf="loading" class="loading-container">
+        <ion-spinner name="crescent"></ion-spinner>
+        <p>Carregando funcionários...</p>
+      </div>
 
-          <ion-card-title>{{ funcionario.nome }}</ion-card-title>
-        </ion-card-header>
-
-        <ion-card-content>
-          <div class="funcionario-info">
-            <div class="info-row">
-              <span class="label">Email:</span>
-              <span class="value">{{ funcionario.email }}</span>
-            </div>
-
-            <div class="info-row">
-              <span class="label">Usuário:</span>
-              <span class="value">{{ funcionario.usuario }}</span>
-            </div>
-          </div>
-
-          <!-- Ações -->
-          <div class="acoes-funcionario" *ngIf="podeGerenciarFuncionarios">
-            <ion-button fill="outline" size="small" (click)="editarFuncionario(funcionario.id); $event.stopPropagation()">
-              <ion-icon name="create" slot="start"></ion-icon>
-              Editar
+      <!-- Lista vazia -->
+      <div *ngIf="!loading && funcionariosFiltrados.length === 0" class="lista-vazia">
+        <ion-icon name="people-outline" color="medium"></ion-icon>
+        <h3>Nenhum funcionário encontrado</h3>
+        <p>
+          <span *ngIf="filtroTexto || filtroStatus">
+            Tente ajustar os filtros ou
+          </span>
+          <span *ngIf="podeGerenciarFuncionarios">
+            <ion-button fill="clear" (click)="navegarParaCadastro()">
+              cadastrar um novo funcionário
             </ion-button>
-          </div>
-        </ion-card-content>
-      </ion-card>
-    </div>
+          </span>
+        </p>
+      </div>
 
-    <!-- Mensagem quando não há funcionários -->
-    <div *ngIf="!loading && funcionarios.length === 0" class="lista-vazia">
-      <ion-icon name="people-outline" color="medium"></ion-icon>
-      <h3>Nenhum funcionário encontrado</h3>
-      <p>Ainda não há funcionários cadastrados no sistema.</p>
-      <span *ngIf="podeGerenciarFuncionarios">
-        <ion-button fill="clear" (click)="navegarParaCadastro()">
-          cadastrar o primeiro funcionário
-        </ion-button>
-      </span>
+      <!-- Tabela de Funcionários -->
+      <div *ngIf="!loading && funcionariosFiltrados.length > 0" class="tabela-container">
+        <table class="funcionarios-table">
+          <thead>
+            <tr>
+              <th>Nome</th>
+              <th>Email</th>
+              <th>Usuário</th>
+              <th>Status</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let funcionario of funcionariosFiltrados" class="funcionario-row">
+              <td class="nome-funcionario">
+                <div class="funcionario-info">
+                  <h3>{{ funcionario.nome }}</h3>
+                </div>
+              </td>
+              
+              <td class="email">
+                <div class="email-info">
+                  {{ funcionario.email }}
+                </div>
+              </td>
+              
+              <td class="usuario">
+                <div class="usuario-info">
+                  {{ funcionario.usuario }}
+                </div>
+              </td>
+              
+              <td class="status">
+                <ion-chip color="success" outline>
+                  <ion-icon name="checkmark-circle"></ion-icon>
+                  <ion-label>Ativo</ion-label>
+                </ion-chip>
+              </td>
+              
+              <td class="acoes">
+                <div class="acoes-container">
+                  <ion-button *ngIf="podeGerenciarFuncionarios" fill="clear" size="small" (click)="editarFuncionario(funcionario.id)">
+                    <ion-icon name="create" slot="icon-only"></ion-icon>
+                  </ion-button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
-
-  </div> <!-- Fecha content-container -->
+  </div>
 </ion-content>

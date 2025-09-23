@@ -1,0 +1,188 @@
+/* Novos estilos para organização de documentos */
+
+.categoria-secao {
+    margin-bottom: 24px;
+
+    .categoria-titulo {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--ion-color-primary);
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-bottom: 16px;
+
+        ion-icon {
+            font-size: 1.4rem;
+        }
+    }
+}
+
+.integrante-secao {
+    margin-bottom: 20px;
+
+    .integrante-nome {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--ion-color-secondary);
+        font-size: 1.1rem;
+        font-weight: 500;
+        margin-bottom: 12px;
+        padding: 8px 12px;
+        background: var(--ion-color-light);
+        border-radius: 8px;
+        border-left: 4px solid var(--ion-color-secondary);
+
+        ion-icon {
+            font-size: 1.2rem;
+        }
+    }
+}
+
+.documentos-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+.documento-card {
+    margin: 0;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s, box-shadow 0.2s;
+
+    &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+    }
+
+    &.familia {
+        border-left: 4px solid var(--ion-color-primary);
+    }
+
+    &.aluno {
+        border-left: 4px solid var(--ion-color-secondary);
+    }
+
+    &.integrante {
+        border-left: 4px solid var(--ion-color-tertiary);
+    }
+
+    .documento-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 8px;
+
+        h4,
+        h5 {
+            margin: 0;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--ion-color-dark);
+            flex: 1;
+            margin-right: 8px;
+        }
+
+        h5 {
+            font-size: 0.9rem;
+        }
+    }
+
+    .documento-descricao {
+        font-size: 0.85rem;
+        color: var(--ion-color-medium);
+        margin-bottom: 12px;
+        line-height: 1.4;
+    }
+
+    .documento-acoes {
+        display: flex;
+        justify-content: flex-end;
+        gap: 4px;
+
+        ion-button {
+            --padding-start: 8px;
+            --padding-end: 8px;
+
+            ion-icon {
+                font-size: 1.2rem;
+            }
+        }
+    }
+}
+
+.resumo-documentos {
+    margin-top: 24px;
+    padding: 16px;
+    background: var(--ion-color-light);
+    border-radius: 12px;
+
+    h4 {
+        margin: 0 0 16px 0;
+        color: var(--ion-color-dark);
+        font-weight: 600;
+    }
+
+    .resumo-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+        gap: 16px;
+
+        .resumo-item {
+            text-align: center;
+
+            .resumo-numero {
+                font-size: 2rem;
+                font-weight: 700;
+                color: var(--ion-color-primary);
+                display: block;
+            }
+
+            .resumo-label {
+                font-size: 0.8rem;
+                color: var(--ion-color-medium);
+                font-weight: 500;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+            }
+        }
+    }
+}
+
+.empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--ion-color-medium);
+
+    ion-icon {
+        margin-bottom: 16px;
+        opacity: 0.5;
+    }
+
+    h3 {
+        margin: 0 0 8px 0;
+        color: var(--ion-color-dark);
+    }
+
+    p {
+        margin: 0;
+        font-size: 0.9rem;
+    }
+}
+
+.loading-container {
+    text-align: center;
+    padding: 40px 20px;
+
+    ion-spinner {
+        margin-bottom: 16px;
+    }
+
+    p {
+        color: var(--ion-color-medium);
+        font-size: 0.9rem;
+    }
+}

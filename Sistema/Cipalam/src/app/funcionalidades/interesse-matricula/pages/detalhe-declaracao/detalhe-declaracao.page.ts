@@ -20,6 +20,7 @@ export class DetalheDeclaracaoPage implements OnInit {
   loginGerado?: { usuario: string, senha: string };
   matriculaIniciada = false;
   processandoMatricula = false;
+  processandoFinalizacao = false;
   // Campos para documentos enviados (removido documentosNecessarios)
   integrantesRenda: any[] = [];
   horariosSelecionados: string[] = [];
@@ -265,15 +266,30 @@ export class DetalheDeclaracaoPage implements OnInit {
    * Carrega documentos já enviados para a matrícula
    */
   private carregarDocumentosEnviados() {
-    // Por enquanto, vamos usar um ID fixo para teste (Ana Costa Lima)
-    // Em um cenário real, você precisaria mapear o protocolo para o ID da pessoa
-    let idResponsavel = 6; // Ana Costa Lima que tem matrícula iniciada
+    if (!this.declaracao) {
+      this.carregandoDocumentos = false;
+      return;
+    }
 
-    // Tentativa de encontrar ID baseado no protocolo
-    if (this.declaracao?.protocolo === 'MAT-2025-001') {
+    // Buscar o ID do responsável baseado no CPF da declaração
+    let idResponsavel: number | null = null;
+
+    // Mapeamentos baseados no protocolo ou CPF
+    if (this.declaracao.protocolo === 'MAT-2025-001') {
       idResponsavel = 4; // Ana Silva Santos
-    } else if (this.declaracao?.protocolo === 'MAT-1756957725758') {
-      idResponsavel = 6; // Ana Costa Lima
+    } else if (this.declaracao.protocolo === 'MAT-1757642954961') {
+      idResponsavel = 7; // Ana Costa Lima
+    } else if (this.declaracao.cpfResponsavel === '111.222.655-44') {
+      idResponsavel = 7; // Ana Costa Lima
+    } else if (this.declaracao.cpfResponsavel === '444.444.444-44') {
+      idResponsavel = 4; // Ana Silva Santos
+    }
+
+    if (!idResponsavel) {
+      console.warn('Não foi possível determinar o ID do responsável para carregar documentos');
+      this.carregandoDocumentos = false;
+      this.documentosEnviados = [];
+      return;
     }
 
     this.carregandoDocumentos = true;
@@ -664,5 +680,97 @@ export class DetalheDeclaracaoPage implements OnInit {
       buttons: ['Fechar']
     });
     await alert.present();
+  }
+
+  /**
+   * Verifica se pode finalizar a matrícula
+   */
+  podeFinalizarMatricula(): boolean {
+    // Verifica se a matrícula foi iniciada e não foi finalizada ainda
+    return this.matriculaIniciada &&
+      this.declaracao?.status !== 'matriculado' &&
+      !this.processandoFinalizacao;
+  }
+
+  /**
+   * Finaliza a matrícula alterando o status para 'matriculado'
+   */
+  async finalizarMatricula() {
+    if (!this.declaracao?.id) {
+      await this.mostrarErro('Declaração não encontrada');
+      return;
+    }
+
+    const alert = await this.alertController.create({
+      header: 'Finalizar Matrícula',
+      message: 'Tem certeza que deseja finalizar a matrícula? Após finalizada, a declaração será removida da listagem e o aluno aparecerá na seção de turmas.',
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel'
+        },
+        {
+          text: 'Finalizar',
+          handler: () => {
+            this.processarFinalizacao();
+          }
+        }
+      ]
+    });
+
+    await alert.present();
+  }
+
+  /**
+   * Processa a finalização da matrícula
+   */
+  private async processarFinalizacao() {
+    this.processandoFinalizacao = true;
+
+    const loading = await this.loadingController.create({
+      message: 'Finalizando matrícula...'
+    });
+    await loading.present();
+
+    try {
+      // Chamada para o endpoint que atualiza o status para 'matriculado'
+      const response = await this.http.put(
+        `http://localhost:8080/api/turmas-alunos/declaracoes/${this.declaracao?.id}/finalizar`,
+        {}
+      ).toPromise();
+
+      await loading.dismiss();
+
+      const toast = await this.toastController.create({
+        message: 'Matrícula finalizada com sucesso! O aluno agora aparece na listagem de turmas.',
+        duration: 4000,
+        color: 'success',
+        position: 'top'
+      });
+      await toast.present();
+
+      // Atualizar status local
+      if (this.declaracao) {
+        this.declaracao.status = 'matriculado';
+      }
+
+      // Voltar para a listagem após 2 segundos
+      setTimeout(() => {
+        this.voltarLista();
+      }, 2000);
+
+    } catch (error: any) {
+      await loading.dismiss();
+      console.error('Erro ao finalizar matrícula:', error);
+
+      let mensagem = 'Erro ao finalizar matrícula';
+      if (error.error && error.error.message) {
+        mensagem = error.error.message;
+      }
+
+      await this.mostrarErro(mensagem);
+    } finally {
+      this.processandoFinalizacao = false;
+    }
   }
 }

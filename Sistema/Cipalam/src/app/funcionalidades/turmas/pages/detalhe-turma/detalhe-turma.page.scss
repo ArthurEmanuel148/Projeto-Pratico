@@ -1,0 +1,243 @@
+.container {
+    padding: 16px;
+}
+
+.header-info {
+    text-align: center;
+    margin-bottom: 24px;
+
+    h2 {
+        color: var(--ion-color-primary);
+        margin-bottom: 8px;
+    }
+
+    p {
+        color: var(--ion-color-medium);
+        margin: 0;
+    }
+}
+
+.loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 200px;
+
+    p {
+        margin-top: 16px;
+        color: var(--ion-color-medium);
+    }
+}
+
+.empty-state {
+    text-align: center;
+    padding: 40px 20px;
+
+    ion-icon {
+        color: var(--ion-color-medium);
+        margin-bottom: 16px;
+    }
+
+    h3 {
+        color: var(--ion-color-primary);
+        margin-bottom: 8px;
+    }
+
+    p {
+        color: var(--ion-color-medium);
+        margin: 0;
+    }
+}
+
+.alunos-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.aluno-card {
+    margin: 0;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.aluno-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+
+    .aluno-info {
+        flex: 1;
+
+        ion-card-title {
+            margin: 0 0 4px 0;
+            font-size: 1.1rem;
+        }
+
+        ion-card-subtitle {
+            margin: 0;
+            color: var(--ion-color-medium);
+        }
+    }
+
+    .aluno-badges {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        align-items: flex-end;
+    }
+}
+
+.aluno-details {
+    margin-bottom: 16px;
+}
+
+.detail-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+
+    ion-icon {
+        font-size: 16px;
+        min-width: 16px;
+    }
+
+    span {
+        font-size: 0.9rem;
+        color: var(--ion-color-step-600);
+    }
+}
+
+.aluno-actions {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+
+    ion-button {
+        --padding-start: 12px;
+        --padding-end: 12px;
+        height: 32px;
+        font-size: 0.85rem;
+    }
+}
+
+// Modal styles
+.modal-content {
+    --padding-start: 0;
+    --padding-end: 0;
+}
+
+.detalhes-aluno {
+    padding: 16px;
+}
+
+.section {
+    margin-bottom: 24px;
+
+    h3 {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--ion-color-primary);
+        margin-bottom: 16px;
+        font-size: 1.1rem;
+        border-bottom: 1px solid var(--ion-color-light);
+        padding-bottom: 8px;
+
+        ion-icon {
+            font-size: 20px;
+        }
+    }
+}
+
+.section-content {
+    padding-left: 28px;
+}
+
+.detail-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+
+    label {
+        font-weight: 500;
+        color: var(--ion-color-step-700);
+        min-width: 120px;
+    }
+
+    span {
+        flex: 1;
+        text-align: right;
+        color: var(--ion-color-step-600);
+    }
+}
+
+.documento-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px;
+    background: var(--ion-color-light);
+    border-radius: 8px;
+    margin-bottom: 8px;
+
+    .documento-info {
+        flex: 1;
+
+        strong {
+            display: block;
+            color: var(--ion-color-primary);
+            margin-bottom: 4px;
+        }
+
+        .documento-nome {
+            display: block;
+            font-size: 0.9rem;
+            color: var(--ion-color-step-600);
+            margin-bottom: 2px;
+        }
+
+        .documento-data {
+            font-size: 0.8rem;
+            color: var(--ion-color-medium);
+        }
+    }
+}
+
+// Responsivo
+@media (max-width: 768px) {
+    .aluno-header {
+        flex-direction: column;
+        gap: 12px;
+
+        .aluno-badges {
+            align-items: flex-start;
+            flex-direction: row;
+        }
+    }
+
+    .aluno-actions {
+        flex-direction: column;
+
+        ion-button {
+            justify-content: flex-start;
+        }
+    }
+
+    .detail-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+
+        label {
+            min-width: auto;
+        }
+
+        span {
+            text-align: left;
+        }
+    }
+}

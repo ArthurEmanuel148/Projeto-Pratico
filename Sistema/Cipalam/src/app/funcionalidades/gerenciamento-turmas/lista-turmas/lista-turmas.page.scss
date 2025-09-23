@@ -3,36 +3,36 @@
 // =============================================================================
 
 :host {
-  --form-max-width: 900px;
-  --section-spacing: 2.25rem;
-  --input-spacing: 1.5rem;
-  --border-radius: 12px;
-  --animation-duration: 0.3s;
-  
-  // Cores dinâmicas que funcionam em ambos os temas
-  --custom-primary: var(--ion-color-primary);
-  --custom-success: var(--ion-color-success);
-  --custom-danger: var(--ion-color-danger);
-  --custom-warning: var(--ion-color-warning);
-  
-  // Backgrounds e superfícies
-  --custom-background: var(--ion-background-color, #ffffff);
-  --custom-surface: var(--ion-item-background, #ffffff);
-  --custom-surface-variant: var(--ion-color-light, #f8f9fa);
-  
-  // Textos
-  --custom-text: var(--ion-text-color, #000000);
-  --custom-text-secondary: var(--ion-color-medium, #6c757d);
-  --custom-text-muted: var(--ion-color-medium-shade, #9e9e9e);
-  
-  // Bordas
-  --custom-border: var(--ion-color-light-shade, #e0e0e0);
-  --custom-border-focus: var(--ion-color-primary);
-  
-  // Sombras
-  --custom-shadow-light: 0 2px 8px rgba(0, 0, 0, 0.08);
-  --custom-shadow-medium: 0 4px 16px rgba(0, 0, 0, 0.12);
-  --custom-shadow-heavy: 0 8px 32px rgba(0, 0, 0, 0.16);
+    --form-max-width: 800px; // Diminuído de 900px para 800px
+    --section-spacing: 2.25rem;
+    --input-spacing: 1.5rem;
+    --border-radius: 12px;
+    --animation-duration: 0.3s;
+
+    // Cores dinâmicas que funcionam em ambos os temas
+    --custom-primary: var(--ion-color-primary);
+    --custom-success: var(--ion-color-success);
+    --custom-danger: var(--ion-color-danger);
+    --custom-warning: var(--ion-color-warning);
+
+    // Backgrounds e superfícies
+    --custom-background: var(--ion-background-color, #ffffff);
+    --custom-surface: var(--ion-item-background, #ffffff);
+    --custom-surface-variant: var(--ion-color-light, #f8f9fa);
+
+    // Textos
+    --custom-text: var(--ion-text-color, #000000);
+    --custom-text-secondary: var(--ion-color-medium, #6c757d);
+    --custom-text-muted: var(--ion-color-medium-shade, #9e9e9e);
+
+    // Bordas
+    --custom-border: var(--ion-color-light-shade, #e0e0e0);
+    --custom-border-focus: var(--ion-color-primary);
+
+    // Sombras
+    --custom-shadow-light: 0 2px 8px rgba(0, 0, 0, 0.08);
+    --custom-shadow-medium: 0 4px 16px rgba(0, 0, 0, 0.12);
+    --custom-shadow-heavy: 0 8px 32px rgba(0, 0, 0, 0.16);
 }
 
 // =============================================================================
@@ -40,61 +40,61 @@
 // =============================================================================
 
 .page-header {
-  background: transparent;
-  color: var(--custom-text);
-  padding: 0.25rem 1.5rem;
-  margin-bottom: 0.5rem;
-  position: relative;
-  overflow: hidden;
-  text-align: center; // Centralizando como nas páginas de funcionário
-
-  .header-content {
-    display: flex;
-    align-items: center;
-    justify-content: center; // Centralizando o conteúdo
+    background: transparent;
+    color: var(--custom-text);
+    padding: 0.25rem 1.5rem;
+    margin-bottom: 0.5rem;
     position: relative;
-    z-index: 1;
+    overflow: hidden;
+    text-align: center; // Centralizando como nas páginas de funcionário
 
-    .header-info {
-      flex: 1;
+    .header-content {
+        display: flex;
+        align-items: center;
+        justify-content: center; // Centralizando o conteúdo
+        position: relative;
+        z-index: 1;
 
-      h1 {
-        font-size: 1.75rem;
-        font-weight: 700;
-        margin: 0 0 0.5rem 0;
-        letter-spacing: -0.5px;
-        color: var(--custom-text);
-      }
+        .header-info {
+            flex: 1;
 
-      p {
-        font-size: 1rem;
-        opacity: 0.7;
-        margin: 0;
-        font-weight: 400;
-        color: var(--custom-text-secondary);
-      }
-    }
+            h1 {
+                font-size: 1.75rem;
+                font-weight: 700;
+                margin: 0 0 0.5rem 0;
+                letter-spacing: -0.5px;
+                color: var(--custom-text);
+            }
 
-    .header-illustration {
-      flex-shrink: 0;
-      margin-left: 1.25rem;
-
-      ion-icon {
-        font-size: 2rem;
-        color: white;
-        background: var(--custom-primary);
-        border-radius: 50%;
-        padding: 1rem;
-        box-shadow: 0 4px 12px rgba(var(--ion-color-primary-rgb), 0.3);
-        transition: all 0.3s ease;
-        
-        &:hover {
-          transform: scale(1.05);
-          box-shadow: 0 6px 20px rgba(var(--ion-color-primary-rgb), 0.4);
+            p {
+                font-size: 1rem;
+                opacity: 0.7;
+                margin: 0;
+                font-weight: 400;
+                color: var(--custom-text-secondary);
+            }
         }
-      }
+
+        .header-illustration {
+            flex-shrink: 0;
+            margin-left: 1.25rem;
+
+            ion-icon {
+                font-size: 2rem;
+                color: white;
+                background: var(--custom-primary);
+                border-radius: 50%;
+                padding: 1rem;
+                box-shadow: 0 4px 12px rgba(var(--ion-color-primary-rgb), 0.3);
+                transition: all 0.3s ease;
+
+                &:hover {
+                    transform: scale(1.05);
+                    box-shadow: 0 6px 20px rgba(var(--ion-color-primary-rgb), 0.4);
+                }
+            }
+        }
     }
-  }
 }
 
 // =============================================================================
@@ -103,47 +103,148 @@
 
 // Espaçamento lateral e layout responsivo
 ion-content {
-  --padding-start: 1rem;
-  --padding-end: 1rem;
+    --padding-start: 1rem;
+    --padding-end: 1rem;
+    
+    // Container principal com largura limitada
+    .content-container {
+        max-width: var(--form-max-width);
+        margin: 0 auto;
+        width: 100%;
+    }
 }
 
 // Cards com mais espaçamento
-.filtros-card {
-  margin: 0 0.5rem 1rem 0.5rem;
+// Pesquisa Estilo Gmail
+.pesquisa-gmail {
+    padding: 1rem 0;
+    width: 100%;
+    
+    .search-container {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        width: 100%;
+        
+        .gmail-search {
+            flex: 1;
+            --background: white;
+            --border-radius: 24px;
+            --box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+            --color: var(--custom-text);
+            --placeholder-color: var(--custom-text-muted);
+            --icon-color: var(--custom-text-muted);
+            --clear-button-color: var(--custom-text-muted);
+            margin: 0;
+            height: 48px;
+            
+            .searchbar-input-container {
+                border: 2px solid #e0e0e0;
+                border-radius: 24px;
+                background: white;
+                
+                .searchbar-input {
+                    padding: 0 20px;
+                    height: 44px;
+                    font-size: 16px;
+                }
+                
+                &:hover {
+                    border-color: #d0d0d0;
+                    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+                }
+            }
+            
+            &.searchbar-has-focus {
+                .searchbar-input-container {
+                    border-color: var(--custom-primary) !important;
+                    box-shadow: 0 4px 12px rgba(var(--custom-primary-rgb), 0.2) !important;
+                }
+            }
+        }
+        
+        .filtros-toggle {
+            --color: var(--custom-text-muted);
+            --border-radius: 50%;
+            width: 48px;
+            height: 48px;
+            border: 2px solid #e0e0e0;
+            background: white;
+            
+            &.ativo {
+                --color: var(--custom-primary);
+                --background: color-mix(in srgb, var(--custom-primary) 10%, white);
+                border-color: var(--custom-primary);
+            }
+            
+            &:hover {
+                border-color: #d0d0d0;
+                --background: var(--custom-surface-variant);
+            }
+            
+            ion-icon {
+                font-size: 20px;
+            }
+        }
+    }
+    
+    .filtros-inline {
+        margin-top: 16px;
+        animation: slideDown 0.3s ease-out;
+        
+        .filtro-chips {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            
+            ion-chip {
+                --border-radius: 20px;
+                cursor: pointer;
+                transition: all 0.2s ease;
+                height: 36px;
+                font-weight: 500;
+                
+                &:hover {
+                    transform: translateY(-1px);
+                    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+                }
+            }
+            
+            ion-button {
+                --color: var(--custom-text-muted);
+                height: 36px;
+                --border-radius: 18px;
+                --border-color: #e0e0e0;
+                
+                &:hover {
+                    --color: var(--ion-color-danger);
+                    --border-color: var(--ion-color-danger);
+                }
+            }
+        }
+    }
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 // Lista de turmas com espaçamento
 .turmas-lista {
-  padding: 0 0.5rem;
-  
-  .lista-header {
-    margin-bottom: 1rem;
-    padding: 0 0.5rem;
-  }
-}
+    padding: 0;
 
-.filtros-card {
-    margin-bottom: 1rem;
-
-    ion-card-title {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        font-size: 1.2rem;
-    }
-
-    ion-row {
-        align-items: end;
-    }
-
-    ion-item {
-        --padding-start: 0;
-        --inner-padding-end: 0;
-    }
-
-    ion-searchbar {
-        --background: var(--ion-color-light);
-        --border-radius: 8px;
+    .lista-header {
+        margin-bottom: 1rem;
+        padding: 0 1rem;
     }
 }
 
@@ -208,108 +309,231 @@ ion-content {
     }
 }
 
-.turma-card {
-    margin-bottom: 1rem;
+// =============================================================================
+// ESTILOS DA TABELA DE TURMAS
+// =============================================================================
+
+.tabela-container {
+    background: white;
     border-radius: 12px;
+    box-shadow: var(--custom-shadow-light);
     overflow: hidden;
+    border: 1px solid var(--custom-border);
+    width: 100%;
+    margin: 0;
+}
 
-    &:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        transition: all 0.3s ease;
-    }
-
-    ion-card-header {
-        padding-bottom: 0.5rem;
-
-        ion-card-subtitle {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-            margin-bottom: 0.5rem;
-        }
-
-        ion-card-title {
-            font-size: 1.3rem;
+.turmas-table {
+    width: 100%;
+    border-collapse: collapse;
+    
+    thead {
+        background: linear-gradient(135deg, 
+            color-mix(in srgb, var(--custom-primary) 8%, white), 
+            color-mix(in srgb, var(--custom-primary) 4%, white));
+        
+        th {
+            padding: 1rem;
+            text-align: left;
             font-weight: 600;
-            color: var(--ion-color-dark);
-        }
-    }
-
-    .turma-info {
-        .info-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 0.5rem;
-            padding: 0.25rem 0;
-
-            .label {
-                font-weight: 500;
-                color: var(--ion-color-medium);
-                font-size: 0.9rem;
+            color: var(--custom-text);
+            border-bottom: 2px solid var(--custom-border);
+            font-size: 0.9rem;
+            
+            &:first-child {
+                border-top-left-radius: 12px;
             }
-
-            .value {
-                font-weight: 600;
-                color: var(--ion-color-dark);
-
-                &.text-success {
-                    color: var(--ion-color-success);
-                }
-
-                &.text-danger {
-                    color: var(--ion-color-danger);
-                }
-            }
-        }
-
-        .vagas-progress {
-            margin: 1rem 0;
-
-            ion-progress-bar {
-                height: 8px;
-                border-radius: 4px;
-            }
-        }
-
-        .observacoes {
-            margin-top: 1rem;
-            padding-top: 1rem;
-            border-top: 1px solid var(--ion-color-light);
-
-            .label {
-                font-weight: 500;
-                color: var(--ion-color-medium);
-                font-size: 0.9rem;
-                display: block;
-                margin-bottom: 0.5rem;
-            }
-
-            p {
-                color: var(--ion-color-dark);
-                line-height: 1.4;
-                margin: 0;
-                font-style: italic;
+            
+            &:last-child {
+                border-top-right-radius: 12px;
+                text-align: center;
             }
         }
     }
+    
+    tbody {
+        .turma-row {
+            border-bottom: 1px solid var(--custom-border);
+            transition: all 0.2s ease;
+            
+            &:hover {
+                background: color-mix(in srgb, var(--custom-primary) 2%, white);
+            }
+            
+            &:last-child {
+                border-bottom: none;
+            }
+            
+            td {
+                padding: 1rem;
+                vertical-align: top;
+                
+                &.nome-turma {
+                    .turma-info {
+                        h3 {
+                            margin: 0;
+                            font-size: 1.1rem;
+                            font-weight: 600;
+                            color: var(--custom-text);
+                        }
+                    }
+                }
+                
+                &.horario {
+                    .horario-info {
+                        .label {
+                            font-weight: 600;
+                            color: var(--custom-text);
+                            font-size: 0.85rem;
+                        }
+                        
+                        font-size: 0.9rem;
+                        color: var(--custom-text-secondary);
+                        line-height: 1.4;
+                    }
+                }
+                
+                &.capacidade {
+                    .capacidade-info {
+                        display: flex;
+                        align-items: center;
+                        gap: 0.25rem;
+                        font-weight: 500;
+                        
+                        .atual {
+                            color: var(--custom-primary);
+                            font-weight: 600;
+                            font-size: 1.1rem;
+                        }
+                        
+                        .separador {
+                            color: var(--custom-text-muted);
+                            margin: 0 0.25rem;
+                        }
+                        
+                        .maxima {
+                            color: var(--custom-text-secondary);
+                        }
+                        
+                        .progress-bar {
+                            width: 60px;
+                            height: 6px;
+                            background: var(--custom-border);
+                            border-radius: 3px;
+                            overflow: hidden;
+                            margin-left: 0.5rem;
+                            
+                            .progress-fill {
+                                height: 100%;
+                                background: var(--custom-success);
+                                transition: width 0.3s ease;
+                                
+                                &.full {
+                                    background: var(--custom-warning);
+                                }
+                            }
+                        }
+                    }
+                }
+                
+                &.status {
+                    text-align: center;
+                }
+                
+                &.acoes {
+                    text-align: center;
+                    
+                    .acoes-container {
+                        display: flex;
+                        gap: 0.25rem;
+                        justify-content: center;
+                        align-items: center;
+                        
+                        ion-button {
+                            --border-radius: 6px;
+                            
+                            &[color="primary"] {
+                                --color: var(--custom-primary);
+                            }
+                            
+                            &[color="danger"] {
+                                --color: var(--custom-danger);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
 
-    .acoes-turma {
-        display: flex;
-        gap: 0.5rem;
-        margin-top: 1rem;
-        padding-top: 1rem;
-        border-top: 1px solid var(--ion-color-light);
-        flex-wrap: wrap;
+// Responsividade da tabela
+@media (max-width: 768px) {
+    .filtros-container {
+        margin: 0 0.25rem 1rem 0.25rem;
+        
+        .filtros-content {
+            padding: 1rem;
+            
+            .filtros-secundarios {
+                flex-direction: column;
+                gap: 1rem;
+                
+                .filtro-item {
+                    min-width: auto;
+                    
+                    .btn-limpar {
+                        width: 100%;
+                    }
+                }
+            }
+        }
+    }
+    
+    .tabela-container {
+        overflow-x: auto;
+        
+        .turmas-table {
+            min-width: 700px;
+            
+            th, td {
+                padding: 0.75rem 0.5rem;
+                font-size: 0.85rem;
+            }
+        }
+    }
+}
 
-        ion-button {
-            flex: 1;
-            min-width: 120px;
-
-            @media (max-width: 480px) {
-                flex: none;
-                width: 100%;
+@media (max-width: 480px) {
+    .filtros-container {
+        .filtros-header {
+            padding: 0.75rem 1rem;
+            
+            h2 {
+                font-size: 1rem;
+            }
+        }
+        
+        .filtros-content {
+            padding: 0.75rem;
+        }
+    }
+    
+    .tabela-container {
+        .turmas-table {
+            min-width: 600px;
+            
+            th, td {
+                padding: 0.5rem 0.25rem;
+                font-size: 0.8rem;
+            }
+            
+            .nome-turma .turma-info h3 {
+                font-size: 0.95rem;
+            }
+            
+            .capacidade-info .progress-bar {
+                width: 40px;
             }
         }
     }
@@ -330,39 +554,20 @@ ion-chip {
 // Responsividade
 @media (max-width: 768px) {
     .page-header {
-        h1 {
-            font-size: 1.8rem;
-
-            ion-icon {
-                font-size: 2rem;
+        .header-content {
+            flex-direction: column;
+            text-align: center;
+            
+            .header-info h1 {
+                font-size: 1.5rem;
             }
-        }
-    }
-
-    .filtros-card {
-        ion-card-content {
-            ion-row {
-                ion-col {
-                    &[size-md] {
-                        size: 12;
-                    }
+            
+            .header-illustration {
+                margin: 1rem 0 0 0;
+                
+                ion-icon {
+                    font-size: 2rem;
                 }
-            }
-        }
-    }
-}
-
-@media (max-width: 480px) {
-    .turma-card {
-        ion-card-header {
-            ion-card-subtitle {
-                ion-chip {
-                    font-size: 0.7rem;
-                }
-            }
-
-            ion-card-title {
-                font-size: 1.1rem;
             }
         }
     }

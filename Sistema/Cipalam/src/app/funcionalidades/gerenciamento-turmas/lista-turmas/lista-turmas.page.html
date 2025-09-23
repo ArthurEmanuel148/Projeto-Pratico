@@ -13,74 +13,86 @@
 </ion-header>
 
 <ion-content class="ion-padding-horizontal">
-    <!-- Header com título e descrição -->
-    <div class="page-header">
-        <div class="header-content">
-            <div class="header-info">
-                <h1>Gerenciamento de Turmas</h1>
-                <p>Gerencie todas as turmas do sistema. Você pode criar, editar e visualizar informações das turmas.</p>
+    <div class="content-container">
+        <!-- Header com título e descrição -->
+        <div class="page-header">
+            <div class="header-content">
+                <div class="header-info">
+                    <h1>Gerenciamento de Turmas</h1>
+                    <p>Gerencie todas as turmas do sistema. Você pode criar, editar e visualizar informações das turmas.</p>
+                </div>
+                <div class="header-illustration">
+                    <ion-icon name="library-outline"></ion-icon>
+                </div>
             </div>
-            <div class="header-illustration">
-                <ion-icon name="library-outline"></ion-icon>
+        </div>
+
+    <!-- Pesquisa Estilo Gmail -->
+    <div class="pesquisa-gmail">
+        <div class="search-container">
+            <ion-searchbar 
+                [(ngModel)]="filtroTexto" 
+                (ionInput)="aplicarFiltros()"
+                placeholder="Pesquisar turmas" 
+                debounce="300"
+                show-clear-button="focus"
+                class="gmail-search">
+            </ion-searchbar>
+            
+            <ion-button 
+                fill="clear" 
+                size="small" 
+                class="filtros-toggle"
+                (click)="toggleFiltrosAvancados()"
+                [class.ativo]="mostrarFiltrosAvancados">
+                <ion-icon name="options-outline"></ion-icon>
+            </ion-button>
+        </div>
+        
+        <!-- Filtros integrados -->
+        <div class="filtros-inline" *ngIf="mostrarFiltrosAvancados">
+            <div class="filtro-chips">
+                <ion-chip 
+                    [color]="filtroStatus === 'ativo' ? 'primary' : 'medium'"
+                    (click)="toggleFiltroStatus('ativo')"
+                    [outline]="filtroStatus !== 'ativo'">
+                    <ion-label>Ativas</ion-label>
+                </ion-chip>
+                
+                <ion-chip 
+                    [color]="filtroStatus === 'inativo' ? 'danger' : 'medium'"
+                    (click)="toggleFiltroStatus('inativo')"
+                    [outline]="filtroStatus !== 'inativo'">
+                    <ion-label>Inativas</ion-label>
+                </ion-chip>
+                
+                <ion-chip 
+                    [color]="filtroStatus === 'com-vagas' ? 'success' : 'medium'"
+                    (click)="toggleFiltroStatus('com-vagas')"
+                    [outline]="filtroStatus !== 'com-vagas'">
+                    <ion-label>Com Vagas</ion-label>
+                </ion-chip>
+                
+                <ion-chip 
+                    [color]="filtroStatus === 'lotada' ? 'warning' : 'medium'"
+                    (click)="toggleFiltroStatus('lotada')"
+                    [outline]="filtroStatus !== 'lotada'">
+                    <ion-label>Lotadas</ion-label>
+                </ion-chip>
+                
+                <ion-button 
+                    fill="clear" 
+                    size="small" 
+                    (click)="limparFiltros()"
+                    *ngIf="filtroStatus || filtroTexto">
+                    <ion-icon name="close" slot="start"></ion-icon>
+                    Limpar
+                </ion-button>
             </div>
         </div>
     </div>
 
-    <!-- Filtros -->
-    <ion-card class="filtros-card">
-        <ion-card-header>
-            <ion-card-title>
-                <ion-icon name="funnel-outline"></ion-icon>
-                Filtros
-            </ion-card-title>
-        </ion-card-header>
-        <ion-card-content>
-            <ion-row>
-                <ion-col size="12" size-md="6" size-lg="4">
-                    <ion-searchbar [(ngModel)]="filtroTexto" (ionInput)="aplicarFiltros()"
-                        placeholder="Buscar por nome ou observações..." debounce="300">
-                    </ion-searchbar>
-                </ion-col>
-
-                <ion-col size="6" size-md="3" size-lg="2">
-                    <ion-item>
-                        <ion-label>Período</ion-label>
-                        <ion-select [(ngModel)]="filtroPeriodo" (ionChange)="aplicarFiltros()" placeholder="Todos">
-                            <ion-select-option value="">Todos</ion-select-option>
-                            <ion-select-option value="MANHA">Manhã</ion-select-option>
-                            <ion-select-option value="TARDE">Tarde</ion-select-option>
-                            <ion-select-option value="NOITE">Noite</ion-select-option>
-                            <ion-select-option value="INTEGRAL">Integral</ion-select-option>
-                        </ion-select>
-                    </ion-item>
-                </ion-col>
-
-                <ion-col size="6" size-md="3" size-lg="2">
-                    <ion-item>
-                        <ion-label>Status</ion-label>
-                        <ion-select [(ngModel)]="filtroStatus" (ionChange)="aplicarFiltros()" placeholder="Todos">
-                            <ion-select-option value="">Todos</ion-select-option>
-                            <ion-select-option value="ativo">Ativas</ion-select-option>
-                            <ion-select-option value="inativo">Inativas</ion-select-option>
-                            <ion-select-option value="com-vagas">Com Vagas</ion-select-option>
-                            <ion-select-option value="lotada">Lotadas</ion-select-option>
-                        </ion-select>
-                    </ion-item>
-                </ion-col>
-            </ion-row>
-
-            <ion-row>
-                <ion-col size="12">
-                    <ion-button fill="clear" size="small" (click)="limparFiltros()">
-                        <ion-icon name="refresh" slot="start"></ion-icon>
-                        Limpar Filtros
-                    </ion-button>
-                </ion-col>
-            </ion-row>
-        </ion-card-content>
-    </ion-card>
-
-    <!-- Lista de Turmas -->
+    <!-- Lista de Turmas em Tabela -->
     <div class="turmas-lista">
         <div class="lista-header">
             <h2>
@@ -105,7 +117,7 @@
             <ion-icon name="school-outline" color="medium"></ion-icon>
             <h3>Nenhuma turma encontrada</h3>
             <p>
-                <span *ngIf="filtroTexto || filtroPeriodo || filtroStatus">
+                <span *ngIf="filtroTexto || filtroStatus">
                     Tente ajustar os filtros ou
                 </span>
                 <span *ngIf="podeGerenciarTurmas">
@@ -116,75 +128,75 @@
             </p>
         </div>
 
-        <!-- Cards das turmas -->
-        <ion-card *ngFor="let turma of turmasFiltradas" class="turma-card">
-            <ion-card-header>
-                <ion-card-subtitle>
-                    <ion-chip [color]="getCorPeriodo(turma.horarioInicio)" outline>
-                        <ion-icon name="time-outline"></ion-icon>
-                        <ion-label>{{ getPeriodoFormatado(turma) }}</ion-label>
-                    </ion-chip>
+        <!-- Tabela de Turmas -->
+        <div *ngIf="!loading && turmasFiltradas.length > 0" class="tabela-container">
+            <table class="turmas-table">
+                <thead>
+                    <tr>
+                        <th>Nome da Turma</th>
+                        <th>Horário</th>
+                        <th>Capacidade</th>
+                        <th>Status</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let turma of turmasFiltradas" class="turma-row">
+                        <td class="nome-turma">
+                            <div class="turma-info">
+                                <h3>{{ turma.nomeTurma }}</h3>
+                            </div>
+                        </td>
+                        
+                        <td class="horario">
+                            <div class="horario-info">
+                                <span class="label">Início:</span> {{ formatarHorario(turma.horarioInicio) }}
+                                <br>
+                                <span class="label">Fim:</span> {{ formatarHorario(turma.horarioFim) }}
+                            </div>
+                        </td>
+                        
+                        <td class="capacidade">
+                            <div class="capacidade-info">
+                                <span class="atual">{{ turma.capacidadeAtual }}</span>
+                                <span class="separador">/</span>
+                                <span class="maxima">{{ turma.capacidadeMaxima }}</span>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" 
+                                         [style.width.%]="(turma.capacidadeAtual / turma.capacidadeMaxima) * 100"
+                                         [class.full]="turma.capacidadeAtual === turma.capacidadeMaxima">
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                        
+                        <td class="status">
+                            <ion-chip [color]="turma.ativo ? 'success' : 'danger'" outline>
+                                <ion-icon [name]="turma.ativo ? 'checkmark-circle' : 'close-circle'"></ion-icon>
+                                <ion-label>{{ turma.ativo ? 'Ativa' : 'Inativa' }}</ion-label>
+                            </ion-chip>
+                        </td>
+                        
+                        <td class="acoes">
+                            <div class="acoes-container">
+                                <ion-button fill="clear" size="small" color="primary" (click)="verAlunosMatriculados(turma.id!)">
+                                    <ion-icon name="people" slot="icon-only"></ion-icon>
+                                </ion-button>
 
-                    <ion-chip [color]="getStatusVagas(turma).cor" outline>
-                        <ion-icon name="people-outline"></ion-icon>
-                        <ion-label>{{ getStatusVagas(turma).texto }}</ion-label>
-                    </ion-chip>
+                                <ion-button *ngIf="podeGerenciarTurmas" fill="clear" size="small" (click)="editarTurma(turma.id!)">
+                                    <ion-icon name="create" slot="icon-only"></ion-icon>
+                                </ion-button>
 
-                    <ion-chip [color]="turma.ativo ? 'success' : 'danger'" outline>
-                        <ion-icon [name]="turma.ativo ? 'checkmark-circle' : 'close-circle'"></ion-icon>
-                        <ion-label>{{ turma.ativo ? 'Ativa' : 'Inativa' }}</ion-label>
-                    </ion-chip>
-                </ion-card-subtitle>
-
-                <ion-card-title>{{ turma.nomeTurma }}</ion-card-title>
-            </ion-card-header>
-
-            <ion-card-content>
-                <div class="turma-info">
-                    <div class="info-row">
-                        <span class="label">Horário:</span>
-                        <span class="value">{{ turma.horarioInicio }} - {{ turma.horarioFim }}</span>
-                    </div>
-
-                    <div class="info-row">
-                        <span class="label">Capacidade:</span>
-                        <span class="value">{{ turma.capacidadeAtual }}/{{ turma.capacidadeMaxima }}</span>
-                    </div>
-
-                    <div class="info-row">
-                        <span class="label">Vagas Disponíveis:</span>
-                        <span class="value" [class.text-success]="turma.vagasDisponiveis! > 0"
-                            [class.text-danger]="turma.vagasDisponiveis === 0">
-                            {{ turma.vagasDisponiveis }}
-                        </span>
-                    </div>
-
-                    <div class="vagas-progress">
-                        <ion-progress-bar [value]="turma.capacidadeAtual / turma.capacidadeMaxima"
-                            [color]="getStatusVagas(turma).cor">
-                        </ion-progress-bar>
-                    </div>
-
-                    <div *ngIf="turma.observacoes" class="observacoes">
-                        <span class="label">Observações:</span>
-                        <p>{{ turma.observacoes }}</p>
-                    </div>
-                </div>
-
-                <!-- Ações -->
-                <div class="acoes-turma" *ngIf="podeGerenciarTurmas">
-                    <ion-button fill="outline" size="small" (click)="editarTurma(turma.id!)">
-                        <ion-icon name="create" slot="start"></ion-icon>
-                        Editar
-                    </ion-button>
-
-                    <ion-button fill="outline" size="small" color="danger" (click)="confirmarExclusao(turma)"
-                        [disabled]="turma.capacidadeAtual > 0">
-                        <ion-icon name="trash" slot="start"></ion-icon>
-                        Excluir
-                    </ion-button>
-                </div>
-            </ion-card-content>
-        </ion-card>
+                                <ion-button *ngIf="podeGerenciarTurmas" fill="clear" size="small" color="danger" 
+                                            (click)="confirmarExclusao(turma)" [disabled]="turma.capacidadeAtual > 0">
+                                    <ion-icon name="trash" slot="icon-only"></ion-icon>
+                                </ion-button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
     </div>
 </ion-content>

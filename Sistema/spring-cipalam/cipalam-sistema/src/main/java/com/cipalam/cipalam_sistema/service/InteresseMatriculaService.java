@@ -43,7 +43,10 @@ public class InteresseMatriculaService {
     }
 
     public List<InteresseMatricula> listarTodos() {
-        return interesseMatriculaRepository.findAll();
+        // Filtra apenas declarações que não estão matriculadas
+        return interesseMatriculaRepository.findAll().stream()
+                .filter(interesse -> interesse.getStatus() != InteresseMatricula.StatusInteresse.matriculado)
+                .collect(java.util.stream.Collectors.toList());
     }
 
     public Optional<InteresseMatricula> buscarPorId(Integer id) {
@@ -447,5 +450,46 @@ public class InteresseMatriculaService {
         map.put("nomeResponsavel", row[8]);
 
         return map;
+    }
+
+    /**
+     * Processa matrícula usando a procedure existente
+     */
+    public boolean processarMatricula(Integer idDeclaracao, Integer idTurma) {
+        try {
+            StoredProcedureQuery procedureQuery = entityManager
+                    .createStoredProcedureQuery("sp_IniciarMatricula")
+                    .registerStoredProcedureParameter("p_idDeclaracao", Integer.class, ParameterMode.IN)
+                    .registerStoredProcedureParameter("p_idTurma", Integer.class, ParameterMode.IN)
+                    .registerStoredProcedureParameter("p_idFuncionario", Integer.class, ParameterMode.IN)
+                    .setParameter("p_idDeclaracao", idDeclaracao)
+                    .setParameter("p_idTurma", idTurma)
+                    .setParameter("p_idFuncionario", 1); // ID do funcionário logado (ajustar conforme necessário)
+
+            procedureQuery.execute();
+            return true;
+        } catch (Exception e) {
+            throw new RuntimeException("Erro ao processar matrícula: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Atualiza status da declaração de interesse
+     */
+    public void atualizarStatus(Integer idDeclaracao, String novoStatus) {
+        try {
+            Optional<InteresseMatricula> interesse = interesseMatriculaRepository.findById(idDeclaracao);
+            if (interesse.isPresent()) {
+                InteresseMatricula declaracao = interesse.get();
+                // Converter string para enum
+                InteresseMatricula.StatusInteresse statusEnum = InteresseMatricula.StatusInteresse.valueOf(novoStatus);
+                declaracao.setStatus(statusEnum);
+                interesseMatriculaRepository.save(declaracao);
+            } else {
+                throw new RuntimeException("Declaração não encontrada com ID: " + idDeclaracao);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Erro ao atualizar status da declaração: " + e.getMessage());
+        }
     }
 }

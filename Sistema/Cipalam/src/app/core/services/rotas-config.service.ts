@@ -36,6 +36,12 @@ export class RotasConfigService {
         ['listarTiposDocumento', '/sistema/tipos-documento/lista'],
         ['cadastroTipoDocumento', '/sistema/tipos-documento/cadastro'],
 
+        // Turmas
+        ['turmas', '/sistema/turmas'],
+        ['listarTurmas', '/sistema/turmas/lista'],
+        ['cadastroTurma', '/sistema/turmas/cadastro'],
+        ['gestaoTurmasMatriculados', '/sistema/gestao-turmas'],
+
         // Alunos (futuras implementações)
         ['listaAlunos', '/sistema/alunos/lista'],
         ['cadastroAluno', '/sistema/alunos/cadastro'],

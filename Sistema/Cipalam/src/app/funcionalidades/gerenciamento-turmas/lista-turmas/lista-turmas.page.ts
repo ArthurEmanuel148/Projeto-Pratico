@@ -18,8 +18,8 @@ export class ListaTurmasPage implements OnInit {
 
     // Filtros
     filtroTexto = '';
-    filtroPeriodo = '';
     filtroStatus = '';
+    mostrarFiltrosAvancados = false;
 
     constructor(
         private turmaService: TurmaService,
@@ -113,12 +113,6 @@ export class ListaTurmasPage implements OnInit {
                 );
             }
 
-            // Filtro por período
-            if (this.filtroPeriodo) {
-                const periodoTurma = this.turmaService.getPeriodoDoDia(turma.horarioInicio);
-                passa = passa && periodoTurma.toLowerCase() === this.filtroPeriodo.toLowerCase();
-            }
-
             // Filtro por status
             if (this.filtroStatus) {
                 if (this.filtroStatus === 'ativo') {
@@ -136,9 +130,21 @@ export class ListaTurmasPage implements OnInit {
         });
     }
 
+    toggleFiltrosAvancados() {
+        this.mostrarFiltrosAvancados = !this.mostrarFiltrosAvancados;
+    }
+
+    toggleFiltroStatus(status: string) {
+        if (this.filtroStatus === status) {
+            this.filtroStatus = '';
+        } else {
+            this.filtroStatus = status;
+        }
+        this.aplicarFiltros();
+    }
+
     limparFiltros() {
         this.filtroTexto = '';
-        this.filtroPeriodo = '';
         this.filtroStatus = '';
         this.aplicarFiltros();
     }
@@ -216,6 +222,12 @@ export class ListaTurmasPage implements OnInit {
         return this.turmaService.getPeriodoDoDia(turma.horarioInicio);
     }
 
+    formatarHorario(horario: string): string {
+        if (!horario) return '';
+        // Remove segundos se existir (formato HH:MM:SS -> HH:MM)
+        return horario.split(':').slice(0, 2).join(':');
+    }
+
     async showToast(message: string, color: string = 'medium') {
         const toast = await this.toastController.create({
             message,
@@ -224,5 +236,12 @@ export class ListaTurmasPage implements OnInit {
             position: 'top'
         });
         toast.present();
+    }
+
+    /**
+     * Navega para a página de gestão de turmas para ver alunos matriculados
+     */
+    verAlunosMatriculados(turmaId: number) {
+        this.router.navigate(['/sistema/gestao-turmas/detalhe', turmaId]);
     }
 }

@@ -12,16 +12,26 @@ export enum QuemDeveFornencer {
     FAMILIA = 'FAMILIA'                   // Documento da família
 }
 
+// Escopo do documento (campo real do banco)
+export enum EscopoDocumento {
+    FAMILIA = 'FAMILIA',
+    ALUNO = 'ALUNO', 
+    TODOS_INTEGRANTES = 'TODOS_INTEGRANTES'
+}
+
 export interface TipoDocumento {
     idTipoDocumento?: number;
     nome: string;
     descricao?: string;
     modalidadeEntrega: ModalidadeEntrega; // ASSINADO ou ANEXADO
     quemDeveFornencer: QuemDeveFornencer; // RESPONSAVEL, ALUNO, TODOS_INTEGRANTES, FAMILIA
+    escopo: EscopoDocumento; // Campo real do banco: FAMILIA, ALUNO, TODOS_INTEGRANTES
     ativo: boolean;
     observacoes?: string;
     dataInclusao?: Date;
     dataAlteracao?: Date;
+    dataCriacao?: Date;
+    dataAtualizacao?: Date;
 }
 
 // Request para criar tipo de documento

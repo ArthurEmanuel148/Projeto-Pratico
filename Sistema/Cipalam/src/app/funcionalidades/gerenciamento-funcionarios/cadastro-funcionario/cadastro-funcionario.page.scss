@@ -238,11 +238,12 @@
     --padding-start: 16px;
     --inner-padding-end: 16px;
     --background: var(--custom-surface);
-    --min-height: 56px; // Reduzindo para ficar mais elegante
-    margin-bottom: 0.5rem;
+    --min-height: 64px; // Aumentando para dar mais espaço ao label
+    margin-bottom: 0.75rem; // Mais espaço entre campos
     border-radius: 8px;
-    min-height: 56px;
+    min-height: 64px;
     overflow: visible;
+    position: relative;
 
     ion-label {
       font-weight: 500;
@@ -252,6 +253,7 @@
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
         transform-origin: left top;
         color: #222 !important;
+        z-index: 10;
       }
     }
 
@@ -259,15 +261,18 @@
     &.item-has-focus ion-label[position="floating"],
     &.item-has-value ion-label[position="floating"],
     &.item-interactive.item-input ion-label[position="floating"] {
-      transform: translateY(-1rem) scale(0.75) !important;
-      color: #222 !important;
+      transform: translateY(-1.8rem) scale(0.75) !important;
+      color: #222 !important; // Sempre preto, não acompanha a cor do campo
       background: var(--custom-surface);
-      padding: 0 4px;
-      border-radius: 2px;
+      padding: 2px 6px;
+      border-radius: 4px;
+      z-index: 20;
+      position: relative;
+      margin-left: -2px;
     }
 
     ion-input[type="date"], ion-input, ion-datetime {
-      --padding-top: 12px;
+      --padding-top: 16px;
       --padding-bottom: 12px;
       --color: var(--custom-text);
       --placeholder-color: var(--custom-text-muted);
@@ -277,16 +282,47 @@
       // Estilo específico para campos de data
       &[type="date"] {
         cursor: pointer;
+        padding-right: 12px;
+        position: relative;
+        z-index: 1;
         
-        // Ícone do calendário personalizado
+        // Ocultar o ícone do calendário padrão inicialmente
         &::-webkit-calendar-picker-indicator {
-          color: var(--custom-primary);
+          position: absolute;
+          right: 8px;
+          top: 50%;
+          transform: translateY(-50%);
+          width: 20px;
+          height: 20px;
           cursor: pointer;
-          filter: brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(206deg) brightness(97%) contrast(97%);
+          opacity: 0.6;
+          background: transparent;
+          color: var(--custom-primary);
+          font-size: 16px;
+          
+          &:hover {
+            opacity: 1;
+          }
         }
         
-        &:focus::-webkit-calendar-picker-indicator {
-          color: var(--custom-primary);
+        // Para Firefox
+        &::-moz-calendar-picker-indicator {
+          position: absolute;
+          right: 8px;
+          top: 50%;
+          transform: translateY(-50%);
+          width: 20px;
+          height: 20px;
+          cursor: pointer;
+          opacity: 0.6;
+        }
+        
+        // Quando o campo tem foco ou valor, mostra o ícone
+        &:focus,
+        &:not(:placeholder-shown) {
+          &::-webkit-calendar-picker-indicator {
+            opacity: 1;
+          }
         }
       }
     }
@@ -294,28 +330,15 @@
     &.item-has-focus {
       --border-color: var(--custom-primary);
       --highlight-color-focused: var(--custom-primary);
+      
+      // Para campos de data com foco, ajustar o padding
+      ion-input[type="date"] {
+        --padding-top: 20px;
+      }
     }
 
     &.item-has-value {
       --border-color: var(--custom-success);
-    }
-
-    // Estilo para botões de calendário
-    ion-button[slot="end"] {
-      margin: 0;
-      --padding-start: 8px;
-      --padding-end: 8px;
-      height: 40px;
-      
-      ion-icon {
-        color: var(--custom-primary);
-        font-size: 20px;
-      }
-      
-      &:hover ion-icon {
-        color: var(--custom-primary);
-        opacity: 0.8;
-      }
     }
 
     // Hover effect

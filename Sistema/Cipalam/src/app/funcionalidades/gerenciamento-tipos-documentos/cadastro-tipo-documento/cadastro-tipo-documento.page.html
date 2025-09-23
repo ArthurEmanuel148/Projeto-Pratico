@@ -1,12 +1,4 @@
-<ion-header>
-    <ion-toolbar>
-        <ion-buttons slot="start">
-            <ion-back-button defaultHref="/sistema/tipos-documento/lista"></ion-back-button>
-        </ion-buttons>
-    </ion-toolbar>
-</ion-header>
-
-<ion-content [fullscreen]="true" class="cadastro-content" [scrollY]="true">
+<ion-content [fullscreen]="true" class="cadastro-content">
     <div class="form-container">
         <!-- Header da página -->
         <div class="page-header">
@@ -21,12 +13,13 @@
             </div>
         </div>
 
-        <form [formGroup]="tipoDocumentoForm" (ngSubmit)="salvar()">
+        <!-- Formulário -->
+        <form [formGroup]="tipoDocumentoForm" class="form-wrapper">
             <!-- Seção: Informações Básicas -->
             <div class="form-section">
                 <div class="section-header">
                     <div class="section-icon">
-                        <ion-icon name="informatin-circle-outline"></ion-icon>
+                        <ion-icon name="information-circle-outline"></ion-icon>
                     </div>
                     <div class="section-title">
                         <h2>Informações Básicas</h2>
@@ -35,10 +28,10 @@
                 </div>
 
                 <div class="form-group">
-                    <ion-item [class.item-valid]="nome?.valid && nome?.touched"
-                        [class.item-invalid]="nome?.invalid && nome?.touched">
-                        <ion-label position="stacked">Nome do Documento *</ion-label>
-                        <ion-input formControlName="nome" placeholder="Ex: Certidão de Nascimento" maxlength="100">
+                    <ion-item [class.item-has-value]="nome?.value" [class.item-has-focus]="nome?.value">
+                        <ion-label position="floating">Nome do Documento <ion-text color="danger">*</ion-text></ion-label>
+                        <ion-input formControlName="nome" placeholder="Ex: Certidão de Nascimento" maxlength="100"
+                            (ionFocus)="onInputFocus($event)" (ionBlur)="onInputBlur($event)">
                         </ion-input>
                     </ion-item>
                     <div *ngIf="nome?.invalid && nome?.touched" class="validation-message">
@@ -49,17 +42,16 @@
                         </ion-text>
                     </div>
 
-                    <ion-item>
-                        <ion-label position="stacked">Descrição</ion-label>
+                    <ion-item [class.item-has-value]="descricao?.value">
+                        <ion-label position="floating">Descrição</ion-label>
                         <ion-textarea formControlName="descricao"
                             placeholder="Descreva o propósito e quando este documento é necessário" rows="3"
-                            maxlength="500">
+                            maxlength="500" (ionFocus)="onInputFocus($event)" (ionBlur)="onInputBlur($event)">
                         </ion-textarea>
                     </ion-item>
                     <div *ngIf="descricao?.invalid && descricao?.touched" class="validation-message">
                         <ion-text color="danger">
-                            <span *ngIf="descricao?.errors?.['maxlength']">Descrição não pode ter mais de 500
-                                caracteres</span>
+                            <span *ngIf="descricao?.errors?.['maxlength']">Descrição não pode ter mais de 500 caracteres</span>
                         </ion-text>
                     </div>
                 </div>
@@ -79,7 +71,7 @@
 
                 <div class="form-group">
                     <div class="field-header">
-                        <h3>Modalidade de Entrega *</h3>
+                        <h3>Modalidade de Entrega <ion-text color="danger">*</ion-text></h3>
                         <p>Como o documento será entregue</p>
                     </div>
 
@@ -110,13 +102,12 @@
 
                     <div *ngIf="modalidadeEntrega?.invalid && modalidadeEntrega?.touched" class="validation-message">
                         <ion-text color="danger">
-                            <span *ngIf="modalidadeEntrega?.errors?.['required']">Modalidade de entrega é
-                                obrigatória</span>
+                            <span *ngIf="modalidadeEntrega?.errors?.['required']">Modalidade de entrega é obrigatória</span>
                         </ion-text>
                     </div>
 
                     <div class="field-header" style="margin-top: 24px;">
-                        <h3>Quem Deve Fornecer *</h3>
+                        <h3>Quem Deve Fornecer <ion-text color="danger">*</ion-text></h3>
                         <p>Quem deve fornecer este documento</p>
                     </div>
 
@@ -167,8 +158,7 @@
 
                     <div *ngIf="quemDeveFornencer?.invalid && quemDeveFornencer?.touched" class="validation-message">
                         <ion-text color="danger">
-                            <span *ngIf="quemDeveFornencer?.errors?.['required']">Definir quem deve fornecer é
-                                obrigatório</span>
+                            <span *ngIf="quemDeveFornencer?.errors?.['required']">Definir quem deve fornecer é obrigatório</span>
                         </ion-text>
                     </div>
                 </div>
@@ -197,25 +187,22 @@
                 </div>
             </div>
 
-            <!-- Ações do formulário -->
+            <!-- Botões de Ação -->
             <div class="form-actions">
-                <div class="actions-container">
-                    <ion-button type="button" fill="outline" class="cancel-button" (click)="cancelar()">
-                        <ion-icon name="close-outline" slot="start"></ion-icon>
-                        Cancelar
-                    </ion-button>
+                <ion-button fill="clear" color="medium" size="large" (click)="cancelar()">
+                    <ion-icon name="close-outline" slot="start"></ion-icon>
+                    Cancelar
+                </ion-button>
 
-                    <ion-button *ngIf="isEditMode" type="button" fill="outline" color="danger"
-                        (click)="confirmarExclusao()">
-                        <ion-icon name="trash-outline" slot="start"></ion-icon>
-                        Excluir
-                    </ion-button>
+                <ion-button *ngIf="isEditMode" fill="clear" color="danger" size="large" (click)="confirmarExclusao()">
+                    <ion-icon name="trash-outline" slot="start"></ion-icon>
+                    Excluir
+                </ion-button>
 
-                    <ion-button type="submit" class="submit-button" [disabled]="tipoDocumentoForm.invalid">
-                        <ion-icon name="checkmark-outline" slot="start"></ion-icon>
-                        {{ isEditMode ? 'Atualizar' : 'Criar' }}
-                    </ion-button>
-                </div>
+                <ion-button type="submit" color="primary" size="large" [disabled]="tipoDocumentoForm.invalid" (click)="salvar()">
+                    <ion-icon name="checkmark-outline" slot="start"></ion-icon>
+                    {{ isEditMode ? 'Atualizar' : 'Criar' }}
+                </ion-button>
             </div>
         </form>
     </div>

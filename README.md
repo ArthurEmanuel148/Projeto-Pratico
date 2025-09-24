@@ -1,297 +1,166 @@
-# Sistema CIPALAM - Gestão Educacional
+# Sistema CIPALAM - Plataforma Integrada de Gestão Educacional
 
 ## 📋 Visão Geral
-O Sistema CIPALAM é uma aplicação web desenvolvida em Angular/Ionic para gestão educacional, permitindo o gerenciamento de funcionários, matrículas e declarações de interesse.
+O Sistema CIPALAM é uma plataforma completa desenvolvida para o Instituto Cipalam, oferecendo gestão integrada de matrículas, documentos, funcionários e diversos processos administrativos. Com interface moderna e responsiva, o sistema facilita tanto o trabalho administrativo quanto o acesso às informações por responsáveis e alunos.
 
-## 🏗️ Arquitetura do Sistema
+## 🚀 Principais Funcionalidades
 
-### Frontend (Angular/Ionic)
-```
-src/app/
-├── core/                          # Serviços e modelos centrais
-│   ├── models/                    # Interfaces e modelos de dados
-│   │   └── funcionalidade-sistema.interface.ts
-│   └── services/                  # Serviços principais
-│       ├── auth.service.ts        # Autenticação e autorização
-│       ├── auth.guard.ts          # Guard de autenticação
-│       ├── role.guard.ts          # Guard de permissões
-│       ├── funcionario.service.ts # Gestão de funcionários
-│       ├── funcionalidades-sistema.service.ts # Sistema de funcionalidades
-│       ├── funcionalidades-usos.service.ts    # Tracking de uso
-│       ├── navigation.service.ts  # Navegação
-│       ├── menu-navigation.service.ts # Navegação de menu
-│       ├── api-config.service.ts  # Configuração de API
-│       └── rotas-config.service.ts # Configuração de rotas
-│
-├── funcionalidades/               # Funcionalidades específicas do sistema
-│   ├── autenticacao/             # Sistema de login
-│   │   └── login/
-│   ├── gerenciamento-funcionarios/ # Gestão de funcionários
-│   │   ├── cadastro-funcionario/
-│   │   ├── lista-funcionarios/
-│   │   ├── components/
-│   │   └── models/
-│   └── interesse-matricula/       # Declarações de interesse para matrícula
-│       ├── pages/
-│       ├── components/
-│       ├── models/
-│       └── services/
-│
-├── paineis/                       # Sistema de painéis (roteamento principal)
-│   ├── paineis-routing.module.ts  # Rotas: /sistema/*
-│   └── paineis.module.ts
-│
-└── painel-funcionario/            # Layout e componentes do painel
-    ├── components/
-    │   ├── painel-layout/         # Layout principal do sistema
-    │   └── user-info-header/      # Header com informações do usuário
-    └── painel-funcionario.page.*  # Página de dashboard
-```
+- **Gestão de Matrículas**: Processo completo desde manifestação de interesse até efetivação
+- **Gerenciamento de Documentos**: Upload, validação e aprovação de documentos por tipo de cota
+- **Administração de Funcionários**: Cadastro, permissões e controle de acesso
+- **Dashboard Personalizado**: Interface adaptativa com funcionalidades mais utilizadas
+- **Menu Dinâmico**: Navegação inteligente baseada em permissões de usuário
 
-### Backend (Spring Boot)
-```
-src/main/java/com/cipalam/cipalam_sistema/
-├── controller/                    # Controladores REST
-├── service/                       # Lógica de negócio
-├── repository/                    # Acesso a dados
-├── model/                         # Entidades JPA
-├── DTO/                          # Data Transfer Objects
-├── config/                       # Configurações
-├── security/                     # Segurança e autenticação
-└── enums/                        # Enumerações
-```
-
-## 🚀 Funcionalidades Principais
-
-### 1. **Sistema de Autenticação**
-- Login seguro com validação de credenciais
-- Controle de acesso baseado em perfis (admin, professor, funcionário, responsável)
-- Guards de proteção de rotas
-
-### 2. **Gestão de Funcionários**
-- Cadastro de novos funcionários
-- Listagem e busca de funcionários
-- Gerenciamento de permissões
-- Histórico de atividades
-
-### 3. **Declarações de Interesse para Matrícula**
-- Formulário público para declaração de interesse
-- Configuração de documentos por tipo de cota
-- Lista e gerenciamento de declarações
-- Workflow de aprovação
-
-### 4. **Dashboard Inteligente**
-- Funcionalidades mais utilizadas pelo usuário
-- Estatísticas de uso
-- Acesso rápido às principais funções
-- Histórico de navegação
-
-### 5. **Sistema de Menu Dinâmico**
-- Menu adaptável baseado em permissões
-- Menu superior com funcionalidades frequentes
-- Menu lateral hierárquico
-- Cache de funcionalidades para performance
-
-## 🛣️ Estrutura de Rotas
-
-### Rotas Públicas
-- `/login` - Página de autenticação
-- `/interesse-matricula` - Formulário público de interesse
-
-### Rotas do Sistema (Autenticadas)
-- `/sistema/dashboard` - Dashboard principal
-- `/sistema/funcionarios` - Gestão de funcionários
-  - `/sistema/funcionarios/lista` - Lista de funcionários
-  - `/sistema/funcionarios/cadastro` - Cadastro de funcionário
-- `/sistema/matriculas` - Gestão de matrículas
-  - `/sistema/matriculas/declaracoes-interesse` - Declarações de interesse
-  - `/sistema/matriculas/configuracao-documentos` - Config. documentos
-
-## 🔧 Tecnologias Utilizadas
+## � Stack Tecnológica
 
 ### Frontend
-- **Angular 19** - Framework principal
-- **Ionic 8** - Framework UI mobile-first
-- **TypeScript** - Linguagem de programação
-- **RxJS** - Programação reativa
-- **Capacitor** - Deploy mobile nativo
+- **Angular 19** com TypeScript 5.6.3
+- **Ionic 8** para interface responsiva e mobile-first
+- **Capacitor 7.2.0** para desenvolvimento mobile
+- **RxJS** para programação reativa
+- **SCSS** com tema personalizado e design system
 
 ### Backend
-- **Spring Boot** - Framework Java
-- **Spring Security** - Segurança e autenticação
-- **Spring Data JPA** - Persistência de dados
-- **MySQL** - Banco de dados relacional
+- **Spring Boot 3.4.9** com Java 21
+- **Spring Security** com JWT para autenticação
+- **Spring Data JPA** para acesso ao banco de dados
+- **MySQL 8.0+** como banco de dados relacional
 
-### Ferramentas de Desenvolvimento
-- **Angular CLI** - Ferramenta de linha de comando
-- **Ionic CLI** - Ferramenta Ionic
-- **Maven** - Gerenciamento de dependências Java
-- **Git** - Controle de versão
+## 💻 Instalação e Execução
 
-## 📦 Instalação e Execução
+### Requisitos
+- Node.js 18+ e NPM
+- Angular CLI e Ionic CLI
+- Java 21 JDK
+- MySQL 8.0+
+- XAMPP (opcional para desenvolvimento)
 
-### Pré-requisitos
-- Node.js 18+
-- Angular CLI
-- Ionic CLI
-- Java 17+
-- Maven
-- MySQL
+### Passos Rápidos
 
-### Frontend (Angular/Ionic)
-```bash
-cd Sistema/Cipalam
-npm install
-ionic serve
-```
+1. **Banco de Dados**
+   ```bash
+   /Applications/XAMPP/xamppfiles/bin/mysql -u root < Sistema/CIPALAM_COMPLETO_FINAL.sql
+   ```
 
-### Backend (Spring Boot)
-```bash
-cd Sistema/spring-cipalam/cipalam-sistema
-mvn spring-boot:run
-```
+2. **Backend**
+   ```bash
+   cd Sistema/spring-cipalam/cipalam-sistema/
+   ./mvnw spring-boot:run
+   ```
 
-### Banco de Dados
-1. Executar script: `Sistema/CIPALAM_COMPLETO_FINAL.sql`
-2. Configurar conexão em `application.properties`
+3. **Frontend**
+   ```bash
+   cd Sistema/Cipalam/
+   npm install
+   ionic serve
+   ```
 
-## 🎯 Fluxos Principais
+## 🔒 Segurança e Permissões
 
-### 1. Login e Acesso ao Sistema
-1. Usuário acessa `/login`
-2. Insere credenciais
-3. Sistema valida e redireciona para `/sistema/dashboard`
-4. Menu é construído baseado nas permissões do usuário
+O sistema implementa um controle de acesso granular com:
 
-### 2. Declaração de Interesse (Público)
-1. Responsável acessa `/interesse-matricula`
-2. Preenche formulário em etapas
-3. Submete declaração
-4. Sistema gera protocolo
+- **Autenticação JWT** com tokens de 24h e refresh tokens
+- **Perfis de Usuário**: Administrador, Funcionário, Professor, Responsável
+- **Permissões Específicas** para cada funcionalidade
+- **Menu Adaptável** que exibe apenas o que o usuário tem acesso
+- **Proteção de Rotas** no frontend e endpoints no backend
 
-### 3. Gestão de Funcionários (Interno)
-1. Funcionário autorizado acessa `/sistema/funcionarios`
-2. Pode listar, cadastrar ou editar funcionários
-3. Define permissões por funcionário
-4. Sistema registra auditoria
+## 🏗️ Arquitetura
 
-## 🔒 Sistema de Permissões
+O projeto segue a seguinte arquitetura:
 
-### Perfis de Usuário
-- **Admin**: Acesso total ao sistema
-- **Professor**: Acesso limitado a suas turmas
-- **Funcionário**: Acesso a funcionalidades específicas
-- **Responsável**: Acesso apenas ao dashboard específico
+### Frontend
+- **Core Module**: Serviços centralizados e modelos de dados
+- **Feature Modules**: Módulos por funcionalidade
+- **Componentes Reutilizáveis**: Design system consistente
+- **Interceptors**: Tratamento de tokens e erros
+- **Guards**: Proteção de rotas baseada em permissões
 
-### Permissões Granulares
-- `gerenciamentoFuncionarios`: Gestão de funcionários
-- `declaracoesInteresse`: Visualizar declarações
-- `configurarDocumentosCota`: Configurar documentos
-- `relatorios`: Gerar relatórios
-- `administracao`: Funções administrativas
+### Backend
+- **API REST**: Mais de 130 endpoints documentados
+- **Controladores**: Separação por domínio de negócio
+- **Serviços**: Encapsulamento da lógica de negócio
+- **Repositórios**: Acesso ao banco de dados
+- **DTOs**: Transferência segura de dados
 
-## 📊 Sistema de Monitoramento
+## � Versão Mobile
 
-### Tracking de Uso
-- Registro de funcionalidades mais utilizadas
-- Histórico de navegação por usuário
-- Cache inteligente de menu
-- Estatísticas de performance
+O sistema também visa um funcionamento otimizado para mobile:
 
-### Logs e Auditoria
-- Log de acessos
-- Auditoria de alterações
-- Monitoramento de erros
-- Relatórios de uso
+- Interface responsiva funcional em qualquer dispositivo
+- Capacitor para empacotamento em apps nativos
+- Experiência otimizada para telas menores
+- Funcionalidades offline para operações críticas
 
-## 🚦 Status do Projeto
+## 📊 Dashboard e Funcionalidades Inteligentes
 
-### ✅ Implementado
-- Sistema de autenticação completo
-- Layout responsivo
-- Gestão básica de funcionários
-- Declarações de interesse
-- Menu dinâmico
-- Sistema de permissões
+O sistema adapta-se ao uso de cada usuário:
 
-### 🔄 Em Desenvolvimento
-- Relatórios avançados
-- Integração mobile completa
-- Sistema de notificações
-- Backup automático
+- **Dashboard Personalizado**: Prioriza funcionalidades mais utilizadas
+- **Menu Inteligente**: Adapta-se ao histórico de navegação
 
-### 📋 Planejado
-- Dashboard analytics
-- API pública
-- Integração com outros sistemas
-- App mobile nativo
+## 🔄 Fluxos Principais
+
+### Processo de Matrícula
+1. **Manifestação de Interesse**: Formulário público acessível a responsáveis
+2. **Upload de Documentos**: Envio de documentação conforme tipo de cota
+3. **Validação**: Funcionários verificam a documentação enviada
+4. **Aprovação ou Rejeição**: Feedback para o responsável
+5. **Matrícula Efetiva**: Formalização do ingresso na instituição
+
+### Gestão de Documentos
+- Upload seguro com validação de tamanho e formato
+- Organização por tipo, família e ano
+- Sistema de aprovação com auditoria
+- Histórico completo de alterações
+
+## 👥 Usuários e Acessos
+
+| Perfil       | Funcionalidades Principais                           |
+|--------------|-----------------------------------------------------|
+| Administrador | Acesso completo ao sistema                          |
+| Funcionário  | Gestão de matrículas e aprovação de documentos      |
+| Professor    | Acesso a turmas e registro de informações acadêmicas |
+| Responsável  | Upload de documentos e acompanhamento do processo    |
+
+## � Acessando o Sistema
+
+### Credenciais de Teste
+
+| Usuário      | Senha      | Perfil       | Acesso                     |
+|--------------|------------|--------------|----------------------------|
+| `admin`      | `admin123` | Administrador | Acesso completo            |
+| `funcionario`| `func123`  | Funcionário  | Gestão de matrículas       |
+| `responsavel`| `resp123`  | Responsável  | Upload de documentos       |
+
+### URLs de Acesso
+- **Frontend**: http://localhost:8100
+- **Backend API**: http://localhost:8080/api
+- **Documentos**: /cipalam_documentos/
+
+## � Status do Projeto
+
+O sistema está em constante evolução, com funcionalidades sendo implementadas continuamente:
+
+- **✅ Implementado**: Autenticação, gestão de funcionários, processamento de matrículas
+- **🔄 Em Andamento**: Relatórios avançados, otimizações de performance
+- **📅 Planejado**: Módulo de acompanhamento acadêmico, app mobile nativo
+
+## 🤖 Desenvolvimento com IA
+
+Este projeto foi desenvolvido com auxílio do **GitHub Copilot**, utilizando inteligência artificial para:
+- Geração de código mais eficiente e consistente
+- Detecção de bugs e vulnerabilidades
+- Sugestões de melhores práticas
+- Aceleração do desenvolvimento
 
 ## 📝 Licença
 
-Este projeto está sob a licença MIT. Veja o arquivo `LICENSE` para mais detalhes.
+Este projeto está sob a licença MIT. Consulte o arquivo `LICENSE` para mais detalhes.
 
 ---
 
-**Desenvolvido com ❤️ para a comunidade educacional**
-- ✅ **Sistema de Biblioteca (Roda de Leitura)**
-- ✅ **Controle de Uniformes**
-- ✅ **Registro de Advertências**
-- ✅ **Planejamento de Aulas**
-- ✅ **Sistema de Permissões Baseado em Perfis**
+## 👥 Autores
 
-## 🚀 Como Executar
-
-### 1. Configuração do Banco de Dados
-
-Execute o arquivo SQL único e completo:
-
-```bash
-# Navegue até a pasta Sistema
-cd Sistema/
-
-# Execute no MySQL/phpMyAdmin o arquivo:
-CIPALAM_CORRIGIDO.sql
-```
-
-### 2. Backend (Spring Boot)
-
-```bash
-cd Sistema/spring-cipalam/cipalam-sistema/
-./mvnw spring-boot:run
-```
-
-### 3. Frontend (Angular/Ionic)
-
-```bash
-cd Sistema/Cipalam/
-npm install
-ionic serve
-```
-
-## 📊 Usuários de Teste
-
-| Usuário             | Senha      | Perfil      | Acesso               |
-| ------------------- | ---------- | ----------- | -------------------- |
-| `admin`             | `password` | Diretor     | Completo             |
-| `joao.professor`    | `password` | Professor   | Matrículas/Aulas     |
-| `maria.responsavel` | `password` | Responsável | Próprias informações |
-
-## 🎯 Funcionalidades Principais
-
-### Declaração de Interesse (Modernizada)
-
-- Interface step-by-step intuitiva
-- Configuração de documentos por tipo de cota
-- Lista otimizada para equipe pedagógica
-- Validações completas e feedback visual
-
-### Sistema de Permissões
-
-- Acesso baseado em perfis de usuário
-- Menu dinâmico conforme permissões
-- Proteção de rotas e funcionalidades
-
-## Autores
-
-| [<img loading="lazy" src="https://avatars.githubusercontent.com/u/161357772?v=4" width=115><br><sub>Arthur Emanuel</sub>](https://github.com/ArthurEmanuel148) | [<img loading="lazy" src="https://avatars.githubusercontent.com/u/141276601?v=4" width=115><br><sub>Ana Luíza</sub>](https://github.com/Lubina01) |
+| [<img loading="lazy" src="https://avatars.githubusercontent.com/u/161357772?v=4" width=80><br><sub>Arthur Emanuel</sub>](https://github.com/ArthurEmanuel148) | [<img loading="lazy" src="https://avatars.githubusercontent.com/u/141276601?v=4" width=80><br><sub>Ana Luíza</sub>](https://github.com/Lubina01) |
 | :------------------------------------------------------------------------------------------------------------------------------------------------------------: | :-----------------------------------------------------------------------------------------------------------------------------------------------: |

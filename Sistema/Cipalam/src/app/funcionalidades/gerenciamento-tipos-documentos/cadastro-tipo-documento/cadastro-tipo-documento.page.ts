@@ -4,7 +4,7 @@ import { FormBuilder, FormGroup, Validators, FormsModule, ReactiveFormsModule } 
 import { ActivatedRoute, Router } from '@angular/router';
 import { LoadingController, ToastController, AlertController, IonicModule } from '@ionic/angular';
 import { TipoDocumentoService } from '../../../core/services/tipo-documento.service';
-import { TipoDocumento, ModalidadeEntrega, QuemDeveFornencer } from '../../../core/models/tipo-documento.interface';
+import { TipoDocumento, QuemDeveFornencer } from '../../../core/models/tipo-documento.interface';
 
 @Component({
     selector: 'app-cadastro-tipo-documento',
@@ -19,15 +19,9 @@ export class CadastroTipoDocumentoPage implements OnInit {
     tipoDocumentoId?: number;
 
     // Estados para controle visual dos radio buttons
-    modalidadeSelecionada: string = '';
     quemForneceSelecionado: string = '';
 
     // Opções para os selects
-    modalidadesEntrega = [
-        { value: ModalidadeEntrega.ASSINADO, label: 'Assinado Digitalmente' },
-        { value: ModalidadeEntrega.ANEXADO, label: 'Anexado/Upload' }
-    ];
-
     quemDeveFornecerOpcoes = [
         { value: QuemDeveFornencer.RESPONSAVEL, label: 'Apenas Responsável' },
         { value: QuemDeveFornencer.ALUNO, label: 'Apenas Aluno' },
@@ -59,7 +53,7 @@ export class CadastroTipoDocumentoPage implements OnInit {
         this.tipoDocumentoForm = this.formBuilder.group({
             nome: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(100)]],
             descricao: ['', [Validators.maxLength(500)]],
-            modalidadeEntrega: ['', [Validators.required]], // ASSINADO ou ANEXADO
+            modalidadeEntrega: ['ANEXADO'], // Fixo como ANEXADO para todos os documentos
             quemDeveFornencer: ['', [Validators.required]], // RESPONSAVEL, ALUNO, TODOS_INTEGRANTES, FAMILIA
             ativo: [true]
         });
@@ -85,8 +79,7 @@ export class CadastroTipoDocumentoPage implements OnInit {
                     ativo: tipoDocumento.ativo
                 });
 
-                // Atualizar estados visuais
-                this.modalidadeSelecionada = tipoDocumento.modalidadeEntrega;
+                // Atualizar estados visuais (modalidade sempre ANEXADO)
                 this.quemForneceSelecionado = tipoDocumento.quemDeveFornencer;
             }
         } catch (error) {
@@ -191,24 +184,12 @@ export class CadastroTipoDocumentoPage implements OnInit {
     }
 
     // Métodos helper para templates
-    getModalidadeEntregaLabel(modalidade: ModalidadeEntrega): string {
-        const opcao = this.modalidadesEntrega.find(m => m.value === modalidade);
-        return opcao ? opcao.label : modalidade;
-    }
-
     getQuemDeveFornecerLabel(quem: QuemDeveFornencer): string {
         const opcao = this.quemDeveFornecerOpcoes.find(q => q.value === quem);
         return opcao ? opcao.label : quem;
     }
 
-    // Métodos para seleção manual dos radio buttons
-    selecionarModalidade(modalidade: string) {
-        console.log('Selecionando modalidade:', modalidade);
-        this.modalidadeSelecionada = modalidade;
-        this.tipoDocumentoForm.patchValue({ modalidadeEntrega: modalidade });
-        console.log('Valor atual do form:', this.tipoDocumentoForm.value);
-    }
-
+    // Método para seleção manual do radio button
     selecionarQuemFornece(quem: string) {
         console.log('Selecionando quem fornece:', quem);
         this.quemForneceSelecionado = quem;
@@ -218,31 +199,56 @@ export class CadastroTipoDocumentoPage implements OnInit {
 
     limparFormulario() {
         this.tipoDocumentoForm.reset();
-        this.modalidadeSelecionada = '';
         this.quemForneceSelecionado = '';
         this.tipoDocumentoForm.patchValue({
             nome: '',
             descricao: '',
-            modalidadeEntrega: '',
+            modalidadeEntrega: 'ANEXADO', // Sempre definir como ANEXADO
             quemDeveFornencer: '',
             ativo: true
         });
     }
 
-    // Métodos para focus/blur dos inputs (igual ao cadastro de funcionários)
-    onInputFocus(event: any) {
-        // Adiciona classe para estilização quando o campo recebe foco
-        const item = event.target.closest('ion-item');
-        if (item) {
-            item.classList.add('item-has-focus');
+    // Métodos para focus/blur dos inputs - mostra placeholder apenas após clicar
+    onInputFocus(event: any, placeholderText: string) {
+        const input = event.target;
+        const ionItem = input.closest('ion-item');
+        
+        // Força o label a subir imediatamente
+        if (ionItem) {
+            ionItem.classList.add('item-has-focus');
+            if (!input.value) {
+                ionItem.classList.add('item-has-placeholder');
+            }
+        }
+        
+        if (input && !input.value) {
+            // Define um valor temporário invisível para forçar o label a subir
+            input.value = ' ';
+            setTimeout(() => {
+                input.value = '';
+                input.placeholder = placeholderText;
+            }, 50);
         }
     }
 
     onInputBlur(event: any) {
-        // Remove classe quando o campo perde foco
-        const item = event.target.closest('ion-item');
-        if (item) {
-            item.classList.remove('item-has-focus');
+        const input = event.target;
+        const ionItem = input.closest('ion-item');
+        
+        if (input && !input.value.trim()) {
+            input.placeholder = '';
+            input.value = '';
+            if (ionItem) {
+                ionItem.classList.remove('item-has-placeholder');
+            }
+        }
+        
+        // Remove a classe de foco se não houver valor
+        if (ionItem && !input.value.trim()) {
+            setTimeout(() => {
+                ionItem.classList.remove('item-has-focus');
+            }, 100);
         }
     }
 

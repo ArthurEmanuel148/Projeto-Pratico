@@ -30,30 +30,17 @@
                 <div class="form-group">
                     <ion-item [class.item-has-value]="nome?.value" [class.item-has-focus]="nome?.value">
                         <ion-label position="floating">Nome do Documento <ion-text color="danger">*</ion-text></ion-label>
-                        <ion-input formControlName="nome" placeholder="Ex: Certidão de Nascimento" maxlength="100"
-                            (ionFocus)="onInputFocus($event)" (ionBlur)="onInputBlur($event)">
+                        <ion-input formControlName="nome" maxlength="100"
+                            (ionFocus)="onInputFocus($event, 'Ex: Certidão de Nascimento')" (ionBlur)="onInputBlur($event)">
                         </ion-input>
                     </ion-item>
-                    <div *ngIf="nome?.invalid && nome?.touched" class="validation-message">
-                        <ion-text color="danger">
-                            <span *ngIf="nome?.errors?.['required']">Nome é obrigatório</span>
-                            <span *ngIf="nome?.errors?.['minlength']">Nome deve ter pelo menos 3 caracteres</span>
-                            <span *ngIf="nome?.errors?.['maxlength']">Nome não pode ter mais de 100 caracteres</span>
-                        </ion-text>
-                    </div>
 
                     <ion-item [class.item-has-value]="descricao?.value">
                         <ion-label position="floating">Descrição</ion-label>
-                        <ion-textarea formControlName="descricao"
-                            placeholder="Descreva o propósito e quando este documento é necessário" rows="3"
-                            maxlength="500" (ionFocus)="onInputFocus($event)" (ionBlur)="onInputBlur($event)">
+                        <ion-textarea formControlName="descricao" rows="3"
+                            maxlength="500" (ionFocus)="onInputFocus($event, 'Descreva o propósito e quando este documento é necessário')" (ionBlur)="onInputBlur($event)">
                         </ion-textarea>
                     </ion-item>
-                    <div *ngIf="descricao?.invalid && descricao?.touched" class="validation-message">
-                        <ion-text color="danger">
-                            <span *ngIf="descricao?.errors?.['maxlength']">Descrição não pode ter mais de 500 caracteres</span>
-                        </ion-text>
-                    </div>
                 </div>
             </div>
 
@@ -71,42 +58,6 @@
 
                 <div class="form-group">
                     <div class="field-header">
-                        <h3>Modalidade de Entrega <ion-text color="danger">*</ion-text></h3>
-                        <p>Como o documento será entregue</p>
-                    </div>
-
-                    <div class="button-options">
-                        <ion-button [fill]="modalidadeSelecionada === 'ASSINADO' ? 'solid' : 'outline'"
-                            [color]="modalidadeSelecionada === 'ASSINADO' ? 'success' : 'light'"
-                            (click)="selecionarModalidade('ASSINADO')" class="option-button">
-                            <ion-icon name="document-text-outline"></ion-icon>
-                            <div class="button-content">
-                                <div class="button-title">Assinado</div>
-                                <div class="button-subtitle">Documento assinado digitalmente</div>
-                            </div>
-                        </ion-button>
-
-                        <ion-button [fill]="modalidadeSelecionada === 'ANEXADO' ? 'solid' : 'outline'"
-                            [color]="modalidadeSelecionada === 'ANEXADO' ? 'success' : 'light'"
-                            (click)="selecionarModalidade('ANEXADO')" class="option-button">
-                            <ion-icon name="attach-outline"></ion-icon>
-                            <div class="button-content">
-                                <div class="button-title">Anexado</div>
-                                <div class="button-subtitle">Arquivo enviado pelo usuário</div>
-                            </div>
-                        </ion-button>
-                    </div>
-
-                    <!-- Campo hidden para o FormControl -->
-                    <input type="hidden" formControlName="modalidadeEntrega" />
-
-                    <div *ngIf="modalidadeEntrega?.invalid && modalidadeEntrega?.touched" class="validation-message">
-                        <ion-text color="danger">
-                            <span *ngIf="modalidadeEntrega?.errors?.['required']">Modalidade de entrega é obrigatória</span>
-                        </ion-text>
-                    </div>
-
-                    <div class="field-header" style="margin-top: 24px;">
                         <h3>Quem Deve Fornecer <ion-text color="danger">*</ion-text></h3>
                         <p>Quem deve fornecer este documento</p>
                     </div>
@@ -155,12 +106,6 @@
 
                     <!-- Campo hidden para o FormControl -->
                     <input type="hidden" formControlName="quemDeveFornencer" />
-
-                    <div *ngIf="quemDeveFornencer?.invalid && quemDeveFornencer?.touched" class="validation-message">
-                        <ion-text color="danger">
-                            <span *ngIf="quemDeveFornencer?.errors?.['required']">Definir quem deve fornecer é obrigatório</span>
-                        </ion-text>
-                    </div>
                 </div>
             </div>
 
@@ -178,7 +123,7 @@
 
                 <div class="form-group">
                     <ion-item>
-                        <ion-checkbox formControlName="ativo" slot="start"></ion-checkbox>
+                        <ion-toggle formControlName="ativo" slot="start"></ion-toggle>
                         <ion-label>
                             <h3>Documento Ativo</h3>
                             <p>O documento está disponível para uso no sistema</p>

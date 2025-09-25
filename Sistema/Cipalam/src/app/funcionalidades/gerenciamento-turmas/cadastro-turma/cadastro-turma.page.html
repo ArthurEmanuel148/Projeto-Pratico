@@ -78,9 +78,9 @@
                         <ion-label position="floating">Observações</ion-label>
                         <ion-textarea formControlName="observacoes" (ionFocus)="onInputFocus($event, 'Observações adicionais sobre a turma (opcional)')" (ionBlur)="onInputBlur($event)" rows="3" autoGrow="true"></ion-textarea>
                     </ion-item>
-                    <ion-item lines="none">
-                        <ion-checkbox formControlName="ativo" color="success"></ion-checkbox>
-                        <ion-label class="checkbox-label">
+                    <ion-item class="turma-ativa-item">
+                        <ion-toggle formControlName="ativo" slot="start"></ion-toggle>
+                        <ion-label>
                             <h3>Turma Ativa</h3>
                             <p>Marque se a turma estará disponível para matrículas</p>
                         </ion-label>
@@ -94,7 +94,7 @@
                     <ion-icon name="close-outline" slot="start"></ion-icon>
                     Cancelar
                 </ion-button>
-                <ion-button type="button" color="success" size="large" [disabled]="cadastroForm.invalid" (click)="onSubmit()">
+                <ion-button type="button" color="danger" size="large" [disabled]="cadastroForm.invalid" (click)="onSubmit()">
                     <ion-icon name="checkmark-outline" slot="start"></ion-icon>
                     {{ isEditMode ? 'Atualizar Turma' : 'Cadastrar Turma' }}
                 </ion-button>

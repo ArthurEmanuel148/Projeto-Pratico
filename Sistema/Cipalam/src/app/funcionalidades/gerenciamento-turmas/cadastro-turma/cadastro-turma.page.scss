@@ -315,6 +315,89 @@ ion-textarea {
 }
 
 // =============================================================================
+// TOGGLE CUSTOMIZADO (CHAVINHA)
+// =============================================================================
+
+.checkbox-label {
+  h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 0 0 0.25rem 0;
+    color: var(--custom-text) !important;
+  }
+
+  p {
+    font-size: 0.875rem;
+    color: var(--custom-text-secondary) !important;
+    margin: 0;
+    opacity: 0.8;
+  }
+}
+
+// Item específico para Turma Ativa - borda sutil igual observações
+.turma-ativa-item {
+  --border-width: 1px;
+  --border-color: var(--custom-border);
+  --border-radius: 8px;
+  --padding-start: 16px;
+  --inner-padding-end: 16px;
+  --background: var(--custom-surface);
+  --min-height: 56px;
+  margin-bottom: 0.5rem;
+  border-radius: 8px;
+  min-height: 56px;
+  overflow: visible;
+  
+  // Mantém bordas sutis em todos os estados
+  &:hover {
+    --border-color: var(--custom-border);
+    transform: none;
+  }
+  
+  &.item-has-focus {
+    --border-color: var(--custom-border);
+    --highlight-color-focused: transparent;
+  }
+  
+  &.item-has-value {
+    --border-color: var(--custom-border);
+  }
+
+  ion-label {
+    h3 {
+      font-size: 1rem;
+      font-weight: 600;
+      margin: 0 0 0.25rem 0;
+      color: var(--custom-text) !important;
+    }
+
+    p {
+      font-size: 0.875rem;
+      color: var(--custom-text-secondary) !important;
+      margin: 0;
+      opacity: 0.8;
+    }
+  }
+}
+
+ion-toggle {
+  --background: #e0e0e0;
+  --background-checked: #cc0000;
+  --handle-background: white;
+  --handle-background-checked: white;
+  margin-right: 1rem;
+}
+
+ion-checkbox {
+  --size: 20px;
+  --checkmark-color: white;
+  --background-checked: var(--ion-color-success);
+  --border-color: var(--custom-border);
+  --border-color-checked: var(--ion-color-success);
+  margin-left: 1rem;
+}
+
+// =============================================================================
 // BOTÕES DE AÇÃO
 // =============================================================================
 

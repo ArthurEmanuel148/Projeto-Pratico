@@ -215,10 +215,10 @@
     --padding-start: 16px;
     --inner-padding-end: 16px;
     --background: var(--custom-surface);
-    --min-height: 64px;
+    --min-height: 52px; // Reduzido de 64px para 52px
     margin-bottom: 0.75rem;
     border-radius: 8px;
-    min-height: 64px;
+    min-height: 52px; // Reduzido de 64px para 52px
     overflow: visible;
     position: relative;
 
@@ -237,7 +237,7 @@
     &.item-has-focus ion-label[position="floating"],
     &.item-has-value ion-label[position="floating"],
     &.item-interactive.item-input ion-label[position="floating"] {
-      transform: translateY(-1.8rem) scale(0.75) !important;
+      transform: translateY(-1.6rem) scale(0.75) !important; // Reduzido de -1.8rem para -1.6rem
       color: #222 !important;
       background: var(--custom-surface);
       padding: 2px 6px;
@@ -248,11 +248,11 @@
     }
 
     ion-input, ion-textarea {
-      --padding-top: 16px;
-      --padding-bottom: 12px;
+      --padding-top: 12px; // Reduzido de 16px para 12px
+      --padding-bottom: 10px; // Reduzido de 12px para 10px
       --color: var(--custom-text);
       --placeholder-color: var(--custom-text-muted);
-      min-height: 44px;
+      min-height: 36px; // Reduzido de 44px para 36px
       line-height: 1.4;
     }
 
@@ -278,6 +278,7 @@
 
 .field-header {
   margin: 1.5rem 0 1rem 0;
+  text-align: center; // Centraliza o texto
   
   h3 {
     font-size: 1.1rem;
@@ -295,14 +296,18 @@
 
 .button-options {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-columns: 1fr 1fr; // 2 colunas fixas para layout 2x2
   gap: 1rem;
   margin: 1rem 0;
+  max-width: 600px; // Limita a largura para não ficar muito esticado
+  margin-left: auto;
+  margin-right: auto; // Centraliza o grid
   
   .option-button {
     --border-radius: 12px;
     --padding-start: 1rem;
     --padding-end: 1rem;
+    --border-width: 0px; // Remove a borda sempre
     height: auto;
     padding: 1rem;
     display: flex;
@@ -310,10 +315,16 @@
     align-items: center;
     text-align: center;
     transition: all 0.2s ease;
+    box-shadow: var(--custom-shadow-light); // Sempre com sombra (aparência elevada)
     
     &:hover {
       transform: translateY(-2px);
       box-shadow: var(--custom-shadow-medium);
+    }
+    
+    // Botão selecionado apenas muda a cor, mantém aparência elevada
+    &[fill="solid"] {
+      box-shadow: var(--custom-shadow-light); // Mesma sombra
     }
     
     ion-icon {
@@ -451,7 +462,8 @@
   }
   
   .button-options {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr 1fr; // Mantém 2x2 em tablets
+    gap: 0.75rem; // Gap menor em telas médias
   }
   
   .form-actions {
@@ -475,6 +487,12 @@
   
   .form-section {
     margin-bottom: 1rem;
+  }
+  
+  // Apenas em mobile muito pequeno volta para 1 coluna
+  .button-options {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
   }
 }
 
@@ -531,5 +549,34 @@ ion-item:hover {
   
   ion-item {
     border: 2px solid var(--custom-border);
+  }
+}
+
+// =============================================================================
+// TOGGLE CUSTOMIZADO (CHAVINHA)
+// =============================================================================
+
+ion-toggle {
+  --background: #e0e0e0;
+  --background-checked: #cc0000;
+  --handle-background: white;
+  --handle-background-checked: white;
+  margin-right: 1rem;
+}
+
+// Bordas sutis nos campos com toggle - igual aos outros campos
+ion-item {
+  &:hover {
+    --border-color: var(--custom-border);
+    transform: none;
+  }
+  
+  &.item-has-focus {
+    --border-color: var(--custom-border);
+    --highlight-color-focused: transparent;
+  }
+  
+  &.item-has-value {
+    --border-color: var(--custom-border);
   }
 }

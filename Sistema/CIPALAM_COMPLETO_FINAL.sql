@@ -1098,35 +1098,6 @@ VALUES
         'menu',
         4
     ),
-    (
-        'alunos',
-        'Alunos',
-        'Menu de alunos',
-        'people-circle-outline',
-        NULL,
-        'menu',
-        5
-    ),
-    (
-        'administracao',
-        'Administração',
-        'Menu de administração',
-        'cog-outline',
-        NULL,
-        'menu',
-        9
-    ),
-
--- Documentos (menu principal)
-(
-    'aprovacaoDocumentos',
-    'Documentos',
-    'Gerenciar e aprovar documentos enviados',
-    'document-text-outline',
-    NULL,
-    'menu',
-    6
-),
 
 -- Ações de funcionários
 (
@@ -1655,93 +1626,96 @@ INSERT INTO
 VALUES (2, '2023-01-01');
 
 -- Permissões para João
+-- Garantindo que as permissões sejam adicionadas somente se a funcionalidade existe
 INSERT INTO
     `tbPermissao` (
         `tbPessoa_idPessoa`,
         `tbFuncionalidade_idFuncionalidade`,
         `temPermissao`
     )
-VALUES (
-        2,
-        (
-            SELECT idFuncionalidade
-            FROM tbFuncionalidade
-            WHERE
-                chave = 'painel'
-        ),
-        TRUE
-    ),
-    (
-        2,
-        (
-            SELECT idFuncionalidade
-            FROM tbFuncionalidade
-            WHERE
-                chave = 'matriculas'
-        ),
-        TRUE
-    ),
-    (
-        2,
-        (
-            SELECT idFuncionalidade
-            FROM tbFuncionalidade
-            WHERE
-                chave = 'declaracoesInteresse'
-        ),
-        TRUE
-    ),
-    (
-        2,
-        (
-            SELECT idFuncionalidade
-            FROM tbFuncionalidade
-            WHERE
-                chave = 'declaracaoInteresse'
-        ),
-        TRUE
-    ),
-    (
-        2,
-        (
-            SELECT idFuncionalidade
-            FROM tbFuncionalidade
-            WHERE
-                chave = 'aprovacaoDocumentos'
-        ),
-        TRUE
-    ),
-    -- Permissões para Turmas
-    (
-        2,
-        (
-            SELECT idFuncionalidade
-            FROM tbFuncionalidade
-            WHERE
-                chave = 'turmas'
-        ),
-        TRUE
-    ),
-    (
-        2,
-        (
-            SELECT idFuncionalidade
-            FROM tbFuncionalidade
-            WHERE
-                chave = 'listarTurmas'
-        ),
-        TRUE
-    ),
-    (
-        2,
-        (
-            SELECT idFuncionalidade
-            FROM tbFuncionalidade
-            WHERE
-                chave = 'cadastroTurma'
-        ),
-        TRUE
-    );
+SELECT 2, idFuncionalidade, TRUE
+FROM tbFuncionalidade
+WHERE
+    chave = 'painel';
+-- Inserção segura para 'matriculas'
+INSERT INTO
+    `tbPermissao` (
+        `tbPessoa_idPessoa`,
+        `tbFuncionalidade_idFuncionalidade`,
+        `temPermissao`
+    )
+SELECT 2, idFuncionalidade, TRUE
+FROM tbFuncionalidade
+WHERE
+    chave = 'matriculas';
+
+-- Inserção segura para 'declaracoesInteresse'
+INSERT INTO
+    `tbPermissao` (
+        `tbPessoa_idPessoa`,
+        `tbFuncionalidade_idFuncionalidade`,
+        `temPermissao`
+    )
+SELECT 2, idFuncionalidade, TRUE
+FROM tbFuncionalidade
+WHERE
+    chave = 'declaracoesInteresse';
+-- Inserção segura para 'declaracaoInteresse'
+INSERT INTO
+    `tbPermissao` (
+        `tbPessoa_idPessoa`,
+        `tbFuncionalidade_idFuncionalidade`,
+        `temPermissao`
+    )
+SELECT 2, idFuncionalidade, TRUE
+FROM tbFuncionalidade
+WHERE
+    chave = 'declaracaoInteresse';
+-- Inserção segura para 'aprovacaoDocumentos'
+INSERT INTO
+    `tbPermissao` (
+        `tbPessoa_idPessoa`,
+        `tbFuncionalidade_idFuncionalidade`,
+        `temPermissao`
+    )
+SELECT 2, idFuncionalidade, TRUE
+FROM tbFuncionalidade
+WHERE
+    chave = 'aprovacaoDocumentos';
+-- Inserção segura para 'turmas'
+INSERT INTO
+    `tbPermissao` (
+        `tbPessoa_idPessoa`,
+        `tbFuncionalidade_idFuncionalidade`,
+        `temPermissao`
+    )
+SELECT 2, idFuncionalidade, TRUE
+FROM tbFuncionalidade
+WHERE
+    chave = 'turmas';
+-- Inserção segura para 'listarTurmas'
+INSERT INTO
+    `tbPermissao` (
+        `tbPessoa_idPessoa`,
+        `tbFuncionalidade_idFuncionalidade`,
+        `temPermissao`
+    )
+SELECT 2, idFuncionalidade, TRUE
+FROM tbFuncionalidade
+WHERE
+    chave = 'listarTurmas';
+
+-- Inserção segura para 'cadastroTurma'
+INSERT INTO
+    `tbPermissao` (
+        `tbPessoa_idPessoa`,
+        `tbFuncionalidade_idFuncionalidade`,
+        `temPermissao`
+    )
+SELECT 2, idFuncionalidade, TRUE
+FROM tbFuncionalidade
+WHERE
+    chave = 'cadastroTurma';
 
 -- Família para Maria
 INSERT INTO
@@ -2193,255 +2167,17 @@ VALUES
 -- VIEWS ÚTEIS - ATUALIZADAS PARA NOVO FLUXO
 -- ===================================================================
 
--- View para documentos pendentes do responsável (por família)
-CREATE VIEW vw_documentos_familia AS
-SELECT
-    dm.idDocumentoMatricula,
-    dm.tbFamilia_idtbFamilia as idFamilia,
-    td.idTipoDocumento,
-    td.nome as nomeDocumento,
-    td.descricao,
-    td.tipoProcessamento,
-    td.escopo,
-    dm.status,
-    dm.caminhoArquivo,
-    dm.dataEnvio,
-    dm.dataAprovacao,
-    dm.motivoRejeicao,
-    dm.observacoes,
-    -- Dados da família
-    f.tipoCota as cotaFamilia,
-    p.NmPessoa as nomeResponsavel,
-    p.CpfPessoa as cpfResponsavel
-FROM
-    tbDocumentoMatricula dm
-    INNER JOIN tbTipoDocumento td ON dm.tbTipoDocumento_idTipoDocumento = td.idTipoDocumento
-    INNER JOIN tbFamilia f ON dm.tbFamilia_idtbFamilia = f.idtbFamilia
-    INNER JOIN tbResponsavel r ON f.idtbFamilia = r.tbFamilia_idtbFamilia
-    INNER JOIN tbPessoa p ON r.tbPessoa_idPessoa = p.idPessoa
-WHERE
-    dm.tbFamilia_idtbFamilia IS NOT NULL
-ORDER BY td.nome;
+-- REMOVIDA: vw_documentos_familia (backend usa consultas SQL diretas)
 
--- View para documentos pendentes do aluno (individuais)
-CREATE VIEW vw_documentos_aluno AS
-SELECT
-    dm.idDocumentoMatricula,
-    dm.tbAluno_idPessoa as idAluno,
-    td.idTipoDocumento,
-    td.nome as nomeDocumento,
-    td.descricao,
-    td.tipoProcessamento,
-    td.escopo,
-    dm.status,
-    dm.caminhoArquivo,
-    dm.dataEnvio,
-    dm.dataAprovacao,
-    dm.motivoRejeicao,
-    dm.observacoes,
-    -- Dados do aluno
-    pa.NmPessoa as nomeAluno,
-    pa.CpfPessoa as cpfAluno,
-    a.matricula,
-    -- Dados da família
-    f.tipoCota as cotaFamilia,
-    pr.NmPessoa as nomeResponsavel,
-    pr.CpfPessoa as cpfResponsavel
-FROM
-    tbDocumentoMatricula dm
-    INNER JOIN tbTipoDocumento td ON dm.tbTipoDocumento_idTipoDocumento = td.idTipoDocumento
-    INNER JOIN tbAluno a ON dm.tbAluno_idPessoa = a.tbPessoa_idPessoa
-    INNER JOIN tbPessoa pa ON a.tbPessoa_idPessoa = pa.idPessoa
-    INNER JOIN tbFamilia f ON a.tbFamilia_idtbFamilia = f.idtbFamilia
-    INNER JOIN tbResponsavel r ON f.idtbFamilia = r.tbFamilia_idtbFamilia
-    INNER JOIN tbPessoa pr ON r.tbPessoa_idPessoa = pr.idPessoa
-WHERE
-    dm.tbAluno_idPessoa IS NOT NULL
-ORDER BY td.nome;
+-- REMOVIDA: vw_documentos_aluno (backend usa consultas SQL diretas)
 
--- View consolidada: Todos os documentos por responsável
-CREATE VIEW vw_documentos_responsavel AS
-SELECT
-    'familia' as tipoDocumento,
-    dm.idDocumentoMatricula,
-    dm.tbFamilia_idtbFamilia as idReferencia,
-    NULL as idAluno,
-    td.nome as nomeDocumento,
-    td.descricao,
-    td.escopo,
-    dm.status,
-    dm.dataEnvio,
-    dm.dataAprovacao,
-    pr.idPessoa as idResponsavel,
-    pr.NmPessoa as nomeResponsavel,
-    pr.CpfPessoa as cpfResponsavel,
-    NULL as nomeAluno,
-    f.tipoCota
-FROM
-    tbDocumentoMatricula dm
-    INNER JOIN tbTipoDocumento td ON dm.tbTipoDocumento_idTipoDocumento = td.idTipoDocumento
-    INNER JOIN tbFamilia f ON dm.tbFamilia_idtbFamilia = f.idtbFamilia
-    INNER JOIN tbResponsavel r ON f.idtbFamilia = r.tbFamilia_idtbFamilia
-    INNER JOIN tbPessoa pr ON r.tbPessoa_idPessoa = pr.idPessoa
-WHERE
-    dm.tbFamilia_idtbFamilia IS NOT NULL
-UNION ALL
-SELECT
-    'aluno' as tipoDocumento,
-    dm.idDocumentoMatricula,
-    dm.tbAluno_idPessoa as idReferencia,
-    a.tbPessoa_idPessoa as idAluno,
-    td.nome as nomeDocumento,
-    td.descricao,
-    td.escopo,
-    dm.status,
-    dm.dataEnvio,
-    dm.dataAprovacao,
-    pr.idPessoa as idResponsavel,
-    pr.NmPessoa as nomeResponsavel,
-    pr.CpfPessoa as cpfResponsavel,
-    pa.NmPessoa as nomeAluno,
-    f.tipoCota
-FROM
-    tbDocumentoMatricula dm
-    INNER JOIN tbTipoDocumento td ON dm.tbTipoDocumento_idTipoDocumento = td.idTipoDocumento
-    INNER JOIN tbAluno a ON dm.tbAluno_idPessoa = a.tbPessoa_idPessoa
-    INNER JOIN tbPessoa pa ON a.tbPessoa_idPessoa = pa.idPessoa
-    INNER JOIN tbFamilia f ON a.tbFamilia_idtbFamilia = f.idtbFamilia
-    INNER JOIN tbResponsavel r ON f.idtbFamilia = r.tbFamilia_idtbFamilia
-    INNER JOIN tbPessoa pr ON r.tbPessoa_idPessoa = pr.idPessoa
-WHERE
-    dm.tbAluno_idPessoa IS NOT NULL
-ORDER BY
-    idResponsavel,
-    tipoDocumento,
-    nomeDocumento;
+-- REMOVIDA: vw_documentos_responsavel (backend usa consultas SQL diretas)
 
--- View para turmas disponíveis - CORRIGIDA SEM PERÍODO
-CREATE VIEW vw_turmas_disponiveis AS
-SELECT
-    t.idtbTurma,
-    t.nomeTurma,
-    t.capacidadeMaxima,
-    t.capacidadeAtual,
-    (
-        t.capacidadeMaxima - t.capacidadeAtual
-    ) as vagasDisponiveis,
-    t.horarioInicio,
-    t.horarioFim,
-    CASE
-        WHEN TIME(t.horarioInicio) >= '06:00:00'
-        AND TIME(t.horarioInicio) < '12:00:00' THEN 'Manhã'
-        WHEN TIME(t.horarioInicio) >= '12:00:00'
-        AND TIME(t.horarioInicio) < '18:00:00' THEN 'Tarde'
-        WHEN TIME(t.horarioInicio) >= '18:00:00'
-        OR TIME(t.horarioInicio) < '06:00:00' THEN 'Noite'
-        WHEN TIME(t.horarioInicio) >= '06:00:00'
-        AND TIME(t.horarioFim) >= '17:00:00' THEN 'Integral'
-        ELSE 'Não definido'
-    END as periodoFormatado,
-    t.ativo,
-    t.observacoes,
-    CASE
-        WHEN (
-            t.capacidadeMaxima - t.capacidadeAtual
-        ) > 0 THEN TRUE
-        ELSE FALSE
-    END as temVagas
-FROM tbTurma t
-WHERE
-    t.ativo = TRUE
-ORDER BY t.horarioInicio, t.nomeTurma;
+-- REMOVIDA: vw_turmas_disponiveis (redundante com vw_turmas_para_selecao)
 
--- View para declarações completas
-CREATE VIEW vw_declaracoes_completas AS
-SELECT
-    i.id,
-    i.protocolo,
-    i.etapaAtual,
-    i.nomeResponsavel,
-    i.cpfResponsavel,
-    i.emailResponsavel,
-    i.telefoneResponsavel,
-    i.responsavelExistente,
-    i.responsavelAutenticado,
-    i.nomeAluno,
-    i.dataNascimentoAluno,
-    i.cpfAluno,
-    i.escolaAluno,
-    i.municipioEscola,
-    i.ufEscola,
-    CONCAT(
-        COALESCE(i.logradouro, ''),
-        ', ',
-        COALESCE(i.numero, ''),
-        ' - ',
-        COALESCE(i.bairro, ''),
-        ', ',
-        COALESCE(i.cidade, ''),
-        '/',
-        COALESCE(i.uf, ''),
-        ' - ',
-        COALESCE(i.cep, '')
-    ) as enderecoCompleto,
-    i.tipoCota,
-    i.status,
-    i.dataInicio,
-    i.dataEnvio,
-    i.dataInicioMatricula,
-    i.ultimaAtualizacao,
-    i.observacoesResponsavel,
-    i.dadosFamiliaresPreenchidos,
-    CASE
-        WHEN i.etapaAtual = 'dados_responsavel' THEN 'Dados do Responsável'
-        WHEN i.etapaAtual = 'verificacao_responsavel' THEN 'Verificação do Responsável'
-        WHEN i.etapaAtual = 'dados_aluno' THEN 'Dados do Aluno'
-        WHEN i.etapaAtual = 'dados_familiares' THEN 'Dados Familiares'
-        WHEN i.etapaAtual = 'endereco_familia' THEN 'Endereço da Família'
-        WHEN i.etapaAtual = 'observacoes' THEN 'Observações'
-        WHEN i.etapaAtual = 'revisao' THEN 'Revisão'
-        WHEN i.etapaAtual = 'finalizado' THEN 'Finalizado'
-        ELSE i.etapaAtual
-    END as etapaFormatada,
-    CASE
-        WHEN i.tipoCota = 'livre' THEN 'Vaga Livre'
-        WHEN i.tipoCota = 'economica' THEN 'Cota Econômica'
-        WHEN i.tipoCota = 'funcionario' THEN 'Cota Funcionário'
-        ELSE COALESCE(i.tipoCota, 'Não definido')
-    END as tipoVagaFormatado,
-    CASE
-        WHEN i.status = 'em_preenchimento' THEN 'Em Preenchimento'
-        WHEN i.status = 'interesse_declarado' THEN 'Interesse Declarado'
-        WHEN i.status = 'matricula_iniciada' THEN 'Matrícula Iniciada'
-        WHEN i.status = 'documentos_pendentes' THEN 'Documentos Pendentes'
-        WHEN i.status = 'documentos_completos' THEN 'Documentos Completos'
-        WHEN i.status = 'matricula_aprovada' THEN 'Matrícula Aprovada'
-        WHEN i.status = 'matricula_cancelada' THEN 'Matrícula Cancelada'
-        ELSE i.status
-    END as statusFormatado,
-    p.NmPessoa as funcionarioResponsavel,
-    -- Calcular progresso baseado na etapa atual
-    CASE
-        WHEN i.etapaAtual = 'dados_responsavel' THEN 10
-        WHEN i.etapaAtual = 'verificacao_responsavel' THEN 20
-        WHEN i.etapaAtual = 'dados_aluno' THEN 30
-        WHEN i.etapaAtual = 'dados_familiares' THEN 50
-        WHEN i.etapaAtual = 'endereco_familia' THEN 70
-        WHEN i.etapaAtual = 'observacoes' THEN 85
-        WHEN i.etapaAtual = 'revisao' THEN 95
-        WHEN i.etapaAtual = 'finalizado' THEN 100
-        ELSE 0
-    END as progressoPercentual
-FROM
-    tbInteresseMatricula i
-    LEFT JOIN tbPessoa p ON i.funcionarioResponsavel_idPessoa = p.idPessoa;
+-- REMOVIDA: vw_declaracoes_completas (backend usa consultas SQL diretas)
 
--- View para configuração de documentos
-CREATE VIEW vw_configuracao_documentos AS
-SELECT c.tipoCota, c.documentosObrigatorios, c.dataAtualizacao, p.NmPessoa as funcionarioResponsavel
-FROM
-    tbConfiguracaoDocumentosCota c
-    LEFT JOIN tbPessoa p ON c.funcionarioResponsavel_idPessoa = p.idPessoa;
+-- REMOVIDA: vw_configuracao_documentos (backend usa consultas SQL diretas)
 
 -- ===================================================================
 -- VIEW PARA IDENTIFICAÇÃO DE USUÁRIOS NO LOGIN
@@ -2486,248 +2222,13 @@ WHERE
 -- VIEWS E PROCEDURES ADICIONAIS PARA INICIAR MATRÍCULA
 -- ===================================================================
 
--- View para turmas disponíveis com seleção - CORRIGIDA SEM PERÍODO
-CREATE VIEW vw_turmas_para_selecao AS
-SELECT
-    t.idtbTurma,
-    t.nomeTurma,
-    t.horarioInicio,
-    t.horarioFim,
-    t.capacidadeMaxima,
-    t.capacidadeAtual,
-    (
-        t.capacidadeMaxima - t.capacidadeAtual
-    ) as vagasDisponiveis,
-    CASE
-        WHEN t.capacidadeAtual < t.capacidadeMaxima THEN TRUE
-        ELSE FALSE
-    END as temVagas,
-    CONCAT(
-        t.nomeTurma,
-        ' - ',
-        CASE
-            WHEN TIME(t.horarioInicio) >= '06:00:00'
-            AND TIME(t.horarioInicio) < '12:00:00' THEN 'Manhã'
-            WHEN TIME(t.horarioInicio) >= '12:00:00'
-            AND TIME(t.horarioInicio) < '18:00:00' THEN 'Tarde'
-            WHEN TIME(t.horarioInicio) >= '18:00:00'
-            OR TIME(t.horarioInicio) < '06:00:00' THEN 'Noite'
-            WHEN TIME(t.horarioInicio) >= '06:00:00'
-            AND TIME(t.horarioFim) >= '17:00:00' THEN 'Integral'
-            ELSE 'Não definido'
-        END,
-        ' (',
-        (
-            t.capacidadeMaxima - t.capacidadeAtual
-        ),
-        ' vagas)'
-    ) as descricaoCompleta
-FROM tbTurma t
-WHERE
-    t.ativo = TRUE
-ORDER BY t.horarioInicio, t.nomeTurma;
+-- REMOVIDA: vw_turmas_para_selecao (backend usa consultas SQL diretas)
 
--- View para declarações prontas para iniciar matrícula
-CREATE VIEW vw_declaracoes_para_matricula AS
-SELECT
-    i.id,
-    i.protocolo,
-    i.nomeResponsavel,
-    i.cpfResponsavel,
-    i.telefoneResponsavel,
-    i.emailResponsavel,
-    i.nomeAluno,
-    i.dataNascimentoAluno,
-    i.tipoCota,
-    i.escolaAluno,
-    i.municipioEscola,
-    i.ufEscola,
-    i.numeroIntegrantes,
-    i.observacoesResponsavel,
-    i.dataEnvio,
-    DATEDIFF(CURDATE(), i.dataEnvio) as diasAguardando,
-    CASE i.tipoCota
-        WHEN 'livre' THEN 'Cota Livre'
-        WHEN 'economica' THEN 'Cota Econômica'
-        WHEN 'funcionario' THEN 'Cota Funcionário'
-        ELSE 'Não Informado'
-    END as tipoCotaDescricao,
-    -- Verificar se responsável já existe no sistema
-    CASE
-        WHEN p.idPessoa IS NOT NULL THEN TRUE
-        ELSE FALSE
-    END as responsavelJaExiste,
-    p.idPessoa as idPessoaResponsavel
-FROM
-    tbInteresseMatricula i
-    LEFT JOIN tbPessoa p ON p.CpfPessoa = i.cpfResponsavel
-WHERE
-    i.status = 'interesse_declarado'
-    AND i.etapaAtual = 'finalizado'
-ORDER BY i.dataEnvio ASC;
+-- REMOVIDA: vw_declaracoes_para_matricula (redundante com vw_iniciar_matricula)
 
--- View específica para interface de iniciar matrícula
-CREATE VIEW vw_iniciar_matricula AS
-SELECT
-    i.id as idDeclaracao,
-    i.protocolo,
-    i.nomeResponsavel,
-    i.cpfResponsavel,
-    i.telefoneResponsavel,
-    i.emailResponsavel,
-    i.nomeAluno,
-    YEAR(CURDATE()) - YEAR(i.dataNascimentoAluno) - (
-        DATE_FORMAT(CURDATE(), '%m%d') < DATE_FORMAT(i.dataNascimentoAluno, '%m%d')
-    ) as idadeAluno,
-    i.dataNascimentoAluno,
-    i.tipoCota,
-    i.escolaAluno,
-    i.municipioEscola,
-    i.ufEscola,
-    i.numeroIntegrantes,
-    i.observacoesResponsavel,
-    i.dataEnvio,
-    DATEDIFF(CURDATE(), i.dataEnvio) as diasAguardando,
-    CASE i.tipoCota
-        WHEN 'livre' THEN 'Cota Livre'
-        WHEN 'economica' THEN 'Cota Econômica'
-        WHEN 'funcionario' THEN 'Cota Funcionário'
-        ELSE 'Não Informado'
-    END as tipoCotaDescricao,
-    -- Verificar se responsável já existe no sistema
-    CASE
-        WHEN p.idPessoa IS NOT NULL THEN TRUE
-        ELSE FALSE
-    END as responsavelJaExiste,
-    p.idPessoa as idPessoaResponsavel,
-    -- Informações de endereço resumidas
-    CONCAT(
-        COALESCE(i.logradouro, ''),
-        ', ',
-        COALESCE(i.numero, 'S/N'),
-        ' - ',
-        COALESCE(i.bairro, ''),
-        ', ',
-        COALESCE(i.cidade, ''),
-        ' - ',
-        COALESCE(i.uf, '')
-    ) as enderecoCompleto,
-    -- Informações de documentos que serão necessários (simplificado)
-    (
-        SELECT JSON_EXTRACT(
-                cdc.documentosObrigatorios, '$'
-            )
-        FROM
-            tbConfiguracaoDocumentosCota cdc
-        WHERE
-            cdc.tipoCota = UPPER(i.tipoCota)
-    ) as documentosNecessarios,
-    -- Contagem de documentos que serão criados
-    (
-        SELECT JSON_LENGTH(cdc.documentosObrigatorios)
-        FROM
-            tbConfiguracaoDocumentosCota cdc
-        WHERE
-            cdc.tipoCota = UPPER(i.tipoCota)
-    ) as totalDocumentosNecessarios
-FROM
-    tbInteresseMatricula i
-    LEFT JOIN tbPessoa p ON p.CpfPessoa = i.cpfResponsavel
-WHERE
-    i.status = 'interesse_declarado'
-    AND i.etapaAtual = 'finalizado'
-ORDER BY i.dataEnvio ASC;
+-- REMOVIDA: vw_iniciar_matricula (backend usa consultas SQL diretas)
 
--- View para detalhamento completo de uma declaração específica
-CREATE VIEW vw_detalhamento_declaracao AS
-SELECT
-    i.id,
-    i.protocolo,
-    i.status,
-    i.etapaAtual,
-    -- Dados do Responsável
-    i.nomeResponsavel,
-    i.cpfResponsavel,
-    i.dataNascimentoResponsavel,
-    i.telefoneResponsavel,
-    i.emailResponsavel,
-    i.rendaResponsavel,
-    i.profissaoResponsavel,
-    -- Dados do Aluno
-    i.nomeAluno,
-    i.dataNascimentoAluno,
-    i.cpfAluno,
-    YEAR(CURDATE()) - YEAR(i.dataNascimentoAluno) - (
-        DATE_FORMAT(CURDATE(), '%m%d') < DATE_FORMAT(i.dataNascimentoAluno, '%m%d')
-    ) as idadeAluno,
-    i.escolaAluno,
-    i.codigoInepEscola,
-    i.municipioEscola,
-    i.ufEscola,
-    -- Endereço
-    i.cep,
-    i.logradouro,
-    i.numero,
-    i.complemento,
-    i.bairro,
-    i.cidade,
-    i.uf,
-    i.codigoIbgeCidade,
-    i.pontoReferencia,
-    CONCAT(
-        COALESCE(i.logradouro, ''),
-        ', ',
-        COALESCE(i.numero, 'S/N'),
-        CASE
-            WHEN i.complemento IS NOT NULL
-            AND i.complemento != '' THEN CONCAT(', ', i.complemento)
-            ELSE ''
-        END,
-        ' - ',
-        COALESCE(i.bairro, ''),
-        ', ',
-        COALESCE(i.cidade, ''),
-        ' - ',
-        COALESCE(i.uf, ''),
-        ' - CEP: ',
-        COALESCE(i.cep, 'Não informado')
-    ) as enderecoCompleto,
-    -- Tipo de Cota
-    i.tipoCota,
-    CASE i.tipoCota
-        WHEN 'livre' THEN 'Cota Livre'
-        WHEN 'economica' THEN 'Cota Econômica'
-        WHEN 'funcionario' THEN 'Cota Funcionário'
-        ELSE 'Não Informado'
-    END as tipoCotaDescricao,
-    -- Informações Familiares
-    i.numeroIntegrantes,
-    i.integrantesRenda,
-    i.dadosFamiliaresPreenchidos,
-    -- Horários e Observações
-    i.horariosSelecionados,
-    i.observacoesResponsavel,
-    -- Controle de Datas
-    i.dataInicio,
-    i.dataEnvio,
-    i.ultimaAtualizacao,
-    DATEDIFF(CURDATE(), i.dataEnvio) as diasAguardando,
-    -- Verificações do Sistema
-    CASE
-        WHEN p.idPessoa IS NOT NULL THEN TRUE
-        ELSE FALSE
-    END as responsavelJaExiste,
-    p.idPessoa as idPessoaResponsavel,
-    p.NmPessoa as nomeResponsavelSistema,
-    -- Status para ação de iniciar matrícula
-    CASE
-        WHEN i.status = 'interesse_declarado'
-        AND i.etapaAtual = 'finalizado' THEN TRUE
-        ELSE FALSE
-    END as podeIniciarMatricula
-FROM
-    tbInteresseMatricula i
-    LEFT JOIN tbPessoa p ON p.CpfPessoa = i.cpfResponsavel;
+-- REMOVIDA: vw_detalhamento_declaracao (backend usa consultas SQL diretas)
 
 -- ===================================================================
 -- PROCEDURES ADICIONAIS
@@ -3029,9 +2530,10 @@ WHERE
 
 -- Verificar turmas disponíveis
 SELECT 'Turmas disponíveis' as item, COUNT(*) as quantidade
-FROM vw_turmas_para_selecao
+FROM tbTurma
 WHERE
-    temVagas = TRUE;
+    ativo = TRUE
+    AND capacidadeAtual < capacidadeMaxima;
 
 -- Verificar documentos por cota
 SELECT 'Configurações de documentos' as item, COUNT(*) as quantidade
@@ -3079,12 +2581,12 @@ SELECT
 
 **1. FUNCIONÁRIO CONSULTA DECLARAÇÕES**:
 ```sql
-SELECT * FROM vw_declaracoes_para_matricula;
+SELECT * FROM vw_iniciar_matricula;
 ```
 
 **2. FUNCIONÁRIO CONSULTA TURMAS DISPONÍVEIS**:
 ```sql
-SELECT * FROM vw_turmas_para_selecao WHERE temVagas = TRUE;
+SELECT * FROM tbTurma WHERE ativo = TRUE AND capacidadeAtual < capacidadeMaxima;
 ```
 
 **3. VALIDAR SE PODE INICIAR**:
@@ -3142,14 +2644,12 @@ c) Documentos que serão criados por cota
 - Processo automático na procedure sp_IniciarMatricula
 
 5. **VIEWS EXISTENTES MANTIDAS**:
-- vw_turmas_para_selecao: Turmas com vagas
-- vw_declaracoes_para_matricula: Declarações prontas
-- vw_iniciar_matricula: Nova view específica
+-- VIEWS REMOVIDAS: Sistema usa consultas SQL diretas nas tabelas
 
 FLUXO DE USO DA NOVA FUNCIONALIDADE:
 
 1. Funcionário acessa menu "Matrículas" > "Declarações de Interesse"
-2. Sistema lista declarações disponíveis (vw_declaracoes_para_matricula)
+2. Sistema lista declarações disponíveis (consulta SQL direta)
 3. Funcionário clica em uma declaração específica para detalhar
 4. Sistema chama vw_detalhamento_declaracao para mostrar todos os detalhes
 5. Interface exibe botão "Iniciar Matrícula" se podeIniciarMatricula = TRUE
@@ -3173,7 +2673,7 @@ FLUXO DE USO DA NOVA FUNCIONALIDADE:
 EXEMPLO DE USO COMPLETO:
 ```sql
 -- 1. Listar declarações disponíveis
-SELECT * FROM vw_declaracoes_para_matricula;
+-- USAR: Consulta SQL direta na tabela tbInteresseMatricula
 
 -- 2. Detalhar declaração específica (ID 1)
 SELECT * FROM vw_detalhamento_declaracao WHERE id = 1;
@@ -3198,11 +2698,8 @@ LOGIN GERADO AUTOMATICAMENTE:
 SELECT fn_CountDocumentosPendentesResponsavel('111.222.333-44') as total;
 
 VIEWS ÚTEIS:
-- vw_turmas_para_selecao: Turmas com vagas + descrição completa
-- vw_declaracoes_para_matricula: Declarações prontas + dados resumidos
-- vw_documentos_responsavel: Todos os documentos do responsável
-- vw_declaracoes_completas: Declarações com formatação completa
-- vw_usuarios_sistema: Para autenticação no sistema
+- vw_usuarios_sistema: Única view mantida - Para autenticação no sistema
+- Demais consultas: SQL direto nas tabelas (mais eficiente)
 
 PROCEDURES E FUNCTIONS:
 - sp_IniciarMatricula(): Automatiza todo o fluxo
@@ -3241,14 +2738,15 @@ PROCESSO AUTOMÁTICO sp_IniciarMatricula():
 EXEMPLOS PRÁTICOS:
 
 Ver declarações prontas para matricular:
-SELECT protocolo, nomeAluno, tipoCotaDescricao, diasAguardando 
-FROM vw_declaracoes_para_matricula 
+SELECT protocolo, nomeAluno, tipoCota, DATEDIFF(CURDATE(), dataEnvio) as diasAguardando 
+FROM tbInteresseMatricula 
+WHERE status = 'interesse_declarado' AND etapaAtual = 'finalizado'
 ORDER BY diasAguardando DESC;
 
 Ver turmas com vagas:
-SELECT descricaoCompleta, vagasDisponiveis 
-FROM vw_turmas_para_selecao 
-WHERE temVagas = TRUE;
+SELECT nomeTurma, capacidadeMaxima, capacidadeAtual, (capacidadeMaxima - capacidadeAtual) as vagasDisponiveis
+FROM tbTurma 
+WHERE ativo = TRUE AND capacidadeAtual < capacidadeMaxima;
 
 Iniciar matrícula (declaração 1, turma 1, funcionário 2):
 CALL sp_IniciarMatricula(1, 1, 2);
@@ -3328,12 +2826,18 @@ ORDER BY routine_name;
 -- 5. Testar views principais
 SELECT 'TESTE: Turmas disponíveis' as teste;
 
-SELECT COUNT(*) as total_turmas_ativas FROM vw_turmas_para_selecao;
+SELECT COUNT(*) as total_turmas_ativas
+FROM tbTurma
+WHERE
+    ativo = TRUE;
 
 SELECT 'TESTE: Declarações para matrícula' as teste;
 
 SELECT COUNT(*) as total_declaracoes
-FROM vw_declaracoes_para_matricula;
+FROM tbInteresseMatricula
+WHERE
+    status = 'interesse_declarado'
+    AND etapaAtual = 'finalizado';
 
 -- 6. Testar function de validação
 SELECT 'TESTE: Function de validação' as teste;

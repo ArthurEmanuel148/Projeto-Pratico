@@ -27,15 +27,28 @@
                         <p>Informações básicas da turma</p>
                     </div>
                 </div>
-                <div class="form-group">
-          <ion-item>
-            <ion-label position="floating">Nome da Turma <ion-text color="danger">*</ion-text></ion-label>
-            <ion-input type="text" formControlName="nomeTurma" (ionFocus)="onInputFocus($event, 'Ex: Turma A - Fundamental I')" (ionBlur)="onInputBlur($event)" required></ion-input>
-          </ion-item>
-          <ion-item>
-            <ion-label position="floating">Capacidade Máxima <ion-text color="danger">*</ion-text></ion-label>
-            <ion-input type="number" formControlName="capacidadeMaxima" (ionFocus)="onInputFocus($event, '20')" (ionBlur)="onInputBlur($event)" min="1" max="50" required></ion-input>
-          </ion-item>
+                <div class="form-group form-field-container">
+                    <ion-item (click)="focusInput('nomeTurma')" [class.item-invalid]="isFieldInvalid('nomeTurma')"
+                        [class.item-valid]="isFieldValid('nomeTurma')">
+                        <ion-label position="floating">Nome da Turma <ion-text color="danger">*</ion-text></ion-label>
+                        <ion-input type="text" formControlName="nomeTurma" (ionFocus)="onInputFocus($event)"
+                            (ionBlur)="onInputBlur($event)" required></ion-input>
+                    </ion-item>
+                    <div *ngIf="getFieldError('nomeTurma')" class="error-message">
+                        {{ getFieldError('nomeTurma') }}
+                    </div>
+                </div>
+                
+                <div class="form-group form-field-container">
+                    <ion-item (click)="focusInput('capacidadeMaxima')" [class.item-invalid]="isFieldInvalid('capacidadeMaxima')"
+                        [class.item-valid]="isFieldValid('capacidadeMaxima')">
+                        <ion-label position="floating">Capacidade Máxima <ion-text color="danger">*</ion-text></ion-label>
+                        <ion-input type="number" formControlName="capacidadeMaxima" (ionFocus)="onInputFocus($event)"
+                            (ionBlur)="onInputBlur($event)" min="1" max="50" required></ion-input>
+                    </ion-item>
+                    <div *ngIf="getFieldError('capacidadeMaxima')" class="error-message">
+                        {{ getFieldError('capacidadeMaxima') }}
+                    </div>
                 </div>
             </div>
 
@@ -50,15 +63,28 @@
                         <p>Defina os horários de início e fim das aulas</p>
                     </div>
                 </div>
-                <div class="form-group">
-          <ion-item>
-            <ion-label position="floating">Horário de Início <ion-text color="danger">*</ion-text></ion-label>
-            <ion-input type="time" formControlName="horarioInicio" (ionFocus)="onTimeFocus($event, 'horarioInicio', '08:00')" (ionBlur)="onInputBlur($event)" required></ion-input>
-          </ion-item>
-          <ion-item>
-            <ion-label position="floating">Horário de Fim <ion-text color="danger">*</ion-text></ion-label>
-            <ion-input type="time" formControlName="horarioFim" (ionFocus)="onTimeFocus($event, 'horarioFim', '12:00')" (ionBlur)="onInputBlur($event)" required></ion-input>
-          </ion-item>
+                <div class="form-group form-field-container">
+                    <ion-item (click)="focusInput('horarioInicio')" [class.item-invalid]="isFieldInvalid('horarioInicio')"
+                        [class.item-valid]="isFieldValid('horarioInicio')">
+                        <ion-label position="floating">Horário de Início <ion-text color="danger">*</ion-text></ion-label>
+                        <ion-input type="time" formControlName="horarioInicio" (ionFocus)="onInputFocus($event)"
+                            (ionBlur)="onInputBlur($event)" required></ion-input>
+                    </ion-item>
+                    <div *ngIf="getFieldError('horarioInicio')" class="error-message">
+                        {{ getFieldError('horarioInicio') }}
+                    </div>
+                </div>
+                
+                <div class="form-group form-field-container">
+                    <ion-item (click)="focusInput('horarioFim')" [class.item-invalid]="isFieldInvalid('horarioFim')"
+                        [class.item-valid]="isFieldValid('horarioFim')">
+                        <ion-label position="floating">Horário de Fim <ion-text color="danger">*</ion-text></ion-label>
+                        <ion-input type="time" formControlName="horarioFim" (ionFocus)="onInputFocus($event)"
+                            (ionBlur)="onInputBlur($event)" required></ion-input>
+                    </ion-item>
+                    <div *ngIf="getFieldError('horarioFim')" class="error-message">
+                        {{ getFieldError('horarioFim') }}
+                    </div>
                 </div>
             </div>
 
@@ -76,7 +102,7 @@
                 <div class="form-group">
                     <ion-item>
                         <ion-label position="floating">Observações</ion-label>
-                        <ion-textarea formControlName="observacoes" (ionFocus)="onInputFocus($event, 'Observações adicionais sobre a turma (opcional)')" (ionBlur)="onInputBlur($event)" rows="3" autoGrow="true"></ion-textarea>
+                        <ion-textarea formControlName="observacoes" (ionFocus)="onInputFocus($event)" (ionBlur)="onInputBlur($event)" rows="3" autoGrow="true"></ion-textarea>
                     </ion-item>
                     <ion-item class="turma-ativa-item">
                         <ion-toggle formControlName="ativo" slot="start"></ion-toggle>

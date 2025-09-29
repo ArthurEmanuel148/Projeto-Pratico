@@ -193,8 +193,21 @@ export class ListaTurmasPage implements OnInit {
             },
             error: (error) => {
                 loading.dismiss();
-                console.error('Erro ao excluir turma:', error);
-                const message = error.error?.message || 'Erro ao excluir turma';
+                console.error('Erro completo ao excluir turma:', error);
+                console.error('error.error:', error.error);
+                console.error('error.error?.message:', error.error?.message);
+                
+                let message = 'Erro ao excluir turma';
+                
+                // Tentar várias formas de acessar a mensagem
+                if (error.error?.message) {
+                    message = error.error.message;
+                } else if (error.error && typeof error.error === 'string') {
+                    message = error.error;
+                } else if (error.message) {
+                    message = error.message;
+                }
+                
                 this.showToast(message, 'danger');
             }
         });

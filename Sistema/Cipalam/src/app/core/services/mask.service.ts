@@ -14,10 +14,10 @@ export class MaskService {
    */
   applyCpfMask(value: string): string {
     if (!value) return '';
-    
+
     // Remove tudo que não é dígito
     const numericValue = value.replace(/\D/g, '');
-    
+
     // Aplica a máscara
     return numericValue
       .replace(/(\d{3})(\d)/, '$1.$2')
@@ -33,10 +33,10 @@ export class MaskService {
    */
   applyPhoneMask(value: string): string {
     if (!value) return '';
-    
+
     // Remove tudo que não é dígito
     const numericValue = value.replace(/\D/g, '');
-    
+
     // Aplica a máscara
     if (numericValue.length <= 10) {
       // Telefone fixo: (00) 0000-0000
@@ -54,21 +54,50 @@ export class MaskService {
   }
 
   /**
-   * Aplica máscara de data DD/MM/AAAA
+   * Aplica máscara de data DD/MM/AAAA de forma inteligente
    * @param value Valor a ser formatado
    * @returns Valor formatado
    */
   applyDateMask(value: string): string {
     if (!value) return '';
-    
+
     // Remove tudo que não é dígito
     const numericValue = value.replace(/\D/g, '');
-    
-    // Aplica a máscara DD/MM/AAAA
-    return numericValue
-      .replace(/(\d{2})(\d)/, '$1/$2')
-      .replace(/(\d{2})\/(\d{2})(\d)/, '$1/$2/$3')
-      .replace(/(\d{2})\/(\d{2})\/(\d{4})\d+?$/, '$1/$2/$3');
+
+    // Limita a 8 dígitos (DDMMAAAA)
+    const limitedValue = numericValue.substring(0, 8);
+
+    // Aplica a máscara de forma progressiva
+    if (limitedValue.length <= 2) {
+      return limitedValue;
+    } else if (limitedValue.length <= 4) {
+      return limitedValue.replace(/(\d{2})(\d+)/, '$1/$2');
+    } else {
+      return limitedValue.replace(/(\d{2})(\d{2})(\d+)/, '$1/$2/$3');
+    }
+  }
+
+  /**
+   * Aplica máscara de data inteligente para digitação contínua
+   * Exemplo: 11920 se torna 11/9/20, 11092025 se torna 11/09/2025
+   * @param value Valor a ser formatado
+   * @returns Valor formatado
+   */
+  applySmartDateMask(value: string): string {
+    if (!value) return '';
+
+    // Remove tudo que não é dígito
+    const numericValue = value.replace(/\D/g, '');
+
+    // Limita a 8 dígitos
+    const limitedValue = numericValue.substring(0, 8);
+
+    if (limitedValue.length === 0) return '';
+    if (limitedValue.length <= 2) return limitedValue;
+    if (limitedValue.length <= 4) return limitedValue.replace(/(\d{2})(\d+)/, '$1/$2');
+
+    // Para 5+ dígitos, aplicar formato DD/MM/AAAA
+    return limitedValue.replace(/(\d{2})(\d{2})(\d+)/, '$1/$2/$3');
   }
 
   /**
@@ -78,10 +107,10 @@ export class MaskService {
    */
   applyCepMask(value: string): string {
     if (!value) return '';
-    
+
     // Remove tudo que não é dígito
     const numericValue = value.replace(/\D/g, '');
-    
+
     // Aplica a máscara
     return numericValue
       .replace(/(\d{5})(\d)/, '$1-$2')
@@ -105,16 +134,16 @@ export class MaskService {
    */
   validateCpf(cpf: string): boolean {
     if (!cpf) return false;
-    
+
     // Remove máscara
     const numericCpf = this.removeMask(cpf);
-    
+
     // Verifica se tem 11 dígitos
     if (numericCpf.length !== 11) return false;
-    
+
     // Verifica se todos os dígitos são iguais
     if (/^(\d)\1{10}$/.test(numericCpf)) return false;
-    
+
     // Validação do primeiro dígito verificador
     let sum = 0;
     for (let i = 0; i < 9; i++) {
@@ -123,7 +152,7 @@ export class MaskService {
     let remainder = 11 - (sum % 11);
     if (remainder === 10 || remainder === 11) remainder = 0;
     if (remainder !== parseInt(numericCpf.charAt(9))) return false;
-    
+
     // Validação do segundo dígito verificador
     sum = 0;
     for (let i = 0; i < 10; i++) {
@@ -132,7 +161,7 @@ export class MaskService {
     remainder = 11 - (sum % 11);
     if (remainder === 10 || remainder === 11) remainder = 0;
     if (remainder !== parseInt(numericCpf.charAt(10))) return false;
-    
+
     return true;
   }
 }

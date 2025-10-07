@@ -887,10 +887,12 @@ ion-input[type="text"] {
   }
 }
 
-// Ajuste para o toggle de status
-ion-toggle[formControlName="ativo"] {
+// Ajuste para o toggle de status - garantir que funcione
+ion-toggle[slot="start"] {
   --handle-background-checked: var(--ion-color-success);
   --track-background-checked: var(--ion-color-success-tint);
+  z-index: 10; // Garantir que esteja acima de outros elementos
+  pointer-events: auto !important; // Forçar que aceite cliques
   
   &::part(handle) {
     border-radius: 50%;
@@ -898,13 +900,15 @@ ion-toggle[formControlName="ativo"] {
 }
 
 // Estilo para o item do toggle
-ion-item:has(ion-toggle[formControlName="ativo"]) {
+ion-item:has(ion-toggle[slot="start"]) {
   --padding-start: 16px;
   --inner-padding-end: 16px;
   --min-height: 60px;
+  cursor: pointer; // Adicionar cursor pointer para indicar que é clicável
   
   ion-toggle {
     margin-right: 16px;
+    pointer-events: auto !important; // Garantir que o toggle aceite cliques
   }
   
   ion-label {

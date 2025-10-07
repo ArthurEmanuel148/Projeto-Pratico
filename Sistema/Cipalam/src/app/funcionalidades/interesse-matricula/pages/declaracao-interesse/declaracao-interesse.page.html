@@ -37,35 +37,55 @@
       </div>
 
       <form [formGroup]="dadosResponsavelForm" class="form-container">
-        <ion-item class="form-item">
+        <ion-item class="form-item" [class.campo-erro]="isFieldInvalid('nome')">
           <ion-input formControlName="nome" placeholder="Nome completo" [clearInput]="true" fill="outline"
             label="Nome completo" labelPlacement="floating">
           </ion-input>
         </ion-item>
+        <div class="mensagem-erro" *ngIf="isFieldInvalid('nome')">
+          <ion-icon name="alert-circle" color="danger"></ion-icon>
+          <span>{{ getErrorMessage('nome') }}</span>
+        </div>
 
-        <ion-item class="form-item">
+        <ion-item class="form-item" [class.campo-erro]="isFieldInvalid('cpf')">
           <ion-input formControlName="cpf" placeholder="000.000.000-00" maxlength="14" [clearInput]="true"
             fill="outline" label="CPF" labelPlacement="floating" (ionInput)="formatarCpf($event, 'responsavel')">
           </ion-input>
         </ion-item>
+        <div class="mensagem-erro" *ngIf="isFieldInvalid('cpf')">
+          <ion-icon name="alert-circle" color="danger"></ion-icon>
+          <span>{{ getErrorMessage('cpf') }}</span>
+        </div>
 
-        <ion-item class="form-item">
+        <ion-item class="form-item" [class.campo-erro]="isFieldInvalid('dataNascimento')">
           <ion-input formControlName="dataNascimento" type="date" fill="outline" label="Data de nascimento"
             labelPlacement="floating">
           </ion-input>
         </ion-item>
+        <div class="mensagem-erro" *ngIf="isFieldInvalid('dataNascimento')">
+          <ion-icon name="alert-circle" color="danger"></ion-icon>
+          <span>{{ getErrorMessage('dataNascimento') }}</span>
+        </div>
 
-        <ion-item class="form-item">
+        <ion-item class="form-item" [class.campo-erro]="isFieldInvalid('email')">
           <ion-input formControlName="email" type="email" placeholder="email@exemplo.com" [clearInput]="true"
             fill="outline" label="E-mail" labelPlacement="floating">
           </ion-input>
         </ion-item>
+        <div class="mensagem-erro" *ngIf="isFieldInvalid('email')">
+          <ion-icon name="alert-circle" color="danger"></ion-icon>
+          <span>{{ getErrorMessage('email') }}</span>
+        </div>
 
-        <ion-item class="form-item">
+        <ion-item class="form-item" [class.campo-erro]="isFieldInvalid('telefone')">
           <ion-input formControlName="telefone" placeholder="(11) 99999-9999" maxlength="15" [clearInput]="true"
             fill="outline" label="Telefone" labelPlacement="floating" (ionInput)="formatarTelefone($event)">
           </ion-input>
         </ion-item>
+        <div class="mensagem-erro" *ngIf="isFieldInvalid('telefone')">
+          <ion-icon name="alert-circle" color="danger"></ion-icon>
+          <span>{{ getErrorMessage('telefone') }}</span>
+        </div>
       </form>
     </div>
 
@@ -73,7 +93,7 @@
     <div *ngIf="etapaAtual === ETAPAS.VERIFICACAO_RESPONSAVEL" class="etapa-container">
       <div class="etapa-header">
         <div class="header-icon">
-          <ion-icon name="key-outline" color="primary"></ion-icon>
+          <ion-icon name="key-outline" style="color: white; background: var(--ion-color-primary); padding: 12px; border-radius: 50%; font-size: 1.5rem;"></ion-icon>
         </div>
         <div class="header-content">
           <h2>Responsável Já Cadastrado</h2>
@@ -82,11 +102,15 @@
       </div>
 
       <form [formGroup]="verificacaoResponsavelForm" class="form-container">
-        <ion-item class="form-item">
+        <ion-item class="form-item" [class.campo-erro]="isFieldInvalid('senha', verificacaoResponsavelForm)">
           <ion-input formControlName="senha" type="password" placeholder="Digite sua senha" [clearInput]="true"
             fill="outline" label="Senha" labelPlacement="floating">
           </ion-input>
         </ion-item>
+        <div class="mensagem-erro" *ngIf="isFieldInvalid('senha', verificacaoResponsavelForm)">
+          <ion-icon name="alert-circle" color="danger"></ion-icon>
+          <span>{{ getErrorMessage('senha', verificacaoResponsavelForm) }}</span>
+        </div>
 
         <div class="info-card">
           <ion-icon name="information-circle-outline" color="primary"></ion-icon>
@@ -105,7 +129,7 @@
     <div *ngIf="etapaAtual === ETAPAS.DADOS_ALUNO" class="etapa-container">
       <div class="etapa-header">
         <div class="header-icon">
-          <ion-icon name="school-outline" color="primary"></ion-icon>
+          <ion-icon name="school-outline" style="color: white; background: var(--ion-color-primary); padding: 12px; border-radius: 50%; font-size: 1.5rem;"></ion-icon>
         </div>
         <div class="header-content">
           <h2>Dados do Aluno</h2>
@@ -114,30 +138,46 @@
       </div>
 
       <form [formGroup]="dadosAlunoForm" class="form-container">
-        <ion-item class="form-item">
+        <ion-item class="form-item" [class.campo-erro]="isFieldInvalid('nome', dadosAlunoForm)">
           <ion-input formControlName="nome" placeholder="Nome completo do aluno" [clearInput]="true" fill="outline"
             label="Nome completo" labelPlacement="floating">
           </ion-input>
         </ion-item>
+        <div class="mensagem-erro" *ngIf="isFieldInvalid('nome', dadosAlunoForm)">
+          <ion-icon name="alert-circle" color="danger"></ion-icon>
+          <span>{{ getErrorMessage('nome', dadosAlunoForm) }}</span>
+        </div>
 
-        <ion-item class="form-item">
+        <ion-item class="form-item" [class.campo-erro]="isFieldInvalid('cpf', dadosAlunoForm)">
           <ion-input formControlName="cpf" placeholder="000.000.000-00" maxlength="14" [clearInput]="true"
             fill="outline" label="CPF do aluno" labelPlacement="floating" (ionInput)="formatarCpf($event, 'aluno')">
           </ion-input>
         </ion-item>
+        <div class="mensagem-erro" *ngIf="isFieldInvalid('cpf', dadosAlunoForm)">
+          <ion-icon name="alert-circle" color="danger"></ion-icon>
+          <span>{{ getErrorMessage('cpf', dadosAlunoForm) }}</span>
+        </div>
 
-        <ion-item class="form-item">
+        <ion-item class="form-item" [class.campo-erro]="isFieldInvalid('dataNascimento', dadosAlunoForm)">
           <ion-input formControlName="dataNascimento" type="date" fill="outline" label="Data de nascimento"
             labelPlacement="floating">
           </ion-input>
         </ion-item>
+        <div class="mensagem-erro" *ngIf="isFieldInvalid('dataNascimento', dadosAlunoForm)">
+          <ion-icon name="alert-circle" color="danger"></ion-icon>
+          <span>{{ getErrorMessage('dataNascimento', dadosAlunoForm) }}</span>
+        </div>
 
         <!-- Campo de Escola Simples -->
-        <ion-item class="form-item">
+        <ion-item class="form-item" [class.campo-erro]="isFieldInvalid('escola', dadosAlunoForm)">
           <ion-input formControlName="escola" placeholder="Nome da escola onde estuda" [clearInput]="true"
             fill="outline" label="Escola onde estuda" labelPlacement="floating">
           </ion-input>
         </ion-item>
+        <div class="mensagem-erro" *ngIf="isFieldInvalid('escola', dadosAlunoForm)">
+          <ion-icon name="alert-circle" color="danger"></ion-icon>
+          <span>{{ getErrorMessage('escola', dadosAlunoForm) }}</span>
+        </div>
 
         <!-- Tipo de Cota -->
         <div class="cota-group">
@@ -405,7 +445,7 @@
     <div *ngIf="etapaAtual === ETAPAS.ENDERECO_FAMILIA" class="etapa-container">
       <div class="etapa-header">
         <div class="header-icon">
-          <ion-icon name="location-outline" color="primary"></ion-icon>
+          <ion-icon name="location-outline" style="color: white; background: var(--ion-color-primary); padding: 12px; border-radius: 50%; font-size: 1.5rem;"></ion-icon>
         </div>
         <div class="header-content">
           <h2>Endereço da Família</h2>
@@ -414,25 +454,37 @@
       </div>
 
       <form [formGroup]="enderecoForm" class="form-container">
-        <ion-item class="form-item">
+        <ion-item class="form-item" [class.campo-erro]="isFieldInvalid('cep', enderecoForm)">
           <ion-input formControlName="cep" placeholder="00000-000" maxlength="9"
             (ionBlur)="buscarEnderecoPorCep(enderecoForm.get('cep')?.value || '')" [clearInput]="true" fill="outline"
             label="CEP" labelPlacement="floating" (ionInput)="formatarCep($event)">
           </ion-input>
         </ion-item>
+        <div class="mensagem-erro" *ngIf="isFieldInvalid('cep', enderecoForm)">
+          <ion-icon name="alert-circle" color="danger"></ion-icon>
+          <span>{{ getErrorMessage('cep', enderecoForm) }}</span>
+        </div>
 
-        <ion-item class="form-item">
+        <ion-item class="form-item" [class.campo-erro]="isFieldInvalid('logradouro', enderecoForm)">
           <ion-input formControlName="logradouro" placeholder="Rua, Avenida, etc." [clearInput]="true" fill="outline"
             label="Logradouro" labelPlacement="floating">
           </ion-input>
         </ion-item>
+        <div class="mensagem-erro" *ngIf="isFieldInvalid('logradouro', enderecoForm)">
+          <ion-icon name="alert-circle" color="danger"></ion-icon>
+          <span>{{ getErrorMessage('logradouro', enderecoForm) }}</span>
+        </div>
 
         <div class="row-container">
-          <ion-item class="form-item flex-2">
+          <ion-item class="form-item flex-2" [class.campo-erro]="isFieldInvalid('numero', enderecoForm)">
             <ion-input formControlName="numero" placeholder="123" [clearInput]="true" fill="outline" label="Número"
               labelPlacement="floating">
             </ion-input>
           </ion-item>
+          <div class="mensagem-erro" *ngIf="isFieldInvalid('numero', enderecoForm)">
+            <ion-icon name="alert-circle" color="danger"></ion-icon>
+            <span>{{ getErrorMessage('numero', enderecoForm) }}</span>
+          </div>
 
           <ion-item class="form-item flex-3">
             <ion-input formControlName="complemento" placeholder="Apto, Bloco, etc." [clearInput]="true" fill="outline"
@@ -441,24 +493,36 @@
           </ion-item>
         </div>
 
-        <ion-item class="form-item">
+        <ion-item class="form-item" [class.campo-erro]="isFieldInvalid('bairro', enderecoForm)">
           <ion-input formControlName="bairro" placeholder="Nome do bairro" [clearInput]="true" fill="outline"
             label="Bairro" labelPlacement="floating">
           </ion-input>
         </ion-item>
+        <div class="mensagem-erro" *ngIf="isFieldInvalid('bairro', enderecoForm)">
+          <ion-icon name="alert-circle" color="danger"></ion-icon>
+          <span>{{ getErrorMessage('bairro', enderecoForm) }}</span>
+        </div>
 
         <div class="row-container">
-          <ion-item class="form-item flex-4">
+          <ion-item class="form-item flex-4" [class.campo-erro]="isFieldInvalid('cidade', enderecoForm)">
             <ion-input formControlName="cidade" placeholder="Nome da cidade" [clearInput]="true" fill="outline"
               label="Cidade" labelPlacement="floating">
             </ion-input>
           </ion-item>
+          <div class="mensagem-erro" *ngIf="isFieldInvalid('cidade', enderecoForm)">
+            <ion-icon name="alert-circle" color="danger"></ion-icon>
+            <span>{{ getErrorMessage('cidade', enderecoForm) }}</span>
+          </div>
 
-          <ion-item class="form-item flex-1">
+          <ion-item class="form-item flex-1" [class.campo-erro]="isFieldInvalid('uf', enderecoForm)">
             <ion-input formControlName="uf" placeholder="SP" maxlength="2" [clearInput]="true" fill="outline" label="UF"
               labelPlacement="floating">
             </ion-input>
           </ion-item>
+          <div class="mensagem-erro" *ngIf="isFieldInvalid('uf', enderecoForm)">
+            <ion-icon name="alert-circle" color="danger"></ion-icon>
+            <span>{{ getErrorMessage('uf', enderecoForm) }}</span>
+          </div>
         </div>
 
         <ion-item class="form-item">
@@ -474,7 +538,7 @@
     <div *ngIf="etapaAtual === ETAPAS.OBSERVACOES" class="etapa-container">
       <div class="etapa-header">
         <div class="header-icon">
-          <ion-icon name="document-text-outline" color="primary"></ion-icon>
+          <ion-icon name="document-text-outline" style="color: white; background: var(--ion-color-primary); padding: 12px; border-radius: 50%; font-size: 1.5rem;"></ion-icon>
         </div>
         <div class="header-content">
           <h2>Observações</h2>

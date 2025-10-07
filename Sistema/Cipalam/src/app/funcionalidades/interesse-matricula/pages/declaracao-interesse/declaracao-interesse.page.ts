@@ -787,4 +787,53 @@ export class DeclaracaoInteressePage implements OnInit {
   voltarParaInicio() {
     this.router.navigate(['/entrada-publica']);
   }
+
+  // MÉTODOS DE VALIDAÇÃO VISUAL
+  isFieldInvalid(fieldName: string, formGroup?: FormGroup): boolean {
+    const form = formGroup || this.dadosResponsavelForm;
+    const field = form?.get(fieldName);
+    return !!(field && field.invalid && (field.dirty || field.touched));
+  }
+
+  getErrorMessage(fieldName: string, formGroup?: FormGroup): string {
+    const form = formGroup || this.dadosResponsavelForm;
+    const field = form?.get(fieldName);
+    
+    if (field?.errors) {
+      if (field.errors['required']) {
+        switch(fieldName) {
+          case 'nome': return 'Nome completo é obrigatório';
+          case 'cpf': return 'CPF é obrigatório';
+          case 'dataNascimento': return 'Data de nascimento é obrigatória';
+          case 'email': return 'E-mail é obrigatório';
+          case 'telefone': return 'Telefone é obrigatório';
+          case 'escola': return 'Escola é obrigatória';
+          case 'senha': return 'Senha é obrigatória';
+          case 'cep': return 'CEP é obrigatório';
+          case 'logradouro': return 'Logradouro é obrigatório';
+          case 'numero': return 'Número é obrigatório';
+          case 'bairro': return 'Bairro é obrigatório';
+          case 'cidade': return 'Cidade é obrigatória';
+          case 'uf': return 'UF é obrigatória';
+          default: return 'Este campo é obrigatório';
+        }
+      }
+      if (field.errors['email']) {
+        return 'Digite um e-mail válido (exemplo@email.com)';
+      }
+      if (field.errors['minlength']) {
+        return `Mínimo de ${field.errors['minlength'].requiredLength} caracteres`;
+      }
+      if (field.errors['pattern']) {
+        if (fieldName === 'cpf') {
+          return 'CPF deve estar no formato 000.000.000-00';
+        }
+        return 'Formato inválido';
+      }
+      if (field.errors['cepInvalido']) {
+        return 'CEP deve estar no formato 00000-000';
+      }
+    }
+    return '';
+  }
 }

@@ -179,20 +179,22 @@
         </div>
 
         <div class="form-group form-field-container">
-          <ion-item [class.item-valid]="cadastroForm.get('ativo')?.value">
+          <ion-item [class.item-valid]="funcionarioAtivo" (click)="toggleStatusManual()">
             <ion-toggle 
-              formControlName="ativo"
+              [checked]="funcionarioAtivo"
               color="success"
-              slot="start">
+              slot="start"
+              (ionChange)="onStatusToggleChange($event)"
+              (click)="$event.stopPropagation()">
             </ion-toggle>
             <ion-label>
               <h3>Status do Funcionário</h3>
-              <p>{{ cadastroForm.get('ativo')?.value ? 'Funcionário Ativo' : 'Funcionário Inativo' }}</p>
+              <p>{{ funcionarioAtivo ? 'Funcionário Ativo' : 'Funcionário Inativo' }}</p>
             </ion-label>
           </ion-item>
           <div class="info-message">
             <ion-icon name="information-circle-outline"></ion-icon>
-            <span>{{ cadastroForm.get('ativo')?.value ? 'Funcionário pode acessar o sistema e realizar suas atividades.' : 'Funcionário não pode acessar o sistema. Desative apenas quando necessário.' }}</span>
+            <span>{{ funcionarioAtivo ? 'Funcionário pode acessar o sistema e realizar suas atividades.' : 'Funcionário não pode acessar o sistema. Desative apenas quando necessário.' }}</span>
           </div>
         </div>
       </div>
@@ -204,7 +206,7 @@
           Cancelar
         </ion-button>
 
-        <ion-button type="button" color="primary" size="large" [disabled]="cadastroForm.invalid"
+        <ion-button type="button" color="primary" size="large" [disabled]="!botaoHabilitado"
           (click)="prosseguirParaPermissoes()">
           <ion-icon name="checkmark-outline" slot="start"></ion-icon>
           {{ isEditMode ? 'Atualizar Permissões' : 'Prosseguir' }}

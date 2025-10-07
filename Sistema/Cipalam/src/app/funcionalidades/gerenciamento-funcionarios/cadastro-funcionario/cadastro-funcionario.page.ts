@@ -20,6 +20,8 @@ export class CadastroFuncionarioPage implements OnInit {
   funcionarioId: number | null = null;
   funcionarioData: any = null;
   permissoesOriginais: Record<string, boolean> = {};
+  funcionarioAtivo: boolean = true; // Propriedade para controlar o toggle diretamente
+  statusAlterado: boolean = false; // Controla se o status foi alterado
 
   // Controle manual de campos que perderam o foco (para validação não agressiva)
   manuallyTouchedFields: Set<string> = new Set();
@@ -64,6 +66,15 @@ export class CadastroFuncionarioPage implements OnInit {
     this.cadastroForm.get('ativo')?.valueChanges.subscribe(valor => {
       console.log('Toggle ativo mudou para:', valor);
     });
+    
+    // Garantir que o toggle de status funcione corretamente
+    setTimeout(() => {
+      const ativoControl = this.cadastroForm.get('ativo');
+      if (ativoControl) {
+        ativoControl.markAsUntouched();
+        ativoControl.updateValueAndValidity();
+      }
+    }, 200);
   }
 
   private ajustarValidacaoFormulario() {
@@ -130,6 +141,19 @@ export class CadastroFuncionarioPage implements OnInit {
         // Forçar a atualização visual dos campos com valores
         setTimeout(() => {
           this.forcarAtualizacaoVisualdosCampos();
+          
+          // Garantir que o toggle de status esteja funcionando
+          const valorAtivo = this.funcionarioData.ativo !== undefined ? this.funcionarioData.ativo : true;
+          this.funcionarioAtivo = valorAtivo; // Definir propriedade local
+          this.statusAlterado = false; // Resetar flag de alteração após carregar dados
+          
+          const ativoControl = this.cadastroForm.get('ativo');
+          if (ativoControl) {
+            ativoControl.setValue(valorAtivo);
+            ativoControl.markAsUntouched();
+            ativoControl.updateValueAndValidity();
+            console.log('Status ativo carregado:', valorAtivo);
+          }
         }, 100);
 
         // Armazenar permissões originais
@@ -452,7 +476,7 @@ export class CadastroFuncionarioPage implements OnInit {
       cpfPessoa: this.limparCpf(dadosBasicos.cpf || ''),
       telefone: this.limparTelefone(dadosBasicos.telefone),
       dtNascPessoa: dataNascimentoFormatada,
-      ativo: dadosBasicos.ativo !== undefined ? dadosBasicos.ativo : true, // Status ativo/inativo
+      ativo: this.funcionarioAtivo, // Status ativo/inativo usando propriedade direta
       
       // Objeto pessoa para compatibilidade (caso o backend ainda precise)
       pessoa: {
@@ -461,7 +485,7 @@ export class CadastroFuncionarioPage implements OnInit {
         cpfPessoa: this.limparCpf(dadosBasicos.cpf || ''),
         telefone: this.limparTelefone(dadosBasicos.telefone),
         dtNascPessoa: dataNascimentoFormatada,
-        ativo: dadosBasicos.ativo !== undefined ? dadosBasicos.ativo : true
+        ativo: this.funcionarioAtivo
       },
       
       // Dados do funcionário
@@ -491,6 +515,7 @@ export class CadastroFuncionarioPage implements OnInit {
       this.presentToast('Funcionário cadastrado com sucesso!');
       this.cadastroForm.reset();
       this.manuallyTouchedFields.clear();
+      this.statusAlterado = false; // Resetar flag após sucesso
       this.navCtrl.navigateBack('/sistema/funcionarios/lista');
     } catch (error: any) {
       console.error('Erro ao cadastrar funcionário:', error);
@@ -576,7 +601,7 @@ export class CadastroFuncionarioPage implements OnInit {
       cpfPessoa: this.limparCpf(dadosBasicos.cpf || ''),
       telefone: this.limparTelefone(dadosBasicos.telefone), // Campo correto
       dtNascPessoa: dataNascimentoFormatada,
-      ativo: dadosBasicos.ativo !== undefined ? dadosBasicos.ativo : true, // Status ativo/inativo
+      ativo: this.funcionarioAtivo, // Status ativo/inativo usando propriedade direta
       // Campos do funcionário
       usuario: dadosBasicos.usuarioSistema,
       senha: dadosBasicos.senhaSistema,
@@ -601,6 +626,7 @@ export class CadastroFuncionarioPage implements OnInit {
       const resultado = await this.funcionarioService.atualizarFuncionario(this.funcionarioId!, funcionarioParaAtualizar).toPromise();
       console.log('Resultado da atualização:', resultado);
       this.presentToast('Funcionário atualizado com sucesso!');
+      this.statusAlterado = false; // Resetar flag após sucesso
       this.navCtrl.navigateBack('/sistema/funcionarios/lista');
     } catch (error: any) {
       console.error('Erro completo ao atualizar funcionário:', error);
@@ -1093,5 +1119,57 @@ export class CadastroFuncionarioPage implements OnInit {
     }
 
     return null;
+  }
+
+  /**
+   * Função para garantir que o toggle de status funcione corretamente
+   */
+  onStatusToggleChange(event: any) {
+    const novoValor = event.detail.checked;
+    console.log('Toggle de status acionado. Novo valor:', novoValor);
+    
+    // Atualizar a propriedade local
+    this.funcionarioAtivo = novoValor;
+    this.statusAlterado = true; // Marcar que houve alteração
+    
+    // Também atualizar o FormControl para manter sincronização
+    const ativoControl = this.cadastroForm.get('ativo');
+    if (ativoControl) {
+      ativoControl.setValue(novoValor, { emitEvent: false });
+      ativoControl.markAsDirty();
+      ativoControl.markAsTouched();
+      console.log('FormControl e propriedade local atualizados para:', novoValor);
+    }
+  }
+
+  /**
+   * Verifica se o botão deve estar habilitado
+   */
+  get botaoHabilitado(): boolean {
+    if (this.isEditMode) {
+      // Em modo de edição, habilitar se o formulário é válido OU se o status foi alterado
+      return this.cadastroForm.valid || this.statusAlterado;
+    } else {
+      // Em modo de cadastro, apenas se o formulário é válido
+      return this.cadastroForm.valid;
+    }
+  }
+
+  /**
+   * Função alternativa para toggle manual
+   */
+  toggleStatusManual() {
+    console.log('Clique manual no item do toggle');
+    this.funcionarioAtivo = !this.funcionarioAtivo;
+    this.statusAlterado = true; // Marcar que houve alteração
+    
+    // Atualizar o FormControl
+    const ativoControl = this.cadastroForm.get('ativo');
+    if (ativoControl) {
+      ativoControl.setValue(this.funcionarioAtivo, { emitEvent: false });
+      ativoControl.markAsDirty();
+      ativoControl.markAsTouched();
+      console.log('Status alterado manualmente para:', this.funcionarioAtivo);
+    }
   }
 }

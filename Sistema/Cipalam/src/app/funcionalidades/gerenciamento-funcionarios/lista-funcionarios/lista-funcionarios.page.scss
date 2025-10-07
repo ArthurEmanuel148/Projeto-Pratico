@@ -209,12 +209,13 @@ ion-content {
         color-mix(in srgb, var(--custom-primary) 4%, white));
     
     th {
-      padding: 1rem;
+      padding: 0.8rem 1rem;
       text-align: left;
       font-weight: 600;
       color: var(--custom-text);
       border-bottom: 2px solid var(--custom-border);
-      font-size: 0.9rem;
+      font-size: 0.85rem;
+      vertical-align: middle;
       
       &:first-child {
         border-top-left-radius: 12px;
@@ -222,6 +223,30 @@ ion-content {
       
       &:last-child {
         border-top-right-radius: 12px;
+        text-align: center;
+        width: 100px; // Define largura fixa para a coluna Status
+      }
+      
+      // Define larguras específicas para as colunas
+      &:nth-child(1) { // Nome
+        width: 35%;
+      }
+      
+      &:nth-child(2) { // Email  
+        width: 30%;
+      }
+      
+      &:nth-child(3) { // Usuário
+        width: 20%;
+      }
+      
+      &:nth-child(4) { // Status
+        width: 10%;
+        text-align: center;
+      }
+      
+      &:nth-child(5) { // Ações
+        width: 5%;
         text-align: center;
       }
     }
@@ -241,23 +266,26 @@ ion-content {
       }
       
       td {
-        padding: 1rem;
-        vertical-align: top;
+        padding: 0.8rem 1rem;
+        vertical-align: middle;
+        border-bottom: 1px solid var(--custom-border);
+        font-size: 0.9rem;
         
         &.nome-funcionario {
           .funcionario-info {
             h3 {
               margin: 0;
-              font-size: 1.1rem;
+              font-size: 0.95rem;
               font-weight: 600;
               color: var(--custom-text);
+              line-height: 1.3;
             }
           }
         }
         
         &.email {
           .email-info {
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             color: var(--custom-text-secondary);
             line-height: 1.4;
           }
@@ -265,7 +293,7 @@ ion-content {
         
         &.usuario {
           .usuario-info {
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             color: var(--custom-text-secondary);
             line-height: 1.4;
             font-weight: 500;
@@ -274,6 +302,26 @@ ion-content {
         
         &.status {
           text-align: center;
+          vertical-align: middle;
+          
+          ion-chip {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 80px;
+            height: 28px;
+            padding: 0 8px;
+            
+            ion-label {
+              font-size: 0.8rem;
+              font-weight: 500;
+            }
+            
+            ion-icon {
+              font-size: 0.9rem;
+              margin-right: 4px;
+            }
+          }
         }
         
         &.acoes {
@@ -340,11 +388,23 @@ ion-content {
 ion-chip {
   --background: transparent;
   --color: var(--ion-color-primary);
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   font-weight: 500;
+  border-radius: 16px;
+  height: 28px;
+  min-width: 70px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 
   ion-icon {
-    margin-right: 0.25rem;
+    margin-right: 0.2rem;
+    font-size: 0.8rem;
+  }
+  
+  ion-label {
+    font-size: 0.75rem;
+    font-weight: 500;
   }
 }
 

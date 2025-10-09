@@ -7,7 +7,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -26,10 +25,9 @@ public class TurmaController {
             List<Turma> turmas = turmaService.listarTodas();
             return ResponseEntity.ok(turmas);
         } catch (Exception e) {
-            Map<String, Object> errorResponse = new HashMap<>();
-            errorResponse.put("success", false);
-            errorResponse.put("message", "Erro ao listar turmas: " + e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of(
+                    "success", false,
+                    "message", "Erro ao listar turmas: " + e.getMessage()));
         }
     }
 
@@ -40,59 +38,76 @@ public class TurmaController {
             if (turma.isPresent()) {
                 return ResponseEntity.ok(turma.get());
             } else {
-                Map<String, Object> errorResponse = new HashMap<>();
-                errorResponse.put("success", false);
-                errorResponse.put("message", "Turma não encontrada");
-                return ResponseEntity.notFound().build();
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of(
+                        "success", false,
+                        "message", "Turma não encontrada"));
             }
         } catch (Exception e) {
-            Map<String, Object> errorResponse = new HashMap<>();
-            errorResponse.put("success", false);
-            errorResponse.put("message", "Erro ao buscar turma: " + e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of(
+                    "success", false,
+                    "message", "Erro ao buscar turma: " + e.getMessage()));
         }
     }
 
     @PostMapping
     public ResponseEntity<?> criar(@RequestBody Turma turma) {
         try {
+            // Validações de campos obrigatórios
+            if (turma.getNomeTurma() == null || turma.getNomeTurma().trim().isEmpty()) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of(
+                        "success", false,
+                        "message", "Nome da turma é obrigatório"));
+            }
+
+            if (turma.getCapacidadeMaxima() == null || turma.getCapacidadeMaxima() <= 0) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of(
+                        "success", false,
+                        "message", "Capacidade máxima é obrigatória e deve ser maior que zero"));
+            }
+
             Turma novaTurma = turmaService.salvar(turma);
 
-            Map<String, Object> response = new HashMap<>();
-            response.put("success", true);
-            response.put("message", "Turma criada com sucesso!");
-            response.put("turma", novaTurma);
-
-            return ResponseEntity.status(HttpStatus.CREATED).body(response);
+            return ResponseEntity.status(HttpStatus.CREATED).body(Map.of(
+                    "success", true,
+                    "message", "Turma criada com sucesso!",
+                    "turma", novaTurma));
         } catch (Exception e) {
-            Map<String, Object> errorResponse = new HashMap<>();
-            errorResponse.put("success", false);
-            errorResponse.put("message", "Erro ao criar turma: " + e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of(
+                    "success", false,
+                    "message", "Erro ao criar turma: " + e.getMessage()));
         }
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<?> atualizar(@PathVariable Integer id, @RequestBody Turma turma) {
         try {
+            // Validações de campos obrigatórios
+            if (turma.getNomeTurma() == null || turma.getNomeTurma().trim().isEmpty()) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of(
+                        "success", false,
+                        "message", "Nome da turma é obrigatório"));
+            }
+
+            if (turma.getCapacidadeMaxima() == null || turma.getCapacidadeMaxima() <= 0) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of(
+                        "success", false,
+                        "message", "Capacidade máxima é obrigatória e deve ser maior que zero"));
+            }
+
             Turma turmaAtualizada = turmaService.atualizar(id, turma);
 
-            Map<String, Object> response = new HashMap<>();
-            response.put("success", true);
-            response.put("message", "Turma atualizada com sucesso!");
-            response.put("turma", turmaAtualizada);
-
-            return ResponseEntity.ok(response);
+            return ResponseEntity.ok(Map.of(
+                    "success", true,
+                    "message", "Turma atualizada com sucesso!",
+                    "turma", turmaAtualizada));
         } catch (RuntimeException e) {
-            Map<String, Object> errorResponse = new HashMap<>();
-            errorResponse.put("success", false);
-            errorResponse.put("message", e.getMessage());
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of(
+                    "success", false,
+                    "message", e.getMessage()));
         } catch (Exception e) {
-            Map<String, Object> errorResponse = new HashMap<>();
-            errorResponse.put("success", false);
-            errorResponse.put("message", "Erro ao atualizar turma: " + e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of(
+                    "success", false,
+                    "message", "Erro ao atualizar turma: " + e.getMessage()));
         }
     }
 
@@ -101,21 +116,17 @@ public class TurmaController {
         try {
             turmaService.deletar(id);
 
-            Map<String, Object> response = new HashMap<>();
-            response.put("success", true);
-            response.put("message", "Turma excluída com sucesso!");
-
-            return ResponseEntity.ok(response);
+            return ResponseEntity.ok(Map.of(
+                    "success", true,
+                    "message", "Turma excluída com sucesso!"));
         } catch (RuntimeException e) {
-            Map<String, Object> errorResponse = new HashMap<>();
-            errorResponse.put("success", false);
-            errorResponse.put("message", e.getMessage());
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of(
+                    "success", false,
+                    "message", e.getMessage()));
         } catch (Exception e) {
-            Map<String, Object> errorResponse = new HashMap<>();
-            errorResponse.put("success", false);
-            errorResponse.put("message", "Erro ao excluir turma: " + e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of(
+                    "success", false,
+                    "message", "Erro ao excluir turma: " + e.getMessage()));
         }
     }
 
@@ -125,10 +136,9 @@ public class TurmaController {
             List<Turma> turmas = turmaService.listarAtivas();
             return ResponseEntity.ok(turmas);
         } catch (Exception e) {
-            Map<String, Object> errorResponse = new HashMap<>();
-            errorResponse.put("success", false);
-            errorResponse.put("message", "Erro ao listar turmas ativas: " + e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of(
+                    "success", false,
+                    "message", "Erro ao listar turmas ativas: " + e.getMessage()));
         }
     }
 
@@ -138,10 +148,9 @@ public class TurmaController {
             List<Turma> turmas = turmaService.listarComVagas();
             return ResponseEntity.ok(turmas);
         } catch (Exception e) {
-            Map<String, Object> errorResponse = new HashMap<>();
-            errorResponse.put("success", false);
-            errorResponse.put("message", "Erro ao listar turmas com vagas: " + e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of(
+                    "success", false,
+                    "message", "Erro ao listar turmas com vagas: " + e.getMessage()));
         }
     }
 }

@@ -29,27 +29,55 @@
           </div>
         </div>
 
-        <div class="form-group">
-          <ion-item>
+        <div class="form-group form-field-container">
+          <ion-item (click)="focusInput('nomeCompleto')" [class.item-invalid]="isFieldInvalid('nomeCompleto')"
+            [class.item-valid]="isFieldValid('nomeCompleto')">
             <ion-label position="floating">Nome Completo <ion-text color="danger">*</ion-text></ion-label>
-            <ion-input type="text" formControlName="nomeCompleto" (ionFocus)="onInputFocus($event)" (ionBlur)="onInputBlur($event)" required></ion-input>
+            <ion-input type="text" formControlName="nomeCompleto" (ionFocus)="onInputFocus($event)"
+              (ionBlur)="onInputBlur($event)" required></ion-input>
           </ion-item>
-
-          <ion-item>
-            <ion-label position="floating">E-mail <ion-text color="danger">*</ion-text></ion-label>
-            <ion-input type="email" formControlName="email" (ionFocus)="onInputFocus($event)" (ionBlur)="onInputBlur($event)" required></ion-input>
-          </ion-item>
-
-          <ion-item>
-            <ion-label position="floating">CPF</ion-label>
-            <ion-input type="text" formControlName="cpf" (ionInput)="onCpfInput($event)" (ionFocus)="onCpfFocus($event)" (ionBlur)="onCpfBlur($event)"></ion-input>
-          </ion-item>
-
-          <ion-item>
-            <ion-label position="floating">Telefone <ion-text color="danger">*</ion-text></ion-label>
-            <ion-input type="tel" formControlName="telefone" (ionInput)="onPhoneInput($event)" (ionFocus)="onPhoneFocus($event)" (ionBlur)="onPhoneBlur($event)" required></ion-input>
-          </ion-item>
+          <div *ngIf="getFieldError('nomeCompleto')" class="error-message">
+            {{ getFieldError('nomeCompleto') }}
+          </div>
         </div>
+
+        <div class="form-group form-field-container">
+          <ion-item (click)="focusInput('email')" [class.item-invalid]="isFieldInvalid('email')"
+            [class.item-valid]="isFieldValid('email')">
+            <ion-label position="floating">E-mail <ion-text color="danger">*</ion-text></ion-label>
+            <ion-input type="email" formControlName="email" (ionFocus)="onInputFocus($event)"
+              (ionBlur)="onInputBlur($event)" required></ion-input>
+          </ion-item>
+          <div *ngIf="getFieldError('email')" class="error-message">
+            {{ getFieldError('email') }}
+          </div>
+        </div>
+
+        <div class="form-group form-field-container">
+          <ion-item (click)="focusInput('cpf')" [class.item-invalid]="isFieldInvalid('cpf')"
+            [class.item-valid]="isFieldValid('cpf')">
+            <ion-label position="floating">CPF</ion-label>
+            <ion-input type="text" formControlName="cpf" (ionInput)="onCpfInput($event)" (ionFocus)="onCpfFocus($event)"
+              (ionBlur)="onCpfBlur($event)"></ion-input>
+          </ion-item>
+          <div *ngIf="getFieldError('cpf')" class="error-message">
+            {{ getFieldError('cpf') }}
+          </div>
+        </div>
+
+        <div class="form-group form-field-container">
+          <ion-item (click)="focusInput('telefone')" [class.item-invalid]="isFieldInvalid('telefone')"
+            [class.item-valid]="isFieldValid('telefone')">
+            <ion-label position="floating">Telefone <ion-text color="danger">*</ion-text></ion-label>
+            <ion-input type="tel" formControlName="telefone" (ionInput)="onPhoneInput($event)"
+              (ionFocus)="onPhoneFocus($event)" (ionBlur)="onPhoneBlur($event)" required></ion-input>
+          </ion-item>
+          <div *ngIf="getFieldError('telefone')" class="error-message">
+            {{ getFieldError('telefone') }}
+          </div>
+        </div>
+
+        <!-- Fim da seção de Dados Pessoais -->
       </div>
 
       <!-- Seção: Datas Importantes -->
@@ -64,15 +92,34 @@
           </div>
         </div>
 
-        <div class="form-group">
-          <ion-item>
+        <div class="form-group form-field-container">
+          <ion-item (click)="focusInput('dataNascimento')" [class.item-invalid]="isFieldInvalid('dataNascimento')"
+            [class.item-valid]="isFieldValid('dataNascimento')">
             <ion-label position="floating">Data de Nascimento <ion-text color="danger">*</ion-text></ion-label>
-            <ion-input type="date" formControlName="dataNascimento" required></ion-input>
+            <ion-input type="text" formControlName="dataNascimento" (ionInput)="onDateInput($event)"
+              (ionFocus)="onDateFocus($event)" (ionBlur)="onDateBlur($event)" placeholder="DD/MM/AAAA"
+              required></ion-input>
+            <ion-icon name="calendar-outline" slot="end" (click)="openDatePicker('dataNascimento', $event)"
+              class="date-picker-icon"></ion-icon>
           </ion-item>
-          <ion-item>
+          <div *ngIf="getFieldError('dataNascimento')" class="error-message">
+            {{ getFieldError('dataNascimento') }}
+          </div>
+        </div>
+
+        <div class="form-group form-field-container">
+          <ion-item (click)="focusInput('dataInicio')" [class.item-invalid]="isFieldInvalid('dataInicio')"
+            [class.item-valid]="isFieldValid('dataInicio')">
             <ion-label position="floating">Data de Entrada <ion-text color="danger">*</ion-text></ion-label>
-            <ion-input type="date" formControlName="dataEntradaInstituto" required></ion-input>
+            <ion-input type="text" formControlName="dataInicio" (ionInput)="onDateInput($event)"
+              (ionFocus)="onDateFocus($event)" (ionBlur)="onDateBlur($event)" placeholder="DD/MM/AAAA"
+              required></ion-input>
+            <ion-icon name="calendar-outline" slot="end" (click)="openDatePicker('dataInicio', $event)"
+              class="date-picker-icon"></ion-icon>
           </ion-item>
+          <div *ngIf="getFieldError('dataInicio')" class="error-message">
+            {{ getFieldError('dataInicio') }}
+          </div>
         </div>
       </div>
 
@@ -88,16 +135,67 @@
           </div>
         </div>
 
-        <div class="form-group">
-          <ion-item>
+        <div class="form-group form-field-container">
+          <ion-item (click)="focusInput('usuarioSistema')" [class.item-invalid]="isFieldInvalid('usuarioSistema')"
+            [class.item-valid]="isFieldValid('usuarioSistema')">
             <ion-label position="floating">Usuário do Sistema <ion-text color="danger">*</ion-text></ion-label>
-            <ion-input type="text" formControlName="usuarioSistema" required (ionFocus)="onInputFocus($event)" (ionBlur)="onInputBlur($event)"></ion-input>
+            <ion-input type="text" formControlName="usuarioSistema" required (ionFocus)="onInputFocus($event)"
+              (ionBlur)="onInputBlur($event)"></ion-input>
           </ion-item>
+          <div *ngIf="getFieldError('usuarioSistema')" class="error-message">
+            {{ getFieldError('usuarioSistema') }}
+          </div>
+        </div>
 
-          <ion-item>
-            <ion-label position="floating">Senha do Sistema <ion-text color="danger">*</ion-text></ion-label>
-            <ion-input type="password" formControlName="senhaSistema" required (ionFocus)="onInputFocus($event)" (ionBlur)="onInputBlur($event)"></ion-input>
+        <div class="form-group form-field-container">
+          <ion-item (click)="focusInput('senhaSistema')" [class.item-invalid]="isFieldInvalid('senhaSistema')"
+            [class.item-valid]="isFieldValid('senhaSistema')">
+            <ion-label position="floating">
+              Senha do Sistema 
+              <ion-text *ngIf="!isEditMode" color="danger">*</ion-text>
+              <ion-text *ngIf="isEditMode" color="medium">(opcional na edição)</ion-text>
+            </ion-label>
+            <ion-input type="password" formControlName="senhaSistema" required (ionFocus)="onInputFocus($event)"
+              (ionBlur)="onInputBlur($event)"></ion-input>
           </ion-item>
+          <div *ngIf="getFieldError('senhaSistema')" class="error-message">
+            {{ getFieldError('senhaSistema') }}
+          </div>
+        </div>
+
+
+      </div>
+
+      <!-- Seção: Status do Funcionário (apenas em modo de edição) -->
+      <div class="form-section" *ngIf="isEditMode">
+        <div class="section-header">
+          <div class="section-icon">
+            <ion-icon name="person-outline"></ion-icon>
+          </div>
+          <div class="section-title">
+            <h2>Status do Funcionário</h2>
+            <p>Controle de ativação/desativação do funcionário</p>
+          </div>
+        </div>
+
+        <div class="form-group form-field-container">
+          <ion-item [class.item-valid]="funcionarioAtivo" (click)="toggleStatusManual()">
+            <ion-toggle 
+              [checked]="funcionarioAtivo"
+              color="success"
+              slot="start"
+              (ionChange)="onStatusToggleChange($event)"
+              (click)="$event.stopPropagation()">
+            </ion-toggle>
+            <ion-label>
+              <h3>Status do Funcionário</h3>
+              <p>{{ funcionarioAtivo ? 'Funcionário Ativo' : 'Funcionário Inativo' }}</p>
+            </ion-label>
+          </ion-item>
+          <div class="info-message">
+            <ion-icon name="information-circle-outline"></ion-icon>
+            <span>{{ funcionarioAtivo ? 'Funcionário pode acessar o sistema e realizar suas atividades.' : 'Funcionário não pode acessar o sistema. Desative apenas quando necessário.' }}</span>
+          </div>
         </div>
       </div>
 
@@ -108,7 +206,7 @@
           Cancelar
         </ion-button>
 
-        <ion-button type="button" color="primary" size="large" [disabled]="cadastroForm.invalid"
+        <ion-button type="button" color="primary" size="large" [disabled]="!botaoHabilitado"
           (click)="prosseguirParaPermissoes()">
           <ion-icon name="checkmark-outline" slot="start"></ion-icon>
           {{ isEditMode ? 'Atualizar Permissões' : 'Prosseguir' }}

@@ -8,27 +8,27 @@
   --input-spacing: 1.5rem;
   --border-radius: 12px;
   --animation-duration: 0.3s;
-  
+
   // Cores dinâmicas que funcionam em ambos os temas
   --custom-primary: var(--ion-color-primary);
   --custom-success: var(--ion-color-success);
   --custom-danger: var(--ion-color-danger);
   --custom-warning: var(--ion-color-warning);
-  
+
   // Backgrounds e superfícies
   --custom-background: var(--ion-background-color, #ffffff);
   --custom-surface: var(--ion-item-background, #ffffff);
   --custom-surface-variant: var(--ion-color-light, #f8f9fa);
-  
+
   // Textos
   --custom-text: var(--ion-text-color, #000000);
   --custom-text-secondary: var(--ion-color-medium, #6c757d);
   --custom-text-muted: var(--ion-color-medium-shade, #9e9e9e);
-  
+
   // Bordas
   --custom-border: var(--ion-color-light-shade, #e0e0e0);
   --custom-border-focus: var(--ion-color-primary);
-  
+
   // Sombras
   --custom-shadow-light: 0 2px 8px rgba(0, 0, 0, 0.08);
   --custom-shadow-medium: 0 4px 16px rgba(0, 0, 0, 0.12);
@@ -44,7 +44,7 @@
     --custom-text: var(--ion-text-color, #ffffff);
     --custom-text-secondary: var(--ion-color-medium, #a0a0a0);
     --custom-border: var(--ion-color-dark-shade, #404040);
-    
+
     // Sombras mais suaves para tema escuro
     --custom-shadow-light: 0 2px 8px rgba(0, 0, 0, 0.3);
     --custom-shadow-medium: 0 4px 16px rgba(0, 0, 0, 0.4);
@@ -58,7 +58,7 @@
 .cadastro-content {
   --background: var(--custom-background);
   background: var(--custom-background);
-  
+
   // Garante que o conteúdo ocupe toda a altura
   min-height: 100vh;
 }
@@ -122,7 +122,7 @@
         padding: 1rem;
         box-shadow: 0 4px 12px rgba(var(--ion-color-primary-rgb), 0.3);
         transition: all 0.3s ease;
-        
+
         &:hover {
           transform: scale(1.05);
           box-shadow: 0 6px 20px rgba(var(--ion-color-primary-rgb), 0.4);
@@ -133,8 +133,13 @@
 }
 
 @keyframes shimmer {
-  0% { transform: translateX(-100%); }
-  100% { transform: translateX(100%); }
+  0% {
+    transform: translateX(-100%);
+  }
+
+  100% {
+    transform: translateX(100%);
+  }
 }
 
 // =============================================================================
@@ -159,9 +164,9 @@
     display: flex;
     align-items: center;
     padding: 1.25rem 1.5rem;
-    background: linear-gradient(135deg, 
-      color-mix(in srgb, var(--custom-primary) 5%, transparent), 
-      color-mix(in srgb, var(--custom-primary) 2%, transparent));
+    background: linear-gradient(135deg,
+        color-mix(in srgb, var(--custom-primary) 5%, transparent),
+        color-mix(in srgb, var(--custom-primary) 2%, transparent));
     border-bottom: 1px solid var(--custom-border);
 
     .section-icon {
@@ -211,14 +216,15 @@
   display: flex;
   flex-direction: column;
   gap: var(--input-spacing);
-  padding: 1.5rem;
-  
+  padding: 0.75rem 1.5rem;
+  /* Reduzi o padding vertical de 1.5rem para 0.75rem */
+
   // Para campos de data lado a lado
   &:has(.input-container ion-datetime) {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 1rem;
-    
+
     @media (max-width: 768px) {
       grid-template-columns: 1fr;
     }
@@ -248,6 +254,7 @@
     ion-label {
       font-weight: 500;
       color: #222 !important;
+
       // Melhora o comportamento floating
       &[position="floating"] {
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
@@ -271,21 +278,23 @@
       margin-left: -2px;
     }
 
-    ion-input[type="date"], ion-input, ion-datetime {
+    ion-input[type="date"],
+    ion-input,
+    ion-datetime {
       --padding-top: 16px;
       --padding-bottom: 12px;
       --color: var(--custom-text);
       --placeholder-color: var(--custom-text-muted);
       min-height: 44px;
       line-height: 1.4;
-      
+
       // Estilo específico para campos de data
       &[type="date"] {
         cursor: pointer;
         padding-right: 12px;
         position: relative;
         z-index: 1;
-        
+
         // Ocultar o ícone do calendário padrão inicialmente
         &::-webkit-calendar-picker-indicator {
           position: absolute;
@@ -299,12 +308,12 @@
           background: transparent;
           color: var(--custom-primary);
           font-size: 16px;
-          
+
           &:hover {
             opacity: 1;
           }
         }
-        
+
         // Para Firefox
         &::-moz-calendar-picker-indicator {
           position: absolute;
@@ -316,7 +325,7 @@
           cursor: pointer;
           opacity: 0.6;
         }
-        
+
         // Quando o campo tem foco ou valor, mostra o ícone
         &:focus,
         &:not(:placeholder-shown) {
@@ -330,14 +339,14 @@
     &.item-has-focus {
       --border-color: var(--custom-primary);
       --highlight-color-focused: var(--custom-primary);
-      
+
       // Para campos de data com foco, ajustar o padding
       ion-input[type="date"] {
         --padding-top: 20px;
       }
     }
 
-    &.item-has-value {
+    &.item-has-value:not(.item-valid):not(.item-invalid) {
       --border-color: var(--custom-success);
     }
 
@@ -355,7 +364,7 @@ ion-select {
   --background: transparent !important;
   --color: var(--custom-text) !important;
   --placeholder-color: var(--custom-text-muted) !important;
-  
+
   color: var(--custom-text) !important;
 }
 
@@ -376,27 +385,27 @@ ion-select {
     font-weight: 500;
     border-radius: 0.5rem;
     transition: all var(--animation-duration) ease;
-    
+
     &[color="primary"] {
       --background: var(--custom-primary);
       --color: white;
       box-shadow: var(--custom-shadow-light);
-      
+
       &:hover:not([disabled]) {
         --background: color-mix(in srgb, var(--custom-primary) 90%, black);
         transform: translateY(-1px);
         box-shadow: var(--custom-shadow-medium);
       }
     }
-    
+
     &[fill="clear"] {
       --color: var(--custom-text-secondary);
-      
+
       &:hover {
         --background: var(--custom-surface-variant);
       }
     }
-    
+
     &[disabled] {
       opacity: 0.6;
       cursor: not-allowed;
@@ -412,57 +421,57 @@ ion-select {
   .form-container {
     padding: 1rem;
   }
-  
+
   .page-header {
     margin: -1rem -1rem 1.5rem -1rem;
     padding: 1.5rem 1rem;
-    
+
     .header-content {
       flex-direction: column;
       text-align: center;
-      
+
       .header-info h1 {
         font-size: 1.5rem;
       }
-      
+
       .header-illustration {
         margin: 1rem 0 0 0;
-        
+
         ion-icon {
           font-size: 2.5rem;
         }
       }
     }
   }
-  
+
   .form-section {
     margin-bottom: 1.5rem;
-    
+
     .section-header {
       padding: 1rem;
-      
+
       .section-icon {
         width: 2.5rem;
         height: 2.5rem;
-        
+
         ion-icon {
           font-size: 1.25rem;
         }
       }
-      
+
       .section-title h2 {
         font-size: 1.125rem;
       }
     }
   }
-  
+
   ion-list {
     padding: 1rem !important;
   }
-  
+
   .form-actions {
     flex-direction: column;
-    
+
     ion-button {
       width: 100%;
     }
@@ -473,16 +482,16 @@ ion-select {
   .form-container {
     padding: 0.75rem;
   }
-  
+
   .page-header {
     margin: -0.75rem -0.75rem 1rem -0.75rem;
     padding: 1.25rem 0.75rem;
   }
-  
+
   .form-section {
     margin-bottom: 1rem;
   }
-  
+
   ion-list {
     padding: 0.75rem !important;
   }
@@ -508,6 +517,7 @@ ion-button {
     opacity: 0;
     transform: translateY(20px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -531,18 +541,397 @@ ion-item:hover {
   }
 }
 
+// Melhorar área clicável dos campos
+ion-item {
+  cursor: pointer;
+  position: relative;
+
+  // Fazer toda a área do item clicável
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  // Ativar área clicável quando não há foco no input
+  &:not(.item-has-focus) {
+    &::after {
+      pointer-events: auto;
+    }
+  }
+
+  // Garantir que o input continue funcional
+  ion-input {
+    position: relative;
+    z-index: 2;
+    pointer-events: auto;
+  }
+
+  // Garantir que outros elementos (ícones, labels) sejam clicáveis
+  ion-label,
+  ion-icon,
+  .date-picker-icon {
+    position: relative;
+    z-index: 3;
+    pointer-events: auto;
+  }
+}
+
+// Estilos para ícones de calendário nos campos de data
+.date-picker-icon {
+  color: var(--custom-text-secondary);
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 0.5rem;
+  transition: all var(--animation-duration) ease;
+  border-radius: 6px;
+
+  &:hover {
+    color: var(--custom-primary);
+    background: var(--custom-surface-variant);
+    transform: scale(1.1);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
+// Animações aprimoradas para campos de data
+ion-item.item-has-focus .date-picker-icon,
+ion-item.item-has-value .date-picker-icon {
+  color: var(--custom-primary);
+}
+
+// Placeholder melhorado para campos de data
+ion-input[type="text"] {
+  ion-label {
+    transition: all var(--animation-duration) ease;
+  }
+}
+
 // Melhor contraste para usuários com dificuldades visuais
 @media (prefers-contrast: high) {
   :host {
     --custom-border: #000000;
     --custom-text: #000000;
   }
-  
+
   .page-header {
     background: var(--custom-primary);
   }
-  
+
   ion-item {
     border: 2px solid var(--custom-border);
+  }
+
+  .date-picker-icon {
+    color: var(--custom-text);
+
+    &:hover {
+      background: var(--custom-primary);
+      color: white;
+    }
+  }
+}
+
+// =============================================================================
+// ESPAÇAMENTO PARA CAMPOS COM VALIDAÇÃO
+// =============================================================================
+
+.form-field-container {
+  margin-bottom: 4px;
+  /* Reduzido de 8px para 4px - campos mais próximos */
+
+  ion-item {
+    margin-bottom: 2px;
+    /* Reduzido de 4px para 2px */
+  }
+}
+
+// =============================================================================
+// SISTEMA DE VALIDAÇÃO VISUAL
+// =============================================================================
+
+/* Estilos de validação visual - elegante e sem duplicação */
+.item-invalid {
+  --border-color: var(--ion-color-danger) !important;
+  --border-width: 2px !important;
+  background-color: rgba(var(--ion-color-danger-rgb), 0.03);
+  margin-bottom: 8px;
+
+  ion-label {
+    --color: var(--ion-color-danger);
+    font-weight: 500;
+  }
+
+  ion-input {
+    --color: var(--ion-color-danger);
+  }
+}
+
+.item-valid {
+  --border-color: var(--ion-color-success) !important;
+  --border-width: 2px !important;
+  background-color: rgba(var(--ion-color-success-rgb), 0.03);
+
+  ion-label {
+    --color: var(--ion-color-success);
+    font-weight: 500;
+  }
+
+  ion-input {
+    --color: var(--ion-color-success);
+  }
+}
+
+.error-message {
+  color: var(--ion-color-danger);
+  font-size: 12px;
+  font-weight: 500;
+  margin-left: 16px;
+  margin-top: 4px;
+  /* Alterado de -6px para 4px - mais espaço do campo */
+  margin-bottom: 16px;
+  /* Aumentado de 12px para 16px - mais espaço para o próximo campo */
+  padding: 6px 12px;
+  background-color: rgba(var(--ion-color-danger-rgb), 0.1);
+  border-radius: 4px;
+  border-left: 3px solid var(--ion-color-danger);
+  position: relative;
+  z-index: 10;
+  /* Garante que fica por cima */
+  animation: errorSlideIn 0.3s ease-out;
+}
+
+@keyframes errorSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+    max-height: 0;
+    margin-bottom: 0;
+    padding: 0 12px;
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    max-height: 40px;
+    margin-bottom: 12px;
+    padding: 6px 12px;
+  }
+}
+
+// =============================================================================
+// TOGGLE DE STATUS DO FUNCIONÁRIO - REMOVIDO (usando padrão do formulário)
+// =============================================================================
+
+// Seção removida - agora usa o padrão ion-item
+
+.status-toggle-container-OLD {
+  margin: 0 !important;
+  padding: 0 !important;
+
+  .status-toggle-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--custom-surface);
+    border: 2px solid var(--custom-border);
+    border-radius: var(--border-radius);
+    padding: 20px 24px;
+    transition: all var(--animation-duration) ease;
+
+    &:hover {
+      border-color: var(--custom-border-focus);
+      box-shadow: var(--custom-shadow-light);
+    }
+
+    .status-info {
+      flex: 1;
+      padding-right: 16px;
+
+      .status-label {
+        display: block;
+
+        h3 {
+          margin: 0 0 4px 0;
+          font-size: 1.1rem;
+          font-weight: 600;
+          color: var(--custom-text);
+          transition: color var(--animation-duration) ease;
+        }
+
+        p {
+          margin: 0;
+          font-size: 0.9rem;
+          color: var(--custom-text-secondary);
+          line-height: 1.4;
+        }
+      }
+    }
+
+    .status-toggle {
+      flex-shrink: 0;
+
+      ion-toggle {
+        --handle-width: 24px;
+        --handle-height: 24px;
+        --track-width: 48px;
+        --track-height: 28px;
+        
+        // Cores personalizadas
+        --color: var(--custom-border);
+        --color-checked: var(--ion-color-success);
+        --handle-background: #ffffff;
+        --handle-background-checked: #ffffff;
+
+        // Sombras no handle
+        --handle-box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+
+        // Transições suaves
+        transition: all var(--animation-duration) ease;
+
+        &:hover {
+          transform: scale(1.05);
+        }
+      }
+    }
+  }
+
+  // Estados visuais baseados no valor do toggle
+  &:has(ion-toggle[aria-checked="true"]) {
+    .status-toggle-wrapper {
+      border-color: var(--ion-color-success);
+      background: rgba(var(--ion-color-success-rgb), 0.05);
+
+      .status-info h3 {
+        color: var(--ion-color-success);
+      }
+    }
+  }
+
+  &:has(ion-toggle[aria-checked="false"]) {
+    .status-toggle-wrapper {
+      border-color: var(--ion-color-medium);
+      background: rgba(var(--ion-color-medium-rgb), 0.05);
+
+      .status-info h3 {
+        color: var(--ion-color-medium);
+      }
+    }
+  }
+}
+
+// Responsividade para o toggle
+@media (max-width: 768px) {
+  .status-toggle-container {
+    .status-toggle-wrapper {
+      padding: 16px 20px;
+
+      .status-info {
+        padding-right: 12px;
+
+        .status-label {
+          h3 {
+            font-size: 1rem;
+          }
+
+          p {
+            font-size: 0.85rem;
+          }
+        }
+      }
+
+      .status-toggle ion-toggle {
+        --track-width: 44px;
+        --track-height: 26px;
+        --handle-width: 22px;
+        --handle-height: 22px;
+      }
+    }
+  }
+}
+
+// =============================================================================
+// STATUS DO FUNCIONÁRIO - TOGGLE SWITCH
+// =============================================================================
+
+.info-message {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 12px 16px;
+  margin-top: 8px;
+  background: var(--ion-color-light, #f8f9fa);
+  border-radius: 8px;
+  border-left: 3px solid var(--ion-color-primary);
+  font-size: 0.875rem;
+  line-height: 1.4;
+  color: var(--ion-color-medium-shade);
+
+  ion-icon {
+    color: var(--ion-color-primary);
+    font-size: 1.1rem;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  span {
+    flex: 1;
+  }
+}
+
+// Ajuste para o toggle de status - garantir que funcione
+ion-toggle[slot="start"] {
+  --handle-background-checked: var(--ion-color-success);
+  --track-background-checked: var(--ion-color-success-tint);
+  z-index: 10; // Garantir que esteja acima de outros elementos
+  pointer-events: auto !important; // Forçar que aceite cliques
+  
+  &::part(handle) {
+    border-radius: 50%;
+  }
+}
+
+// Estilo para o item do toggle
+ion-item:has(ion-toggle[slot="start"]) {
+  --padding-start: 16px;
+  --inner-padding-end: 16px;
+  --min-height: 60px;
+  cursor: pointer; // Adicionar cursor pointer para indicar que é clicável
+  
+  ion-toggle {
+    margin-right: 16px;
+    pointer-events: auto !important; // Garantir que o toggle aceite cliques
+  }
+  
+  ion-label {
+    margin: 12px 0;
+    
+    h3 {
+      font-weight: 600;
+      color: var(--ion-text-color);
+      margin-bottom: 4px;
+      font-size: 1rem;
+    }
+    
+    p {
+      color: var(--ion-color-medium);
+      font-size: 0.875rem;
+      margin: 0;
+    }
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  .info-message {
+    background: var(--ion-color-dark);
+    border-left-color: var(--ion-color-primary-tint);
   }
 }

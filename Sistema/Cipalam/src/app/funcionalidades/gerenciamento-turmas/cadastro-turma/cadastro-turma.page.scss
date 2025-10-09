@@ -207,15 +207,106 @@
 .form-group {
   display: flex;
   flex-direction: column;
-  gap: var(--input-spacing);
-  padding: 1.5rem;
+  gap: 0rem;
+  padding: 1rem;
+}
+
+// Containers para campos com validação
+.form-field-container {
+  margin-bottom: 0px;
+  /* Removido completamente o espaçamento entre containers */
+
+  ion-item {
+    margin-bottom: 0px;
+    /* Removido completamente o espaçamento entre items */
+  }
+}
+
+// =============================================================================
+// SISTEMA DE VALIDAÇÃO VISUAL
+// =============================================================================
+
+/* Estilos de validação visual - elegante e sem duplicação */
+.item-invalid {
+  --border-color: var(--ion-color-danger) !important;
+  --border-width: 2px !important;
+  background-color: rgba(var(--ion-color-danger-rgb), 0.03);
+  margin-bottom: 0px;
+
+  ion-label {
+    --color: var(--ion-color-danger);
+    font-weight: 500;
+  }
+
+  ion-input {
+    --color: var(--ion-color-danger);
+  }
+}
+
+.item-valid {
+  --border-color: var(--ion-color-success) !important;
+  --border-width: 2px !important;
+  background-color: rgba(var(--ion-color-success-rgb), 0.03);
+
+  ion-label {
+    --color: var(--ion-color-success);
+    font-weight: 500;
+  }
+
+  ion-input {
+    --color: var(--ion-color-success);
+  }
+}
+
+.error-message {
+  color: var(--ion-color-danger);
+  font-size: 11px;
+  font-weight: 400;
+  /* Reduzido peso da fonte para ficar mais sutil */
+  margin-left: 16px;
+  margin-top: 1px;
+  margin-bottom: 2px;
+  padding: 2px 8px;
+  /* Reduzido ainda mais o padding */
+  background-color: rgba(var(--ion-color-danger-rgb), 0.05);
+  /* Background mais sutil */
+  border-radius: 3px;
+  /* Bordas mais suaves */
+  border-left: 2px solid var(--ion-color-danger);
+  /* Borda esquerda mais fina */
+  position: relative;
+  z-index: 5;
+  /* Z-index menor para não sobressair tanto */
+  animation: errorSlideIn 0.2s ease-out;
+  /* Animação mais rápida e discreta */
+}
+
+@keyframes errorSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+    /* Movimento mais sutil */
+    max-height: 0;
+    margin-bottom: 0;
+    padding: 0 8px;
+  }
+
+  to {
+    opacity: 0.9;
+    /* Opacidade reduzida para ficar mais discreto */
+    transform: translateY(0);
+    max-height: 20px;
+    /* Altura menor */
+    margin-bottom: 2px;
+    padding: 2px 8px;
+  }
 }
 
 // Estilos dos formulários com labels flutuantes e bordas
 .form-group {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 0rem; /* Sem gap - campos grudados */
 
   ion-item {
     --border-width: 1px;
@@ -225,7 +316,7 @@
     --inner-padding-end: 16px;
     --background: var(--custom-surface);
     --min-height: 56px; // Reduzindo para ficar mais elegante
-    margin-bottom: 0.5rem;
+    margin-bottom: 0rem; /* Removido margin-bottom completamente */
     border-radius: 8px;
     min-height: 56px;
     overflow: visible;

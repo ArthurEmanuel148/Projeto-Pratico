@@ -114,9 +114,21 @@ public class PessoaController {
     @PutMapping("/funcionarios/{id}")
     public ResponseEntity<?> atualizarFuncionario(@PathVariable Integer id, @RequestBody PessoaCadastroDTO dto) {
         try {
+            System.out.println("=== CONTROLLER - ATUALIZAR FUNCIONÁRIO ===");
+            System.out.println("ID recebido: " + id);
+            System.out.println("DTO recebido: " + dto);
+            System.out.println("dto.getNmPessoa(): " + dto.getNmPessoa());
+            System.out.println("dto.getEmail(): " + dto.getEmail());
+            System.out.println("dto.getDataInicio(): " + dto.getDataInicio());
+            System.out.println("dto.getTipo(): " + dto.getTipo());
+            System.out.println("dto.getUsuario(): " + dto.getUsuario());
+            System.out.println("dto.getPermissoes(): " + dto.getPermissoes());
+
             Map<String, Object> funcionarioAtualizado = pessoaService.atualizarFuncionario(id, dto);
             return ResponseEntity.ok(funcionarioAtualizado);
         } catch (Exception e) {
+            System.err.println("ERRO no controller atualizarFuncionario: " + e.getMessage());
+            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }

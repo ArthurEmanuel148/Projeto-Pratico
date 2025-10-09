@@ -15,6 +15,7 @@ export class CadastroTurmaPage implements OnInit {
     isEditMode: boolean = false;
     turmaId: number | null = null;
     turmaData: any = null;
+    manuallyTouchedFields: Set<string> = new Set();
 
     constructor(
         private fb: FormBuilder,
@@ -44,73 +45,80 @@ export class CadastroTurmaPage implements OnInit {
                 this.carregarDadosTurma();
             }
         });
-
-        // Configurar listener para validação em tempo real
-        this.setupFormValidation();
-    }
-
-    setupFormValidation() {
-        // Observar mudanças nos campos para aplicar validação visual
-        Object.keys(this.cadastroForm.controls).forEach(key => {
-            this.cadastroForm.get(key)?.valueChanges.subscribe(() => {
-                // Marcar como touched quando o valor mudar
-                if (!this.cadastroForm.get(key)?.touched) {
-                    this.cadastroForm.get(key)?.markAsTouched();
-                }
-            });
-        });
     }
 
     // Métodos para verificar estados de validação
     isFieldValid(fieldName: string): boolean {
         const field = this.cadastroForm.get(fieldName);
-        return field ? field.valid && (field.touched || field.dirty) : false;
+        // Só mostra como válido se foi tocado manualmente e tem valor
+        return !!(field && field.valid && this.manuallyTouchedFields.has(fieldName) && field.value);
     }
 
     isFieldInvalid(fieldName: string): boolean {
         const field = this.cadastroForm.get(fieldName);
-        return field ? field.invalid && (field.touched || field.dirty) : false;
+        // Só mostra erro se o campo foi tocado manualmente (perdeu foco)
+        return !!(field && field.invalid && this.manuallyTouchedFields.has(fieldName));
     }
 
     getFieldError(fieldName: string): string {
         const field = this.cadastroForm.get(fieldName);
-        if (field && field.errors && field.touched) {
-            if (field.errors['required']) {
-                return 'Este campo é obrigatório';
+        
+        // Só mostra erro se foi tocado manualmente
+        if (!field || !field.errors || !this.manuallyTouchedFields.has(fieldName)) {
+            return '';
+        }
+
+        // Mensagens personalizadas por campo e tipo de erro
+        const errorMessages: { [key: string]: { [key: string]: string } } = {
+            nomeTurma: {
+                required: 'Nome da turma é obrigatório',
+                minlength: 'Nome deve ter pelo menos 3 caracteres'
+            },
+            capacidadeMaxima: {
+                required: 'Capacidade máxima é obrigatória',
+                min: 'Capacidade deve ser no mínimo 1',
+                max: 'Capacidade deve ser no máximo 50'
+            },
+            horarioInicio: {
+                required: 'Horário de início é obrigatório'
+            },
+            horarioFim: {
+                required: 'Horário de fim é obrigatório'
             }
-            if (field.errors['minlength']) {
-                return `Mínimo de ${field.errors['minlength'].requiredLength} caracteres`;
-            }
-            if (field.errors['min']) {
-                return `Valor mínimo: ${field.errors['min'].min}`;
-            }
-            if (field.errors['max']) {
-                return `Valor máximo: ${field.errors['max'].max}`;
+        };
+
+        const fieldErrors = errorMessages[fieldName];
+        if (fieldErrors) {
+            // Retorna a primeira mensagem de erro encontrada
+            for (const errorType in field.errors) {
+                if (fieldErrors[errorType]) {
+                    return fieldErrors[errorType];
+                }
             }
         }
+
+        // Mensagens genéricas se não houver específica
+        if (field.errors['required']) {
+            return 'Este campo é obrigatório';
+        }
+        if (field.errors['minlength']) {
+            return `Mínimo de ${field.errors['minlength'].requiredLength} caracteres`;
+        }
+        if (field.errors['min']) {
+            return `Valor mínimo: ${field.errors['min'].min}`;
+        }
+        if (field.errors['max']) {
+            return `Valor máximo: ${field.errors['max'].max}`;
+        }
+
         return '';
     }
 
-    // Método para controlar foco nos inputs - mostra placeholder apenas após clicar
-    onInputFocus(event: any, placeholderText: string) {
-        const input = event.target;
-        const ionItem = input.closest('ion-item');
-        
-        // Força o label a subir imediatamente
+    // Método para controlar foco nos inputs - força o label a flutuar
+    onInputFocus(event: any) {
+        const ionItem = event.target.closest('ion-item');
         if (ionItem) {
             ionItem.classList.add('item-has-focus');
-            if (!input.value) {
-                ionItem.classList.add('item-has-placeholder');
-            }
-        }
-        
-        if (input && !input.value) {
-            // Define um valor temporário invisível para forçar o label a subir
-            input.value = ' ';
-            setTimeout(() => {
-                input.value = '';
-                input.placeholder = placeholderText;
-            }, 50);
         }
     }
 
@@ -119,38 +127,63 @@ export class CadastroTurmaPage implements OnInit {
         const input = event.target;
         const ionItem = input.closest('ion-item');
         
-        if (input && !input.value.trim()) {
-            input.placeholder = '';
-            input.value = '';
-            if (ionItem) {
-                ionItem.classList.remove('item-has-placeholder');
+        if (ionItem) {
+            if (input.value) {
+                ionItem.classList.add('item-has-value');
+                ionItem.classList.remove('item-has-focus');
+            } else {
+                ionItem.classList.remove('item-has-focus', 'item-has-value');
+            }
+        }
+
+        // Marca o campo como tocado manualmente (só agora pode mostrar validação)
+        const ionInput = input.closest('ion-input');
+        if (ionInput) {
+            const formControlName = ionInput.getAttribute('formControlName');
+            if (formControlName) {
+                // Adiciona ao conjunto de campos tocados manualmente
+                this.manuallyTouchedFields.add(formControlName);
+
+                const field = this.cadastroForm.get(formControlName);
+                if (field) {
+                    field.markAsTouched();
+                }
             }
         }
         
-        // Remove a classe de foco se não houver valor
-        if (ionItem && !input.value.trim()) {
-            setTimeout(() => {
-                ionItem.classList.remove('item-has-focus');
-            }, 100);
+        if (input && !input.value.trim()) {
+            input.placeholder = '';
         }
     }
 
-    // Método especial para campos de tempo - pré-preenche com valor padrão
-    onTimeFocus(event: any, fieldName: string, defaultValue: string) {
-        const field = this.cadastroForm.get(fieldName);
-        const input = event.target;
-        const ionItem = input.closest('ion-item');
-        
-        // Força o label a subir imediatamente
-        if (ionItem) {
-            ionItem.classList.add('item-has-focus', 'item-has-value');
+    // Método para focar programaticamente em um input
+    focusInput(fieldName: string) {
+        // Previne que o evento seja disparado quando já está focado
+        if (document.activeElement?.closest('ion-input')?.getAttribute('formControlName') === fieldName) {
+            return;
         }
-        
-        if (field && !field.value) {
-            setTimeout(() => {
-                field.setValue(defaultValue);
-            }, 50);
-        }
+
+        setTimeout(() => {
+            const ionInput = document.querySelector(`ion-input[formControlName="${fieldName}"]`) as any;
+            if (ionInput) {
+                // Primeiro força o foco visual
+                const ionItem = ionInput.closest('ion-item');
+                if (ionItem) {
+                    ionItem.classList.add('item-has-focus');
+                }
+
+                // Depois foca no input nativo
+                const nativeInput = ionInput.querySelector('input');
+                if (nativeInput) {
+                    nativeInput.focus();
+                } else {
+                    // Fallback: usar o método setFocus do ion-input
+                    if (ionInput.setFocus) {
+                        ionInput.setFocus();
+                    }
+                }
+            }
+        }, 50);
     }
 
     async carregarDadosTurma() {
@@ -177,6 +210,9 @@ export class CadastroTurmaPage implements OnInit {
     }
 
     preencherFormulario(turma: any) {
+        // Limpa campos tocados manualmente para evitar mostrar validação no modo edição
+        this.manuallyTouchedFields.clear();
+        
         this.cadastroForm.patchValue({
             nomeTurma: turma.nomeTurma,
             capacidadeMaxima: turma.capacidadeMaxima,
@@ -217,8 +253,21 @@ export class CadastroTurmaPage implements OnInit {
                 },
                 error: (error) => {
                     loading.dismiss();
-                    console.error('Erro ao salvar turma:', error);
-                    const message = error.error?.message || 'Erro ao salvar turma';
+                    console.error('Erro completo ao salvar turma:', error);
+                    console.error('error.error:', error.error);
+                    console.error('error.error?.message:', error.error?.message);
+                    
+                    let message = 'Erro ao salvar turma';
+                    
+                    // Tentar várias formas de acessar a mensagem
+                    if (error.error?.message) {
+                        message = error.error.message;
+                    } else if (error.error && typeof error.error === 'string') {
+                        message = error.error;
+                    } else if (error.message) {
+                        message = error.message;
+                    }
+                    
                     this.showToast(message, 'danger');
                 }
             });
@@ -295,8 +344,21 @@ export class CadastroTurmaPage implements OnInit {
             },
             error: (error) => {
                 loading.dismiss();
-                console.error('Erro ao excluir turma:', error);
-                const message = error.error?.message || 'Erro ao excluir turma';
+                console.error('Erro completo ao excluir turma:', error);
+                console.error('error.error:', error.error);
+                console.error('error.error?.message:', error.error?.message);
+                
+                let message = 'Erro ao excluir turma';
+                
+                // Tentar várias formas de acessar a mensagem
+                if (error.error?.message) {
+                    message = error.error.message;
+                } else if (error.error && typeof error.error === 'string') {
+                    message = error.error;
+                } else if (error.message) {
+                    message = error.message;
+                }
+                
                 this.showToast(message, 'danger');
             }
         });

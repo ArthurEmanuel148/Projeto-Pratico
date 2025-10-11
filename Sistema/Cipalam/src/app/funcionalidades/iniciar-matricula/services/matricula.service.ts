@@ -45,7 +45,7 @@ export interface IniciarMatriculaResponse {
   providedIn: 'root'
 })
 export class MatriculaService {
-  private readonly API_BASE_URL = `${environment.apiUrl}/api/matriculas`;
+  private readonly API_BASE_URL = `${environment.apiUrl}/interesse-matricula`;
 
   private httpOptions = {
     headers: new HttpHeaders({
@@ -59,7 +59,7 @@ export class MatriculaService {
    * Busca todas as declarações disponíveis para matrícula
    */
   getDeclaracoesParaMatricula(): Observable<DeclaracaoParaMatricula[]> {
-    return this.http.get<DeclaracaoParaMatricula[]>(`${this.API_BASE_URL}/declaracoes`, this.httpOptions)
+    return this.http.get<DeclaracaoParaMatricula[]>(`${this.API_BASE_URL}?status=interesse_declarado,matricula_iniciada`, this.httpOptions)
       .pipe(
         map(response => {
           console.log('✅ Declarações recebidas:', response);
@@ -76,7 +76,7 @@ export class MatriculaService {
    * Busca todas as turmas disponíveis para matrícula
    */
   getTurmasDisponiveis(): Observable<TurmaDisponivel[]> {
-    return this.http.get<TurmaDisponivel[]>(`${this.API_BASE_URL}/turmas`, this.httpOptions)
+    return this.http.get<TurmaDisponivel[]>(`${environment.apiUrl}/turmas`, this.httpOptions)
       .pipe(
         map(response => {
           console.log('✅ Turmas disponíveis recebidas:', response);
@@ -111,8 +111,7 @@ export class MatriculaService {
    * Inicia o processo de matrícula
    */
   iniciarMatricula(idDeclaracao: number, idTurma: number, idFuncionario: number): Observable<IniciarMatriculaResponse> {
-    const request = { idDeclaracao, idTurma, idFuncionario };
-    return this.http.post<IniciarMatriculaResponse>(`${this.API_BASE_URL}/iniciar`, request, this.httpOptions)
+    return this.http.post<IniciarMatriculaResponse>(`${this.API_BASE_URL}/${idDeclaracao}/iniciar-matricula?turmaId=${idTurma}&funcionarioId=${idFuncionario}`, {}, this.httpOptions)
       .pipe(
         map(response => {
           console.log('✅ Matrícula iniciada:', response);

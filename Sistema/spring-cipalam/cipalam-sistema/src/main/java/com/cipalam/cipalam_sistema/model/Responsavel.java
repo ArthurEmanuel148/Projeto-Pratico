@@ -8,6 +8,10 @@ import lombok.Data;
 @Data
 public class Responsavel {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "idResponsavel")
+    private Integer id;
+
     @Column(name = "tbPessoa_idPessoa")
     private Integer pessoaId;
 

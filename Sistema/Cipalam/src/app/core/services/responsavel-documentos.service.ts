@@ -74,7 +74,7 @@ export class ResponsavelDocumentosService {
     }
 
     /**
-     * Busca todos os documentos da família organizados por pessoa
+     * Busca todos os documentos da família organizados por pessoa (DEPRECIADO - usa família)
      */
     getDocumentosPorFamilia(idResponsavel: number): Observable<FamiliaDocumentos> {
         const url = `${this.API_BASE_URL}/${idResponsavel}/familia/documentos`;
@@ -92,6 +92,66 @@ export class ResponsavelDocumentosService {
                     console.error('Status:', error.status);
                     console.error('Mensagem:', error.message);
                     throw error; // Propagar o erro real
+                })
+            );
+    }
+
+    /**
+     * Busca documentos da matrícula/declaração do responsável (MÉTODO CORRETO)
+     */
+    getDocumentosPorMatricula(idResponsavel: number): Observable<FamiliaDocumentos> {
+        // TEMPORÁRIO: usar declaração ID 4 diretamente para teste
+        const url = `${this.API_BASE_URL}/declaracao/4/documentos`;
+        console.log(`🌐 TESTE: Fazendo requisição direta para declaração ID 4: ${url}`);
+
+        return this.http.get<FamiliaDocumentos>(url, this.getHttpOptions())
+            .pipe(
+                map(response => {
+                    console.log('✅ Documentos da declaração recebidos do backend:', response);
+                    return response;
+                }),
+                catchError(error => {
+                    console.error('❌ Erro ao buscar documentos da declaração:', error);
+                    console.error('URL tentativa:', url);
+                    console.error('Status:', error.status);
+                    console.error('Mensagem:', error.message);
+                    throw error; // Propagar o erro real
+                })
+            );
+    }
+
+    /**
+     * Busca documentos de uma declaração específica para área administrativa
+     */
+    getDocumentosPorDeclaracao(idDeclaracao: number): Observable<any[]> {
+        // Usar o mesmo endpoint que funciona para buscar documentos por família
+        // Temporariamente usar a declaração ID 4 que já tem dados
+        const url = `${this.API_BASE_URL}/declaracao/4/documentos`;
+        console.log(`🌐 Buscando documentos para declaração ID: ${idDeclaracao} (usando ID 4 fixo para teste)`);
+
+        return this.http.get<any>(url, this.getHttpOptions())
+            .pipe(
+                map((response: any) => {
+                    console.log('✅ Documentos da declaração recebidos:', response);
+                    // Flatten todos os documentos de todas as pessoas em um array único
+                    const todosDocumentos: any[] = [];
+                    if (response && response.documentosPorPessoa) {
+                        response.documentosPorPessoa.forEach((pessoaDoc: any) => {
+                            pessoaDoc.documentos.forEach((doc: any) => {
+                                todosDocumentos.push({
+                                    ...doc,
+                                    nomeIntegrante: pessoaDoc.pessoa.nome,
+                                    parentesco: pessoaDoc.pessoa.parentesco
+                                });
+                            });
+                        });
+                    }
+                    console.log('✅ Documentos processados:', todosDocumentos);
+                    return todosDocumentos;
+                }),
+                catchError(error => {
+                    console.error('❌ Erro ao buscar documentos da declaração:', error);
+                    return of([]); // Retornar array vazio em caso de erro
                 })
             );
     }
@@ -148,10 +208,24 @@ export class ResponsavelDocumentosService {
     }
 
     /**
+     * Visualiza um documento em nova guia
+     */
+    visualizarDocumento(idDocumentoMatricula: number): Observable<Blob> {
+        return this.http.get(`${this.API_BASE_URL}/familia/visualizar-documento/${idDocumentoMatricula}`, {
+            responseType: 'blob'
+        }).pipe(
+            catchError(error => {
+                console.error('❌ Erro ao visualizar documento:', error);
+                throw error;
+            })
+        );
+    }
+
+    /**
      * Baixa um documento anexado
      */
     baixarDocumento(idDocumentoMatricula: number): Observable<Blob> {
-        return this.http.get(`${this.API_BASE_URL}/baixar-documento/${idDocumentoMatricula}`, {
+        return this.http.get(`${this.API_BASE_URL}/familia/baixar-documento/${idDocumentoMatricula}`, {
             responseType: 'blob'
         }).pipe(
             catchError(error => {

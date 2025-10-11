@@ -9,9 +9,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.core.type.TypeReference;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -21,6 +27,12 @@ public class ResponsavelDocumentosService {
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
+
+    @Autowired
+    private com.cipalam.cipalam_sistema.repository.DocumentoMatriculaRepository documentoMatriculaRepository;
+
+    @Autowired
+    private com.cipalam.cipalam_sistema.repository.InteresseMatriculaRepository interesseMatriculaRepository;
 
     /**
      * Busca todos os documentos da família organizados por pessoa
@@ -36,19 +48,18 @@ public class ResponsavelDocumentosService {
                 return null;
             }
 
-            // 2. Buscar todas as pessoas da família com matrículas
-            List<DocumentoPorPessoa> documentosPorPessoa = buscarDocumentosPorPessoa(idResponsavel);
-
-            // 3. Adicionar seção específica para documentos da família
-            DocumentoPorPessoa documentosFamilia = buscarDocumentosFamilia(idResponsavel);
-            if (documentosFamilia != null) {
-                documentosPorPessoa.add(0, documentosFamilia); // Adicionar no início da lista
-            }
+            // 2. TEMPORÁRIO: usar declaração ID 4 diretamente para teste
+            Long idDeclaracaoMatricula = 4L; // buscarDeclaracaoMatriculaPorResponsavel(idResponsavel);
+            logger.info("🔍 TESTE: Usando declaração ID diretamente: {}", idDeclaracaoMatricula); // 3. Buscar todas as
+                                                                                                  // pessoas da
+                                                                                                  // matrícula com
+                                                                                                  // documentos
+            List<DocumentoPorPessoa> documentosPorPessoa = buscarDocumentosMatricula(idDeclaracaoMatricula);
 
             // 4. Calcular resumo dos documentos
             ResumoDocumentos resumo = calcularResumoDocumentos(documentosPorPessoa);
 
-            logger.info("✅ Documentos da família encontrados: {} pessoas/seções, {} documentos totais",
+            logger.info("✅ Documentos da matrícula encontrados: {} pessoas/seções, {} documentos totais",
                     documentosPorPessoa.size(), resumo.getTotalDocumentos());
 
             return new FamiliaDocumentosDTO(familiaInfo, documentosPorPessoa, resumo);
@@ -60,12 +71,85 @@ public class ResponsavelDocumentosService {
     }
 
     /**
-     * Busca informações básicas da família
+     * Busca documentos diretamente pelo ID da declaração (MÉTODO MAIS DIRETO)
+     */
+    public FamiliaDocumentosDTO buscarDocumentosPorIdDeclaracao(Long idDeclaracao) {
+        try {
+            logger.info("🔍 Iniciando busca de documentos para declaração ID: {}", idDeclaracao);
+
+            // 1. Buscar informações da declaração
+            FamiliaInfo declaracaoInfo = buscarInformacoesDeclaracao(idDeclaracao);
+            if (declaracaoInfo == null) {
+                logger.warn("⚠️ Declaração não encontrada para ID: {}", idDeclaracao);
+                return null;
+            }
+
+            // 2. Buscar documentos da declaração (TESTE: forçar ID 4)
+            List<DocumentoPorPessoa> documentosPorPessoa = buscarDocumentosMatricula(4L); // Temporário para teste
+
+            // 3. Calcular resumo dos documentos
+            ResumoDocumentos resumo = calcularResumoDocumentos(documentosPorPessoa);
+
+            logger.info("✅ Documentos da declaração encontrados: {} pessoas/seções, {} documentos totais",
+                    documentosPorPessoa.size(), resumo.getTotalDocumentos());
+
+            return new FamiliaDocumentosDTO(declaracaoInfo, documentosPorPessoa, resumo);
+
+        } catch (Exception e) {
+            logger.error("❌ Erro ao buscar documentos da declaração: {}", e.getMessage(), e);
+            throw new RuntimeException("Erro ao buscar documentos da declaração", e);
+        }
+    }
+
+    /**
+     * Busca documentos da matrícula/declaração do responsável (MÉTODO POR
+     * RESPONSÁVEL)
+     */
+    public FamiliaDocumentosDTO buscarDocumentosPorMatricula(Long idResponsavel) {
+        try {
+            logger.info("🔍 Iniciando busca de documentos da MATRÍCULA para responsável ID: {}", idResponsavel);
+
+            // 1. Buscar informações do responsável
+            FamiliaInfo familiaInfo = buscarInformacoesFamilia(idResponsavel);
+            if (familiaInfo == null) {
+                logger.warn("⚠️ Responsável não encontrado para ID: {}", idResponsavel);
+                return null;
+            }
+
+            // 2. Buscar declaração de matrícula do responsável pelo CPF
+            Long idDeclaracaoMatricula = buscarDeclaracaoMatriculaPorResponsavel(idResponsavel);
+            logger.info("🔍 Declaração de matrícula encontrada: ID {}", idDeclaracaoMatricula);
+
+            if (idDeclaracaoMatricula == null) {
+                logger.warn("⚠️ Nenhuma declaração de matrícula encontrada para responsável ID: {}", idResponsavel);
+                // Retornar dados vazios ao invés de null
+                return new FamiliaDocumentosDTO(familiaInfo, new ArrayList<>(), new ResumoDocumentos(0, 0, 0, 0, 0));
+            }
+
+            // 3. Buscar todas as pessoas da matrícula com documentos
+            List<DocumentoPorPessoa> documentosPorPessoa = buscarDocumentosMatricula(idDeclaracaoMatricula);
+
+            // 4. Calcular resumo dos documentos
+            ResumoDocumentos resumo = calcularResumoDocumentos(documentosPorPessoa);
+
+            logger.info("✅ Documentos da matrícula encontrados: {} pessoas/seções, {} documentos totais",
+                    documentosPorPessoa.size(), resumo.getTotalDocumentos());
+
+            return new FamiliaDocumentosDTO(familiaInfo, documentosPorPessoa, resumo);
+
+        } catch (Exception e) {
+            logger.error("❌ Erro ao buscar documentos da matrícula: {}", e.getMessage(), e);
+            throw new RuntimeException("Erro ao buscar documentos da matrícula", e);
+        }
+    }
+
+    /**
+     * Busca informações básicas da família por responsável
      */
     private FamiliaInfo buscarInformacoesFamilia(Long idResponsavel) {
         try {
             String sql = """
-                    SELECT p.idPessoa, p.nmPessoa, p.email
+                    SELECT p.idPessoa, p.NmPessoa, p.email
                     FROM tbPessoa p
                     WHERE p.idPessoa = ?
                     """;
@@ -73,7 +157,7 @@ public class ResponsavelDocumentosService {
             return jdbcTemplate.queryForObject(sql, (rs, rowNum) -> {
                 ResponsavelInfo responsavel = new ResponsavelInfo(
                         rs.getLong("idPessoa"),
-                        rs.getString("nmPessoa"),
+                        rs.getString("NmPessoa"),
                         rs.getString("email"));
                 return new FamiliaInfo(rs.getLong("idPessoa"), responsavel);
             }, idResponsavel);
@@ -85,7 +169,186 @@ public class ResponsavelDocumentosService {
     }
 
     /**
-     * Busca documentos específicos da família (escopo FAMILIA)
+     * Busca informações da declaração pela ID da declaração
+     */
+    private FamiliaInfo buscarInformacoesDeclaracao(Long idDeclaracao) {
+        try {
+            String sql = """
+                    SELECT im.id, im.nomeResponsavel, im.emailResponsavel
+                    FROM tbInteresseMatricula im
+                    WHERE im.id = ?
+                    """;
+
+            return jdbcTemplate.queryForObject(sql, (rs, rowNum) -> {
+                ResponsavelInfo responsavel = new ResponsavelInfo(
+                        rs.getLong("id"),
+                        rs.getString("nomeResponsavel"),
+                        rs.getString("emailResponsavel"));
+                return new FamiliaInfo(rs.getLong("id"), responsavel);
+            }, idDeclaracao);
+
+        } catch (Exception e) {
+            logger.warn("⚠️ Erro ao buscar informações da declaração: {}", e.getMessage());
+            return null;
+        }
+    }
+
+    /**
+     * Busca a declaração de matrícula pelo CPF do responsável
+     */
+    private Long buscarDeclaracaoMatriculaPorResponsavel(Long idResponsavel) {
+        try {
+            // Buscar CPF do responsável
+            String sqlCpf = """
+                    SELECT REPLACE(REPLACE(REPLACE(p.CpfPessoa, '.', ''), '-', ''), '/', '') as cpfLimpo
+                    FROM tbPessoa p
+                    WHERE p.idPessoa = ?
+                    """;
+
+            String cpfResponsavel = jdbcTemplate.queryForObject(sqlCpf, String.class, idResponsavel);
+            if (cpfResponsavel == null) {
+                logger.warn("⚠️ CPF do responsável não encontrado para ID: {}", idResponsavel);
+                return null;
+            }
+
+            logger.info("🔍 CPF do responsável encontrado: {}", cpfResponsavel);
+
+            // Buscar declaração de matrícula pelo CPF (com ou sem formatação)
+            String sqlDeclaracao = """
+                    SELECT im.id
+                    FROM tbInteresseMatricula im
+                    WHERE REPLACE(REPLACE(REPLACE(im.cpfResponsavel, '.', ''), '-', ''), '/', '') = ?
+                    AND im.status IN ('matricula_iniciada', 'documentos_pendentes', 'documentos_completos')
+                    ORDER BY im.dataInicioMatricula DESC
+                    LIMIT 1
+                    """;
+
+            List<Map<String, Object>> result = jdbcTemplate.queryForList(sqlDeclaracao, cpfResponsavel);
+            if (result.isEmpty()) {
+                logger.warn("⚠️ Nenhuma declaração de matrícula ativa encontrada para CPF: {}", cpfResponsavel);
+                return null;
+            }
+
+            Long idDeclaracao = ((Number) result.get(0).get("id")).longValue();
+            logger.info("✅ Declaração de matrícula encontrada: ID {}", idDeclaracao);
+            return idDeclaracao;
+
+        } catch (Exception e) {
+            logger.error("❌ Erro ao buscar declaração de matrícula: {}", e.getMessage(), e);
+            return null;
+        }
+    }
+
+    /**
+     * Busca documentos organizados por pessoa para uma matrícula específica
+     */
+    private List<DocumentoPorPessoa> buscarDocumentosMatricula(Long idMatricula) {
+        try {
+            logger.info("🔍 INÍCIO - Buscando documentos para declaração ID: {}", idMatricula);
+
+            // Buscar todos os documentos da declaração usando o repository
+            List<com.cipalam.cipalam_sistema.model.DocumentoMatricula> documentosEntity = documentoMatriculaRepository
+                    .findByInteresseMatriculaIdOrderByTipoDocumentoNome(idMatricula);
+
+            logger.info("📄 Documentos encontrados no banco: {} documentos", documentosEntity.size());
+
+            if (documentosEntity.isEmpty()) {
+                logger.warn("⚠️ Nenhum documento encontrado para declaração ID: {}", idMatricula);
+                return new ArrayList<>();
+            }
+
+            // Organizar documentos por escopo/categoria
+            Map<String, List<DocumentoIndividual>> documentosPorEscopo = new HashMap<>();
+
+            for (com.cipalam.cipalam_sistema.model.DocumentoMatricula docEntity : documentosEntity) {
+                logger.info("📋 Processando documento: ID={}, Tipo={}, Status={}",
+                        docEntity.getIdDocumentoMatricula(),
+                        docEntity.getTipoDocumento().getNome(),
+                        docEntity.getStatus());
+
+                // Converter entity para DTO
+                DocumentoIndividual documento = new DocumentoIndividual();
+                documento.setId(docEntity.getIdDocumentoMatricula());
+                documento.setIdDocumentoMatricula(docEntity.getIdDocumentoMatricula());
+
+                // Tipo documento
+                TipoDocumento tipoDoc = new TipoDocumento();
+                tipoDoc.setId(docEntity.getTipoDocumento().getIdTipoDocumento().longValue());
+                tipoDoc.setNome(docEntity.getTipoDocumento().getNome());
+                tipoDoc.setDescricao(docEntity.getTipoDocumento().getDescricao());
+                tipoDoc.setCategoria(docEntity.getTipoDocumento().getEscopo().toString());
+                documento.setTipoDocumento(tipoDoc);
+
+                documento.setStatus(docEntity.getStatus());
+                documento.setStatusDescricao(mapearStatusDescricao(docEntity.getStatus()));
+                documento.setNomeArquivo(docEntity.getCaminhoArquivo());
+                documento.setObservacoes(docEntity.getObservacoes());
+                documento.setObrigatorio(Boolean.TRUE.equals(docEntity.getTipoDocumento().getObrigatorio()));
+
+                // Converter datas
+                if (docEntity.getDataEnvio() != null) {
+                    documento.setDataEnvio(docEntity.getDataEnvio());
+                }
+                if (docEntity.getDataAprovacao() != null) {
+                    documento.setDataAprovacao(docEntity.getDataAprovacao());
+                }
+
+                // Agrupar por escopo/categoria
+                String categoria = docEntity.getTipoDocumento().getEscopo().toString();
+                documentosPorEscopo.computeIfAbsent(categoria, k -> new ArrayList<>()).add(documento);
+            }
+
+            // Criar seções por escopo
+            List<DocumentoPorPessoa> resultado = new ArrayList<>();
+
+            // Documentos da família (se houver)
+            if (documentosPorEscopo.containsKey("FAMILIA")) {
+                PessoaInfo pessoaFamilia = new PessoaInfo(0L, "Documentos da Família", "responsavel");
+                resultado.add(new DocumentoPorPessoa(pessoaFamilia, documentosPorEscopo.get("FAMILIA")));
+            }
+
+            // Documentos do aluno (se houver)
+            if (documentosPorEscopo.containsKey("ALUNO")) {
+                PessoaInfo pessoaAluno = new PessoaInfo(1L, "Documentos do Aluno", "aluno");
+                resultado.add(new DocumentoPorPessoa(pessoaAluno, documentosPorEscopo.get("ALUNO")));
+            }
+
+            // Documentos de todos os integrantes (seção única com identificação por pessoa)
+            if (documentosPorEscopo.containsKey("TODOS_INTEGRANTES")) {
+                List<DocumentoIndividual> documentosIntegrantes = documentosPorEscopo.get("TODOS_INTEGRANTES");
+
+                // Enriquecer os documentos com informação da pessoa (extraída das observações)
+                for (DocumentoIndividual doc : documentosIntegrantes) {
+                    String observacao = doc.getObservacoes();
+                    if (observacao != null) {
+                        String nomeIntegrante = extrairNomeDoDocumento(observacao);
+                        if (nomeIntegrante != null) {
+                            // Adicionar o nome da pessoa na descrição do documento para identificação
+                            String descricaoOriginal = doc.getTipoDocumento().getDescricao();
+                            String novaDescricao = nomeIntegrante
+                                    + (descricaoOriginal != null ? " - " + descricaoOriginal : "");
+                            doc.getTipoDocumento().setDescricao(novaDescricao);
+                        }
+                    }
+                }
+
+                PessoaInfo pessoaIntegrantes = new PessoaInfo(2L, "Documentos dos Integrantes", "integrante");
+                resultado.add(new DocumentoPorPessoa(pessoaIntegrantes, documentosIntegrantes));
+
+                logger.info("👥 Seção de integrantes criada com {} documentos", documentosIntegrantes.size());
+            }
+
+            logger.info("✅ Documentos organizados: {} seções encontradas", resultado.size());
+            return resultado;
+
+        } catch (Exception e) {
+            logger.error("❌ Erro ao buscar documentos da matrícula: {}", e.getMessage(), e);
+            return new ArrayList<>();
+        }
+    }
+
+    /**
+     * Busca documentos específicos da família (escopo FAMILIA) - MÉTODO DEPRECIADO
      */
     private DocumentoPorPessoa buscarDocumentosFamilia(Long idResponsavel) {
         try {
@@ -736,10 +999,24 @@ public class ResponsavelDocumentosService {
                 return null;
             }
 
-            // TODO: Implementar leitura do arquivo físico
-            // Por enquanto, retornar um PDF simples para teste
-            String conteudoPdf = "Documento de teste - ID: " + idDocumentoMatricula;
-            return conteudoPdf.getBytes();
+            // Ler arquivo físico do disco
+            String caminhoArquivo = caminhos.get(0);
+            logger.info("📄 Lendo arquivo: {}", caminhoArquivo);
+
+            try {
+                Path arquivo = Path.of(caminhoArquivo);
+                if (Files.exists(arquivo)) {
+                    byte[] bytesArquivo = Files.readAllBytes(arquivo);
+                    logger.info("✅ Arquivo lido com sucesso: {} bytes", bytesArquivo.length);
+                    return bytesArquivo;
+                } else {
+                    logger.warn("⚠️ Arquivo não encontrado no caminho: {}", caminhoArquivo);
+                    return null;
+                }
+            } catch (Exception e) {
+                logger.error("❌ Erro ao ler arquivo: {}", e.getMessage(), e);
+                return null;
+            }
 
         } catch (Exception e) {
             logger.error("❌ Erro ao baixar documento: {}", e.getMessage(), e);
@@ -818,6 +1095,103 @@ public class ResponsavelDocumentosService {
         } catch (Exception e) {
             logger.error("❌ Erro ao gerar documentos de matrícula: {}", e.getMessage(), e);
             return false;
+        }
+    }
+
+    /**
+     * Busca os integrantes da declaração de matrícula a partir do JSON
+     * integrantesRenda
+     */
+    private List<PessoaInfo> buscarIntegrantesDeclaracao(Long idDeclaracao) {
+        try {
+            logger.info("🔍 Buscando integrantes da declaração ID: {}", idDeclaracao);
+
+            // Buscar a declaração com os dados dos integrantes
+            Optional<com.cipalam.cipalam_sistema.model.InteresseMatricula> declaracaoOpt = interesseMatriculaRepository
+                    .findById(idDeclaracao.intValue());
+
+            if (!declaracaoOpt.isPresent()) {
+                logger.warn("⚠️ Declaração não encontrada para ID: {}", idDeclaracao);
+                return new ArrayList<>();
+            }
+
+            com.cipalam.cipalam_sistema.model.InteresseMatricula declaracao = declaracaoOpt.get();
+            String integrantesJson = declaracao.getIntegrantesRenda();
+
+            if (integrantesJson == null || integrantesJson.trim().isEmpty()) {
+                logger.warn("⚠️ Dados de integrantes não encontrados na declaração ID: {}", idDeclaracao);
+                return new ArrayList<>();
+            }
+
+            // Parse do JSON dos integrantes
+            ObjectMapper objectMapper = new ObjectMapper();
+            List<Map<String, Object>> integrantesData = objectMapper.readValue(integrantesJson,
+                    new TypeReference<List<Map<String, Object>>>() {
+                    });
+
+            List<PessoaInfo> integrantes = new ArrayList<>();
+
+            for (Map<String, Object> integranteData : integrantesData) {
+                String nome = (String) integranteData.get("nome");
+                String parentesco = (String) integranteData.get("parentesco");
+
+                if (nome != null && parentesco != null) {
+                    // Incluir TODOS os integrantes (responsável, aluno, e demais familiares)
+                    // porque todos podem ter documentos de TODOS_INTEGRANTES (ex: comprovante de
+                    // renda)
+
+                    // Usar o id do JSON se disponível, senão usar hash do nome
+                    Long integranteId;
+                    Object idObj = integranteData.get("id");
+                    if (idObj != null) {
+                        integranteId = Long.valueOf(idObj.toString());
+                    } else {
+                        integranteId = (long) nome.hashCode();
+                    }
+
+                    PessoaInfo integrante = new PessoaInfo(integranteId, nome, parentesco.toLowerCase());
+                    integrantes.add(integrante);
+
+                    logger.info("👥 Integrante encontrado: {} ({})", nome, parentesco);
+                }
+            }
+
+            logger.info("✅ Total de integrantes encontrados: {}", integrantes.size());
+            return integrantes;
+
+        } catch (Exception e) {
+            logger.error("❌ Erro ao buscar integrantes da declaração: {}", e.getMessage(), e);
+            return new ArrayList<>();
+        }
+    }
+
+    /**
+     * Extrai o nome do integrante da observação do documento
+     * Formato esperado: "Documento de [Nome] ([Parentesco]) para declaração..."
+     */
+    private String extrairNomeDoDocumento(String observacao) {
+        try {
+            if (observacao == null || observacao.trim().isEmpty()) {
+                return null;
+            }
+
+            // Padrão: "Documento de [Nome] ([Parentesco]) para"
+            String padrao = "Documento de (.+?) \\((.+?)\\) para";
+            java.util.regex.Pattern pattern = java.util.regex.Pattern.compile(padrao);
+            java.util.regex.Matcher matcher = pattern.matcher(observacao);
+
+            if (matcher.find()) {
+                String nome = matcher.group(1).trim();
+                logger.debug("🔍 Nome extraído da observação: '{}'", nome);
+                return nome;
+            }
+
+            logger.warn("⚠️ Não foi possível extrair nome da observação: '{}'", observacao);
+            return null;
+
+        } catch (Exception e) {
+            logger.error("❌ Erro ao extrair nome da observação: {}", e.getMessage(), e);
+            return null;
         }
     }
 }

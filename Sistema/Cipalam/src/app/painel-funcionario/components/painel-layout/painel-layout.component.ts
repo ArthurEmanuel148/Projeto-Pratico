@@ -668,17 +668,11 @@ export class PainelLayoutComponent implements OnInit {
     const currentUrl = this.router.url;
     const userType = usuario.tipo;
 
-    // Responsáveis podem acessar o sistema com permissões limitadas
+    // Responsáveis tem área independente (sem layout de funcionário)
     if (userType === 'responsavel') {
-      if (!currentUrl.includes('/sistema/')) {
+      if (!currentUrl.includes('/painel-responsavel')) {
         console.warn('Responsável tentando acessar área não autorizada:', currentUrl);
-        this.router.navigate(['/sistema/responsavel']);
-        return;
-      }
-      // Se responsável está em rota errada do sistema, redirecionar para área específica
-      if (currentUrl.includes('/sistema/dashboard') || currentUrl === '/sistema') {
-        console.log('Redirecionando responsável para área específica');
-        this.router.navigate(['/sistema/responsavel']);
+        this.router.navigate(['/painel-responsavel']);
         return;
       }
     }

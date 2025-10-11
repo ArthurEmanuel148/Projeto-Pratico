@@ -162,4 +162,38 @@ public class MatriculaService {
             return "Erro ao criptografar senha: " + e.getMessage();
         }
     }
+
+    /**
+     * Finaliza a matrícula - migra dados da declaração para as tabelas definitivas
+     * 1. Oculta a declaração de interesse
+     * 2. Distribui os dados pelas tabelas (aluno, pessoa, família, etc.)
+     * 3. Migra os documentos para as pessoas corretas
+     */
+    @Transactional
+    public Map<String, Object> finalizarMatricula(Long idDeclaracao, Long funcionarioId) {
+        try {
+            System.out.println("=== FINALIZANDO MATRÍCULA ===");
+            System.out.println("ID Declaração: " + idDeclaracao);
+            System.out.println("ID Funcionário: " + funcionarioId);
+
+            // Chama a procedure que fará toda a migração de dados
+            jdbcTemplate.update(
+                    "CALL sp_FinalizarMatricula(?, ?)",
+                    idDeclaracao,
+                    funcionarioId);
+
+            Map<String, Object> resultado = new java.util.HashMap<>();
+            resultado.put("success", true);
+            resultado.put("message", "Matrícula finalizada com sucesso!");
+            resultado.put("idDeclaracao", idDeclaracao);
+
+            System.out.println("=== MATRÍCULA FINALIZADA COM SUCESSO ===");
+            return resultado;
+
+        } catch (Exception e) {
+            System.err.println("Erro ao finalizar matrícula: " + e.getMessage());
+            e.printStackTrace();
+            throw new RuntimeException("Erro ao finalizar matrícula: " + e.getMessage(), e);
+        }
+    }
 }

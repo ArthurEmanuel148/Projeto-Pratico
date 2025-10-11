@@ -438,7 +438,15 @@
                                     </h3>
                                     <div class="documentos-grid">
                                         <ion-card *ngFor="let documento of documentosFamilia"
-                                            class="documento-card familia">
+                                            class="documento-card familia"
+                                            [class.documento-enviado]="documento.status === 'enviado'"
+                                            [class.documento-aprovado]="documento.status === 'aprovado'"
+                                            [class.documento-rejeitado]="documento.status === 'rejeitado'">
+
+                                            <div class="documento-icon">
+                                                <ion-icon [name]="getIconeDocumento(documento)"></ion-icon>
+                                            </div>
+
                                             <ion-card-content>
                                                 <div class="documento-header">
                                                     <h4>{{ documento.tipoDocumento }}</h4>
@@ -446,21 +454,34 @@
                                                         {{ documento.status }}
                                                     </ion-badge>
                                                 </div>
-                                                <p class="documento-descricao">{{ documento.descricao }}</p>
+
+                                                <p class="documento-descricao">{{ documento.descricao ||
+                                                    documento.tipoDocumento }}</p>
+
+                                                <div class="documento-info" *ngIf="documento.dataEnvio">
+                                                    <p class="data-envio">
+                                                        <ion-icon name="time-outline"></ion-icon>
+                                                        {{ documento.dataEnvioFormatada || (documento.dataEnvio |
+                                                        date:'dd/MM/yyyy HH:mm') }}
+                                                    </p>
+                                                </div>
+
                                                 <div class="documento-acoes">
                                                     <ion-button *ngIf="documento.caminhoArquivo" fill="clear"
-                                                        size="small" (click)="visualizarDocumento(documento)">
+                                                        size="small" (click)="visualizarDocumento(documento)"
+                                                        title="Visualizar documento">
                                                         <ion-icon name="eye-outline" slot="icon-only"></ion-icon>
                                                     </ion-button>
                                                     <ion-button *ngIf="documento.status === 'enviado'" fill="clear"
                                                         color="success" size="small"
-                                                        (click)="aprovarDocumento(documento)">
+                                                        (click)="aprovarDocumento(documento)" title="Aprovar documento">
                                                         <ion-icon name="checkmark-circle-outline"
                                                             slot="icon-only"></ion-icon>
                                                     </ion-button>
                                                     <ion-button *ngIf="documento.status === 'enviado'" fill="clear"
                                                         color="danger" size="small"
-                                                        (click)="rejeitarDocumento(documento)">
+                                                        (click)="rejeitarDocumento(documento)"
+                                                        title="Rejeitar documento">
                                                         <ion-icon name="close-circle-outline"
                                                             slot="icon-only"></ion-icon>
                                                     </ion-button>

@@ -431,6 +431,10 @@ ion-header {
             background: var(--primary-color);
           }
 
+          &.enviado {
+            background: var(--primary-color);
+          }
+
           &.aprovado {
             background: var(--success-color);
           }
@@ -1204,4 +1208,141 @@ ion-list {
   --cipalam-background: #ffffff;
   --cipalam-surface: #fafafa;
   --cipalam-border: #e8eaf6;
+}
+
+// ========================================
+// ESTILOS PARA FILTROS DE CATEGORIAS
+// ========================================
+
+// Filtro por categoria
+.documentos-filtro {
+  margin-bottom: 25px;
+  padding: 0 5px;
+
+  ion-segment {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 12px;
+    padding: 4px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    border: 1px solid var(--border-color);
+
+    ion-segment-button {
+      --background: transparent;
+      --color: var(--text-secondary);
+      --indicator-color: var(--primary-color);
+      --indicator-box-shadow: 0 2px 8px rgba(59, 130, 246, 0.2);
+      min-height: 42px;
+      margin: 2px;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+      font-weight: 500;
+      font-size: 0.9rem;
+
+      &.segment-button-checked {
+        --background: var(--primary-color);
+        --color: white;
+        box-shadow: 0 2px 8px rgba(59, 130, 246, 0.25);
+        transform: translateY(-1px);
+      }
+
+      ion-label {
+        font-weight: 600;
+        letter-spacing: 0.5px;
+      }
+
+      &:hover:not(.segment-button-checked) {
+        --background: var(--light-color);
+        --color: var(--primary-color);
+      }
+    }
+  }
+}
+
+// Seções de categoria
+.categoria-secao {
+  margin-bottom: 35px;
+
+  .categoria-titulo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--text-primary);
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+    padding: 0 5px;
+
+    ion-icon {
+      font-size: 1.5rem;
+      color: var(--primary-color);
+    }
+  }
+}
+
+// Estilos específicos por categoria de documento
+.document-card {
+  &.familia {
+    border-left: 4px solid #10b981;
+
+    .document-icon {
+      background: rgba(16, 185, 129, 0.1);
+
+      ion-icon {
+        color: #10b981;
+      }
+
+      &.enviado {
+        background: #10b981;
+
+        ion-icon {
+          color: white;
+        }
+      }
+    }
+  }
+
+  &.aluno {
+    border-left: 4px solid #3b82f6;
+
+    .document-icon {
+      background: rgba(59, 130, 246, 0.1);
+
+      ion-icon {
+        color: #3b82f6;
+      }
+
+      &.enviado {
+        background: #3b82f6;
+
+        ion-icon {
+          color: white;
+        }
+      }
+    }
+  }
+
+  &.integrantes {
+    border-left: 4px solid #f59e0b;
+
+    .document-icon {
+      background: rgba(245, 158, 11, 0.1);
+
+      ion-icon {
+        color: #f59e0b;
+      }
+
+      &.enviado {
+        background: #f59e0b;
+
+        ion-icon {
+          color: white;
+        }
+      }
+    }
+  }
+}
+
+// Conteúdo dos documentos
+.documents-content {
+  padding: 0 5px;
 }

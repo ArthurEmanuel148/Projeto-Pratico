@@ -108,9 +108,9 @@ export class TurmasService {
         );
     }
 
-    // Obter documentos de um aluno
+    // Obter documentos de um aluno via ResponsavelDocumentosService (com separação individual)
     obterDocumentosAluno(alunoId: number): Observable<any> {
-        return this.http.get<any>(`${this.apiUrl}/alunos/${alunoId}/documentos`);
+        return this.http.get<any>(`${environment.apiUrl}/responsavel-documentos/matricula/aluno/${alunoId}`);
     }
 
     // Aprovar documento

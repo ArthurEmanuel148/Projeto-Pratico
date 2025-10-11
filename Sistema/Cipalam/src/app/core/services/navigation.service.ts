@@ -41,9 +41,9 @@ export class NavigationService {
         break;
 
       case 'responsavel':
-        // Responsáveis vão para uma área específica com funcionalidades limitadas
+        // Responsáveis vão para uma área específica com funcionalidades limitadas (SEM layout de funcionário)
         console.log('Redirecionando responsável para área de responsável');
-        this.router.navigate(['/sistema/responsavel']);
+        this.router.navigate(['/painel-responsavel']);
         break;
 
       default:

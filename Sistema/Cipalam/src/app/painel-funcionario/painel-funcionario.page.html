@@ -282,7 +282,7 @@
   <!-- PAINEL ORIGINAL PARA FUNCIONÁRIOS -->
   <div *ngIf="!isResponsavel">
     <div class="welcome-message">
-      <h3>Bem-vindo(a) de volta, {{ usuarioLogado?.nomeCompleto || 'Usuário' }}!</h3>
+      <h3>Bem-vindo(a) de volta, {{ usuarioLogado?.nomePessoa || usuarioLogado?.pessoa?.nmPessoa || 'Usuário' }}!</h3>
       <p>Aqui estão suas funcionalidades mais acessadas e atalhos rápidos.</p>
     </div>
 
@@ -315,62 +315,6 @@
           <p>Comece a usar o sistema para ver suas funcionalidades mais acessadas aqui!</p>
         </div>
       </ion-grid>
-    </div>
-
-    <!-- Estatísticas Rápidas -->
-    <div class="section-container" *ngIf="estatisticasUso && estatisticasUso.totalAcessos > 0">
-      <ion-text color="medium">
-        <h4><ion-icon name="analytics-outline" class="section-icon"></ion-icon> Suas Estatísticas</h4>
-      </ion-text>
-      <ion-grid>
-        <ion-row>
-          <ion-col size="6" size-md="3">
-            <div class="stat-card">
-              <ion-text color="primary">
-                <h2>{{ estatisticasUso.totalAcessos }}</h2>
-                <p>Total de Acessos</p>
-              </ion-text>
-            </div>
-          </ion-col>
-          <ion-col size="6" size-md="3">
-            <div class="stat-card">
-              <ion-text color="success">
-                <h2>{{ estatisticasUso.totalFuncionalidades }}</h2>
-                <p>Funcionalidades Usadas</p>
-              </ion-text>
-            </div>
-          </ion-col>
-          <ion-col size="12" size-md="6" *ngIf="estatisticasUso.funcionalidadeMaisUsada">
-            <div class="stat-card">
-              <ion-text color="warning">
-                <h3>{{ estatisticasUso.funcionalidadeMaisUsada.nomeAmigavel }}</h3>
-                <p>Funcionalidade Favorita ({{ estatisticasUso.funcionalidadeMaisUsada.contador }}x)</p>
-              </ion-text>
-            </div>
-          </ion-col>
-        </ion-row>
-      </ion-grid>
-    </div>
-
-    <!-- Seção de Avisos -->
-    <div class="section-container">
-      <ion-text color="medium">
-        <h4><ion-icon name="newspaper-outline" class="section-icon"></ion-icon> Avisos Recentes</h4>
-      </ion-text>
-      <ion-list lines="none">
-        <ion-item *ngFor="let i of [1,2,3]">
-          <ion-icon name="alert-circle-outline" slot="start" color="warning"></ion-icon>
-          <ion-label>
-            <h2>Aviso Importante {{i}}</h2>
-            <p>Detalhes sobre o aviso recente para os funcionários...</p>
-          </ion-label>
-        </ion-item>
-        <!-- Exemplo de estado vazio -->
-        <div *ngIf="true" class="empty-state">
-          <ion-icon name="chatbubbles-outline"></ion-icon>
-          <p>Nenhum aviso no momento.</p>
-        </div>
-      </ion-list>
     </div>
 
   </div> <!-- Fim do painel para funcionários -->

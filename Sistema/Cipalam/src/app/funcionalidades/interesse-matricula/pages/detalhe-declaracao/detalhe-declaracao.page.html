@@ -20,7 +20,7 @@
   <!-- Link de voltar para a listagem -->
   <div class="content-container">
     <div class="back-link">
-      <ion-button fill="clear" color="primary" routerLink="/sistema/matriculas/declaracoes">
+      <ion-button fill="solid" color="primary" routerLink="/sistema/matriculas/declaracoes">
         <ion-icon name="arrow-back-outline" slot="start"></ion-icon>
         Voltar para a listagem
       </ion-button>
@@ -134,10 +134,10 @@
           <ion-card-title>Datas Importantes</ion-card-title>
         </ion-card-header>
         <ion-card-content>
-          <p><strong>Data de Envio da Declaração:</strong> {{ (declaracao.dataEnvio | date:'dd/MM/yyyy HH:mm') || 'Não
+          <p><strong>Data de Envio da Declaração:</strong> {{ (declaracao.dataEnvio | date:'dd/MM/yyyy') || 'Não
             informado' }}</p>
           <p *ngIf="declaracao.dataInicioMatricula"><strong>Data de Início da Matrícula:</strong> {{
-            declaracao.dataInicioMatricula | date:'dd/MM/yyyy HH:mm' }}</p>
+            declaracao.dataInicioMatricula | date:'dd/MM/yyyy' }}</p>
         </ion-card-content>
       </ion-card>
 
@@ -184,7 +184,6 @@
                     <th>Parentesco</th>
                     <th>Idade</th>
                     <th>Renda</th>
-                    <th>Tipo Renda</th>
                     <th>Ocupação/Obs</th>
                   </tr>
                 </thead>
@@ -201,10 +200,8 @@
                       <span *ngIf="integrante.idade || integrante.idade === 0">{{ integrante.idade }} anos</span>
                       <span *ngIf="!integrante.idade && integrante.idade !== 0">-</span>
                     </td>
-                    <td class="valor-renda">{{ integrante.renda ? (integrante.renda | currency:'BRL':'symbol':'1.2-2') :
-                      'R$
-                      0,00' }}</td>
-                    <td>{{ integrante.tipoRenda || '-' }}</td>
+                    <td class="valor-renda">{{ integrante.renda || integrante.rendaMensal ? ((integrante.renda ||
+                      integrante.rendaMensal) | currency:'BRL':'symbol':'1.2-2') : 'R$ 0,00' }}</td>
                     <td class="observacoes-col">
                       <span *ngIf="integrante.ocupacao">{{ integrante.ocupacao }}</span>
                       <span *ngIf="integrante.observacoes" class="obs-extra">{{ integrante.observacoes }}</span>
@@ -279,7 +276,8 @@
       <ion-card *ngIf="matriculaIniciada">
         <ion-card-header>
           <ion-card-title color="success">
-            <ion-icon name="checkmark-circle-outline" slot="start"></ion-icon>
+            <ion-icon name="checkmark-outline" slot="start"></ion-icon>
+            Aprovar
             Matrícula Iniciada com Sucesso!
           </ion-card-title>
         </ion-card-header>
@@ -304,72 +302,269 @@
             </ion-button>
           </div>
 
-          <!-- Seção removida: Documentos Necessários não fazem parte do sistema -->
+          <!-- Seção de documentos com categorias (igual ao painel do responsável) -->
+          <div class="documents-section">
+            <ion-card class="section-card">
+              <ion-card-header>
+                <ion-card-title>
+                  <ion-icon name="document-text-outline" color="primary"></ion-icon>
+                  Documentos da Matrícula
+                </ion-card-title>
+              </ion-card-header>
+              <ion-card-content>
 
-          <!-- Nova seção para documentos enviados -->
-          <div class="documents-section" *ngIf="!carregandoDocumentos">
-            <h3>Documentos Enviados</h3>
-            <div *ngIf="documentosEnviados.length > 0; else nenhumDocumentoEnviado">
-              <div class="documentos-grid">
-                <div class="documento-card" *ngFor="let doc of documentosEnviados">
-                  <div class="documento-header">
-                    <ion-icon name="document-text-outline" [color]="getStatusColor(doc.status)"></ion-icon>
-                    <div class="documento-title">
-                      <h4>{{ doc.tipoDocumento.nome }}</h4>
-                      <ion-badge [color]="getStatusColor(doc.status)" class="status-badge">
-                        {{ doc.statusDescricao }}
-                      </ion-badge>
-                    </div>
-                  </div>
-
-                  <div class="documento-info">
-                    <div class="info-linha">
-                      <span class="label">Responsável:</span>
-                      <span class="valor">{{ doc.nomeResponsavel }}</span>
-                    </div>
-                    <div class="info-linha">
-                      <span class="label">Parentesco:</span>
-                      <span class="valor">{{ doc.parentesco }}</span>
-                    </div>
-                    <div class="info-linha" *ngIf="doc.dataEnvio">
-                      <span class="label">Enviado em:</span>
-                      <span class="valor">{{ doc.dataEnvio | date:'dd/MM/yyyy HH:mm' }}</span>
-                    </div>
-                  </div>
-
-                  <div class="documento-acoes">
-                    <ion-button size="small" fill="outline" color="primary" (click)="abrirDocumento(doc)"
-                      [disabled]="!doc.nomeArquivo || doc.nomeArquivo === 'null'">
-                      <ion-icon name="open-outline" slot="start"></ion-icon>
-                      {{ (doc.nomeArquivo && doc.nomeArquivo !== 'null') ? 'Abrir Documento' : 'Não anexado' }}
-                    </ion-button>
-
-                    <!-- Botões de aprovação/rejeição para funcionários -->
-                    <div class="acoes-funcionario" *ngIf="isFuncionario() && doc.status === 'enviado'">
-                      <ion-button size="small" fill="solid" color="success" (click)="aprovarDocumento(doc)">
-                        <ion-icon name="checkmark-outline" slot="start"></ion-icon>
-                        Aprovar
-                      </ion-button>
-                      <ion-button size="small" fill="solid" color="danger" (click)="rejeitarDocumento(doc)">
-                        <ion-icon name="close-outline" slot="start"></ion-icon>
-                        Rejeitar
-                      </ion-button>
-                    </div>
-                  </div>
+                <!-- Filtro por categoria -->
+                <div class="documentos-filtro">
+                  <ion-segment [(ngModel)]="categoriaDocumentos" (ionChange)="filtrarDocumentosPorCategoria($event)">
+                    <ion-segment-button value="todos">
+                      <ion-label>TODOS</ion-label>
+                    </ion-segment-button>
+                    <ion-segment-button value="familia">
+                      <ion-label>FAMÍLIA</ion-label>
+                    </ion-segment-button>
+                    <ion-segment-button value="aluno">
+                      <ion-label>ALUNO</ion-label>
+                    </ion-segment-button>
+                    <ion-segment-button value="integrantes">
+                      <ion-label>INTEGRANTES</ion-label>
+                    </ion-segment-button>
+                  </ion-segment>
                 </div>
-              </div>
-            </div>
-            <ng-template #nenhumDocumentoEnviado>
-              <ion-note color="medium" class="ion-margin">
-                <ion-icon name="information-circle-outline" slot="start"></ion-icon>
-                Nenhum documento foi enviado ainda.
-              </ion-note>
-            </ng-template>
+
+                <!-- Loading -->
+                <div *ngIf="carregandoDocumentos" class="loading-container">
+                  <ion-spinner name="circular"></ion-spinner>
+                  <p>Carregando documentos...</p>
+                </div>
+
+                <!-- Conteúdo dos documentos -->
+                <div *ngIf="!carregandoDocumentos && documentosEnviados.length > 0">
+
+                  <!-- TODOS OS DOCUMENTOS -->
+                  <div *ngIf="categoriaDocumentos === 'todos'">
+
+                    <!-- Documentos da Família -->
+                    <div *ngIf="documentosFamilia.length > 0" class="categoria-secao">
+                      <h3 class="categoria-titulo">
+                        <ion-icon name="home-outline"></ion-icon>
+                        Documentos da Família ({{ documentosFamilia.length }})
+                      </h3>
+                      <div class="documentos-grid">
+                        <ion-card *ngFor="let documento of documentosFamilia" class="documento-card familia"
+                          [class.documento-enviado]="documento.status === 'enviado'"
+                          [class.documento-aprovado]="documento.status === 'aprovado'"
+                          [class.documento-rejeitado]="documento.status === 'rejeitado'">
+
+                          <div class="documento-icon">
+                            <ion-icon name="home-outline"></ion-icon>
+                          </div>
+
+                          <ion-card-content>
+                            <div class="documento-header">
+                              <h4>{{ documento.tipoDocumento?.nome || documento.tipoDocumento }}</h4>
+                              <ion-badge [color]="getStatusColor(documento.status)">
+                                {{ documento.status }}
+                              </ion-badge>
+                            </div>
+
+                            <p class="documento-descricao">{{ documento.tipoDocumento?.descricao ||
+                              documento.tipoDocumento?.nome }}</p>
+
+                            <div class="documento-info" *ngIf="documento.dataEnvio">
+                              <p class="data-envio">
+                                <ion-icon name="calendar-outline"></ion-icon>
+                                {{ documento.dataEnvioFormatada || (documento.dataEnvio | date:'dd/MM/yyyy') }}
+                              </p>
+                            </div>
+
+                            <div class="documento-acoes" *ngIf="isFuncionario()">
+                              <ion-button fill="solid" size="small" (click)="abrirDocumento(documento)"
+                                title="Visualizar documento">
+                                <ion-icon name="eye-outline" slot="start"></ion-icon>
+                                Ver
+                              </ion-button>
+                              <ion-button *ngIf="documento.status === 'enviado'" fill="solid" class="btn-aprovar"
+                                size="small" (click)="aprovarDocumento(documento)" title="Aprovar documento">
+                                <ion-icon name="checkmark-outline" slot="start"></ion-icon>
+                                Aprovar
+                              </ion-button>
+                              <ion-button *ngIf="documento.status === 'enviado'" fill="solid" class="btn-negar"
+                                size="small" (click)="rejeitarDocumento(documento)" title="Rejeitar documento">
+                                <ion-icon name="close-outline" slot="start"></ion-icon>
+                                Negar
+                              </ion-button>
+                            </div>
+                          </ion-card-content>
+                        </ion-card>
+                      </div>
+                    </div>
+
+                    <!-- Documentos do Aluno -->
+                    <div *ngIf="documentosAluno.length > 0" class="categoria-secao">
+                      <h3 class="categoria-titulo">
+                        <ion-icon name="person-outline"></ion-icon>
+                        Documentos do Aluno ({{ documentosAluno.length }})
+                      </h3>
+                      <div class="documentos-grid">
+                        <ion-card *ngFor="let documento of documentosAluno" class="documento-card aluno"
+                          [class.documento-enviado]="documento.status === 'enviado'"
+                          [class.documento-aprovado]="documento.status === 'aprovado'"
+                          [class.documento-rejeitado]="documento.status === 'rejeitado'">
+
+                          <div class="documento-icon">
+                            <ion-icon name="person-outline"></ion-icon>
+                          </div>
+
+                          <ion-card-content>
+                            <div class="documento-header">
+                              <h4>{{ documento.tipoDocumento?.nome || documento.tipoDocumento }}</h4>
+                              <ion-badge [color]="getStatusColor(documento.status)">
+                                {{ documento.status }}
+                              </ion-badge>
+                            </div>
+
+                            <p class="documento-descricao">{{ documento.tipoDocumento?.descricao ||
+                              documento.tipoDocumento?.nome }}</p>
+
+                            <div class="documento-info" *ngIf="documento.dataEnvio">
+                              <p class="data-envio">
+                                <ion-icon name="calendar-outline"></ion-icon>
+                                {{ documento.dataEnvioFormatada || (documento.dataEnvio | date:'dd/MM/yyyy') }}
+                              </p>
+                            </div>
+
+                            <div class="documento-acoes" *ngIf="isFuncionario()">
+                              <ion-button fill="solid" size="small" (click)="abrirDocumento(documento)"
+                                title="Visualizar documento">
+                                <ion-icon name="eye-outline" slot="start"></ion-icon>
+                                Ver
+                              </ion-button>
+                              <ion-button *ngIf="documento.status === 'enviado'" fill="solid" class="btn-aprovar"
+                                size="small" (click)="aprovarDocumento(documento)" title="Aprovar documento">
+                                <ion-icon name="checkmark-outline" slot="start"></ion-icon>
+                                Aprovar
+                              </ion-button>
+                              <ion-button *ngIf="documento.status === 'enviado'" fill="solid" class="btn-negar"
+                                size="small" (click)="rejeitarDocumento(documento)" title="Rejeitar documento">
+                                <ion-icon name="close-outline" slot="start"></ion-icon>
+                                Negar
+                              </ion-button>
+                            </div>
+                          </ion-card-content>
+                        </ion-card>
+                      </div>
+                    </div>
+
+                    <!-- Documentos por Integrante -->
+                    <div *ngIf="documentosIntegrantes.size > 0" class="categoria-secao">
+                      <h3 class="categoria-titulo">
+                        <ion-icon name="people-outline"></ion-icon>
+                        Documentos dos Integrantes
+                      </h3>
+
+                      <div *ngFor="let integrante of documentosIntegrantes | keyvalue" class="integrante-secao">
+                        <h4 class="integrante-nome">
+                          <ion-icon name="person-circle-outline"></ion-icon>
+                          {{ integrante.key }} ({{ integrante.value.length }} documentos)
+                        </h4>
+                        <div class="documentos-grid">
+                          <ion-card *ngFor="let documento of integrante.value" class="documento-card integrante"
+                            [class.documento-enviado]="documento.status === 'enviado'"
+                            [class.documento-aprovado]="documento.status === 'aprovado'"
+                            [class.documento-rejeitado]="documento.status === 'rejeitado'">
+
+                            <div class="documento-icon">
+                              <ion-icon name="person-circle-outline"></ion-icon>
+                            </div>
+
+                            <ion-card-content>
+                              <div class="documento-header">
+                                <h5>{{ documento.tipoDocumento?.nome || documento.tipoDocumento }}</h5>
+                                <ion-badge [color]="getStatusColor(documento.status)">
+                                  {{ documento.status }}
+                                </ion-badge>
+                              </div>
+
+                              <p class="documento-descricao">{{ documento.tipoDocumento?.descricao ||
+                                documento.tipoDocumento?.nome }}</p>
+
+                              <div class="documento-info" *ngIf="documento.dataEnvio">
+                                <p class="data-envio">
+                                  <ion-icon name="calendar-outline"></ion-icon>
+                                  {{ documento.dataEnvioFormatada || (documento.dataEnvio | date:'dd/MM/yyyy') }}
+                                </p>
+                              </div>
+
+                              <div class="documento-acoes" *ngIf="isFuncionario()">
+                                <ion-button fill="solid" size="small" (click)="abrirDocumento(documento)"
+                                  title="Visualizar documento">
+                                  <ion-icon name="eye-outline" slot="start"></ion-icon>
+                                  Ver
+                                </ion-button>
+                                <ion-button *ngIf="documento.status === 'enviado'" fill="solid" class="btn-aprovar"
+                                  size="small" (click)="aprovarDocumento(documento)" title="Aprovar documento">
+                                  <ion-icon name="checkmark-outline" slot="start"></ion-icon>
+                                  Aprovar
+                                </ion-button>
+                                <ion-button *ngIf="documento.status === 'enviado'" fill="solid" class="btn-negar"
+                                  size="small" (click)="rejeitarDocumento(documento)" title="Rejeitar documento">
+                                  <ion-icon name="close-outline" slot="start"></ion-icon>
+                                  Negar
+                                </ion-button>
+                              </div>
+                            </ion-card-content>
+                          </ion-card>
+                        </div>
+                      </div>
+                    </div>
+
+                  </div>
+
+                  <!-- APENAS DOCUMENTOS DA FAMÍLIA -->
+                  <div *ngIf="categoriaDocumentos === 'familia'" class="documentos-grid">
+                    <ion-card *ngFor="let documento of documentosFamilia" class="documento-card familia">
+                      <!-- mesmo template dos documentos da família acima -->
+                    </ion-card>
+                  </div>
+
+                  <!-- APENAS DOCUMENTOS DO ALUNO -->
+                  <div *ngIf="categoriaDocumentos === 'aluno'" class="documentos-grid">
+                    <ion-card *ngFor="let documento of documentosAluno" class="documento-card aluno">
+                      <!-- mesmo template dos documentos do aluno acima -->
+                    </ion-card>
+                  </div>
+
+                  <!-- APENAS DOCUMENTOS DOS INTEGRANTES -->
+                  <div *ngIf="categoriaDocumentos === 'integrantes'">
+                    <div *ngFor="let integrante of documentosIntegrantes | keyvalue" class="integrante-secao">
+                      <h4 class="integrante-nome">
+                        <ion-icon name="person-circle-outline"></ion-icon>
+                        {{ integrante.key }} ({{ integrante.value.length }} documentos)
+                      </h4>
+                      <div class="documentos-grid">
+                        <ion-card *ngFor="let documento of integrante.value" class="documento-card integrante">
+                          <!-- mesmo template dos documentos de integrantes acima -->
+                        </ion-card>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+
+                <!-- Mensagem quando não há documentos -->
+                <div *ngIf="!carregandoDocumentos && documentosEnviados.length === 0" class="no-documents">
+                  <ion-note color="medium" class="ion-margin">
+                    <ion-icon name="information-circle-outline" slot="start"></ion-icon>
+                    Nenhum documento foi encontrado para esta matrícula.
+                  </ion-note>
+                </div>
+              </ion-card-content>
+            </ion-card>
           </div>
 
-          <div *ngIf="carregandoDocumentos" class="ion-text-center ion-margin">
+          <div *ngIf="carregandoDocumentos || carregandoDocumentosSolicitados" class="ion-text-center ion-margin">
             <ion-spinner></ion-spinner>
-            <p>Carregando documentos enviados...</p>
+            <p>Carregando documentos...</p>
           </div>
 
           <ion-note color="primary" class="ion-margin-top">
@@ -382,7 +577,8 @@
           <div class="ion-margin-top" *ngIf="podeFinalizarMatricula()">
             <ion-button expand="block" color="success" (click)="finalizarMatricula()"
               [disabled]="processandoFinalizacao">
-              <ion-icon name="checkmark-circle-outline" slot="start"></ion-icon>
+              <ion-icon name="checkmark-outline" slot="start"></ion-icon>
+              Aprovar
               {{ processandoFinalizacao ? 'Finalizando...' : 'Finalizar Matrícula' }}
             </ion-button>
             <ion-note color="medium" class="ion-margin-top">

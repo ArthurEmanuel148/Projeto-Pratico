@@ -1,4 +1,4 @@
-<ion-header [translucent]="true">
+<ion-header>
     <ion-toolbar color="primary">
         <ion-buttons slot="start">
             <ion-button (click)="voltar()">
@@ -9,13 +9,7 @@
     </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-    <ion-header collapse="condense">
-        <ion-toolbar>
-            <ion-title size="large">Selecionar Turma</ion-title>
-        </ion-toolbar>
-    </ion-header>
-
+<ion-content>
     <!-- Loading -->
     <div *ngIf="isLoading" class="loading-container">
         <ion-spinner></ion-spinner>
@@ -26,7 +20,7 @@
     <div *ngIf="!isLoading" class="content-container">
 
         <!-- Informações da declaração -->
-        <ion-card *ngIf="declaracaoSelecionada" class="declaracao-card">
+        <ion-card *ngIf="declaracaoSelecionada" class="declaracao-card compact">
             <ion-card-header>
                 <ion-card-title>
                     <ion-icon name="document-text" color="primary"></ion-icon>
@@ -34,44 +28,32 @@
                 </ion-card-title>
             </ion-card-header>
             <ion-card-content>
-                <ion-grid>
-                    <ion-row>
-                        <ion-col size="12" size-md="6">
-                            <div class="info-item">
-                                <span class="label">Protocolo:</span>
-                                <span class="value">{{ declaracaoSelecionada.protocolo }}</span>
-                            </div>
-                        </ion-col>
-                        <ion-col size="12" size-md="6">
-                            <div class="info-item">
-                                <span class="label">Tipo de Cota:</span>
-                                <span class="value">{{ declaracaoSelecionada.tipoCotaDescricao }}</span>
-                            </div>
-                        </ion-col>
-                    </ion-row>
-                    <ion-row>
-                        <ion-col size="12" size-md="6">
-                            <div class="info-item">
-                                <span class="label">Aluno:</span>
-                                <span class="value">{{ declaracaoSelecionada.nomeAluno }}</span>
-                            </div>
-                        </ion-col>
-                        <ion-col size="12" size-md="6">
-                            <div class="info-item">
-                                <span class="label">Responsável:</span>
-                                <span class="value">{{ declaracaoSelecionada.nomeResponsavel }}</span>
-                            </div>
-                        </ion-col>
-                    </ion-row>
-                    <ion-row>
-                        <ion-col size="12">
-                            <div class="info-item">
-                                <span class="label">Aguardando há:</span>
-                                <span class="value">{{ declaracaoSelecionada.diasAguardando }} dias</span>
-                            </div>
-                        </ion-col>
-                    </ion-row>
-                </ion-grid>
+                <div class="declaracao-info-grid">
+                    <div class="info-row">
+                        <div class="info-item compact">
+                            <span class="label">Protocolo:</span>
+                            <span class="value">{{ declaracaoSelecionada.protocolo }}</span>
+                        </div>
+                        <div class="info-item compact">
+                            <span class="label">Tipo:</span>
+                            <span class="value">{{ declaracaoSelecionada.tipoCotaDescricao }}</span>
+                        </div>
+                        <div class="info-item compact">
+                            <span class="label">Aguarda:</span>
+                            <span class="value">{{ declaracaoSelecionada.diasAguardando }} dias</span>
+                        </div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-item compact full-width">
+                            <span class="label">Aluno:</span>
+                            <span class="value">{{ declaracaoSelecionada.nomeAluno }}</span>
+                        </div>
+                        <div class="info-item compact full-width">
+                            <span class="label">Responsável:</span>
+                            <span class="value">{{ declaracaoSelecionada.nomeResponsavel }}</span>
+                        </div>
+                    </div>
+                </div>
             </ion-card-content>
         </ion-card>
 
@@ -96,41 +78,53 @@
                 </div>
 
                 <!-- Lista de turmas -->
-                <div *ngIf="turmasDisponiveis.length > 0" class="turmas-list">
+                <div *ngIf="turmasDisponiveis.length > 0" class="turmas-container">
                     <ion-radio-group [(ngModel)]="turmaSelecionada" (ionChange)="selecionarTurma($event.detail.value)">
 
-                        <div *ngFor="let turma of turmasDisponiveis" class="turma-item"
+                        <div *ngFor="let turma of turmasDisponiveis; let i = index" class="turma-card"
                             [class.selected]="turmaSelecionada?.id === turma.id">
 
-                            <ion-item>
-                                <ion-radio [value]="turma" slot="start"></ion-radio>
-
-                                <ion-label>
+                            <ion-card class="individual-turma-card"
+                                [class.selected-card]="turmaSelecionada?.id === turma.id">
+                                <div class="turma-content" (click)="selecionarTurma(turma)">
                                     <div class="turma-header">
-                                        <h2>{{ turma.nome }}</h2>
+                                        <div class="turma-title-section">
+                                            <ion-radio [value]="turma" class="custom-radio"></ion-radio>
+                                            <div class="title-info">
+                                                <h2>{{ turma.nomeTurma || turma.nome }}</h2>
+                                                <div class="turma-subtitle">
+                                                    <ion-icon name="time-outline"></ion-icon>
+                                                    <span>{{ turma.horarioInicio }} às {{ turma.horarioFim }}</span>
+                                                </div>
+                                            </div>
+                                        </div>
                                         <div class="vagas-badge" [ngClass]="getVagasClass(turma.vagasDisponiveis)">
-                                            {{ turma.vagasDisponiveis }} vagas
+                                            <ion-icon name="people"></ion-icon>
+                                            {{ turma.vagasDisponiveis }} VAGAS
                                         </div>
                                     </div>
 
-                                    <div class="turma-details">
-                                        <p class="turno">
-                                            <ion-icon name="time" color="medium"></ion-icon>
-                                            {{ turma.turno }}
-                                        </p>
+                                    <div class="turma-stats">
+                                        <div class="stat-item">
+                                            <ion-icon name="person-circle-outline" color="medium"></ion-icon>
+                                            <div class="stat-info">
+                                                <span class="stat-label">Matriculados</span>
+                                                <span class="stat-value">{{ turma.capacidadeMaxima -
+                                                    turma.vagasDisponiveis }}/{{ turma.capacidadeMaxima }}</span>
+                                            </div>
+                                        </div>
 
-                                        <p class="capacidade">
-                                            <ion-icon name="people" color="medium"></ion-icon>
-                                            {{ turma.capacidadeMaxima - turma.vagasDisponiveis }}/{{
-                                            turma.capacidadeMaxima }} matriculados
-                                        </p>
-
-                                        <p *ngIf="turma.descricaoCompleta" class="descricao">
-                                            {{ turma.descricaoCompleta }}
-                                        </p>
+                                        <div class="stat-item">
+                                            <ion-icon name="checkmark-circle-outline" color="success"></ion-icon>
+                                            <div class="stat-info">
+                                                <span class="stat-label">Disponíveis</span>
+                                                <span class="stat-value">{{ turma.vagasDisponiveis }} vagas</span>
+                                            </div>
+                                        </div>
                                     </div>
-                                </ion-label>
-                            </ion-item>
+
+                                </div>
+                            </ion-card>
 
                         </div>
 
@@ -141,18 +135,16 @@
         </ion-card>
 
         <!-- Botões de ação -->
-        <div class="action-buttons" *ngIf="turmasDisponiveis.length > 0">
-            <ion-button expand="full" fill="outline" color="primary" [disabled]="!turmaSelecionada"
-                (click)="confirmarSelecao()">
-                <ion-icon name="checkmark-circle" slot="start"></ion-icon>
-                Confirmar Seleção
-            </ion-button>
-
-            <ion-button expand="full" fill="outline" color="medium" (click)="voltar()">
-                <ion-icon name="arrow-back" slot="start"></ion-icon>
+        <div class="form-actions">
+            <ion-button fill="clear" color="medium" size="large" (click)="voltar()">
+                <ion-icon name="arrow-back-outline" slot="start"></ion-icon>
                 Voltar para Lista
             </ion-button>
-        </div>
 
+            <ion-button color="primary" size="large" [disabled]="!turmaSelecionada" (click)="confirmarSelecao()">
+                <ion-icon name="checkmark-outline" slot="start"></ion-icon>
+                Confirmar Seleção
+            </ion-button>
+        </div>
     </div>
 </ion-content>

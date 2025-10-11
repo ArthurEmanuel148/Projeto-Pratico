@@ -7,6 +7,7 @@ import { MatriculaService } from '../../services/matricula.service';
 import { ResponsavelDocumentosService } from '../../../../core/services/responsavel-documentos.service';
 import { AuthService } from '../../../../core/services/auth.service';
 import { HttpClient } from '@angular/common/http';
+import { environment } from '../../../../../environments/environment';
 
 @Component({
   selector: 'app-detalhe-declaracao',
@@ -31,6 +32,21 @@ export class DetalheDeclaracaoPage implements OnInit {
   // Campos para documentos enviados
   documentosEnviados: any[] = [];
   carregandoDocumentos = false;
+
+  // Campos para documentos solicitados
+  documentosSolicitados: any[] = [];
+  carregandoDocumentosSolicitados = false;
+
+  // Lista unificada de todos os documentos
+  todosDocumentos: any[] = [];
+
+  // Controle de categoria de documentos (igual ao painel do responsável)
+  categoriaDocumentos = 'todos';
+
+  // Documentos organizados por categoria
+  documentosFamilia: any[] = [];
+  documentosAluno: any[] = [];
+  documentosIntegrantes: Map<string, any[]> = new Map();
 
   constructor(
     private route: ActivatedRoute,
@@ -128,8 +144,12 @@ export class DetalheDeclaracaoPage implements OnInit {
             usuario: declaracao.dadosResponsavel?.emailResponsavel || declaracao.email || 'usuario@temp.com',
             senha: 'temp123456'
           };
-          // Carregar documentos já enviados
-          this.carregarDocumentosEnviados();
+        }
+
+        // Sempre carregar documentos para visualização administrativa
+        this.carregarDocumentosEnviados();
+        if (this.matriculaIniciada) {
+          this.carregarDocumentosSolicitados();
         }
       },
       error: (error: any) => {
@@ -216,7 +236,9 @@ export class DetalheDeclaracaoPage implements OnInit {
   private calcularRendas() {
     if (this.integrantesRenda && this.integrantesRenda.length > 0) {
       this.rendaFamiliarCalculada = this.integrantesRenda.reduce((total, integrante) => {
-        return total + (integrante.renda || 0);
+        // Suporta ambos os formatos: renda e rendaMensal
+        const valor = integrante.renda || integrante.rendaMensal || 0;
+        return total + Number(valor);
       }, 0);
 
       const numIntegrantes = this.declaracao?.numeroIntegrantes || this.integrantesRenda.length;
@@ -271,55 +293,221 @@ export class DetalheDeclaracaoPage implements OnInit {
       return;
     }
 
-    // Buscar o ID do responsável baseado no CPF da declaração
-    let idResponsavel: number | null = null;
+    // Buscar o ID da declaração para usar o novo endpoint
+    const idDeclaracao = this.declaracao.id;
 
-    // Mapeamentos baseados no protocolo ou CPF
-    if (this.declaracao.protocolo === 'MAT-2025-001') {
-      idResponsavel = 4; // Ana Silva Santos
-    } else if (this.declaracao.protocolo === 'MAT-1757642954961') {
-      idResponsavel = 7; // Ana Costa Lima
-    } else if (this.declaracao.cpfResponsavel === '111.222.655-44') {
-      idResponsavel = 7; // Ana Costa Lima
-    } else if (this.declaracao.cpfResponsavel === '444.444.444-44') {
-      idResponsavel = 4; // Ana Silva Santos
-    }
-
-    if (!idResponsavel) {
-      console.warn('Não foi possível determinar o ID do responsável para carregar documentos');
+    if (!idDeclaracao) {
+      console.warn('Não foi possível determinar o ID da declaração para carregar documentos');
       this.carregandoDocumentos = false;
       this.documentosEnviados = [];
       return;
     }
 
     this.carregandoDocumentos = true;
-    console.log('🔍 Carregando documentos enviados para o responsável:', idResponsavel);
+    console.log('🔍 Carregando documentos para declaração ID:', idDeclaracao);
 
-    this.responsavelDocumentosService.getDocumentosPorFamilia(idResponsavel).subscribe({
-      next: (familiaDocumentos) => {
-        console.log('📋 Documentos da família recebidos:', familiaDocumentos);
+    // Usar o novo método específico para declarações
+    this.responsavelDocumentosService.getDocumentosPorDeclaracao(idDeclaracao).subscribe({
+      next: (documentos: any[]) => {
+        console.log('📋 Documentos da matrícula recebidos:', documentos);
+        this.documentosEnviados = documentos || [];
 
-        // Flatar todos os documentos de todas as pessoas
-        this.documentosEnviados = [];
-        familiaDocumentos.documentosPorPessoa.forEach(pessoaDoc => {
-          pessoaDoc.documentos.forEach(doc => {
-            this.documentosEnviados.push({
-              ...doc,
-              nomeResponsavel: pessoaDoc.pessoa.nome,
-              parentesco: pessoaDoc.pessoa.parentesco
-            });
-          });
-        });
-
+        // Organizar por categorias usando a mesma lógica do painel do responsável
+        this.organizarDocumentosPorCategoria();
         this.carregandoDocumentos = false;
-        console.log('✅ Documentos enviados carregados:', this.documentosEnviados);
+
+        console.log('✅ Documentos organizados por categoria');
+        console.log('🔧 Estado final:', {
+          carregando: this.carregandoDocumentos,
+          totalDocumentos: this.documentosEnviados.length,
+          familia: this.documentosFamilia.length,
+          aluno: this.documentosAluno.length,
+          integrantes: this.documentosIntegrantes.size
+        });
       },
       error: (error: any) => {
-        console.error('❌ Erro ao carregar documentos enviados:', error);
+        console.error('❌ Erro ao carregar documentos:', error);
         this.carregandoDocumentos = false;
         this.documentosEnviados = [];
+        this.organizarDocumentosPorCategoria();
+
+        console.log('🔧 Estado após erro:', {
+          carregando: this.carregandoDocumentos,
+          totalDocumentos: this.documentosEnviados.length
+        });
       }
     });
+  }
+
+  /**
+   * Carrega documentos solicitados para a matrícula
+   */
+  async carregarDocumentosSolicitados() {
+    if (!this.declaracao?.id) {
+      return;
+    }
+
+    this.carregandoDocumentosSolicitados = true;
+
+    try {
+      const response = await this.interesseMatriculaService.buscarDocumentosSolicitados(this.declaracao.id).toPromise();
+
+      if (response && response.sucesso) {
+        this.documentosSolicitados = response.documentos || [];
+        console.log('📋 Documentos solicitados carregados:', this.documentosSolicitados);
+      } else {
+        console.log('Nenhum documento solicitado encontrado para esta matrícula');
+        this.documentosSolicitados = [];
+      }
+    } catch (error) {
+      console.error('❌ Erro ao carregar documentos solicitados:', error);
+      this.documentosSolicitados = [];
+    } finally {
+      this.carregandoDocumentosSolicitados = false;
+      this.unificarDocumentos();
+    }
+  }
+
+  /**
+   * Unifica as listas de documentos solicitados e enviados
+   */
+  private unificarDocumentos() {
+    this.todosDocumentos = [];
+
+    // Adicionar documentos solicitados
+    this.documentosSolicitados.forEach(doc => {
+      this.todosDocumentos.push({
+        ...doc,
+        origem: 'solicitado',
+        // Padronizar propriedades
+        nomeDocumento: doc.tipoDocumento,
+        statusDescricao: doc.status
+      });
+    });
+
+    // Adicionar documentos enviados
+    this.documentosEnviados.forEach(doc => {
+      // Verificar se já existe um documento solicitado com mesmo tipo
+      const existeSolicitado = this.todosDocumentos.find(item =>
+        item.origem === 'solicitado' &&
+        (item.tipoDocumento === doc.tipoDocumento?.nome ||
+          item.nomeDocumento === doc.tipoDocumento?.nome)
+      );
+
+      if (existeSolicitado) {
+        // Atualizar o documento solicitado com dados do enviado
+        Object.assign(existeSolicitado, {
+          ...doc,
+          origem: 'unificado',
+          tipoDocumento: doc.tipoDocumento?.nome || existeSolicitado.tipoDocumento,
+          nomeDocumento: doc.tipoDocumento?.nome || existeSolicitado.nomeDocumento
+        });
+      } else {
+        // Adicionar como novo documento
+        this.todosDocumentos.push({
+          ...doc,
+          origem: 'enviado',
+          tipoDocumento: doc.tipoDocumento?.nome,
+          nomeDocumento: doc.tipoDocumento?.nome
+        });
+      }
+    });
+
+    console.log('📋 Documentos unificados:', this.todosDocumentos);
+  }
+
+  /**
+   * Organiza documentos por categoria (igual ao painel do responsável)
+   */
+  organizarDocumentosPorCategoria() {
+    console.log('Organizando documentos por categoria...');
+
+    // Limpar arrays anteriores
+    this.documentosFamilia = [];
+    this.documentosAluno = [];
+    this.documentosIntegrantes.clear();
+
+    if (!this.documentosEnviados || this.documentosEnviados.length === 0) {
+      console.log('Nenhum documento encontrado');
+      return;
+    }
+
+    this.documentosEnviados.forEach((documento: any) => {
+      console.log('Processando documento:', documento.tipoDocumento?.nome, '- Categoria:', documento.tipoDocumento?.categoria);
+
+      // Converter data para formato brasileiro se necessário
+      if (documento.dataEnvio) {
+        const data = new Date(documento.dataEnvio);
+        documento.dataEnvioFormatada = data.toLocaleDateString('pt-BR');
+      }
+
+      // Usar categoria do tipoDocumento
+      const categoria = documento.tipoDocumento?.categoria?.toUpperCase();
+
+      switch (categoria) {
+        case 'FAMILIA':
+          this.documentosFamilia.push(documento);
+          console.log('Adicionado à categoria FAMÍLIA:', documento.tipoDocumento?.nome);
+          break;
+
+        case 'ALUNO':
+          this.documentosAluno.push(documento);
+          console.log('Adicionado à categoria ALUNO:', documento.tipoDocumento?.nome);
+          break;
+
+        case 'TODOS_INTEGRANTES':
+          const nomeIntegrante = documento.nomeIntegrante || 'Sem identificação';
+          console.log('Documento de integrante - Nome:', nomeIntegrante);
+
+          if (!this.documentosIntegrantes.has(nomeIntegrante)) {
+            this.documentosIntegrantes.set(nomeIntegrante, []);
+          }
+          this.documentosIntegrantes.get(nomeIntegrante)!.push(documento);
+          console.log('Adicionado à categoria INTEGRANTES para:', nomeIntegrante);
+          break;
+
+        default:
+          console.log('Categoria não reconhecida:', categoria);
+          // Adiciona na família por padrão se categoria não reconhecida
+          this.documentosFamilia.push(documento);
+      }
+    });
+
+    console.log('=== RESUMO DA ORGANIZAÇÃO ===');
+    console.log('Documentos da Família:', this.documentosFamilia.length);
+    console.log('Documentos do Aluno:', this.documentosAluno.length);
+    console.log('Integrantes com documentos:', this.documentosIntegrantes.size);
+    this.documentosIntegrantes.forEach((docs, nome) => {
+      console.log(`  ${nome}: ${docs.length} documentos`);
+    });
+  }
+
+  /**
+   * Filtra documentos por categoria
+   */
+  filtrarDocumentosPorCategoria(event: any) {
+    this.categoriaDocumentos = event.detail.value;
+    console.log('Filtrando documentos por categoria:', this.categoriaDocumentos);
+  }
+
+  /**
+   * Retorna documentos visíveis baseado na categoria selecionada
+   */
+  obterDocumentosVisiveis() {
+    switch (this.categoriaDocumentos) {
+      case 'familia':
+        return this.documentosFamilia;
+      case 'aluno':
+        return this.documentosAluno;
+      case 'integrantes':
+        const todosIntegrantes: any[] = [];
+        this.documentosIntegrantes.forEach(docs => {
+          todosIntegrantes.push(...docs);
+        });
+        return todosIntegrantes;
+      default: // 'todos'
+        return this.documentosEnviados;
+    }
   }
 
   /**
@@ -341,7 +529,7 @@ export class DetalheDeclaracaoPage implements OnInit {
     try {
       // Extrair apenas o nome do arquivo do caminho completo
       const nomeArquivoFinal = caminhoCompleto.split('/').pop();
-      const urlArquivo = `http://localhost:8080/cipalam_documentos/${nomeArquivoFinal}`;
+      const urlArquivo = `${environment.apiUrl.replace('/api', '')}/cipalam_documentos/${nomeArquivoFinal}`;
 
       console.log('🔗 Abrindo URL:', urlArquivo);
       console.log('📄 Tipo de arquivo:', documento.tipoArquivo);
@@ -463,6 +651,13 @@ export class DetalheDeclaracaoPage implements OnInit {
   }
 
   /**
+   * Visualizar documento em nova aba (mesmo que abrirDocumento)
+   */
+  async visualizarDocumento(documento: any) {
+    await this.abrirDocumento(documento);
+  }
+
+  /**
    * Retorna a cor baseada no status do documento
    */
   getStatusColor(status: string): string {
@@ -573,7 +768,7 @@ export class DetalheDeclaracaoPage implements OnInit {
     try {
       const token = this.authService.getToken();
       const response = await this.http.post(
-        'http://localhost:8080/api/funcionario/aprovar-documento',
+        `${environment.apiUrl}/funcionario/aprovar-documento`,
         {
           documentoId: documentoId,
           observacoes: observacoes
@@ -616,7 +811,7 @@ export class DetalheDeclaracaoPage implements OnInit {
     try {
       const token = this.authService.getToken();
       const response = await this.http.post(
-        'http://localhost:8080/api/funcionario/rejeitar-documento',
+        `${environment.apiUrl}/funcionario/rejeitar-documento`,
         {
           documentoId: documentoId,
           motivoRejeicao: motivoRejeicao
@@ -733,10 +928,16 @@ export class DetalheDeclaracaoPage implements OnInit {
     await loading.present();
 
     try {
-      // Chamada para o endpoint que atualiza o status para 'matriculado'
-      const response = await this.http.put(
-        `http://localhost:8080/api/turmas-alunos/declaracoes/${this.declaracao?.id}/finalizar`,
-        {}
+      // Obter ID do funcionário logado
+      const usuarioLogado = this.authService.getFuncionarioLogado();
+      if (!usuarioLogado || !usuarioLogado.pessoaId) {
+        throw new Error('Usuário não encontrado');
+      }
+
+      // Chamada para o endpoint de finalizar matrícula usando o service
+      const response = await this.matriculaService.finalizarMatricula(
+        this.declaracao?.id || 0,
+        usuarioLogado.pessoaId
       ).toPromise();
 
       await loading.dismiss();

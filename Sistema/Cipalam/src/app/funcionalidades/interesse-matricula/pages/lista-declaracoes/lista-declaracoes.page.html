@@ -19,23 +19,6 @@
       </div>
     </div>
   </div>
-  <!-- Resumo de vagas -->
-  <ion-card>
-    <ion-card-header>
-      <ion-card-title>Vagas Disponíveis</ion-card-title>
-    </ion-card-header>
-    <ion-card-content>
-      <p><strong>Total:</strong> {{ vagasResumo.total }}</p>
-      <ion-list>
-        <ion-item *ngFor="let cota of vagasResumo.porCota">
-          <ion-label>
-            {{ cota.tipo }}: <strong>{{ cota.disponiveis }}</strong>
-          </ion-label>
-        </ion-item>
-      </ion-list>
-    </ion-card-content>
-  </ion-card>
-
   <!-- Lista de declarações -->
   <ion-list *ngIf="!carregando && declaracoes.length > 0">
     <ion-item *ngFor="let declaracao of declaracoes">

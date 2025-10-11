@@ -14,12 +14,6 @@ export class ListaDeclaracoesPage implements OnInit {
   declaracoes: InteresseMatricula[] = [];
   carregando = true;
 
-  // TODO: Implementar endpoint para buscar resumo de vagas do banco
-  vagasResumo = {
-    total: 0,
-    porCota: [] as Array<{ tipo: string, disponiveis: number }>
-  };
-
   constructor(private interesseService: InteresseMatriculaService, private router: Router) { }
 
   ngOnInit() {

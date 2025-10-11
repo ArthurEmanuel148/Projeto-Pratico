@@ -91,119 +91,380 @@
       </div>
     </div>
 
-    <!-- Family Members Section -->
-    <div class="family-section" *ngIf="familiaDocumentos && familiaDocumentos.documentosPorPessoa.length > 0">
-      <h2 class="section-title">
-        <ion-icon name="people"></ion-icon>
-        Membros da Família
-      </h2>
 
-      <div class="family-grid">
-        <div *ngFor="let pessoa of familiaDocumentos.documentosPorPessoa" class="member-card"
-          [class.selected]="pessoaSelecionada && pessoaSelecionada.pessoa.id === pessoa.pessoa.id"
-          (click)="selecionarPessoa(pessoa)">
-
-          <div class="member-avatar">
-            <ion-icon [name]="obterIconeParentesco(pessoa.pessoa.parentesco)"></ion-icon>
-          </div>
-
-          <div class="member-info">
-            <h3>{{ pessoa.pessoa.nome }}</h3>
-            <p class="member-role">{{ obterDescricaoParentesco(pessoa.pessoa.parentesco) }}</p>
-
-            <div class="member-stats">
-              <span class="stat pending" *ngIf="obterEstatisticasPessoa(pessoa).pendentes > 0">
-                {{ obterEstatisticasPessoa(pessoa).pendentes }} pendente(s)
-              </span>
-              <span class="stat approved" *ngIf="obterEstatisticasPessoa(pessoa).aprovados > 0">
-                {{ obterEstatisticasPessoa(pessoa).aprovados }} aprovado(s)
-              </span>
-            </div>
-          </div>
-
-          <div class="member-indicator">
-            <ion-icon name="chevron-forward"></ion-icon>
-          </div>
-        </div>
-      </div>
-    </div>
 
     <!-- Documents Section -->
-    <div class="documents-section" *ngIf="pessoaSelecionada">
+    <div class="documents-section" *ngIf="familiaDocumentos">
       <h2 class="section-title">
-        <ion-icon [name]="obterIconeParentesco(pessoaSelecionada.pessoa.parentesco)"></ion-icon>
-        Documentos de {{ pessoaSelecionada.pessoa.nome }}
+        <ion-icon name="folder-outline"></ion-icon>
+        Documentos da Matrícula
       </h2>
 
-      <div class="documents-list" *ngIf="pessoaSelecionada.documentos.length > 0">
-        <div *ngFor="let documento of pessoaSelecionada.documentos" class="document-card">
-
-          <div class="document-header">
-            <div class="document-icon" [ngClass]="documento.status">
-              <ion-icon [name]="obterIconeDocumento(documento.tipoDocumento.categoria)"></ion-icon>
-            </div>
-
-            <div class="document-info">
-              <h3>{{ documento.tipoDocumento.nome }}</h3>
-              <p>{{ documento.tipoDocumento.descricao }}</p>
-            </div>
-
-            <div class="document-status">
-              <ion-chip [color]="obterCorStatus(documento.status)" class="status-chip">
-                {{ documento.statusDescricao }}
-              </ion-chip>
-            </div>
-          </div>
-
-          <!-- Document Details -->
-          <div class="document-details" *ngIf="documento.nomeArquivo || documento.observacoes || documento.dataEnvio">
-
-            <div class="detail-item" *ngIf="documento.nomeArquivo">
-              <ion-icon name="document-attach"></ion-icon>
-              <span>{{ documento.nomeArquivo }}</span>
-            </div>
-
-            <div class="detail-item warning" *ngIf="documento.observacoes">
-              <ion-icon name="warning"></ion-icon>
-              <span>{{ documento.observacoes }}</span>
-            </div>
-
-            <div class="detail-item" *ngIf="documento.dataEnvio">
-              <ion-icon name="calendar"></ion-icon>
-              <span>Enviado em {{ documento.dataEnvio | date:'dd/MM/yyyy HH:mm' }}</span>
-            </div>
-
-            <div class="detail-item success" *ngIf="documento.dataAprovacao">
-              <ion-icon name="checkmark-circle"></ion-icon>
-              <span>Aprovado em {{ documento.dataAprovacao | date:'dd/MM/yyyy HH:mm' }}</span>
-            </div>
-          </div>
-
-          <!-- Actions -->
-          <div class="document-actions">
-            <ion-button fill="outline" size="small"
-              *ngIf="documento.status === 'pendente' || documento.status === 'rejeitado'"
-              (click)="anexarDocumento(documento)">
-              <ion-icon name="cloud-upload" slot="start"></ion-icon>
-              {{ documento.status === 'rejeitado' ? 'Reenviar' : 'Anexar' }}
-            </ion-button>
-
-            <ion-button fill="clear" size="small" color="medium" *ngIf="documento.nomeArquivo"
-              (click)="baixarDocumento(documento)">
-              <ion-icon name="download" slot="start"></ion-icon>
-              Download
-            </ion-button>
-          </div>
-        </div>
+      <!-- Filtro por categoria -->
+      <div class="documentos-filtro">
+        <ion-segment [(ngModel)]="categoriaDocumentos" (ionChange)="filtrarDocumentosPorCategoria($event)">
+          <ion-segment-button value="todos">
+            <ion-label>TODOS</ion-label>
+          </ion-segment-button>
+          <ion-segment-button value="familia">
+            <ion-label>FAMÍLIA</ion-label>
+          </ion-segment-button>
+          <ion-segment-button value="aluno">
+            <ion-label>ALUNO</ion-label>
+          </ion-segment-button>
+          <ion-segment-button value="integrantes">
+            <ion-label>INTEGRANTES</ion-label>
+          </ion-segment-button>
+        </ion-segment>
       </div>
 
-      <!-- No Documents for Person -->
-      <div class="empty-state" *ngIf="pessoaSelecionada.documentos.length === 0">
-        <div class="empty-icon">
-          <ion-icon name="document-text-outline"></ion-icon>
+      <!-- Conteúdo baseado na categoria selecionada -->
+      <div class="documents-content">
+
+        <!-- TODOS OS DOCUMENTOS -->
+        <div *ngIf="categoriaDocumentos === 'todos'">
+
+          <!-- Documentos da Família -->
+          <div *ngIf="documentosFamilia.length > 0" class="categoria-secao">
+            <h3 class="categoria-titulo">
+              <ion-icon name="home-outline"></ion-icon>
+              Documentos da Família ({{ documentosFamilia.length }})
+            </h3>
+            <div class="documents-list">
+              <div *ngFor="let documento of documentosFamilia" class="document-card familia">
+                <div class="document-header">
+                  <div class="document-icon" [ngClass]="documento.status">
+                    <ion-icon [name]="obterIconeDocumento(documento.tipoDocumento.categoria)"></ion-icon>
+                  </div>
+                  <div class="document-info">
+                    <h3>{{ documento.tipoDocumento.nome }}</h3>
+                    <p>{{ documento.tipoDocumento.descricao }}</p>
+                  </div>
+                  <div class="document-status">
+                    <ion-chip [color]="obterCorStatus(documento.status)" class="status-chip">
+                      {{ documento.statusDescricao }}
+                    </ion-chip>
+                  </div>
+                </div>
+
+                <!-- Document Details -->
+                <div class="document-details"
+                  *ngIf="documento.observacoes || documento.dataEnvio || documento.dataAprovacao">
+                  <div class="detail-item warning" *ngIf="documento.observacoes">
+                    <ion-icon name="warning"></ion-icon>
+                    <span>{{ documento.observacoes }}</span>
+                  </div>
+                  <div class="detail-item" *ngIf="documento.dataEnvio">
+                    <ion-icon name="calendar"></ion-icon>
+                    <span>Enviado em {{ documento.dataEnvio | date:'dd/MM/yyyy' }}</span>
+                  </div>
+                  <div class="detail-item success" *ngIf="documento.dataAprovacao">
+                    <ion-icon name="checkmark-circle"></ion-icon>
+                    <span>Aprovado em {{ documento.dataAprovacao | date:'dd/MM/yyyy' }}</span>
+                  </div>
+                </div>
+
+                <!-- Actions -->
+                <div class="document-actions">
+                  <ion-button fill="outline" size="small"
+                    *ngIf="documento.status === 'pendente' || documento.status === 'rejeitado'"
+                    (click)="anexarDocumento(documento)">
+                    <ion-icon name="cloud-upload" slot="start"></ion-icon>
+                    {{ documento.status === 'rejeitado' ? 'Reenviar' : 'Anexar' }}
+                  </ion-button>
+                  <ion-button fill="clear" size="small" color="medium" *ngIf="documento.nomeArquivo"
+                    (click)="visualizarDocumento(documento)">
+                    <ion-icon name="eye" slot="start"></ion-icon>
+                    Visualizar
+                  </ion-button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Documentos do Aluno -->
+          <div *ngIf="documentosAluno.length > 0" class="categoria-secao">
+            <h3 class="categoria-titulo">
+              <ion-icon name="person-outline"></ion-icon>
+              Documentos do Aluno ({{ documentosAluno.length }})
+            </h3>
+            <div class="documents-list">
+              <div *ngFor="let documento of documentosAluno" class="document-card aluno">
+                <div class="document-header">
+                  <div class="document-icon" [ngClass]="documento.status">
+                    <ion-icon [name]="obterIconeDocumento(documento.tipoDocumento.categoria)"></ion-icon>
+                  </div>
+                  <div class="document-info">
+                    <h3>{{ documento.tipoDocumento.nome }}</h3>
+                    <p>{{ documento.tipoDocumento.descricao }}</p>
+                  </div>
+                  <div class="document-status">
+                    <ion-chip [color]="obterCorStatus(documento.status)" class="status-chip">
+                      {{ documento.statusDescricao }}
+                    </ion-chip>
+                  </div>
+                </div>
+
+                <!-- Document Details -->
+                <div class="document-details"
+                  *ngIf="documento.observacoes || documento.dataEnvio || documento.dataAprovacao">
+                  <div class="detail-item warning" *ngIf="documento.observacoes">
+                    <ion-icon name="warning"></ion-icon>
+                    <span>{{ documento.observacoes }}</span>
+                  </div>
+                  <div class="detail-item" *ngIf="documento.dataEnvio">
+                    <ion-icon name="calendar"></ion-icon>
+                    <span>Enviado em {{ documento.dataEnvio | date:'dd/MM/yyyy' }}</span>
+                  </div>
+                  <div class="detail-item success" *ngIf="documento.dataAprovacao">
+                    <ion-icon name="checkmark-circle"></ion-icon>
+                    <span>Aprovado em {{ documento.dataAprovacao | date:'dd/MM/yyyy' }}</span>
+                  </div>
+                </div>
+
+                <!-- Actions -->
+                <div class="document-actions">
+                  <ion-button fill="outline" size="small"
+                    *ngIf="documento.status === 'pendente' || documento.status === 'rejeitado'"
+                    (click)="anexarDocumento(documento)">
+                    <ion-icon name="cloud-upload" slot="start"></ion-icon>
+                    {{ documento.status === 'rejeitado' ? 'Reenviar' : 'Anexar' }}
+                  </ion-button>
+                  <ion-button fill="clear" size="small" color="medium" *ngIf="documento.nomeArquivo"
+                    (click)="visualizarDocumento(documento)">
+                    <ion-icon name="eye" slot="start"></ion-icon>
+                    Visualizar
+                  </ion-button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Documentos dos Integrantes -->
+          <div *ngIf="documentosIntegrantes.length > 0" class="categoria-secao">
+            <h3 class="categoria-titulo">
+              <ion-icon name="people-outline"></ion-icon>
+              Documentos dos Integrantes ({{ documentosIntegrantes.length }})
+            </h3>
+            <div class="documents-list">
+              <div *ngFor="let documento of documentosIntegrantes" class="document-card integrantes">
+                <div class="document-header">
+                  <div class="document-icon" [ngClass]="documento.status">
+                    <ion-icon [name]="obterIconeDocumento(documento.tipoDocumento.categoria)"></ion-icon>
+                  </div>
+                  <div class="document-info">
+                    <h3>{{ documento.tipoDocumento.nome }}</h3>
+                    <p>{{ documento.tipoDocumento.descricao }}</p>
+                  </div>
+                  <div class="document-status">
+                    <ion-chip [color]="obterCorStatus(documento.status)" class="status-chip">
+                      {{ documento.statusDescricao }}
+                    </ion-chip>
+                  </div>
+                </div>
+
+                <!-- Document Details -->
+                <div class="document-details"
+                  *ngIf="documento.observacoes || documento.dataEnvio || documento.dataAprovacao">
+                  <div class="detail-item warning" *ngIf="documento.observacoes">
+                    <ion-icon name="warning"></ion-icon>
+                    <span>{{ documento.observacoes }}</span>
+                  </div>
+                  <div class="detail-item" *ngIf="documento.dataEnvio">
+                    <ion-icon name="calendar"></ion-icon>
+                    <span>Enviado em {{ documento.dataEnvio | date:'dd/MM/yyyy' }}</span>
+                  </div>
+                  <div class="detail-item success" *ngIf="documento.dataAprovacao">
+                    <ion-icon name="checkmark-circle"></ion-icon>
+                    <span>Aprovado em {{ documento.dataAprovacao | date:'dd/MM/yyyy' }}</span>
+                  </div>
+                </div>
+
+                <!-- Actions -->
+                <div class="document-actions">
+                  <ion-button fill="outline" size="small"
+                    *ngIf="documento.status === 'pendente' || documento.status === 'rejeitado'"
+                    (click)="anexarDocumento(documento)">
+                    <ion-icon name="cloud-upload" slot="start"></ion-icon>
+                    {{ documento.status === 'rejeitado' ? 'Reenviar' : 'Anexar' }}
+                  </ion-button>
+                  <ion-button fill="clear" size="small" color="medium" *ngIf="documento.nomeArquivo"
+                    (click)="visualizarDocumento(documento)">
+                    <ion-icon name="eye" slot="start"></ion-icon>
+                    Visualizar
+                  </ion-button>
+                </div>
+              </div>
+            </div>
+          </div>
+
         </div>
-        <h3>Nenhum documento necessário</h3>
-        <p>Não há documentos configurados para {{ pessoaSelecionada.pessoa.nome }}.</p>
+
+        <!-- APENAS DOCUMENTOS DA FAMÍLIA -->
+        <div *ngIf="categoriaDocumentos === 'familia'" class="documents-list">
+          <div *ngFor="let documento of documentosFamilia" class="document-card familia">
+            <div class="document-header">
+              <div class="document-icon" [ngClass]="documento.status">
+                <ion-icon [name]="obterIconeDocumento(documento.tipoDocumento.categoria)"></ion-icon>
+              </div>
+              <div class="document-info">
+                <h3>{{ documento.tipoDocumento.nome }}</h3>
+                <p>{{ documento.tipoDocumento.descricao }}</p>
+              </div>
+              <div class="document-status">
+                <ion-chip [color]="obterCorStatus(documento.status)" class="status-chip">
+                  {{ documento.statusDescricao }}
+                </ion-chip>
+              </div>
+            </div>
+
+            <!-- Document Details -->
+            <div class="document-details"
+              *ngIf="documento.observacoes || documento.dataEnvio || documento.dataAprovacao">
+              <div class="detail-item warning" *ngIf="documento.observacoes">
+                <ion-icon name="warning"></ion-icon>
+                <span>{{ documento.observacoes }}</span>
+              </div>
+              <div class="detail-item" *ngIf="documento.dataEnvio">
+                <ion-icon name="calendar"></ion-icon>
+                <span>Enviado em {{ documento.dataEnvio | date:'dd/MM/yyyy' }}</span>
+              </div>
+              <div class="detail-item success" *ngIf="documento.dataAprovacao">
+                <ion-icon name="checkmark-circle"></ion-icon>
+                <span>Aprovado em {{ documento.dataAprovacao | date:'dd/MM/yyyy' }}</span>
+              </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="document-actions">
+              <ion-button fill="outline" size="small"
+                *ngIf="documento.status === 'pendente' || documento.status === 'rejeitado'"
+                (click)="anexarDocumento(documento)">
+                <ion-icon name="cloud-upload" slot="start"></ion-icon>
+                {{ documento.status === 'rejeitado' ? 'Reenviar' : 'Anexar' }}
+              </ion-button>
+              <ion-button fill="clear" size="small" color="medium" *ngIf="documento.nomeArquivo"
+                (click)="visualizarDocumento(documento)">
+                <ion-icon name="eye" slot="start"></ion-icon>
+                Visualizar
+              </ion-button>
+            </div>
+          </div>
+        </div>
+
+        <!-- APENAS DOCUMENTOS DO ALUNO -->
+        <div *ngIf="categoriaDocumentos === 'aluno'" class="documents-list">
+          <div *ngFor="let documento of documentosAluno" class="document-card aluno">
+            <div class="document-header">
+              <div class="document-icon" [ngClass]="documento.status">
+                <ion-icon [name]="obterIconeDocumento(documento.tipoDocumento.categoria)"></ion-icon>
+              </div>
+              <div class="document-info">
+                <h3>{{ documento.tipoDocumento.nome }}</h3>
+                <p>{{ documento.tipoDocumento.descricao }}</p>
+              </div>
+              <div class="document-status">
+                <ion-chip [color]="obterCorStatus(documento.status)" class="status-chip">
+                  {{ documento.statusDescricao }}
+                </ion-chip>
+              </div>
+            </div>
+
+            <!-- Document Details -->
+            <div class="document-details"
+              *ngIf="documento.observacoes || documento.dataEnvio || documento.dataAprovacao">
+              <div class="detail-item warning" *ngIf="documento.observacoes">
+                <ion-icon name="warning"></ion-icon>
+                <span>{{ documento.observacoes }}</span>
+              </div>
+              <div class="detail-item" *ngIf="documento.dataEnvio">
+                <ion-icon name="calendar"></ion-icon>
+                <span>Enviado em {{ documento.dataEnvio | date:'dd/MM/yyyy' }}</span>
+              </div>
+              <div class="detail-item success" *ngIf="documento.dataAprovacao">
+                <ion-icon name="checkmark-circle"></ion-icon>
+                <span>Aprovado em {{ documento.dataAprovacao | date:'dd/MM/yyyy' }}</span>
+              </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="document-actions">
+              <ion-button fill="outline" size="small"
+                *ngIf="documento.status === 'pendente' || documento.status === 'rejeitado'"
+                (click)="anexarDocumento(documento)">
+                <ion-icon name="cloud-upload" slot="start"></ion-icon>
+                {{ documento.status === 'rejeitado' ? 'Reenviar' : 'Anexar' }}
+              </ion-button>
+              <ion-button fill="clear" size="small" color="medium" *ngIf="documento.nomeArquivo"
+                (click)="visualizarDocumento(documento)">
+                <ion-icon name="eye" slot="start"></ion-icon>
+                Visualizar
+              </ion-button>
+            </div>
+          </div>
+        </div>
+
+        <!-- APENAS DOCUMENTOS DOS INTEGRANTES -->
+        <div *ngIf="categoriaDocumentos === 'integrantes'" class="documents-list">
+          <div *ngFor="let documento of documentosIntegrantes" class="document-card integrantes">
+            <div class="document-header">
+              <div class="document-icon" [ngClass]="documento.status">
+                <ion-icon [name]="obterIconeDocumento(documento.tipoDocumento.categoria)"></ion-icon>
+              </div>
+              <div class="document-info">
+                <h3>{{ documento.tipoDocumento.nome }}</h3>
+                <p>{{ documento.tipoDocumento.descricao }}</p>
+              </div>
+              <div class="document-status">
+                <ion-chip [color]="obterCorStatus(documento.status)" class="status-chip">
+                  {{ documento.statusDescricao }}
+                </ion-chip>
+              </div>
+            </div>
+
+            <!-- Document Details -->
+            <div class="document-details"
+              *ngIf="documento.observacoes || documento.dataEnvio || documento.dataAprovacao">
+              <div class="detail-item warning" *ngIf="documento.observacoes">
+                <ion-icon name="warning"></ion-icon>
+                <span>{{ documento.observacoes }}</span>
+              </div>
+              <div class="detail-item" *ngIf="documento.dataEnvio">
+                <ion-icon name="calendar"></ion-icon>
+                <span>Enviado em {{ documento.dataEnvio | date:'dd/MM/yyyy' }}</span>
+              </div>
+              <div class="detail-item success" *ngIf="documento.dataAprovacao">
+                <ion-icon name="checkmark-circle"></ion-icon>
+                <span>Aprovado em {{ documento.dataAprovacao | date:'dd/MM/yyyy' }}</span>
+              </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="document-actions">
+              <ion-button fill="outline" size="small"
+                *ngIf="documento.status === 'pendente' || documento.status === 'rejeitado'"
+                (click)="anexarDocumento(documento)">
+                <ion-icon name="cloud-upload" slot="start"></ion-icon>
+                {{ documento.status === 'rejeitado' ? 'Reenviar' : 'Anexar' }}
+              </ion-button>
+              <ion-button fill="clear" size="small" color="medium" *ngIf="documento.nomeArquivo"
+                (click)="visualizarDocumento(documento)">
+                <ion-icon name="eye" slot="start"></ion-icon>
+                Visualizar
+              </ion-button>
+            </div>
+          </div>
+        </div>
+
+        <!-- No Documents -->
+        <div class="empty-state" *ngIf="obterDocumentosVisiveis().length === 0">
+          <div class="empty-icon">
+            <ion-icon name="document-text-outline"></ion-icon>
+          </div>
+          <h3>Nenhum documento encontrado</h3>
+          <p>Não há documentos para a categoria selecionada.</p>
+        </div>
+
       </div>
     </div>
 

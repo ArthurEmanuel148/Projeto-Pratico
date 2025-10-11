@@ -127,7 +127,7 @@ CREATE TABLE `tbTurma` (
 -- -----------------------------------------------------
 CREATE TABLE `tbResponsavel` (
     `idResponsavel` INT NOT NULL AUTO_INCREMENT,
-    `tbFamilia_idtbFamilia` INT NOT NULL,
+    `tbFamilia_idtbFamilia` INT NULL,
     `tbPessoa_idPessoa` INT NOT NULL,
     `dataVinculo` DATE DEFAULT(CURRENT_DATE),
     `ativo` BOOLEAN DEFAULT TRUE,
@@ -136,12 +136,9 @@ CREATE TABLE `tbResponsavel` (
     PRIMARY KEY (`idResponsavel`),
     INDEX `fk_tbResponsavel_tbFamilia1_idx` (`tbFamilia_idtbFamilia` ASC),
     INDEX `fk_tbResponsavel_tbPessoa1_idx` (`tbPessoa_idPessoa` ASC),
-    CONSTRAINT `fk_tbResponsavel_tbFamilia1` FOREIGN KEY (`tbFamilia_idtbFamilia`) REFERENCES `tbFamilia` (`idtbFamilia`) ON DELETE CASCADE ON UPDATE NO ACTION,
+    CONSTRAINT `fk_tbResponsavel_tbFamilia1` FOREIGN KEY (`tbFamilia_idtbFamilia`) REFERENCES `tbFamilia` (`idtbFamilia`) ON DELETE SET NULL ON UPDATE NO ACTION,
     CONSTRAINT `fk_tbResponsavel_tbPessoa1` FOREIGN KEY (`tbPessoa_idPessoa`) REFERENCES `tbPessoa` (`idPessoa`) ON DELETE CASCADE ON UPDATE NO ACTION,
-    UNIQUE KEY `unique_pessoa_familia` (
-        `tbPessoa_idPessoa`,
-        `tbFamilia_idtbFamilia`
-    )
+    UNIQUE KEY `unique_pessoa_responsavel` (`tbPessoa_idPessoa`)
 ) ENGINE = InnoDB;
 
 -- -----------------------------------------------------
@@ -378,6 +375,9 @@ CREATE TABLE `tbInteresseMatricula` (
 `funcionarioResponsavel_idPessoa` INT NULL,
 `responsavelLogin_idPessoa` INT NULL,
 
+-- TURMA SELECIONADA NO INICIAR MATRÍCULA
+`turmaSelecionada_idTurma` INT NULL,
+
 -- OBSERVAÇÕES INTERNAS
 
 
@@ -397,12 +397,18 @@ CREATE TABLE `tbInteresseMatricula` (
     INDEX `fk_tbInteresseMatricula_responsavel_idx` (
         `responsavelLogin_idPessoa` ASC
     ),
+    INDEX `fk_tbInteresseMatricula_turma_idx` (
+        `turmaSelecionada_idTurma` ASC
+    ),
     CONSTRAINT `fk_tbInteresseMatricula_funcionario` FOREIGN KEY (
         `funcionarioResponsavel_idPessoa`
     ) REFERENCES `tbPessoa` (`idPessoa`) ON DELETE SET NULL ON UPDATE NO ACTION,
     CONSTRAINT `fk_tbInteresseMatricula_responsavel` FOREIGN KEY (
         `responsavelLogin_idPessoa`
-    ) REFERENCES `tbPessoa` (`idPessoa`) ON DELETE SET NULL ON UPDATE NO ACTION
+    ) REFERENCES `tbPessoa` (`idPessoa`) ON DELETE SET NULL ON UPDATE NO ACTION,
+    CONSTRAINT `fk_tbInteresseMatricula_turma` FOREIGN KEY (
+        `turmaSelecionada_idTurma`
+    ) REFERENCES `tbTurma` (`idtbTurma`) ON DELETE SET NULL ON UPDATE NO ACTION
 ) ENGINE = InnoDB;
 
 -- -----------------------------------------------------
@@ -574,26 +580,7 @@ CREATE TABLE `tbIntegranteFamilia` (
     `nomeIntegrante` VARCHAR(100) NOT NULL,
     `cpfIntegrante` VARCHAR(14) NULL,
     `dataNascimento` DATE NULL,
-    `parentesco` ENUM(
-        'pai',
-        'mae',
-        'conjuge',
-        'filho',
-        'filha',
-        'irmao',
-        'irma',
-        'avo',
-        'ava',
-        'tio',
-        'tia',
-        'sobrinho',
-        'sobrinha',
-        'primo',
-        'prima',
-        'responsavel',
-        'tutor',
-        'outro'
-    ) NOT NULL,
+    `parentesco` VARCHAR(50) NOT NULL,
     `renda` DECIMAL(10, 2) NULL DEFAULT 0.00,
     `profissao` VARCHAR(100) NULL,
     `observacoes` TEXT NULL,
@@ -615,7 +602,8 @@ DELIMITER $$
 
 -- -----------------------------------------------------
 -- Procedure: sp_IniciarMatricula
--- Descrição: Automatiza o processo de iniciar matrícula
+-- Descrição: APENAS inicia a matrícula alterando status da declaração
+-- Não cria família, aluno ou outros registros - apenas marca como iniciada
 -- Parâmetros:
 --   - p_idDeclaracao: ID da declaração de interesse
 --   - p_idTurma: ID da turma escolhida pelo funcionário
@@ -627,26 +615,17 @@ CREATE PROCEDURE `sp_IniciarMatricula`(
     IN p_idFuncionario INT
 )
 BEGIN
-    DECLARE v_idFamilia INT;
-    DECLARE v_idResponsavel INT;
-    DECLARE v_idAluno INT;
     DECLARE v_nomeAluno VARCHAR(100);
-    DECLARE v_usuarioLogin VARCHAR(45);
-    DECLARE v_senhaLogin VARCHAR(255);
     DECLARE v_cpfResponsavel VARCHAR(14);
-    DECLARE v_proximaMatricula VARCHAR(20);
+    DECLARE v_nomeResponsavel VARCHAR(100);
+    DECLARE v_protocolo VARCHAR(50);
+    DECLARE v_usuarioLogin VARCHAR(45);
+    DECLARE v_senhaTemporariaTexto VARCHAR(50);
+    DECLARE v_senhaTemporariaCripto VARCHAR(100);
     DECLARE v_tipoCota VARCHAR(20);
-    DECLARE v_integrantesJson JSON;
-    DECLARE v_count INT DEFAULT 0;
-    DECLARE v_maxIntegrantes INT DEFAULT 0;
-    DECLARE v_nomeIntegrante VARCHAR(100);
-    DECLARE v_cpfIntegrante VARCHAR(14);
-    DECLARE v_dataNascIntegrante DATE;
-    DECLARE v_parentescoIntegrante VARCHAR(20);
-    DECLARE v_rendaIntegrante DECIMAL(10,2);
-    DECLARE v_profissaoIntegrante VARCHAR(100);
-    DECLARE v_observacoesIntegrante TEXT;
-    DECLARE v_idPessoaIntegrante INT;
+    DECLARE v_idResponsavel INT;
+    DECLARE v_documentosObrigatorios JSON;
+    DECLARE v_tipoCotatUpper ENUM('LIVRE', 'ECONOMICA', 'FUNCIONARIO');
     
     DECLARE EXIT HANDLER FOR SQLEXCEPTION
     BEGIN
@@ -677,52 +656,30 @@ BEGIN
         SET MESSAGE_TEXT = 'Turma não encontrada ou sem vagas disponíveis';
     END IF;
     
-    -- 1. CRIAR FAMÍLIA com dados da declaração
-    INSERT INTO tbFamilia (
-        cep, logradouro, numero, complemento, bairro, cidade, uf, 
-        codigoIbgeCidade, pontoReferencia, numeroIntegrantes, 
-        integrantesRenda, dadosFamiliaresPreenchidos, tipoCota, observacoes
-    )
+    -- Capturar dados da declaração para retorno
     SELECT 
-        COALESCE(i.cep, '00000-000'), 
-        COALESCE(i.logradouro, 'Não informado'), 
-        COALESCE(i.numero, 'S/N'), 
-        i.complemento, 
-        COALESCE(i.bairro, 'Não informado'), 
-        COALESCE(i.cidade, 'Não informado'), 
-        COALESCE(i.uf, 'SP'),
-        COALESCE(i.codigoIbgeCidade, '0000000'), 
-        i.pontoReferencia, 
-        COALESCE(i.numeroIntegrantes, 1),
-        COALESCE(i.integrantesRenda, '[]'), 
-        COALESCE(i.dadosFamiliaresPreenchidos, 0), 
-        COALESCE(i.tipoCota, 'livre'),
-        CONCAT('Família criada automaticamente da declaração: ', COALESCE(i.protocolo, 'SEM_PROTOCOLO'))
-    FROM tbInteresseMatricula i
-    WHERE i.id = p_idDeclaracao;
-    
-    SET v_idFamilia = LAST_INSERT_ID();
-    
-    -- Verificar se a família foi criada com sucesso
-    IF v_idFamilia IS NULL OR v_idFamilia = 0 THEN
-        SIGNAL SQLSTATE '45000' 
-        SET MESSAGE_TEXT = 'Erro ao criar família - verifique se a declaração possui dados válidos';
-    END IF;
-    
-    -- 2. VERIFICAR SE RESPONSÁVEL JÁ EXISTE
-    SELECT cpfResponsavel, tipoCota, integrantesRenda 
-    INTO v_cpfResponsavel, v_tipoCota, v_integrantesJson
+        nomeAluno, 
+        cpfResponsavel, 
+        nomeResponsavel, 
+        protocolo,
+        tipoCota
+    INTO 
+        v_nomeAluno, 
+        v_cpfResponsavel, 
+        v_nomeResponsavel, 
+        v_protocolo,
+        v_tipoCota
     FROM tbInteresseMatricula 
     WHERE id = p_idDeclaracao;
     
-    -- Verificar se a pessoa já existe
+    -- 1. VERIFICAR SE RESPONSÁVEL JÁ EXISTE, SE NÃO, CRIAR
     SELECT idPessoa INTO v_idResponsavel
     FROM tbPessoa 
     WHERE CpfPessoa = v_cpfResponsavel 
     LIMIT 1;
     
     IF v_idResponsavel IS NULL THEN
-        -- 3. CRIAR PESSOA RESPONSÁVEL
+        -- Criar pessoa responsável
         INSERT INTO tbPessoa (
             NmPessoa, CpfPessoa, dtNascPessoa, telefone, email, renda, profissao
         )
@@ -739,214 +696,190 @@ BEGIN
         
         SET v_idResponsavel = LAST_INSERT_ID();
         
-        -- Verificar se o responsável foi criado com sucesso
-        IF v_idResponsavel IS NULL OR v_idResponsavel = 0 THEN
-            SIGNAL SQLSTATE '45000' 
-            SET MESSAGE_TEXT = 'Erro ao criar pessoa responsável';
-        END IF;
-        
-        -- 4. CRIAR LOGIN PARA RESPONSÁVEL (apenas se não existir)
-        SET v_usuarioLogin = REPLACE(REPLACE(v_cpfResponsavel, '.', ''), '-', '');
-        -- Salvar senha em texto simples - Java irá criptografar depois
-        SET v_senhaLogin = RIGHT(REPLACE(REPLACE(v_cpfResponsavel, '.', ''), '-', ''), 4);
-        
-        INSERT IGNORE INTO tblogin (usuario, senha, tbPessoa_idPessoa)
-        VALUES (v_usuarioLogin, v_senhaLogin, v_idResponsavel);
+        -- Criar registro na tbResponsavel (sem família por enquanto)
+        INSERT INTO tbResponsavel (tbFamilia_idtbFamilia, tbPessoa_idPessoa, dataVinculo, ativo)
+        VALUES (NULL, v_idResponsavel, CURDATE(), 1);
     END IF;
     
-    -- 4.1. VERIFICAR E CRIAR LOGIN MESMO SE RESPONSÁVEL JÁ EXISTIA
-    -- (Para casos onde a pessoa já existia mas não tinha login)
+    -- 2. CRIAR LOGIN PARA RESPONSÁVEL (se não existir)
+    -- Login será criado pelo backend Java com senha criptografada corretamente
     IF NOT EXISTS (SELECT 1 FROM tblogin WHERE tbPessoa_idPessoa = v_idResponsavel) THEN
         SET v_usuarioLogin = REPLACE(REPLACE(v_cpfResponsavel, '.', ''), '-', '');
-        SET v_senhaLogin = RIGHT(REPLACE(REPLACE(v_cpfResponsavel, '.', ''), '-', ''), 4);
-        
-        INSERT INTO tblogin (usuario, senha, tbPessoa_idPessoa)
-        VALUES (v_usuarioLogin, v_senhaLogin, v_idResponsavel);
+        SET v_senhaTemporariaTexto = RIGHT(REPLACE(REPLACE(v_cpfResponsavel, '.', ''), '-', ''), 4);
+        -- Não criar login aqui - deixar para o backend
+    ELSE
+        -- Pegar login existente
+        SELECT usuario INTO v_usuarioLogin 
+        FROM tblogin 
+        WHERE tbPessoa_idPessoa = v_idResponsavel;
+        SET v_senhaTemporariaTexto = 'Login já existente';
     END IF;
     
-    -- 5. VINCULAR RESPONSÁVEL À FAMÍLIA
-    -- Verificar se a família foi criada com sucesso
-    IF v_idFamilia IS NULL OR v_idFamilia = 0 THEN
-        SIGNAL SQLSTATE '45000' 
-        SET MESSAGE_TEXT = 'Erro ao criar família - ID inválido';
+    -- 3. CRIAR DOCUMENTOS PENDENTES BASEADOS NA COTA (ligados à declaração)
+    -- Converter tipo de cota para uppercase
+    CASE v_tipoCota
+        WHEN 'livre' THEN SET v_tipoCotatUpper = 'LIVRE';
+        WHEN 'economica' THEN SET v_tipoCotatUpper = 'ECONOMICA';
+        WHEN 'funcionario' THEN SET v_tipoCotatUpper = 'FUNCIONARIO';
+        ELSE SET v_tipoCotatUpper = 'LIVRE';
+    END CASE;
+    
+    -- Obter lista de documentos obrigatórios para esta cota
+    SELECT documentosObrigatorios INTO v_documentosObrigatorios
+    FROM tbConfiguracaoDocumentosCota
+    WHERE tipoCota = v_tipoCotatUpper;
+    
+    -- Se não encontrou configuração, usar padrão (livre)
+    IF v_documentosObrigatorios IS NULL THEN
+        SELECT documentosObrigatorios INTO v_documentosObrigatorios
+        FROM tbConfiguracaoDocumentosCota
+        WHERE tipoCota = 'LIVRE';
     END IF;
     
-    -- Verificar se o responsável foi criado/encontrado
-    IF v_idResponsavel IS NULL OR v_idResponsavel = 0 THEN
-        SIGNAL SQLSTATE '45000' 
-        SET MESSAGE_TEXT = 'Erro ao criar/encontrar responsável - ID inválido';
-    END IF;
-    
-    INSERT INTO tbResponsavel (tbFamilia_idtbFamilia, tbPessoa_idPessoa)
-    VALUES (v_idFamilia, v_idResponsavel);
-    
-    -- 6. VERIFICAR SE ALUNO JÁ EXISTE E CRIAR SE NECESSÁRIO
-    -- Primeiro obter CPF do aluno
-    SELECT cpfAluno INTO @v_cpfAluno FROM tbInteresseMatricula WHERE id = p_idDeclaracao;
-    
-    -- Verificar se pessoa com CPF do aluno já existe
-    SELECT idPessoa INTO v_idAluno
-    FROM tbPessoa 
-    WHERE CpfPessoa = @v_cpfAluno 
-    LIMIT 1;
-    
-    IF v_idAluno IS NULL THEN
-        -- CRIAR PESSOA ALUNO apenas se não existir
-        INSERT INTO tbPessoa (
-            NmPessoa, CpfPessoa, dtNascPessoa
-        )
-        SELECT 
-            COALESCE(nomeAluno, 'Nome do aluno não informado'), 
-            cpfAluno, 
-            COALESCE(dataNascimentoAluno, CURDATE())
-        FROM tbInteresseMatricula 
-        WHERE id = p_idDeclaracao;
-        
-        SET v_idAluno = LAST_INSERT_ID();
-    END IF;
-    
-    -- Capturar nome do aluno para evitar duplicatas
-    SELECT nomeAluno INTO v_nomeAluno 
-    FROM tbInteresseMatricula 
-    WHERE id = p_idDeclaracao;
-    
-    -- 7. GERAR MATRÍCULA AUTOMÁTICA
-    SET v_proximaMatricula = CONCAT(
-        YEAR(CURDATE()), 
-        LPAD((
-            SELECT COALESCE(MAX(CAST(SUBSTRING(matricula, 5) AS UNSIGNED)), 0) + 1
-            FROM tbAluno 
-            WHERE matricula LIKE CONCAT(YEAR(CURDATE()), '%')
-        ), 4, '0')
-    );
-    
-    -- 8. CRIAR ALUNO
-    INSERT INTO tbAluno (
-        tbPessoa_idPessoa, tbFamilia_idtbFamilia, tbTurma_idtbTurma,
-        matricula, dataMatricula, escolaAluno, codigoInepEscola,
-        municipioEscola, ufEscola, horariosSelecionados, observacoesResponsavel,
-        protocoloDeclaracao, funcionarioMatricula_idPessoa, dataInicioMatricula
+    -- Criar documentos da FAMÍLIA (escopo 'FAMILIA') - UM por família
+    INSERT INTO tbDocumentoMatricula (
+        tbInteresseMatricula_id,
+        tbTipoDocumento_idTipoDocumento, 
+        status,
+        observacoes
     )
     SELECT 
-        v_idAluno, v_idFamilia, p_idTurma,
-        v_proximaMatricula, CURDATE(), escolaAluno, codigoInepEscola,
-        municipioEscola, ufEscola, horariosSelecionados, observacoesResponsavel,
-        protocolo, p_idFuncionario, NOW()
+        p_idDeclaracao,
+        td.idTipoDocumento,
+        'pendente',
+        CONCAT('Documento da família para declaração: ', v_protocolo)
+    FROM tbTipoDocumento td
+    WHERE td.ativo = TRUE 
+    AND td.escopo = 'FAMILIA'
+    AND JSON_CONTAINS(v_documentosObrigatorios, CAST(td.idTipoDocumento AS CHAR))
+    AND NOT EXISTS (
+        SELECT 1 FROM tbDocumentoMatricula dm2 
+        WHERE dm2.tbInteresseMatricula_id = p_idDeclaracao
+        AND dm2.tbTipoDocumento_idTipoDocumento = td.idTipoDocumento
+        AND dm2.tbPessoa_idPessoa IS NULL
+    );
+    
+    -- Criar documentos do ALUNO (escopo 'ALUNO') - UM por aluno
+    INSERT INTO tbDocumentoMatricula (
+        tbInteresseMatricula_id,
+        tbTipoDocumento_idTipoDocumento, 
+        status,
+        observacoes
+    )
+    SELECT 
+        p_idDeclaracao,
+        td.idTipoDocumento,
+        'pendente',
+        CONCAT('Documento do aluno para declaração: ', v_protocolo)
+    FROM tbTipoDocumento td
+    WHERE td.ativo = TRUE 
+    AND td.escopo = 'ALUNO'
+    AND JSON_CONTAINS(v_documentosObrigatorios, CAST(td.idTipoDocumento AS CHAR))
+    AND NOT EXISTS (
+        SELECT 1 FROM tbDocumentoMatricula dm2 
+        WHERE dm2.tbInteresseMatricula_id = p_idDeclaracao
+        AND dm2.tbTipoDocumento_idTipoDocumento = td.idTipoDocumento
+        AND dm2.tbPessoa_idPessoa IS NULL
+    );
+    
+    -- Criar documentos para TODOS OS INTEGRANTES (escopo 'TODOS_INTEGRANTES') - UM para CADA integrante
+    -- Buscar integrantes do JSON da declaração
+    CALL sp_CriarDocumentosIntegrantes(p_idDeclaracao, v_protocolo, v_documentosObrigatorios);
+    
+    -- 4. ATUALIZAR STATUS DA DECLARAÇÃO
+    UPDATE tbInteresseMatricula 
+    SET 
+        status = 'matricula_iniciada',
+        dataInicioMatricula = NOW(),
+        funcionarioResponsavel_idPessoa = p_idFuncionario,
+        responsavelLogin_idPessoa = v_idResponsavel,
+        turmaSelecionada_idTurma = p_idTurma
+    WHERE id = p_idDeclaracao;
+    
+    -- 5. LOG DA AÇÃO
+    INSERT INTO tbLogMatricula (
+        tbInteresseMatricula_id, acao, descricao, usuario_idPessoa
+    ) VALUES (
+        p_idDeclaracao, 
+        'MATRICULA_INICIADA', 
+        CONCAT('Matrícula iniciada - Login criado - Documentos solicitados - Declaração: ', v_protocolo, ' - Turma: ', p_idTurma),
+        p_idFuncionario
+    );
+    
+    COMMIT;
+    
+    -- Retornar dados da matrícula iniciada
+    SELECT 
+        NULL as idFamilia,
+        v_idResponsavel as idResponsavel, 
+        NULL as idAluno,
+        v_protocolo as matricula,
+        v_usuarioLogin as loginResponsavel,
+        v_senhaTemporariaTexto as senhaTemporaria,
+        v_protocolo as protocoloDeclaracao,
+        v_nomeAluno as nomeAluno,
+        v_nomeResponsavel as nomeResponsavel;
+        
+END$$
+
+-- -----------------------------------------------------
+-- Procedure: sp_CriarDocumentosIntegrantes
+-- Descrição: Cria documentos para cada integrante baseado no JSON da declaração
+-- -----------------------------------------------------
+CREATE PROCEDURE `sp_CriarDocumentosIntegrantes`(
+    IN p_idDeclaracao INT,
+    IN p_protocolo VARCHAR(50),
+    IN p_documentosObrigatorios JSON
+)
+BEGIN
+    DECLARE v_integrantesJson JSON;
+    DECLARE v_count INT DEFAULT 0;
+    DECLARE v_maxIntegrantes INT DEFAULT 0;
+    DECLARE v_nomeIntegrante VARCHAR(100);
+    DECLARE v_parentescoIntegrante VARCHAR(50);
+    
+    -- Obter JSON dos integrantes da declaração
+    SELECT integrantesRenda INTO v_integrantesJson
     FROM tbInteresseMatricula 
     WHERE id = p_idDeclaracao;
     
-    -- 9. PROCESSAR INTEGRANTES DA FAMÍLIA
+    -- Processar cada integrante se existir JSON
     IF v_integrantesJson IS NOT NULL AND JSON_LENGTH(v_integrantesJson) > 0 THEN
         SET v_maxIntegrantes = JSON_LENGTH(v_integrantesJson);
         SET v_count = 0;
         
         WHILE v_count < v_maxIntegrantes DO
-            -- Extrair dados do JSON
+            -- Extrair dados do integrante
             SET v_nomeIntegrante = JSON_UNQUOTE(JSON_EXTRACT(v_integrantesJson, CONCAT('$[', v_count, '].nome')));
-            SET v_cpfIntegrante = JSON_UNQUOTE(JSON_EXTRACT(v_integrantesJson, CONCAT('$[', v_count, '].cpf')));
-            SET v_dataNascIntegrante = STR_TO_DATE(JSON_UNQUOTE(JSON_EXTRACT(v_integrantesJson, CONCAT('$[', v_count, '].dataNascimento'))), '%Y-%m-%d');
             SET v_parentescoIntegrante = JSON_UNQUOTE(JSON_EXTRACT(v_integrantesJson, CONCAT('$[', v_count, '].parentesco')));
-            SET v_rendaIntegrante = CAST(JSON_UNQUOTE(JSON_EXTRACT(v_integrantesJson, CONCAT('$[', v_count, '].renda'))) AS DECIMAL(10,2));
-            SET v_profissaoIntegrante = JSON_UNQUOTE(JSON_EXTRACT(v_integrantesJson, CONCAT('$[', v_count, '].profissao')));
-            SET v_observacoesIntegrante = JSON_UNQUOTE(JSON_EXTRACT(v_integrantesJson, CONCAT('$[', v_count, '].observacoes')));
             
-            SET v_idPessoaIntegrante = NULL;
-            
-            -- Para responsável, usar a pessoa já criada e atualizar com renda
-            IF v_parentescoIntegrante = 'responsavel' THEN
-                SET v_idPessoaIntegrante = v_idResponsavel;
-                -- Atualizar renda e profissão do responsável
-                UPDATE tbPessoa 
-                SET renda = COALESCE(v_rendaIntegrante, 0.00),
-                    profissao = v_profissaoIntegrante
-                WHERE idPessoa = v_idResponsavel;
-            ELSE
-                -- Verificar se é o mesmo aluno já criado (por nome)
-                IF v_nomeIntegrante = v_nomeAluno AND v_parentescoIntegrante IN ('filho', 'filha') THEN
-                    SET v_idPessoaIntegrante = v_idAluno;
-                ELSE
-                    -- Para outros integrantes, verificar se já existe por CPF
-                    IF v_cpfIntegrante IS NOT NULL AND v_cpfIntegrante != 'null' AND v_cpfIntegrante != '' THEN
-                        -- Verificar se já existe pessoa com esse CPF
-                        SELECT idPessoa INTO v_idPessoaIntegrante
-                        FROM tbPessoa 
-                        WHERE CpfPessoa = v_cpfIntegrante 
-                        LIMIT 1;
-                    END IF;
-                    
-                    -- Se não encontrou pessoa existente, criar nova
-                    IF v_idPessoaIntegrante IS NULL THEN
-                        INSERT INTO tbPessoa (
-                            NmPessoa, CpfPessoa, dtNascPessoa, renda, profissao
-                        ) VALUES (
-                            v_nomeIntegrante, 
-                            CASE WHEN v_cpfIntegrante IS NULL OR v_cpfIntegrante = 'null' OR v_cpfIntegrante = '' 
-                                 THEN NULL 
-                                 ELSE v_cpfIntegrante 
-                            END,
-                            COALESCE(v_dataNascIntegrante, CURDATE()),
-                            COALESCE(v_rendaIntegrante, 0.00),
-                            v_profissaoIntegrante
-                        );
-                        
-                        SET v_idPessoaIntegrante = LAST_INSERT_ID();
-                    END IF;
-                END IF;
-            END IF;
-            
-            -- Inserir integrante na tabela específica
-            INSERT INTO tbIntegranteFamilia (
-                tbFamilia_idtbFamilia, tbPessoa_idPessoa, nomeIntegrante,
-                cpfIntegrante, dataNascimento, parentesco, renda, profissao, observacoes
-            ) VALUES (
-                v_idFamilia, v_idPessoaIntegrante, v_nomeIntegrante,
-                v_cpfIntegrante, v_dataNascIntegrante, v_parentescoIntegrante,
-                COALESCE(v_rendaIntegrante, 0.00), v_profissaoIntegrante, v_observacoesIntegrante
+            -- Criar documentos TODOS_INTEGRANTES para este integrante específico
+            INSERT INTO tbDocumentoMatricula (
+                tbInteresseMatricula_id,
+                tbTipoDocumento_idTipoDocumento, 
+                status,
+                observacoes
+            )
+            SELECT 
+                p_idDeclaracao,
+                td.idTipoDocumento,
+                'pendente',
+                CONCAT('Documento de ', v_nomeIntegrante, ' (', v_parentescoIntegrante, ') para declaração: ', p_protocolo)
+            FROM tbTipoDocumento td
+            WHERE td.ativo = TRUE 
+            AND td.escopo = 'TODOS_INTEGRANTES'
+            AND JSON_CONTAINS(p_documentosObrigatorios, CAST(td.idTipoDocumento AS CHAR))
+            AND NOT EXISTS (
+                SELECT 1 FROM tbDocumentoMatricula dm2 
+                WHERE dm2.tbInteresseMatricula_id = p_idDeclaracao
+                AND dm2.tbTipoDocumento_idTipoDocumento = td.idTipoDocumento
+                AND dm2.observacoes LIKE CONCAT('%', v_nomeIntegrante, '%')
             );
             
             SET v_count = v_count + 1;
         END WHILE;
     END IF;
     
-    -- 10. CRIAR DOCUMENTOS PENDENTES baseados na cota
-    CALL sp_CriarDocumentosPendentes(v_idFamilia, v_idAluno);
-    
-    -- 11. ATUALIZAR STATUS DA DECLARAÇÃO
-    UPDATE tbInteresseMatricula 
-    SET 
-        status = 'matricula_iniciada',
-        dataInicioMatricula = NOW(),
-        funcionarioResponsavel_idPessoa = p_idFuncionario,
-        responsavelLogin_idPessoa = v_idResponsavel
-    WHERE id = p_idDeclaracao;
-    
-    -- 12. ATUALIZAR CAPACIDADE DA TURMA
-    UPDATE tbTurma 
-    SET capacidadeAtual = capacidadeAtual + 1 
-    WHERE idtbTurma = p_idTurma;
-    
-    -- 13. LOG DA AÇÃO
-    INSERT INTO tbLogMatricula (
-        tbInteresseMatricula_id, acao, descricao, usuario_idPessoa
-    ) VALUES (
-        p_idDeclaracao, 
-        'MATRICULA_INICIADA', 
-        CONCAT('Matrícula iniciada - Aluno: ', v_proximaMatricula, ' - Turma: ', p_idTurma),
-        p_idFuncionario
-    );
-    
-    COMMIT;
-    
-    -- Retornar dados importantes
-    SELECT 
-        v_idFamilia as idFamilia,
-        v_idResponsavel as idResponsavel, 
-        v_idAluno as idAluno,
-        v_proximaMatricula as matricula,
-        v_usuarioLogin as loginResponsavel,
-        v_senhaLogin as senhaTemporaria,
-        (SELECT COUNT(*) FROM tbDocumentoMatricula WHERE tbFamilia_idtbFamilia = v_idFamilia OR tbAluno_idPessoa = v_idAluno) as totalDocumentosPendentes;
-        
 END$$
 
 -- -----------------------------------------------------
@@ -959,6 +892,8 @@ CREATE PROCEDURE `sp_CriarDocumentosPendentes`(
 )
 BEGIN
     DECLARE v_tipoCota ENUM('livre', 'economica', 'funcionario');
+    DECLARE v_tipoCotatUpper ENUM('LIVRE', 'ECONOMICA', 'FUNCIONARIO');
+    DECLARE v_documentosObrigatorios JSON;
     DECLARE v_idIntegrante INT;
     DECLARE v_done INT DEFAULT FALSE;
     
@@ -973,6 +908,26 @@ BEGIN
     -- Obter tipo de cota da família
     SELECT tipoCota INTO v_tipoCota FROM tbFamilia WHERE idtbFamilia = p_idFamilia;
     
+    -- Converter para uppercase para buscar na configuração
+    CASE v_tipoCota
+        WHEN 'livre' THEN SET v_tipoCotatUpper = 'LIVRE';
+        WHEN 'economica' THEN SET v_tipoCotatUpper = 'ECONOMICA';
+        WHEN 'funcionario' THEN SET v_tipoCotatUpper = 'FUNCIONARIO';
+        ELSE SET v_tipoCotatUpper = 'LIVRE';
+    END CASE;
+    
+    -- Obter lista de documentos obrigatórios para esta cota
+    SELECT documentosObrigatorios INTO v_documentosObrigatorios
+    FROM tbConfiguracaoDocumentosCota
+    WHERE tipoCota = v_tipoCotatUpper;
+    
+    -- Se não encontrou configuração, usar configuração padrão (livre)
+    IF v_documentosObrigatorios IS NULL THEN
+        SELECT documentosObrigatorios INTO v_documentosObrigatorios
+        FROM tbConfiguracaoDocumentosCota
+        WHERE tipoCota = 'LIVRE';
+    END IF;
+    
     -- Criar documentos da FAMÍLIA (escopo 'FAMILIA')
     INSERT INTO tbDocumentoMatricula (
         tbFamilia_idtbFamilia, 
@@ -986,6 +941,7 @@ BEGIN
     FROM tbTipoDocumento td
     WHERE td.ativo = TRUE 
     AND td.escopo = 'FAMILIA'
+    AND JSON_CONTAINS(v_documentosObrigatorios, CAST(td.idTipoDocumento AS CHAR))
     AND NOT EXISTS (
         SELECT 1 FROM tbDocumentoMatricula dm2 
         WHERE dm2.tbFamilia_idtbFamilia = p_idFamilia 
@@ -1008,6 +964,7 @@ BEGIN
         FROM tbTipoDocumento td
         WHERE td.ativo = TRUE 
         AND td.escopo = 'ALUNO'
+        AND JSON_CONTAINS(v_documentosObrigatorios, CAST(td.idTipoDocumento AS CHAR))
         AND NOT EXISTS (
             SELECT 1 FROM tbDocumentoMatricula dm2 
             WHERE dm2.tbAluno_idPessoa = p_idAluno 
@@ -1040,6 +997,7 @@ BEGIN
         FROM tbTipoDocumento td
         WHERE td.ativo = TRUE 
         AND td.escopo = 'TODOS_INTEGRANTES'
+        AND JSON_CONTAINS(v_documentosObrigatorios, CAST(td.idTipoDocumento AS CHAR))
         AND NOT EXISTS (
             SELECT 1 FROM tbDocumentoMatricula dm2 
             WHERE dm2.tbFamilia_idtbFamilia = p_idFamilia 
@@ -1051,6 +1009,82 @@ BEGIN
     
     CLOSE cursor_integrantes;
     
+END$$
+
+-- -----------------------------------------------------
+-- Procedure: sp_FinalizarMatricula
+-- Descrição: Finaliza a matrícula marcando o status como 'matriculado'
+--           Mantém a declaração como histórico (não exclui)
+-- Parâmetros:
+--   - p_idDeclaracao: ID da declaração de interesse a finalizar
+--   - p_idFuncionario: ID do funcionário que está finalizando
+-- -----------------------------------------------------
+CREATE PROCEDURE `sp_FinalizarMatricula`(
+    IN p_idDeclaracao INT,
+    IN p_idFuncionario INT
+)
+BEGIN
+    DECLARE v_statusAtual VARCHAR(50);
+    DECLARE v_nomeAluno VARCHAR(100);
+    DECLARE v_matriculaAluno VARCHAR(20);
+    
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+        RESIGNAL;
+    END;
+
+    START TRANSACTION;
+    
+    -- Verificar se a declaração existe e está no status correto
+    SELECT status, nomeAluno 
+    INTO v_statusAtual, v_nomeAluno
+    FROM tbInteresseMatricula 
+    WHERE id = p_idDeclaracao;
+    
+    IF v_statusAtual IS NULL THEN
+        SIGNAL SQLSTATE '45000' 
+        SET MESSAGE_TEXT = 'Declaração não encontrada';
+    END IF;
+    
+    IF v_statusAtual != 'matricula_iniciada' THEN
+        SIGNAL SQLSTATE '45000' 
+        SET MESSAGE_TEXT = 'Apenas declarações com matrícula iniciada podem ser finalizadas';
+    END IF;
+    
+    -- Obter matrícula do aluno criado
+    SELECT a.matricula INTO v_matriculaAluno
+    FROM tbAluno a
+    JOIN tbInteresseMatricula i ON i.id = p_idDeclaracao
+    WHERE a.protocoloDeclaracao = i.protocolo
+    LIMIT 1;
+    
+    -- Atualizar status da declaração para 'matriculado' (ocultar da listagem ativa)
+    UPDATE tbInteresseMatricula 
+    SET 
+        status = 'matriculado',
+        dataFinalizacao = NOW()
+    WHERE id = p_idDeclaracao;
+    
+    -- Log da ação
+    INSERT INTO tbLogMatricula (
+        tbInteresseMatricula_id, acao, descricao, usuario_idPessoa
+    ) VALUES (
+        p_idDeclaracao, 
+        'MATRICULA_FINALIZADA', 
+        CONCAT('Matrícula finalizada - Aluno: ', COALESCE(v_matriculaAluno, 'N/A'), ' - ', v_nomeAluno),
+        p_idFuncionario
+    );
+    
+    COMMIT;
+    
+    -- Retornar confirmação
+    SELECT 
+        'SUCCESS' as resultado,
+        'Matrícula finalizada com sucesso' as mensagem,
+        v_matriculaAluno as matricula,
+        v_nomeAluno as nomeAluno;
+        
 END$$
 
 DELIMITER;
@@ -2843,6 +2877,45 @@ WHERE
 SELECT 'TESTE: Function de validação' as teste;
 
 SELECT fn_ValidarIniciarMatricula (1, 1) as resultado_validacao;
+
+-- ===================================================================
+-- STORED PROCEDURE: sp_FinalizarMatricula
+-- Finaliza matrícula migrando dados da declaração para tabelas definitivas
+-- ===================================================================
+
+DELIMITER / /
+
+DROP PROCEDURE IF EXISTS sp_FinalizarMatricula / /
+
+CREATE PROCEDURE sp_FinalizarMatricula(
+    IN p_idDeclaracao BIGINT,
+    IN p_idFuncionario BIGINT
+)
+BEGIN
+    -- Versão simplificada: apenas oculta a declaração
+    -- As migrações de dados serão implementadas gradualmente
+    
+    START TRANSACTION;
+    
+    -- 1. Verificar se a declaração existe
+    IF NOT EXISTS (SELECT 1 FROM tbInteresseMatricula WHERE idInteresseMatricula = p_idDeclaracao) THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Declaração de interesse não encontrada';
+    END IF;
+    
+    -- 2. Ocultar declaração de interesse (mudar status para matriculado)
+    UPDATE tbInteresseMatricula 
+    SET status = 'matriculado',
+        dataProcessamento = NOW(),
+        idFuncionarioProcessou = p_idFuncionario
+    WHERE idInteresseMatricula = p_idDeclaracao;
+    
+    COMMIT;
+    
+END //
+
+DELIMITER;
+
+-- ===================================================================
 
 -- 7. Verificar dados de teste
 SELECT 'DADOS DE TESTE: Usuários criados' as teste;

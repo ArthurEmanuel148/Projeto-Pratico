@@ -6,8 +6,6 @@ import { FuncionalidadesUsoService, FuncionalidadeUso } from '../core/services/f
 import { AuthService } from '../core/services/auth.service';
 import { DocumentoService } from '../core/services/documento.service';
 
-
-
 interface Feature {
   id: string;
   name: string;
@@ -16,6 +14,10 @@ interface Feature {
   action?: () => void; // Ação customizada
   color?: string; // Cor do ícone (opcional)
 }
+
+
+
+
 
 @Component({
   selector: 'app-painel-funcionario',
@@ -27,7 +29,6 @@ interface Feature {
 export class PainelFuncionarioPage implements OnInit {
   usuarioLogado: any = null;
   mostUsedFeatures: any[] = [];
-  estatisticasUso: any = null;
   isResponsavel: boolean = false;
   tipoCota: string = 'livre'; // Será carregado do backend
   documentosPendentes: any[] = [];
@@ -70,9 +71,21 @@ export class PainelFuncionarioPage implements OnInit {
         lastAccess: item.ultimoAcesso
       }));
     });
+  }
 
-    // Carrega estatísticas de uso
-    this.estatisticasUso = this.funcionalidadesUsosService.getEstatisticas();
+  handleFeatureClick(feature: any) {
+    // Registrar o acesso
+    this.funcionalidadesUsosService.registrarAcesso({
+      chave: feature.id,
+      nomeAmigavel: feature.name,
+      icone: feature.icon,
+      rota: feature.route
+    });
+
+    // Navegar para a funcionalidade
+    if (feature.route) {
+      this.router.navigateByUrl(feature.route);
+    }
   }
 
   async carregarDocumentosPendentes() {
@@ -105,20 +118,7 @@ export class PainelFuncionarioPage implements OnInit {
     return this.documentoService.obterCorStatus(status);
   }
 
-  handleFeatureClick(feature: any) {
-    // Registrar o acesso
-    this.funcionalidadesUsosService.registrarAcesso({
-      chave: feature.id,
-      nomeAmigavel: feature.name,
-      icone: feature.icon,
-      rota: feature.route
-    });
 
-    // Navegar para a funcionalidade
-    if (feature.route) {
-      this.router.navigateByUrl(feature.route);
-    }
-  }
 
   /**
    * Método para anexar documentos específicos

@@ -216,4 +216,43 @@ public class InteresseMatriculaController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
         }
     }
+
+    /**
+     * Buscar documentos solicitados para uma matrícula
+     */
+    @GetMapping("/{interesseId}/documentos-solicitados")
+    public ResponseEntity<?> buscarDocumentosSolicitados(@PathVariable Integer interesseId) {
+        try {
+            List<Map<String, Object>> documentos = interesseMatriculaService.buscarDocumentosSolicitados(interesseId);
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("sucesso", true);
+            response.put("documentos", documentos);
+
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("sucesso", false);
+            errorResponse.put("mensagem", "Erro ao buscar documentos solicitados: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+        }
+    }
+
+    /**
+     * Finalizar matrícula - marca como 'matriculado' e oculta da listagem ativa
+     */
+    @PostMapping("/{declaracaoId}/finalizar-matricula")
+    public ResponseEntity<?> finalizarMatricula(
+            @PathVariable Integer declaracaoId,
+            @RequestParam Integer funcionarioId) {
+        try {
+            Map<String, Object> resultado = interesseMatriculaService.finalizarMatricula(declaracaoId, funcionarioId);
+            return ResponseEntity.ok(resultado);
+        } catch (Exception e) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("message", "Erro ao finalizar matrícula: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+        }
+    }
 }

@@ -1,6 +1,10 @@
 /* Estilo geral da página */
 .content-container {
     padding: 16px;
+    background: var(--ion-background-color);
+    min-height: calc(100vh - 56px);
+    padding-top: 16px;
+    margin-top: 0;
 }
 
 .loading-container {
@@ -8,54 +12,149 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: 200px;
+    height: 300px;
     text-align: center;
+    background: white;
+    border-radius: 20px;
+    margin: 20px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+
+    ion-spinner {
+        --color: var(--ion-color-primary);
+        transform: scale(1.5);
+        margin-bottom: 24px;
+    }
 
     p {
-        margin-top: 16px;
-        color: var(--ion-color-medium);
+        margin: 0;
+        color: var(--ion-color-medium-shade);
+        font-size: 1.1rem;
+        font-weight: 500;
     }
 }
 
-/* Card da declaração */
+/* Card da declaração compacto */
 .declaracao-card {
     margin-bottom: 16px;
-    border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    border: 1px solid var(--ion-color-light-shade);
+    background: white;
+
+    &.compact {
+        margin-bottom: 12px;
+    }
+
+    ion-card-header {
+        padding: 16px 20px 12px 20px;
+        border-bottom: 1px solid var(--ion-color-light-shade);
+    }
 
     ion-card-title {
         display: flex;
         align-items: center;
         gap: 8px;
-        font-size: 1.2rem;
-        font-weight: 600;
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: var(--ion-color-primary-shade);
+
+        ion-icon {
+            font-size: 1.2rem;
+        }
     }
+
+    ion-card-content {
+        padding: 16px 20px;
+    }
+}
+
+.declaracao-info-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.info-row {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    align-items: flex-start;
 }
 
 .info-item {
     display: flex;
     flex-direction: column;
-    margin-bottom: 12px;
+    margin-bottom: 0;
+    padding: 8px 12px;
+    background: var(--ion-color-light-tint);
+    border-radius: 8px;
+    border: 1px solid var(--ion-color-light-shade);
+    transition: all 0.2s ease;
+    flex: 1;
+    min-width: 120px;
+
+    &.compact {
+        padding: 6px 10px;
+        min-width: 100px;
+    }
+
+    &.full-width {
+        flex: 1;
+        min-width: 200px;
+    }
+
+    &:hover {
+        background: var(--ion-color-light);
+        transform: translateY(-1px);
+    }
 
     .label {
-        font-size: 0.85rem;
+        font-size: 0.75rem;
         color: var(--ion-color-medium);
-        font-weight: 500;
-        margin-bottom: 4px;
+        font-weight: 600;
+        margin-bottom: 3px;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
     }
 
     .value {
-        font-size: 1rem;
+        font-size: 0.9rem;
         color: var(--ion-color-dark);
-        font-weight: 500;
+        font-weight: 600;
+        line-height: 1.3;
+        word-break: break-word;
     }
 }
 
-/* Card das turmas */
+/* Responsivo para telas pequenas */
+@media (max-width: 768px) {
+    .info-row {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .info-item {
+        min-width: auto;
+
+        &.full-width {
+            min-width: auto;
+        }
+    }
+}
+
+/* Card das turmas melhorado */
 .turmas-card {
-    margin-bottom: 16px;
-    border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 24px;
+    border-radius: 20px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+    border: 1px solid var(--ion-color-light-shade);
+    background: white;
+
+    ion-card-header {
+        padding: 16px 20px 12px 20px;
+        background: var(--ion-color-primary);
+        border-radius: 20px 20px 0 0;
+    }
 
     ion-card-title {
         display: flex;
@@ -63,12 +162,22 @@
         gap: 8px;
         font-size: 1.2rem;
         font-weight: 600;
+        color: white;
+
+        ion-icon {
+            font-size: 1.3rem;
+        }
     }
 
     ion-card-subtitle {
         margin-top: 8px;
-        color: var(--ion-color-medium);
+        color: rgba(255, 255, 255, 0.9);
         font-size: 0.9rem;
+        font-weight: 400;
+    }
+
+    ion-card-content {
+        padding: 24px;
     }
 }
 
@@ -91,124 +200,225 @@
     p {
         margin: 0;
         color: var(--ion-color-medium);
-        font-size: 0.9rem;
-        line-height: 1.4;
     }
 }
 
-/* Lista de turmas */
-.turmas-list {
+/* Container de turmas melhorado */
+.turmas-container {
     padding: 0;
+    margin: 0;
 }
 
-.turma-item {
-    margin-bottom: 12px;
-    border-radius: 8px;
-    border: 2px solid var(--ion-color-light);
-    transition: all 0.2s ease;
+.turma-card {
+    margin-bottom: 16px;
 
-    &.selected {
-        border-color: var(--ion-color-primary);
-        background-color: var(--ion-color-primary-tint);
-    }
+    .individual-turma-card {
+        margin: 0;
+        border-radius: 16px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        border: 2px solid var(--ion-color-light-shade);
+        overflow: hidden;
+        cursor: pointer;
 
-    &:hover {
-        border-color: var(--ion-color-primary-shade);
-    }
+        &:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+            border-color: var(--ion-color-primary-tint);
+        }
 
-    ion-item {
-        --border-width: 0;
-        --background: transparent;
-        --padding: 16px;
+        &.selected-card {
+            border-color: var(--ion-color-primary);
+            background: var(--ion-color-primary-tint);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(var(--ion-color-primary-rgb), 0.15);
 
-        ion-radio {
-            --color: var(--ion-color-primary);
-            --color-checked: var(--ion-color-primary);
-            margin-right: 16px;
+            .turma-header h2 {
+                color: var(--ion-color-primary-shade);
+            }
         }
     }
+}
+
+.turma-content {
+    padding: 24px;
+    position: relative;
 }
 
 .turma-header {
     display: flex;
     justify-content: space-between;
-    align-items: center;
-    margin-bottom: 8px;
+    align-items: flex-start;
+    margin-bottom: 20px;
+    gap: 16px;
 
-    h2 {
-        margin: 0;
-        font-size: 1.1rem;
-        font-weight: 600;
-        color: var(--ion-color-dark);
+    .turma-title-section {
+        display: flex;
+        align-items: flex-start;
+        gap: 16px;
+        flex: 1;
+
+        .custom-radio {
+            --color: var(--ion-color-primary);
+            --color-checked: var(--ion-color-primary);
+            margin-top: 2px;
+            transform: scale(1.2);
+        }
+
+        .title-info {
+            flex: 1;
+
+            h2 {
+                margin: 0 0 8px 0;
+                font-size: 1.3rem;
+                font-weight: 700;
+                color: var(--ion-color-dark);
+                line-height: 1.3;
+            }
+
+            .turma-subtitle {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                color: var(--ion-color-medium-shade);
+                font-size: 0.95rem;
+                font-weight: 500;
+
+                ion-icon {
+                    font-size: 1.1rem;
+                }
+            }
+        }
     }
 }
 
 .vagas-badge {
-    padding: 4px 8px;
-    border-radius: 12px;
-    font-size: 0.75rem;
-    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 16px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 700;
     text-transform: uppercase;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+    ion-icon {
+        font-size: 1rem;
+    }
 
     &.vagas-muitas {
-        background-color: var(--ion-color-success-tint);
-        color: var(--ion-color-success-contrast);
+        background: var(--ion-color-success);
+        color: white;
     }
 
     &.vagas-moderadas {
-        background-color: var(--ion-color-warning-tint);
-        color: var(--ion-color-warning-contrast);
+        background: var(--ion-color-warning);
+        color: white;
     }
 
     &.vagas-poucas {
-        background-color: var(--ion-color-danger-tint);
-        color: var(--ion-color-danger-contrast);
+        background: var(--ion-color-danger);
+        color: white;
     }
 }
 
-.turma-details {
+.turma-stats {
     display: flex;
-    flex-direction: column;
-    gap: 6px;
+    gap: 24px;
+    margin-bottom: 16px;
+    padding: 16px;
+    background: rgba(var(--ion-color-light-rgb), 0.3);
+    border-radius: 12px;
+    border: 1px solid var(--ion-color-light-shade);
 
-    p {
-        margin: 0;
+    .stat-item {
         display: flex;
         align-items: center;
-        gap: 8px;
-        font-size: 0.85rem;
-        color: var(--ion-color-medium);
+        gap: 12px;
+        flex: 1;
 
         ion-icon {
-            font-size: 0.9rem;
+            font-size: 1.4rem;
+            opacity: 0.8;
         }
-    }
 
-    .turno {
-        color: var(--ion-color-secondary);
-        font-weight: 500;
-    }
+        .stat-info {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
 
-    .descricao {
-        color: var(--ion-color-medium-shade);
-        font-style: italic;
-        margin-top: 4px;
+            .stat-label {
+                font-size: 0.8rem;
+                color: var(--ion-color-medium);
+                font-weight: 500;
+                text-transform: uppercase;
+                letter-spacing: 0.3px;
+            }
+
+            .stat-value {
+                font-size: 1rem;
+                color: var(--ion-color-dark);
+                font-weight: 600;
+            }
+        }
     }
 }
 
-/* Botões de ação */
+
+
+/* Botões de ação melhorados */
 .action-buttons {
-    margin-top: 24px;
-    padding: 16px 0;
+    margin-top: 32px;
+    padding: 24px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
 
     ion-button {
-        margin-bottom: 12px;
-        --border-radius: 8px;
-        height: 48px;
+        --border-radius: 16px;
+        height: 56px;
         font-weight: 600;
+        font-size: 1rem;
+        letter-spacing: 0.3px;
+        text-transform: uppercase;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+
+        &:first-child {
+            --background: var(--ion-color-primary);
+            --color: white;
+
+            &:hover:not([disabled]) {
+                transform: translateY(-2px);
+                box-shadow: 0 6px 20px rgba(var(--ion-color-primary-rgb), 0.3);
+            }
+
+            &[disabled] {
+                opacity: 0.5;
+                transform: none;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            }
+        }
 
         &:last-child {
-            margin-bottom: 0;
+            --background: transparent;
+            --color: var(--ion-color-medium-shade);
+            --border-color: var(--ion-color-light-shade);
+            --border-width: 2px;
+
+            &:hover {
+                --background: var(--ion-color-light-tint);
+                --color: var(--ion-color-dark);
+                transform: translateY(-1px);
+            }
+        }
+
+        ion-icon {
+            font-size: 1.2rem;
+            margin-right: 8px;
         }
     }
 }
@@ -241,6 +451,46 @@
     }
 }
 
+/* Header com correção suave para barra branca */
+ion-header {
+    position: relative;
+    z-index: 10;
+
+    ion-toolbar {
+        --border-width: 0;
+        --background: var(--ion-color-primary);
+        --min-height: 56px;
+        padding: env(safe-area-inset-top) 0 0 0;
+
+        ion-title {
+            font-weight: 600;
+            color: white;
+        }
+
+        ion-button {
+            --color: white;
+            --padding-start: 8px;
+            --padding-end: 8px;
+
+            ion-icon {
+                font-size: 1.5rem;
+            }
+        }
+    }
+}
+
+ion-content {
+    --padding-top: 0;
+    --padding-bottom: 0;
+    --background: var(--ion-background-color);
+}
+
+/* Página host */
+:host {
+    display: block;
+    height: 100%;
+}
+
 /* Animações */
 .turma-item {
     animation: slideInUp 0.3s ease-out;
@@ -255,5 +505,52 @@
     to {
         opacity: 1;
         transform: translateY(0);
+    }
+}
+
+/* Botões de ação */
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+    margin-top: 2rem;
+    padding: 1.5rem 0;
+
+    ion-button {
+        min-width: 140px;
+        height: 3rem;
+        font-weight: 500;
+        border-radius: 0.5rem;
+        transition: all var(--animation-duration) ease;
+
+        &[color="primary"] {
+            --background: var(--custom-primary);
+            --color: white;
+            box-shadow: var(--custom-shadow-light);
+
+            &:hover:not([disabled]) {
+                --background: color-mix(in srgb, var(--custom-primary) 90%, black);
+                transform: translateY(-1px);
+                box-shadow: var(--custom-shadow);
+            }
+
+            &[disabled] {
+                opacity: 0.5;
+                --background: var(--ion-color-medium);
+            }
+        }
+
+        &[fill="clear"] {
+            --color: var(--ion-color-medium);
+
+            &:hover {
+                --background: rgba(var(--ion-color-medium-rgb), 0.1);
+            }
+        }
+
+        ion-icon {
+            font-size: 1.2rem;
+            margin-right: 0.5rem;
+        }
     }
 }

@@ -546,4 +546,25 @@ public class MatriculaController {
             return ResponseEntity.internalServerError().body(errorResponse);
         }
     }
+
+    /**
+     * Finaliza a matrícula - migra dados da declaração de interesse para as tabelas
+     * definitivas
+     */
+    @PostMapping("/{idDeclaracao}/finalizar-matricula")
+    public ResponseEntity<Map<String, Object>> finalizarMatricula(
+            @PathVariable Long idDeclaracao,
+            @RequestParam Long funcionarioId) {
+
+        try {
+            Map<String, Object> resultado = matriculaService.finalizarMatricula(idDeclaracao, funcionarioId);
+            return ResponseEntity.ok(resultado);
+        } catch (Exception e) {
+            e.printStackTrace();
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("message", "Erro ao finalizar matrícula: " + e.getMessage());
+            return ResponseEntity.internalServerError().body(errorResponse);
+        }
+    }
 }

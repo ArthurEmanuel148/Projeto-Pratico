@@ -326,4 +326,13 @@ export class InteresseMatriculaService {
       params: { funcionarioId: funcionarioId.toString() }
     });
   }
+
+  buscarDocumentosSolicitados(interesseId: number): Observable<any> {
+    return this.http.get(`${this.apiUrl}/${interesseId}/documentos-solicitados`).pipe(
+      catchError(error => {
+        console.error('Erro ao buscar documentos solicitados:', error);
+        return throwError(error);
+      })
+    );
+  }
 }

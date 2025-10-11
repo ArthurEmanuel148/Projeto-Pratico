@@ -426,9 +426,9 @@ ion-card {
 
 .documentos-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-  gap: 15px;
-  margin-top: 15px;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 8px;
+  margin-top: 8px;
 }
 
 .documento-card {
@@ -509,20 +509,49 @@ ion-card {
 .documento-acoes {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  padding-top: 10px;
+  gap: 8px;
+  padding-top: 12px;
   border-top: 1px solid var(--custom-border);
 
   ion-button {
-    --padding-start: 12px;
-    --padding-end: 12px;
-    height: 32px;
-    font-size: 0.85em;
+    --padding-start: 16px;
+    --padding-end: 16px;
+    height: 40px;
+    font-size: 0.85rem;
+    width: 100%;
+    --border-radius: 8px;
 
     &[disabled] {
       --color: var(--custom-text-muted);
       --background: transparent;
       --border-color: var(--custom-border);
+    }
+
+    // Botão de visualizar - Azul
+    &:not(.btn-aprovar):not(.btn-negar) {
+      --background: #3b82f6;
+      --background-hover: #2563eb;
+      --background-activated: #1d4ed8;
+      --color: white;
+      --border-color: #3b82f6;
+    }
+
+    // Botão de aprovar - Verde mais intenso
+    &.btn-aprovar {
+      --background: #16a34a;
+      --background-hover: #15803d;
+      --background-activated: #166534;
+      --color: white;
+      --border-color: #16a34a;
+    }
+
+    // Botão de negar - Vermelho mais intenso  
+    &.btn-negar {
+      --background: #dc2626;
+      --background-hover: #b91c1c;
+      --background-activated: #991b1b;
+      --color: white;
+      --border-color: #dc2626;
     }
   }
 
@@ -564,15 +593,15 @@ ion-card {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 200px;
+  height: 150px;
   color: var(--custom-text-secondary);
 
   ion-spinner {
-    margin-bottom: 16px;
+    margin-bottom: 10px;
   }
 
   p {
-    font-size: 1rem;
+    font-size: 0.9rem;
     opacity: 0.8;
   }
 }
@@ -674,5 +703,350 @@ ion-card {
 
   ion-card {
     margin: 0 0 0.75rem 0;
+  }
+}
+
+// ========================================
+// ESTILOS PARA DOCUMENTOS COM CATEGORIAS
+// ========================================
+
+// Filtro por categoria
+.documentos-filtro {
+  margin-bottom: 25px;
+  padding: 0 5px;
+
+  ion-segment {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 12px;
+    padding: 4px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    border: 1px solid var(--custom-border);
+
+    ion-segment-button {
+      --background: transparent;
+      --color: var(--custom-text-secondary);
+      --indicator-color: var(--custom-primary);
+      --indicator-box-shadow: 0 2px 8px rgba(59, 130, 246, 0.2);
+      min-height: 42px;
+      margin: 2px;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+      font-weight: 500;
+      font-size: 0.9rem;
+
+      &.segment-button-checked {
+        --background: var(--custom-primary);
+        --color: white;
+        box-shadow: 0 2px 8px rgba(59, 130, 246, 0.25);
+        transform: translateY(-1px);
+      }
+
+      ion-label {
+        font-weight: 600;
+        letter-spacing: 0.5px;
+      }
+
+      &:hover:not(.segment-button-checked) {
+        --background: var(--custom-surface-variant);
+        --color: var(--custom-primary);
+      }
+    }
+  }
+}
+
+// Seções de categoria
+.categoria-secao {
+  margin-bottom: 15px;
+
+  .categoria-titulo {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--custom-text);
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+    padding: 0 3px;
+
+    ion-icon {
+      font-size: 1.1rem;
+      color: var(--custom-primary);
+    }
+  }
+}
+
+// Seções de integrante
+.integrante-secao {
+  margin-bottom: 20px;
+
+  .integrante-nome {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--custom-dark-text);
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+    padding: 12px;
+    background: var(--custom-surface-variant);
+    border-radius: 8px;
+    border-left: 4px solid var(--custom-warning);
+
+    ion-icon {
+      color: var(--custom-warning);
+      font-size: 1.3rem;
+    }
+  }
+}
+
+// Grid de documentos
+.documentos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 8px;
+  padding: 2px 0;
+}
+
+// Estilos dos cartões de documentos
+.documento-card {
+  position: relative;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+  overflow: hidden;
+  border: 1px solid var(--custom-border);
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+  }
+
+  // Estados visuais por status
+  &.documento-enviado {
+    border-left: 4px solid var(--custom-primary);
+
+    .documento-icon {
+      background: var(--custom-primary);
+
+      ion-icon {
+        color: white;
+      }
+    }
+  }
+
+  &.documento-aprovado {
+    border-left: 4px solid var(--custom-success);
+
+    .documento-icon {
+      background: var(--custom-success);
+
+      ion-icon {
+        color: white;
+      }
+    }
+  }
+
+  &.documento-rejeitado {
+    border-left: 4px solid var(--custom-danger);
+
+    .documento-icon {
+      background: var(--custom-danger);
+
+      ion-icon {
+        color: white;
+      }
+    }
+  }
+
+  // Estilos específicos por categoria
+  &.familia {
+    border-left: 4px solid #10b981;
+
+    .documento-icon {
+      background: rgba(16, 185, 129, 0.1);
+
+      ion-icon {
+        color: #10b981;
+      }
+    }
+  }
+
+  &.aluno {
+    border-left: 4px solid #3b82f6;
+
+    .documento-icon {
+      background: rgba(59, 130, 246, 0.1);
+
+      ion-icon {
+        color: #3b82f6;
+      }
+    }
+  }
+
+  &.integrante {
+    border-left: 4px solid #f59e0b;
+
+    .documento-icon {
+      background: rgba(245, 158, 11, 0.1);
+
+      ion-icon {
+        color: #f59e0b;
+      }
+    }
+  }
+}
+
+// Ícone do documento
+.documento-icon {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(59, 130, 246, 0.1);
+  transition: all 0.3s ease;
+
+  ion-icon {
+    font-size: 1.4rem;
+    color: var(--custom-primary);
+  }
+}
+
+// Conteúdo do cartão
+.documento-card ion-card-content {
+  padding: 12px;
+  padding-right: 50px;
+
+  .documento-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 6px;
+    gap: 6px;
+
+    h4,
+    h5 {
+      margin: 0;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--custom-dark-text);
+      line-height: 1.1;
+      flex: 1;
+    }
+
+    ion-badge {
+      font-size: 0.65rem;
+      font-weight: 600;
+      padding: 2px 5px;
+      border-radius: 6px;
+    }
+  }
+
+  .documento-descricao {
+    font-size: 0.8rem;
+    color: var(--custom-text-secondary);
+    margin: 4px 0;
+    line-height: 1.2;
+  }
+
+  .documento-info {
+    margin: 6px 0;
+
+    .data-envio {
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      font-size: 0.75rem;
+      color: var(--custom-text-muted);
+      margin: 0;
+    }
+  }
+
+  .documento-acoes {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--custom-border);
+
+    ion-button {
+      --border-radius: 8px;
+      font-size: 0.85rem;
+      height: 40px;
+      width: 100%;
+      --padding-start: 16px;
+      --padding-end: 16px;
+
+      // Botão de visualizar - Azul
+      &:not(.btn-aprovar):not(.btn-negar) {
+        --background: #3b82f6;
+        --background-hover: #2563eb;
+        --background-activated: #1d4ed8;
+        --color: white;
+        --border-color: #3b82f6;
+      }
+    }
+  }
+}
+
+// Loading container
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 15px;
+  background: var(--custom-surface-variant);
+  border-radius: 8px;
+  margin: 15px 0;
+
+  ion-spinner {
+    margin-bottom: 12px;
+    --color: var(--custom-primary);
+  }
+
+  p {
+    color: var(--custom-text-secondary);
+    font-size: 1rem;
+    font-weight: 500;
+    margin: 0;
+  }
+}
+
+// Mensagem de nenhum documento
+.no-documents {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  background: var(--custom-surface-variant);
+  border-radius: 12px;
+  margin: 20px 0;
+  text-align: center;
+
+  ion-note {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 20px 24px;
+    border-radius: 12px;
+    background: white;
+    border: 1px solid var(--custom-border);
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--custom-text-secondary);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+
+    ion-icon {
+      font-size: 1.2rem;
+      color: var(--custom-primary);
+    }
   }
 }

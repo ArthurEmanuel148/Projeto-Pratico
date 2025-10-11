@@ -1,5 +1,7 @@
 import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
+import { AuthGuard } from './core/services/auth.guard';
+import { RoleGuard } from './core/services/role.guard';
 
 const routes: Routes = [
   {
@@ -34,6 +36,12 @@ const routes: Routes = [
   {
     path: 'aprovacao-documentos',
     loadComponent: () => import('./funcionalidades/aprovacao-documentos/aprovacao-documentos.page').then(m => m.AprovacaoDocumentosPage)
+  },
+  {
+    path: 'painel-responsavel', // Rota independente para responsáveis - SEM layout de funcionário
+    loadChildren: () => import('./painel-responsavel/painel-responsavel.module').then(m => m.PainelResponsavelPageModule),
+    canActivate: [AuthGuard, RoleGuard],
+    data: { requiredRole: ['responsavel'] }
   }
 ];
 

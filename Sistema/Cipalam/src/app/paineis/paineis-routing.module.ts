@@ -21,12 +21,7 @@ const routes: Routes = [
         canActivate: [RoleGuard],
         data: { requiredRole: ['admin', 'professor', 'funcionario'] }
       },
-      {
-        path: 'responsavel',
-        loadChildren: () => import('../painel-responsavel/painel-responsavel.module').then(m => m.PainelResponsavelPageModule),
-        canActivate: [RoleGuard],
-        data: { requiredRole: ['responsavel'] }
-      },
+
       {
         path: 'funcionarios',
         loadChildren: () => import('../funcionalidades/gerenciamento-funcionarios/gerenciamento-funcionarios.module').then(m => m.GerenciamentoFuncionariosModule),

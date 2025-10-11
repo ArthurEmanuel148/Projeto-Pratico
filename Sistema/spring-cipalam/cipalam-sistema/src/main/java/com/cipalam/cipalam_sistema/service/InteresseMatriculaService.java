@@ -360,14 +360,58 @@ public class InteresseMatriculaService {
             storedProcedure.setParameter(2, turmaId);
             storedProcedure.setParameter(3, funcionarioId);
 
-            storedProcedure.execute();
+            boolean hasResult = storedProcedure.execute();
+            Map<String, Object> dadosMatricula = new HashMap<>();
 
-            // Buscar os dados da matrícula criada para retornar
-            Map<String, Object> dadosMatricula = obterDadosMatriculaCriada(declaracaoId);
+            if (hasResult) {
+                @SuppressWarnings("unchecked")
+                List<Object[]> results = storedProcedure.getResultList();
+                if (!results.isEmpty()) {
+                    Object[] row = results.get(0);
+                    dadosMatricula.put("idFamilia", row[0]);
+                    dadosMatricula.put("idResponsavel", row[1]);
+                    dadosMatricula.put("idAluno", row[2]);
+                    dadosMatricula.put("matricula", row[3]);
+                    dadosMatricula.put("loginResponsavel", row[4]);
+                    dadosMatricula.put("senhaTemporaria", row[5]);
+                    dadosMatricula.put("protocoloDeclaracao", row[6]);
+                    dadosMatricula.put("nomeAluno", row[7]);
+                    dadosMatricula.put("nomeResponsavel", row[8]);
+
+                    // Criar login após a stored procedure se não existir
+                    Integer idResponsavel = (Integer) dadosMatricula.get("idResponsavel");
+                    String loginUsuario = (String) dadosMatricula.get("loginResponsavel");
+                    String senhaTemporaria = (String) dadosMatricula.get("senhaTemporaria");
+
+                    if (idResponsavel != null && loginUsuario != null && senhaTemporaria != null
+                            && !senhaTemporaria.equals("Login já existente")) {
+
+                        // Verificar se login não existe
+                        Optional<Login> loginExistente = loginRepository.findByUsuario(loginUsuario);
+                        if (loginExistente.isEmpty()) {
+                            // Criar login com senha criptografada corretamente
+                            Login novoLogin = new Login();
+                            novoLogin.setUsuario(loginUsuario);
+                            novoLogin.setSenha(passwordEncoder.encode(senhaTemporaria));
+
+                            // Buscar pessoa
+                            Optional<Pessoa> pessoa = pessoaRepository.findById(idResponsavel);
+                            if (pessoa.isPresent()) {
+                                novoLogin.setPessoa(pessoa.get());
+                                loginRepository.save(novoLogin);
+
+                                System.out.println("✅ Login criado com sucesso:");
+                                System.out.println("   Usuário: " + loginUsuario);
+                                System.out.println("   Senha temporária: " + senhaTemporaria);
+                            }
+                        }
+                    }
+                }
+            }
 
             Map<String, Object> response = new HashMap<>();
             response.put("success", true);
-            response.put("message", "Matrícula processada com sucesso usando procedures do banco!");
+            response.put("message", "Matrícula iniciada com sucesso!");
             response.put("dadosMatricula", dadosMatricula);
 
             return response;
@@ -490,6 +534,105 @@ public class InteresseMatriculaService {
             }
         } catch (Exception e) {
             throw new RuntimeException("Erro ao atualizar status da declaração: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Finaliza a matrícula marcando status como 'matriculado'
+     * Usa a procedure sp_FinalizarMatricula do banco de dados
+     */
+    public Map<String, Object> finalizarMatricula(Integer declaracaoId, Integer funcionarioId) {
+        try {
+            StoredProcedureQuery query = entityManager
+                    .createStoredProcedureQuery("sp_FinalizarMatricula")
+                    .registerStoredProcedureParameter("p_idDeclaracao", Integer.class, ParameterMode.IN)
+                    .registerStoredProcedureParameter("p_idFuncionario", Integer.class, ParameterMode.IN);
+
+            query.setParameter("p_idDeclaracao", declaracaoId);
+            query.setParameter("p_idFuncionario", funcionarioId);
+
+            // Executar a procedure
+            query.execute();
+
+            // Obter resultado
+            @SuppressWarnings("unchecked")
+            List<Object[]> results = query.getResultList();
+
+            Map<String, Object> response = new HashMap<>();
+            if (!results.isEmpty()) {
+                Object[] row = results.get(0);
+                response.put("success", true);
+                response.put("resultado", row[0]); // SUCCESS
+                response.put("message", row[1]); // mensagem
+                response.put("matricula", row[2]); // matriculaAluno
+                response.put("nomeAluno", row[3]); // nomeAluno
+            } else {
+                response.put("success", true);
+                response.put("message", "Matrícula finalizada com sucesso");
+            }
+
+            return response;
+
+        } catch (Exception e) {
+            throw new RuntimeException("Erro ao finalizar matrícula: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Buscar documentos solicitados para uma matrícula específica
+     */
+    @SuppressWarnings("unchecked")
+    public List<Map<String, Object>> buscarDocumentosSolicitados(Integer interesseId) {
+        try {
+            String sql = "SELECT dm.idDocumentoMatricula, " +
+                    "       td.nome as tipoDocumento, " +
+                    "       CASE " +
+                    "           WHEN dm.observacoes LIKE '%Documento da família%' THEN 'Família' " +
+                    "           WHEN dm.observacoes LIKE '%Documento do aluno%' THEN 'Aluno' " +
+                    "           WHEN dm.observacoes REGEXP 'Documento de .+ \\(.+\\)' THEN " +
+                    "               SUBSTRING_INDEX(SUBSTRING_INDEX(dm.observacoes, 'Documento de ', -1), ' (', 1) " +
+                    "           ELSE 'Não especificado' " +
+                    "       END as nomeIntegrante, " +
+                    "       CASE " +
+                    "           WHEN dm.observacoes LIKE '%Documento da família%' THEN 'Geral' " +
+                    "           WHEN dm.observacoes LIKE '%Documento do aluno%' THEN 'Aluno' " +
+                    "           WHEN dm.observacoes REGEXP '\\(.+\\)' THEN " +
+                    "               SUBSTRING_INDEX(SUBSTRING_INDEX(dm.observacoes, '(', -1), ')', 1) " +
+                    "           ELSE 'Não especificado' " +
+                    "       END as parentesco, " +
+                    "       dm.status, " +
+                    "       dm.observacoes " +
+                    "FROM tbDocumentoMatricula dm " +
+                    "INNER JOIN tbTipoDocumento td ON dm.tbTipoDocumento_idTipoDocumento = td.idTipoDocumento " +
+                    "WHERE dm.tbInteresseMatricula_id = :interesseId " +
+                    "ORDER BY " +
+                    "   CASE " +
+                    "       WHEN dm.observacoes LIKE '%Documento da família%' THEN 1 " +
+                    "       WHEN dm.observacoes LIKE '%Documento do aluno%' THEN 2 " +
+                    "       ELSE 3 " +
+                    "   END, " +
+                    "   td.nome";
+
+            Query query = entityManager.createNativeQuery(sql);
+            query.setParameter("interesseId", interesseId);
+
+            List<Object[]> results = query.getResultList();
+
+            return results.stream()
+                    .map(row -> {
+                        Map<String, Object> documento = new HashMap<>();
+                        documento.put("id", row[0]);
+                        documento.put("tipoDocumento", row[1]);
+                        documento.put("nomeIntegrante", row[2]);
+                        documento.put("parentesco", row[3]);
+                        documento.put("status", row[4] != null ? row[4] : "pendente");
+                        documento.put("observacoes", row[5]);
+                        return documento;
+                    })
+                    .collect(java.util.stream.Collectors.toList());
+
+        } catch (Exception e) {
+            throw new RuntimeException("Erro ao buscar documentos solicitados: " + e.getMessage());
         }
     }
 }

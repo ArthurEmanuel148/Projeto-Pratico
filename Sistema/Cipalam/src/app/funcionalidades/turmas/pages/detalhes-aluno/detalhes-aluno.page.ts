@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { TurmasService } from '../../services/turmas.service';
 import { AlertController, ModalController } from '@ionic/angular';
+import { environment } from '../../../../../environments/environment';
 
 @Component({
     selector: 'app-detalhes-aluno',
@@ -152,122 +153,126 @@ export class DetalhesAlunoPage implements OnInit {
     }
 
     // Métodos para documentos
-    // Métodos para documentos
     carregarDocumentos() {
         if (this.alunoId) {
             this.isLoading = true;
+            this.carregandoDocumentos = true;
+            console.log('Carregando documentos para aluno ID:', this.alunoId);
+
             this.turmasService.obterDocumentosAluno(this.alunoId).subscribe({
                 next: (response) => {
-                    this.documentos = response.data || [];
-                    this.organizarDocumentos();
-                    this.aplicarFiltros();
+                    console.log('Resposta dos documentos:', response);
+                    this.documentos = response || [];
+                    this.organizarDocumentosPorCategoria();
                     this.isLoading = false;
+                    this.carregandoDocumentos = false;
                 },
                 error: (error) => {
                     console.error('Erro ao carregar documentos:', error);
                     this.isLoading = false;
+                    this.carregandoDocumentos = false;
+                    this.mostrarErro('Erro ao carregar documentos');
                 }
             });
         }
     }
 
-    organizarDocumentos() {
-        // Limpar organizações anteriores
+    organizarDocumentosPorCategoria() {
+        console.log('Organizando documentos por categoria...');
+
+        // Limpar arrays anteriores
         this.documentosFamilia = [];
         this.documentosAluno = [];
         this.documentosIntegrantes.clear();
 
-        this.documentos.forEach(doc => {
-            switch (doc.categoria) {
+        if (!this.documentos || this.documentos.length === 0) {
+            console.log('Nenhum documento encontrado');
+            return;
+        }
+
+        this.documentos.forEach((documento: any) => {
+            console.log('Processando documento:', documento.tipoDocumento, '- Categoria:', documento.categoria);
+
+            // Converter data para formato brasileiro se necessário
+            if (documento.dataEnvio) {
+                const data = new Date(documento.dataEnvio);
+                documento.dataEnvioFormatada = data.toLocaleDateString('pt-BR') + ' às ' +
+                    data.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+            }
+
+            switch (documento.categoria?.toUpperCase()) {
                 case 'FAMILIA':
-                    this.documentosFamilia.push(doc);
+                    this.documentosFamilia.push(documento);
+                    console.log('Adicionado à categoria FAMÍLIA:', documento.tipoDocumento);
                     break;
+
                 case 'ALUNO':
-                    this.documentosAluno.push(doc);
+                    this.documentosAluno.push(documento);
+                    console.log('Adicionado à categoria ALUNO:', documento.tipoDocumento);
                     break;
+
                 case 'TODOS_INTEGRANTES':
-                    const nomeIntegrante = doc.nomeIntegrante || 'Integrante';
+                    const nomeIntegrante = documento.nomeIntegrante || 'Sem identificação';
+                    console.log('Documento de integrante - Nome:', nomeIntegrante);
+
                     if (!this.documentosIntegrantes.has(nomeIntegrante)) {
                         this.documentosIntegrantes.set(nomeIntegrante, []);
                     }
-                    this.documentosIntegrantes.get(nomeIntegrante)!.push(doc);
+                    this.documentosIntegrantes.get(nomeIntegrante)!.push(documento);
+                    console.log('Adicionado à categoria INTEGRANTES para:', nomeIntegrante);
                     break;
+
+                default:
+                    console.log('Categoria não reconhecida:', documento.categoria);
+                    // Adiciona na família por padrão se categoria não reconhecida
+                    this.documentosFamilia.push(documento);
             }
         });
 
-        console.log('Documentos organizados:', {
-            familia: this.documentosFamilia.length,
-            aluno: this.documentosAluno.length,
-            integrantes: this.documentosIntegrantes.size
+        console.log('=== RESUMO DA ORGANIZAÇÃO ===');
+        console.log('Documentos da Família:', this.documentosFamilia.length);
+        console.log('Documentos do Aluno:', this.documentosAluno.length);
+        console.log('Integrantes com documentos:', this.documentosIntegrantes.size);
+        this.documentosIntegrantes.forEach((docs, nome) => {
+            console.log(`  ${nome}: ${docs.length} documentos`);
         });
     }
 
-    aplicarFiltros() {
+    filtrarDocumentosPorCategoria(event: any) {
+        this.categoriaDocumentos = event.detail.value;
+        console.log('Filtrando documentos por categoria:', this.categoriaDocumentos);
+
+        // Não é necessário fazer nada especial aqui, 
+        // pois o template já usa as variáveis organizadas diretamente
+    }
+
+    obterDocumentosVisiveis() {
         switch (this.categoriaDocumentos) {
             case 'familia':
-                this.documentosFiltrados = [...this.documentosFamilia];
-                break;
+                return this.documentosFamilia;
             case 'aluno':
-                this.documentosFiltrados = [...this.documentosAluno];
-                break;
+                return this.documentosAluno;
             case 'integrantes':
-                this.documentosFiltrados = [];
+                const todosIntegrantes: any[] = [];
                 this.documentosIntegrantes.forEach(docs => {
-                    this.documentosFiltrados.push(...docs);
+                    todosIntegrantes.push(...docs);
                 });
-                break;
+                return todosIntegrantes;
             default: // 'todos'
-                this.documentosFiltrados = [...this.documentos];
-                break;
+                return this.documentos;
         }
     }
 
-    filtrarDocumentosAtuais() {
-        let documentosTemp = [...this.documentos];
-
-        // Filtrar por categoria
-        if (this.categoriaDocumentos !== 'todos') {
-            switch (this.categoriaDocumentos) {
-                case 'familia':
-                    documentosTemp = documentosTemp.filter(doc =>
-                        doc.categoria === 'Família' || doc.nomeIntegrante === 'Família'
-                    );
-                    break;
-                case 'aluno':
-                    documentosTemp = documentosTemp.filter(doc =>
-                        doc.categoria === 'Aluno' || doc.nomeIntegrante === 'Aluno'
-                    );
-                    break;
-                case 'integrantes':
-                    documentosTemp = documentosTemp.filter(doc =>
-                        doc.categoria === 'Todos os Integrantes' ||
-                        (doc.nomeIntegrante && doc.nomeIntegrante !== 'Família' && doc.nomeIntegrante !== 'Aluno')
-                    );
-                    break;
-            }
-        }
-
-        // Filtrar por integrante (mantendo compatibilidade)
-        if (this.integranteDocumentos !== 'todos') {
-            documentosTemp = documentosTemp.filter((doc: any) =>
-                doc.nomeIntegrante === this.integranteDocumentos
-            );
-        }
-
-        this.documentosFiltrados = documentosTemp;
-    }
+    // Método removido - usando nova organização por categorias
 
     filtrarDocumentosPorIntegrante(event: any) {
         this.integranteDocumentos = event.detail.value;
-        this.filtrarDocumentosAtuais();
+        // Não é mais necessário filtrar - a organização é feita automaticamente
     }
 
     verDocumentosIntegrante(integrante: any) {
-        // Filtrar documentos específicos do integrante
-        this.integranteDocumentos = integrante.nome;
-        this.filtrarDocumentosAtuais();
-
-        // Mudar para a seção de documentos
+        // Mudar para a seção de documentos e categoria de integrantes
+        this.categoriaDocumentos = 'integrantes';
         this.secaoAtiva = 'documentos';
 
         // Carregar documentos se ainda não foram carregados
@@ -279,7 +284,7 @@ export class DetalhesAlunoPage implements OnInit {
     verDocumento(documento: any) {
         if (documento.nomeArquivo) {
             // Abrir documento em nova aba
-            const url = `http://localhost:8080/cipalam_documentos/${documento.nomeArquivo}`;
+            const url = `${environment.apiUrl.replace('/api', '')}/cipalam_documentos/${documento.nomeArquivo}`;
             window.open(url, '_blank');
         } else {
             this.mostrarErro('Documento não foi anexado ainda');
@@ -492,11 +497,7 @@ export class DetalhesAlunoPage implements OnInit {
         return this.documentos.some(doc => doc.status === 'anexado');
     }
 
-    // Métodos para categorização de documentos
-    filtrarDocumentosPorCategoria(event: any) {
-        this.categoriaDocumentos = event.detail.value;
-        this.aplicarFiltros();
-    }
+    // Método removido - usando nova implementação acima
 
     // Métodos antigos - comentados para usar nova organização
     /*

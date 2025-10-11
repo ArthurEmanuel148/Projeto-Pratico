@@ -72,6 +72,104 @@ public class ResponsavelDocumentosController {
     }
 
     /**
+     * Busca documentos da declaração de matrícula pelo ID da declaração (ENDPOINT
+     * DIRETO)
+     * GET /api/responsavel-documentos/declaracao/{idDeclaracao}/documentos
+     */
+    @GetMapping("/declaracao/{idDeclaracao}/documentos")
+    public ResponseEntity<?> buscarDocumentosPorDeclaracao(@PathVariable Long idDeclaracao) {
+        try {
+            logger.info("🔍 Buscando documentos para declaração ID: {}", idDeclaracao);
+
+            if (idDeclaracao == null || idDeclaracao <= 0) {
+                logger.warn("⚠️ ID da declaração inválido: {}", idDeclaracao);
+                Map<String, Object> error = new HashMap<>();
+                error.put("erro", "ID da declaração é obrigatório e deve ser válido");
+                error.put("codigo", "INVALID_DECLARATION_ID");
+                return ResponseEntity.badRequest().body(error);
+            }
+
+            // Buscar documentos diretamente pelo ID da declaração
+            FamiliaDocumentosDTO declaracaoDocumentos = responsavelDocumentosService
+                    .buscarDocumentosPorIdDeclaracao(idDeclaracao);
+
+            if (declaracaoDocumentos == null) {
+                logger.warn("⚠️ Nenhuma declaração encontrada com ID: {}", idDeclaracao);
+                Map<String, Object> error = new HashMap<>();
+                error.put("erro", "Declaração não encontrada ou sem documentos configurados");
+                error.put("codigo", "DECLARACAO_NOT_FOUND");
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+            }
+
+            logger.info("✅ Documentos da declaração encontrados: {} seções, {} documentos totais",
+                    declaracaoDocumentos.getDocumentosPorPessoa().size(),
+                    declaracaoDocumentos.getResumo().getTotalDocumentos());
+
+            return ResponseEntity.ok(declaracaoDocumentos);
+
+        } catch (Exception e) {
+            logger.error("❌ Erro inesperado ao buscar documentos da declaração ID {}: {}",
+                    idDeclaracao, e.getMessage(), e);
+
+            Map<String, Object> error = new HashMap<>();
+            error.put("erro", "Erro interno do servidor ao buscar documentos da declaração");
+            error.put("codigo", "INTERNAL_SERVER_ERROR");
+            error.put("detalhes", e.getMessage());
+
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
+        }
+    }
+
+    /**
+     * Busca documentos da declaração de matrícula do responsável (ENDPOINT POR
+     * RESPONSÁVEL)
+     * GET /api/responsavel-documentos/{idResponsavel}/matricula/documentos
+     */
+    @GetMapping("/{idResponsavel}/matricula/documentos")
+    public ResponseEntity<?> buscarDocumentosMatricula(@PathVariable Long idResponsavel) {
+        try {
+            logger.info("🔍 Buscando documentos da matrícula para responsável ID: {}", idResponsavel);
+
+            if (idResponsavel == null || idResponsavel <= 0) {
+                logger.warn("⚠️ ID do responsável inválido: {}", idResponsavel);
+                Map<String, Object> error = new HashMap<>();
+                error.put("erro", "ID do responsável é obrigatório e deve ser válido");
+                error.put("codigo", "INVALID_RESPONSIBLE_ID");
+                return ResponseEntity.badRequest().body(error);
+            }
+
+            // Buscar documentos da matrícula (declaração de interesse)
+            FamiliaDocumentosDTO matriculaDocumentos = responsavelDocumentosService
+                    .buscarDocumentosPorMatricula(idResponsavel);
+
+            if (matriculaDocumentos == null) {
+                logger.warn("⚠️ Nenhuma matrícula encontrada para o responsável ID: {}", idResponsavel);
+                Map<String, Object> error = new HashMap<>();
+                error.put("erro", "Matrícula não encontrada ou sem documentos configurados");
+                error.put("codigo", "MATRICULA_NOT_FOUND");
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+            }
+
+            logger.info("✅ Documentos da matrícula encontrados: {} seções, {} documentos totais",
+                    matriculaDocumentos.getDocumentosPorPessoa().size(),
+                    matriculaDocumentos.getResumo().getTotalDocumentos());
+
+            return ResponseEntity.ok(matriculaDocumentos);
+
+        } catch (Exception e) {
+            logger.error("❌ Erro inesperado ao buscar documentos da matrícula para responsável ID {}: {}",
+                    idResponsavel, e.getMessage(), e);
+
+            Map<String, Object> error = new HashMap<>();
+            error.put("erro", "Erro interno do servidor ao buscar documentos da matrícula");
+            error.put("codigo", "INTERNAL_SERVER_ERROR");
+            error.put("detalhes", e.getMessage());
+
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
+        }
+    }
+
+    /**
      * Busca informações básicas do responsável e família
      * GET /api/responsavel/{idResponsavel}/info
      */
@@ -259,8 +357,43 @@ public class ResponsavelDocumentosController {
     }
 
     /**
+     * Visualiza um documento em nova guia
+     * GET
+     * /api/responsavel-documentos/familia/visualizar-documento/{idDocumentoMatricula}
+     */
+    @GetMapping("/familia/visualizar-documento/{idDocumentoMatricula}")
+    public ResponseEntity<?> visualizarDocumento(@PathVariable Long idDocumentoMatricula) {
+        try {
+            logger.info("👁️ Visualizando documento ID: {}", idDocumentoMatricula);
+
+            byte[] arquivoBytes = responsavelDocumentosService.baixarDocumento(idDocumentoMatricula);
+
+            if (arquivoBytes != null && arquivoBytes.length > 0) {
+                return ResponseEntity.ok()
+                        .header("Content-Disposition", "inline; filename=\"documento.pdf\"")
+                        .header("Content-Type", "application/pdf")
+                        .body(arquivoBytes);
+            } else {
+                Map<String, Object> error = new HashMap<>();
+                error.put("erro", "Documento não encontrado");
+                error.put("codigo", "DOCUMENT_NOT_FOUND");
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+            }
+
+        } catch (Exception e) {
+            logger.error("❌ Erro ao visualizar documento: {}", e.getMessage(), e);
+            Map<String, Object> error = new HashMap<>();
+            error.put("erro", "Erro interno do servidor");
+            error.put("codigo", "INTERNAL_SERVER_ERROR");
+            error.put("detalhes", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
+        }
+    }
+
+    /**
      * Baixa um documento
-     * GET /api/responsavel/familia/baixar-documento/{idDocumentoMatricula}
+     * GET
+     * /api/responsavel-documentos/familia/baixar-documento/{idDocumentoMatricula}
      */
     @GetMapping("/familia/baixar-documento/{idDocumentoMatricula}")
     public ResponseEntity<?> baixarDocumento(@PathVariable Long idDocumentoMatricula) {

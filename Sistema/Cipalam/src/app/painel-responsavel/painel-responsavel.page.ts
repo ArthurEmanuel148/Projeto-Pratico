@@ -16,6 +16,14 @@ export class PainelResponsavelPage implements OnInit {
   familiaDocumentos: FamiliaDocumentos | null = null;
   pessoaSelecionada: DocumentoPorPessoa | null = null;
 
+  // Controle de categorias de documentos
+  categoriaDocumentos = 'todos';
+
+  // Documentos organizados por categoria
+  documentosFamilia: DocumentoIndividual[] = [];
+  documentosAluno: DocumentoIndividual[] = [];
+  documentosIntegrantes: DocumentoIndividual[] = [];
+
   constructor(
     private authService: AuthService,
     private responsavelDocumentosService: ResponsavelDocumentosService,
@@ -55,20 +63,17 @@ export class PainelResponsavelPage implements OnInit {
         return;
       }
 
-      console.log('🔍 Carregando documentos para usuário ID:', idUsuario);
-      console.log('📍 URL da requisição:', `${environment.apiUrl}/api/responsavel/${idUsuario}/familia/documentos`);
+      console.log('🔍 Carregando documentos da MATRÍCULA para usuário ID:', idUsuario);
 
-      // Chamar o serviço que busca dados reais do backend
-      this.responsavelDocumentosService.getDocumentosPorFamilia(idUsuario).subscribe({
+      // Chamar o serviço que busca dados da MATRÍCULA (não família, que ainda não existe)
+      this.responsavelDocumentosService.getDocumentosPorMatricula(idUsuario).subscribe({
         next: (documentos) => {
           console.log('✅ Documentos recebidos do backend:', documentos);
           this.familiaDocumentos = documentos;
           this.carregando = false;
 
-          // Selecionar primeira pessoa automaticamente
-          if (documentos?.documentosPorPessoa?.length > 0) {
-            this.selecionarPessoa(documentos.documentosPorPessoa[0]);
-          }
+          // Organizar documentos por categoria
+          this.organizarDocumentosPorCategoria();
         },
         error: async (error) => {
           console.error('❌ Erro ao carregar documentos da família:', error);
@@ -99,13 +104,7 @@ export class PainelResponsavelPage implements OnInit {
     }
   }
 
-  /**
-   * Seleciona uma pessoa para visualizar os documentos
-   */
-  selecionarPessoa(pessoa: DocumentoPorPessoa) {
-    this.pessoaSelecionada = pessoa;
-    console.log('👤 Pessoa selecionada:', pessoa);
-  }
+
 
   /**
    * Obtém o ícone baseado no parentesco
@@ -190,15 +189,7 @@ export class PainelResponsavelPage implements OnInit {
     }
   }
 
-  /**
-   * Obtém estatísticas de documentos de uma pessoa
-   */
-  obterEstatisticasPessoa(pessoa: DocumentoPorPessoa): { pendentes: number; total: number; aprovados: number } {
-    const pendentes = pessoa.documentos.filter(doc => doc.status === 'pendente').length;
-    const aprovados = pessoa.documentos.filter(doc => doc.status === 'aprovado').length;
-    const total = pessoa.documentos.length;
-    return { pendentes, total, aprovados };
-  }
+
 
   /**
    * Anexar documento
@@ -228,7 +219,7 @@ export class PainelResponsavelPage implements OnInit {
         await this.responsavelDocumentosService.anexarDocumento(
           arquivo,
           documento.idDocumentoMatricula,
-          this.pessoaSelecionada!.pessoa.id
+          this.usuarioLogado?.pessoaId || this.usuarioLogado?.usuarioId
         ).toPromise();
 
         console.log('✅ Documento anexado com sucesso');
@@ -246,7 +237,37 @@ export class PainelResponsavelPage implements OnInit {
   }
 
   /**
-   * Baixar documento
+   * Visualizar documento em uma nova guia
+   */
+  async visualizarDocumento(documento: DocumentoIndividual) {
+    console.log('👁️ Visualizando documento:', documento);
+
+    try {
+      const blob = await this.responsavelDocumentosService.visualizarDocumento(
+        documento.idDocumentoMatricula
+      ).toPromise();
+
+      if (blob) {
+        // Criar URL temporária e abrir em nova guia
+        const url = window.URL.createObjectURL(blob);
+        window.open(url, '_blank');
+
+        console.log('✅ Documento aberto em nova guia');
+        await this.mostrarToastSucesso('Documento aberto em nova guia!');
+
+        // Limpar a URL após alguns segundos para liberar memória
+        setTimeout(() => {
+          window.URL.revokeObjectURL(url);
+        }, 5000);
+      }
+    } catch (error) {
+      console.error('❌ Erro ao visualizar documento:', error);
+      await this.mostrarToastErro('Erro ao visualizar documento');
+    }
+  }
+
+  /**
+   * Baixar documento (mantido como método auxiliar)
    */
   async baixarDocumento(documento: DocumentoIndividual) {
     console.log('⬇️ Baixando documento:', documento);
@@ -285,7 +306,7 @@ export class PainelResponsavelPage implements OnInit {
     try {
       await this.responsavelDocumentosService.removerDocumento(
         documento.idDocumentoMatricula,
-        this.pessoaSelecionada!.pessoa.id
+        this.usuarioLogado?.pessoaId || this.usuarioLogado?.usuarioId
       ).toPromise();
 
       console.log('✅ Documento removido com sucesso');
@@ -325,5 +346,66 @@ export class PainelResponsavelPage implements OnInit {
       icon: 'alert-circle'
     });
     await toast.present();
+  }
+
+  /**
+   * Organiza os documentos por categoria baseado na nova estrutura
+   */
+  organizarDocumentosPorCategoria() {
+    // Limpar organizações anteriores
+    this.documentosFamilia = [];
+    this.documentosAluno = [];
+    this.documentosIntegrantes = [];
+
+    if (!this.familiaDocumentos?.documentosPorPessoa) {
+      return;
+    }
+
+    // Organizar baseado no parentesco/tipo da pessoa
+    this.familiaDocumentos.documentosPorPessoa.forEach(pessoaDocumentos => {
+      const parentesco = pessoaDocumentos.pessoa.parentesco?.toLowerCase();
+
+      if (parentesco === 'responsavel' || pessoaDocumentos.pessoa.nome.includes('Família')) {
+        // Documentos da família
+        this.documentosFamilia.push(...pessoaDocumentos.documentos);
+      } else if (parentesco === 'aluno' || pessoaDocumentos.pessoa.nome.includes('Aluno')) {
+        // Documentos do aluno
+        this.documentosAluno.push(...pessoaDocumentos.documentos);
+      } else {
+        // Documentos dos integrantes (pai, mãe, irmão, etc.)
+        this.documentosIntegrantes.push(...pessoaDocumentos.documentos);
+      }
+    });
+
+    console.log('📂 Documentos organizados por categoria:', {
+      familia: this.documentosFamilia.length,
+      aluno: this.documentosAluno.length,
+      integrantes: this.documentosIntegrantes.length,
+      total: this.documentosFamilia.length + this.documentosAluno.length + this.documentosIntegrantes.length
+    });
+  }
+
+  /**
+   * Filtra os documentos por categoria selecionada
+   */
+  filtrarDocumentosPorCategoria(event: any) {
+    this.categoriaDocumentos = event.detail.value;
+    console.log('🔍 Categoria selecionada:', this.categoriaDocumentos);
+  }
+
+  /**
+   * Obtém os documentos visíveis baseado na categoria selecionada
+   */
+  obterDocumentosVisiveis(): DocumentoIndividual[] {
+    switch (this.categoriaDocumentos) {
+      case 'familia':
+        return this.documentosFamilia;
+      case 'aluno':
+        return this.documentosAluno;
+      case 'integrantes':
+        return this.documentosIntegrantes;
+      default: // 'todos'
+        return [...this.documentosFamilia, ...this.documentosAluno, ...this.documentosIntegrantes];
+    }
   }
 }

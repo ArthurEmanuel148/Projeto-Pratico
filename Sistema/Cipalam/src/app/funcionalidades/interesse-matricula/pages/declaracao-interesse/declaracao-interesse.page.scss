@@ -346,6 +346,22 @@ ion-label {
   color: var(--ion-color-primary) !important;
 }
 
+// Ícone específico para Dados do Aluno com fundo colorido
+.header-icon-aluno {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  background: var(--ion-color-primary) !important;
+  border-radius: 50%;
+  
+  ion-icon {
+    font-size: 1.5rem !important;
+    color: white !important;
+  }
+}
+
 .header-content h2 {
   margin: 0 0 4px 0;
   color: #333 !important;
@@ -2161,6 +2177,10 @@ ion-label {
 
 .form-item-small {
   margin-bottom: 8px;
+  --background: transparent !important;
+  --border-width: 0 !important;
+  --inner-border-width: 0 !important;
+  border: none !important;
 
   ion-input {
     font-size: 14px;

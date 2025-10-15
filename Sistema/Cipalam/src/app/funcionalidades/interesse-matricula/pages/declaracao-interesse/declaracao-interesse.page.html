@@ -128,8 +128,8 @@
     <!-- ===== ETAPA 3: DADOS DO ALUNO ===== -->
     <div *ngIf="etapaAtual === ETAPAS.DADOS_ALUNO" class="etapa-container">
       <div class="etapa-header">
-        <div class="header-icon">
-          <ion-icon name="school-outline" style="color: white; background: var(--ion-color-primary); padding: 12px; border-radius: 50%; font-size: 1.5rem;"></ion-icon>
+        <div class="header-icon header-icon-aluno">
+          <ion-icon name="school-outline"></ion-icon>
         </div>
         <div class="header-content">
           <h2>Dados do Aluno</h2>
@@ -315,7 +315,7 @@
                   </ion-input>
                 </ion-item>
                 <ion-item class="form-item-small">
-                  <ion-input type="number" placeholder="0,00" fill="outline" label="Renda Mensal (R$)"
+                  <ion-input type="number" fill="outline" label="Renda Mensal (R$)"
                     labelPlacement="floating" [(ngModel)]="responsavelRenda" [ngModelOptions]="{standalone: true}">
                   </ion-input>
                 </ion-item>
@@ -352,7 +352,7 @@
                   </ion-input>
                 </ion-item>
                 <ion-item class="form-item-small">
-                  <ion-input type="number" placeholder="0,00" fill="outline" label="Renda Mensal (R$)"
+                  <ion-input type="number" fill="outline" label="Renda Mensal (R$)"
                     labelPlacement="floating" [(ngModel)]="alunoRenda" [ngModelOptions]="{standalone: true}">
                   </ion-input>
                 </ion-item>
@@ -401,7 +401,7 @@
                     </ion-input>
                   </ion-item>
                   <ion-item class="form-item-small">
-                    <ion-input type="number" placeholder="0,00" fill="outline" label="Renda Mensal (R$)"
+                    <ion-input type="number" fill="outline" label="Renda Mensal (R$)"
                       labelPlacement="floating" [(ngModel)]="integrante.renda" [ngModelOptions]="{standalone: true}">
                     </ion-input>
                   </ion-item>

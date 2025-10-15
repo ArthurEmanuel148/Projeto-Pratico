@@ -4,39 +4,54 @@
       <ion-label>Dados do Responsável</ion-label>
     </ion-item-divider>
 
-    <div class="input-container">
-      <label class="field-label">Nome Completo <span class="required">*</span></label>
-      <ion-item>
-        <ion-input type="text" formControlName="nomeResponsavel" placeholder="Digite o nome completo" required></ion-input>
+    <div class="form-group form-field-container">
+      <ion-item [class.item-invalid]="isFieldInvalid('nomeResponsavel')" [class.item-valid]="isFieldValid('nomeResponsavel')">
+        <ion-label position="floating">Nome completo <ion-text color="danger">*</ion-text></ion-label>
+        <ion-input type="text" formControlName="nomeResponsavel" required></ion-input>
       </ion-item>
+      <div *ngIf="getFieldError('nomeResponsavel')" class="error-message">
+        {{ getFieldError('nomeResponsavel') }}
+      </div>
     </div>
 
-    <div class="input-container">
-      <label class="field-label">CPF <span class="required">*</span></label>
-      <ion-item>
-        <ion-input type="text" formControlName="cpfResponsavel" required placeholder="000.000.000-00" (ionInput)="onCpfInput($event)"></ion-input>
+    <div class="form-group form-field-container">
+      <ion-item [class.item-invalid]="isFieldInvalid('cpfResponsavel')" [class.item-valid]="isFieldValid('cpfResponsavel')">
+        <ion-label position="floating">CPF <ion-text color="danger">*</ion-text></ion-label>
+        <ion-input type="text" formControlName="cpfResponsavel" required (ionInput)="onCpfInput($event)"></ion-input>
       </ion-item>
+      <div *ngIf="getFieldError('cpfResponsavel')" class="error-message">
+        {{ getFieldError('cpfResponsavel') }}
+      </div>
     </div>
 
-    <div class="input-container">
-      <label class="field-label">Data de Nascimento <span class="required">*</span></label>
-      <ion-item>
+    <div class="form-group form-field-container">
+      <ion-item [class.item-invalid]="isFieldInvalid('dataNascimentoResponsavel')" [class.item-valid]="isFieldValid('dataNascimentoResponsavel')">
+        <ion-label position="floating">Data de nascimento <ion-text color="danger">*</ion-text></ion-label>
         <ion-input type="date" formControlName="dataNascimentoResponsavel" required></ion-input>
       </ion-item>
+      <div *ngIf="getFieldError('dataNascimentoResponsavel')" class="error-message">
+        {{ getFieldError('dataNascimentoResponsavel') }}
+      </div>
     </div>
 
-    <div class="input-container">
-      <label class="field-label">E-mail <span class="required">*</span></label>
-      <ion-item>
-        <ion-input type="email" formControlName="emailResponsavel" placeholder="Digite o e-mail" required email></ion-input>
+    <div class="form-group form-field-container">
+      <ion-item [class.item-invalid]="isFieldInvalid('emailResponsavel')" [class.item-valid]="isFieldValid('emailResponsavel')">
+        <ion-label position="floating">E-mail <ion-text color="danger">*</ion-text></ion-label>
+        <ion-input type="email" formControlName="emailResponsavel" required email></ion-input>
       </ion-item>
+      <div *ngIf="getFieldError('emailResponsavel')" class="error-message">
+        {{ getFieldError('emailResponsavel') }}
+      </div>
     </div>
 
-    <div class="input-container">
-      <label class="field-label">Telefone <span class="required">*</span></label>
-      <ion-item>
-        <ion-input type="tel" formControlName="telefoneResponsavel" required placeholder="(00) 00000-0000" (ionInput)="onPhoneInput($event)"></ion-input>
+    <div class="form-group form-field-container">
+      <ion-item [class.item-invalid]="isFieldInvalid('telefoneResponsavel')" [class.item-valid]="isFieldValid('telefoneResponsavel')">
+        <ion-label position="floating">Telefone <ion-text color="danger">*</ion-text></ion-label>
+        <ion-input type="tel" formControlName="telefoneResponsavel" required (ionInput)="onPhoneInput($event)"></ion-input>
       </ion-item>
+      <div *ngIf="getFieldError('telefoneResponsavel')" class="error-message">
+        {{ getFieldError('telefoneResponsavel') }}
+      </div>
     </div>
   </ion-list>
 

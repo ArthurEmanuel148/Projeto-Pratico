@@ -1087,7 +1087,7 @@ BEGIN
         
 END$$
 
-DELIMITER ;
+DELIMITER;
 
 -- ===================================================================
 -- INSERÇÃO DE FUNCIONALIDADES (SEM ROTAS)
@@ -2508,7 +2508,7 @@ BEGIN
     RETURN v_total;
 END$$
 
-DELIMITER ;
+DELIMITER;
 
 -- ===================================================================
 -- DADOS DE TESTE REMOVIDOS - TURMAS SERÃO CRIADAS VIA INTERFACE
@@ -2602,7 +2602,7 @@ SELECT
 --
 -- ESTRUTURA PRINCIPAIS TABELAS:
 -- - tbFamilia: Dados completos + endereço + renda + integrantes
--- - tbIntegranteFamilia: Cada integrante familiar individual 
+-- - tbIntegranteFamilia: Cada integrante familiar individual
 -- - tbTurma: Controle de capacidade e informações detalhadas
 -- - tbResponsavel: Múltiplos responsáveis por família
 -- - tbAluno: Dados completos da declaração + matrícula
@@ -2736,7 +2736,7 @@ SELECT
 --
 -- DOCUMENTOS POR COTA:
 -- - LIVRE: RG, CPF, Comprovante Residência, Certidão Nascimento, Foto 3x4
--- - ECONÔMICA: Documentos básicos + Comprovante Renda + Declaração Dependentes  
+-- - ECONÔMICA: Documentos básicos + Comprovante Renda + Declaração Dependentes
 -- - FUNCIONÁRIO: Documentos básicos + Comprovante Vínculo + Declaração Parentesco
 --
 -- PROCESSO AUTOMÁTICO sp_IniciarMatricula():
@@ -2758,14 +2758,14 @@ SELECT
 -- EXEMPLOS PRÁTICOS:
 --
 -- Ver declarações prontas para matricular:
--- SELECT protocolo, nomeAluno, tipoCota, DATEDIFF(CURDATE(), dataEnvio) as diasAguardando 
--- FROM tbInteresseMatricula 
+-- SELECT protocolo, nomeAluno, tipoCota, DATEDIFF(CURDATE(), dataEnvio) as diasAguardando
+-- FROM tbInteresseMatricula
 -- WHERE status = 'interesse_declarado' AND etapaAtual = 'finalizado'
 -- ORDER BY diasAguardando DESC;
 --
 -- Ver turmas com vagas:
 -- SELECT nomeTurma, capacidadeMaxima, capacidadeAtual, (capacidadeMaxima - capacidadeAtual) as vagasDisponiveis
--- FROM tbTurma 
+-- FROM tbTurma
 -- WHERE ativo = TRUE AND capacidadeAtual < capacidadeMaxima;
 --
 -- Iniciar matrícula (declaração 1, turma 1, funcionário 2):
@@ -2775,8 +2775,8 @@ SELECT
 -- CALL sp_ListarDocumentosResponsavel('111.222.333-44');
 --
 -- Verificar integrantes de uma família:
--- SELECT nomeIntegrante, parentesco, renda, profissao 
--- FROM tbIntegranteFamilia 
+-- SELECT nomeIntegrante, parentesco, renda, profissao
+-- FROM tbIntegranteFamilia
 -- WHERE tbFamilia_idtbFamilia = 1;
 --
 -- SISTEMA COMPLETAMENTE PRONTO PARA:
@@ -2868,9 +2868,11 @@ SELECT fn_ValidarIniciarMatricula (1, 1) as resultado_validacao;
 -- Finaliza matrícula migrando dados da declaração para tabelas definitivas
 -- ===================================================================
 
-DELIMITER / /
+DELIMITER /
+/
 
-DROP PROCEDURE IF EXISTS sp_FinalizarMatricula / /
+DROP PROCEDURE IF EXISTS sp_FinalizarMatricula /
+/
 
 CREATE PROCEDURE sp_FinalizarMatricula(
     IN p_idDeclaracao BIGINT,
@@ -2896,9 +2898,11 @@ BEGIN
     
     COMMIT;
     
-END //
+END
+/
+/
 
-DELIMITER ;
+DELIMITER;
 
 -- ===================================================================
 

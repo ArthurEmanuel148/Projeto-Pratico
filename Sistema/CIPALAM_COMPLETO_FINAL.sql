@@ -2868,11 +2868,9 @@ SELECT fn_ValidarIniciarMatricula (1, 1) as resultado_validacao;
 -- Finaliza matrícula migrando dados da declaração para tabelas definitivas
 -- ===================================================================
 
-DELIMITER /
-/
+DELIMITER //
 
-DROP PROCEDURE IF EXISTS sp_FinalizarMatricula /
-/
+DROP PROCEDURE IF EXISTS sp_FinalizarMatricula //
 
 CREATE PROCEDURE sp_FinalizarMatricula(
     IN p_idDeclaracao BIGINT,
@@ -2898,11 +2896,9 @@ BEGIN
     
     COMMIT;
     
-END
-/
-/
+END //
 
-DELIMITER;
+DELIMITER ;
 
 -- ===================================================================
 

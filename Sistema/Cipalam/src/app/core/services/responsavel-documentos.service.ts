@@ -124,10 +124,9 @@ export class ResponsavelDocumentosService {
      * Busca documentos de uma declaração específica para área administrativa
      */
     getDocumentosPorDeclaracao(idDeclaracao: number): Observable<any[]> {
-        // Usar o mesmo endpoint que funciona para buscar documentos por família
-        // Temporariamente usar a declaração ID 4 que já tem dados
-        const url = `${this.API_BASE_URL}/declaracao/4/documentos`;
-        console.log(`🌐 Buscando documentos para declaração ID: ${idDeclaracao} (usando ID 4 fixo para teste)`);
+        // Usar o endpoint correto com o ID da declaração
+        const url = `${this.API_BASE_URL}/declaracao/${idDeclaracao}/documentos`;
+        console.log(`🌐 Buscando documentos para declaração ID: ${idDeclaracao}`);
 
         return this.http.get<any>(url, this.getHttpOptions())
             .pipe(

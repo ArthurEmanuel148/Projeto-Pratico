@@ -84,8 +84,8 @@ public class ResponsavelDocumentosService {
                 return null;
             }
 
-            // 2. Buscar documentos da declaração (TESTE: forçar ID 4)
-            List<DocumentoPorPessoa> documentosPorPessoa = buscarDocumentosMatricula(4L); // Temporário para teste
+            // 2. Buscar documentos da declaração usando o ID correto
+            List<DocumentoPorPessoa> documentosPorPessoa = buscarDocumentosMatricula(idDeclaracao);
 
             // 3. Calcular resumo dos documentos
             ResumoDocumentos resumo = calcularResumoDocumentos(documentosPorPessoa);

@@ -18,6 +18,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.http.HttpMethod;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -58,10 +59,17 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .exceptionHandling(exception -> exception.authenticationEntryPoint(jwtAuthenticationEntryPoint))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(auth -> auth.requestMatchers("/api/auth/**").permitAll()
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api/public/**").permitAll()
-                        .requestMatchers("/api/matricula/**").permitAll() // Endpoint do interesse em matrícula
-                        .requestMatchers("/api/matriculas/**").permitAll() // Endpoint de iniciar matrícula
+                        .requestMatchers("/cipalam_documentos/**").authenticated() // Permitir acesso autenticado aos
+                                                                                   // documentos
+                        // Permitir leitura pública (GET) das declarações de interesse para exibição no
+                        // front
+                        .requestMatchers(HttpMethod.GET, "/api/interesse-matricula/**").permitAll()
+                        // Manter os endpoints relacionados à matrícula protegidos (POST/PUT/DELETE)
+                        .requestMatchers("/api/matricula/**").permitAll() // endpoint legado, revisar se necessário
+                        .requestMatchers("/api/matriculas/**").permitAll() // endpoint legado, revisar se necessário
                         .anyRequest().authenticated() // Proteger todos os outros endpoints
                 );
 

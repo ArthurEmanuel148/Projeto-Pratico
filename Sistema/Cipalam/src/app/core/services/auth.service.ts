@@ -60,6 +60,8 @@ export class AuthService {
           const normalizedResponse: LoginResponse = {
             ...response,
             token: response.accessToken || response.token || '', // Mapear accessToken para token
+            accessToken: response.accessToken || response.token || '', // Manter accessToken
+            refreshToken: response.refreshToken || '', // Salvar refreshToken
             pessoa: {
               idPessoa: response.pessoaId || response.usuarioId || 0,
               nmPessoa: response.nomePessoa || '',
@@ -72,11 +74,22 @@ export class AuthService {
           // Salvar usuário logado
           console.log('Login realizado com sucesso:', normalizedResponse);
           localStorage.setItem('usuarioLogado', JSON.stringify(normalizedResponse));
+
+          // Salvar tokens separadamente para fácil acesso
+          if (normalizedResponse.accessToken) {
+            localStorage.setItem('accessToken', normalizedResponse.accessToken);
+          }
+          if (normalizedResponse.refreshToken) {
+            localStorage.setItem('refreshToken', normalizedResponse.refreshToken);
+          }
+
           this.usuarioLogadoSubject.next(normalizedResponse);
         }),
         map(response => ({
           ...response,
           token: response.accessToken || response.token || '', // Garantir que o token seja mapeado
+          accessToken: response.accessToken || response.token || '',
+          refreshToken: response.refreshToken || '',
           pessoa: {
             idPessoa: response.pessoaId || response.usuarioId || 0,
             nmPessoa: response.nomePessoa || '',
@@ -143,7 +156,12 @@ export class AuthService {
 
   getToken(): string | null {
     const usuario = this.usuarioLogadoSubject.value;
-    return usuario?.token || null;
+    return usuario?.token || usuario?.accessToken || localStorage.getItem('accessToken') || null;
+  }
+
+  getRefreshToken(): string | null {
+    const usuario = this.usuarioLogadoSubject.value;
+    return usuario?.refreshToken || localStorage.getItem('refreshToken') || null;
   }
 
   getFuncionarioLogado(): LoginResponse | null {
@@ -331,6 +349,8 @@ export class AuthService {
   logout(): void {
     // Limpar todos os dados do usuário e cache
     localStorage.removeItem('usuarioLogado');
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('refreshToken');
     localStorage.removeItem('funcionalidades_sistema');
     localStorage.removeItem('funcionalidades_cache_info');
     localStorage.removeItem('funcionalidades_uso'); // Remover dados de uso das funcionalidades
@@ -339,5 +359,47 @@ export class AuthService {
     this.usuarioLogadoSubject.next(null);
 
     console.log('Logout realizado - cache limpo');
+  }
+
+  // Método para refresh token
+  refreshAccessToken(): Observable<LoginResponse> {
+    const refreshToken = this.getRefreshToken();
+
+    if (!refreshToken) {
+      return throwError(() => new Error('No refresh token available'));
+    }
+
+    return this.http.post<LoginResponse>(
+      `${this.apiConfig.getBaseUrl()}/auth/refresh`,
+      { refreshToken }
+    ).pipe(
+      tap(response => {
+        // Atualizar tokens
+        if (response.accessToken) {
+          localStorage.setItem('accessToken', response.accessToken);
+        }
+        if (response.refreshToken) {
+          localStorage.setItem('refreshToken', response.refreshToken);
+        }
+
+        // Atualizar usuário logado
+        const usuarioAtual = this.usuarioLogadoSubject.value;
+        if (usuarioAtual) {
+          const usuarioAtualizado = {
+            ...usuarioAtual,
+            token: response.accessToken || usuarioAtual.token,
+            accessToken: response.accessToken || usuarioAtual.accessToken,
+            refreshToken: response.refreshToken || usuarioAtual.refreshToken
+          };
+          localStorage.setItem('usuarioLogado', JSON.stringify(usuarioAtualizado));
+          this.usuarioLogadoSubject.next(usuarioAtualizado);
+        }
+      }),
+      catchError(error => {
+        // Se falhar o refresh, fazer logout
+        this.logout();
+        return throwError(() => error);
+      })
+    );
   }
 }

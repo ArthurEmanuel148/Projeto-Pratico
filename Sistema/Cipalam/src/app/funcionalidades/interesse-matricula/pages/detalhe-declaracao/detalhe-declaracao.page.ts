@@ -536,113 +536,146 @@ export class DetalheDeclaracaoPage implements OnInit {
       console.log('📁 Caminho completo:', caminhoCompleto);
       console.log('📄 Nome do arquivo extraído:', nomeArquivoFinal);
 
+      // Obter token de autenticação
+      const token = localStorage.getItem('accessToken');
+      if (!token) {
+        this.mostrarErro('Sessão expirada. Faça login novamente.');
+        return;
+      }
+
+      console.log('🔐 Token obtido:', token ? 'Sim' : 'Não');
+
       // Detectar o tipo de arquivo para abrir adequadamente
       const tipoArquivo = documento.tipoArquivo?.toLowerCase() || '';
       const nomeArquivoLower = nomeArquivoFinal.toLowerCase();
 
-      if (tipoArquivo.includes('pdf') || nomeArquivoLower.endsWith('.pdf')) {
-        // PDFs: abrir diretamente no visualizador do navegador
-        window.open(urlArquivo, '_blank');
-      } else if (tipoArquivo.includes('image') ||
-        nomeArquivoLower.match(/\.(jpg|jpeg|png|gif|bmp|webp)$/)) {
-        // Imagens (câmera, galeria, etc): abrir em uma página customizada
-        const newTab = window.open('', '_blank');
-        if (newTab) {
-          newTab.document.write(`
-            <!DOCTYPE html>
-            <html>
-              <head>
-                <title>${documento.tipoDocumento?.nome || documento.nomeDocumento} - ${nomeArquivoFinal}</title>
-                <meta charset="UTF-8">
-                <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                <style>
-                  body { 
-                    margin: 0; 
-                    padding: 20px;
-                    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); 
-                    font-family: 'Segoe UI', Arial, sans-serif;
-                    display: flex; 
-                    flex-direction: column;
-                    align-items: center; 
-                    min-height: 100vh;
-                    color: white;
-                  }
-                  .header {
-                    text-align: center;
-                    margin-bottom: 20px;
-                  }
-                  .header h1 {
-                    margin: 0;
-                    font-size: 1.5em;
-                    font-weight: 300;
-                  }
-                  .header p {
-                    margin: 5px 0;
-                    opacity: 0.8;
-                  }
-                  .image-container {
-                    background: white;
-                    border-radius: 12px;
-                    padding: 20px;
-                    box-shadow: 0 10px 40px rgba(0,0,0,0.3);
-                    max-width: 90vw;
-                    max-height: 80vh;
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
-                  }
-                  img { 
-                    max-width: 100%; 
-                    max-height: 70vh; 
-                    object-fit: contain; 
-                    border-radius: 8px;
-                    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-                  }
-                  .loading {
-                    display: flex;
-                    flex-direction: column;
-                    align-items: center;
-                    gap: 10px;
-                  }
-                  .spinner {
-                    border: 3px solid rgba(255,255,255,0.3);
-                    border-top: 3px solid white;
-                    border-radius: 50%;
-                    width: 30px;
-                    height: 30px;
-                    animation: spin 1s linear infinite;
-                  }
-                  @keyframes spin {
-                    0% { transform: rotate(0deg); }
-                    100% { transform: rotate(360deg); }
-                  }
-                </style>
-              </head>
-              <body>
-                <div class="header">
-                  <h1>${documento.tipoDocumento?.nome || documento.nomeDocumento}</h1>
-                  <p>📱 ${nomeArquivoFinal}</p>
-                </div>
-                <div class="image-container">
-                  <div class="loading" id="loading">
-                    <div class="spinner"></div>
-                    <p>Carregando imagem...</p>
-                  </div>
-                  <img id="document-image" src="${urlArquivo}" alt="${documento.tipoDocumento?.nome || documento.nomeDocumento}" 
-                       style="display: none;" 
-                       onload="document.getElementById('loading').style.display='none'; this.style.display='block';"
-                       onerror="document.getElementById('loading').innerHTML='<p>❌ Erro ao carregar imagem</p>';" />
-                </div>
-              </body>
-            </html>
-          `);
-        } else {
-          this.mostrarErro('Erro ao abrir documento. Verifique se o bloqueador de pop-ups está desabilitado.');
+      console.log('📥 Iniciando download do arquivo...');
+
+      // Fazer download autenticado do arquivo via blob
+      const loading = await this.loadingController.create({
+        message: 'Carregando documento...'
+      });
+      await loading.present();
+
+      console.log('🌐 Fazendo requisição HTTP para:', urlArquivo);
+
+      this.http.get(urlArquivo, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        },
+        responseType: 'blob'
+      }).subscribe({
+        next: (blob) => {
+          console.log('✅ Blob recebido:', blob.size, 'bytes');
+          loading.dismiss();
+
+          // Criar URL temporária do blob
+          const blobUrl = window.URL.createObjectURL(blob);
+          console.log('🔗 Blob URL criada:', blobUrl);
+
+          if (tipoArquivo.includes('pdf') || nomeArquivoLower.endsWith('.pdf')) {
+            // PDFs: abrir no visualizador do navegador
+            console.log('📄 Abrindo PDF...');
+            const pdfWindow = window.open(blobUrl, '_blank');
+            if (!pdfWindow || pdfWindow.closed || typeof pdfWindow.closed == 'undefined') {
+              this.mostrarErro('Pop-up bloqueado! Por favor, permita pop-ups para este site e tente novamente.');
+            }
+          } else if (tipoArquivo.includes('image') ||
+            nomeArquivoLower.match(/\.(jpg|jpeg|png|gif|bmp|webp)$/)) {
+            // Imagens: abrir em uma página customizada
+            console.log('🖼️ Abrindo imagem...');
+            const newTab = window.open('', '_blank');
+            if (!newTab || newTab.closed || typeof newTab.closed == 'undefined') {
+              this.mostrarErro('Pop-up bloqueado! Por favor, permita pop-ups para este site e tente novamente.');
+            } else {
+              newTab.document.write(`
+                <!DOCTYPE html>
+                <html>
+                  <head>
+                    <title>${documento.tipoDocumento?.nome || documento.nomeDocumento} - ${nomeArquivoFinal}</title>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <style>
+                      body { 
+                        margin: 0; 
+                        padding: 20px;
+                        background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); 
+                        font-family: 'Segoe UI', Arial, sans-serif;
+                        display: flex; 
+                        flex-direction: column;
+                        align-items: center; 
+                        min-height: 100vh;
+                        color: white;
+                      }
+                      .header {
+                        text-align: center;
+                        margin-bottom: 20px;
+                      }
+                      .header h1 {
+                        margin: 0;
+                        font-size: 1.5em;
+                        font-weight: 300;
+                      }
+                      .header p {
+                        margin: 5px 0;
+                        opacity: 0.8;
+                      }
+                      .image-container {
+                        background: white;
+                        border-radius: 12px;
+                        padding: 20px;
+                        box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+                        max-width: 90vw;
+                        max-height: 80vh;
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                      }
+                      img { 
+                        max-width: 100%; 
+                        max-height: 70vh; 
+                        object-fit: contain; 
+                        border-radius: 8px;
+                        box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+                      }
+                    </style>
+                  </head>
+                  <body>
+                    <div class="header">
+                      <h1>${documento.tipoDocumento?.nome || documento.nomeDocumento}</h1>
+                      <p>📱 ${nomeArquivoFinal}</p>
+                    </div>
+                    <div class="image-container">
+                      <img src="${blobUrl}" alt="${documento.tipoDocumento?.nome || documento.nomeDocumento}" />
+                    </div>
+                  </body>
+                </html>
+              `);
+            }
+          } else {
+            // Outros tipos de arquivo: abrir diretamente
+            console.log('📎 Abrindo arquivo genérico...');
+            const genericWindow = window.open(blobUrl, '_blank');
+            if (!genericWindow || genericWindow.closed || typeof genericWindow.closed == 'undefined') {
+              this.mostrarErro('Pop-up bloqueado! Por favor, permita pop-ups para este site e tente novamente.');
+            }
+          }
+        },
+        error: (error) => {
+          console.error('❌ Erro na requisição HTTP:', error);
+          console.error('Status:', error.status);
+          console.error('Mensagem:', error.message);
+          loading.dismiss();
+
+          if (error.status === 401 || error.status === 403) {
+            this.mostrarErro('Não autorizado. Faça login novamente.');
+          } else if (error.status === 404) {
+            this.mostrarErro('Documento não encontrado no servidor.');
+          } else {
+            this.mostrarErro('Erro ao carregar documento. Tente novamente.');
+          }
         }
-      } else {
-        // Outros tipos de arquivo: abrir diretamente
-        window.open(urlArquivo, '_blank');
-      }
+      });
 
     } catch (error) {
       console.error('Erro ao abrir documento:', error);

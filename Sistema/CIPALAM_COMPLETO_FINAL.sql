@@ -1087,7 +1087,7 @@ BEGIN
         
 END$$
 
-DELIMITER;
+DELIMITER ;
 
 -- ===================================================================
 -- INSERÇÃO DE FUNCIONALIDADES (SEM ROTAS)
@@ -2508,7 +2508,7 @@ BEGIN
     RETURN v_total;
 END$$
 
-DELIMITER;
+DELIMITER ;
 
 -- ===================================================================
 -- DADOS DE TESTE REMOVIDOS - TURMAS SERÃO CRIADAS VIA INTERFACE
@@ -2588,228 +2588,213 @@ SELECT
 -- INSTRUÇÕES DE USO - FLUXO COMPLETO DE INICIAR MATRÍCULA
 -- ===================================================================
 
-/*
-🎉 BANCO DE DADOS CIPALAM - VERSÃO COMPLETA ATUALIZADA!
-
-🆕 NOVO FLUXO IMPLEMENTADO - INICIAR MATRÍCULA:
-
-✅ **PRINCIPAIS FUNCIONALIDADES**:
-- ✅ Tabela tbIntegranteFamilia: Integrantes familiares separados do JSON
-- ✅ Procedure sp_IniciarMatricula(): Processo completo automatizado
-- ✅ Distribuição automática de dados da declaração para tabelas finais
-- ✅ Criação automática de login para responsável (CPF/password)
-- ✅ Sistema de documentos organizados por família e aluno
-- ✅ Views especializadas para seleção de turmas e documentos
-- ✅ Functions utilitárias para validação e contagem
-
-📋 **ESTRUTURA PRINCIPAIS TABELAS**:
-- **tbFamilia**: Dados completos + endereço + renda + integrantes
-- **tbIntegranteFamilia**: Cada integrante familiar individual 
-- **tbTurma**: Controle de capacidade e informações detalhadas
-- **tbResponsavel**: Múltiplos responsáveis por família
-- **tbAluno**: Dados completos da declaração + matrícula
-- **tbDocumentoMatricula**: Separação família/aluno
-- **tbTipoDocumento**: Escopo (familia/aluno/ambos) + cota
-
-🔄 **FLUXO COMPLETO DE INICIAR MATRÍCULA**:
-
-**1. FUNCIONÁRIO CONSULTA DECLARAÇÕES**:
-```sql
-SELECT * FROM vw_iniciar_matricula;
-```
-
-**2. FUNCIONÁRIO CONSULTA TURMAS DISPONÍVEIS**:
-```sql
-SELECT * FROM tbTurma WHERE ativo = TRUE AND capacidadeAtual < capacidadeMaxima;
-```
-
-**3. VALIDAR SE PODE INICIAR**:
-```sql
-SELECT fn_ValidarIniciarMatricula(1, 1) as validacao;
-```
-
-**4. EXECUTAR INICIAR MATRÍCULA**:
-```sql
-CALL sp_IniciarMatricula(1, 1, 2);
+-- BANCO DE DADOS CIPALAM - VERSÃO COMPLETA ATUALIZADA!
+-- NOVO FLUXO IMPLEMENTADO - INICIAR MATRÍCULA:
+--
+-- PRINCIPAIS FUNCIONALIDADES:
+-- - Tabela tbIntegranteFamilia: Integrantes familiares separados do JSON
+-- - Procedure sp_IniciarMatricula(): Processo completo automatizado
+-- - Distribuição automática de dados da declaração para tabelas finais
+-- - Criação automática de login para responsável (CPF/password)
+-- - Sistema de documentos organizados por família e aluno
+-- - Views especializadas para seleção de turmas e documentos
+-- - Functions utilitárias para validação e contagem
+--
+-- ESTRUTURA PRINCIPAIS TABELAS:
+-- - tbFamilia: Dados completos + endereço + renda + integrantes
+-- - tbIntegranteFamilia: Cada integrante familiar individual 
+-- - tbTurma: Controle de capacidade e informações detalhadas
+-- - tbResponsavel: Múltiplos responsáveis por família
+-- - tbAluno: Dados completos da declaração + matrícula
+-- - tbDocumentoMatricula: Separação família/aluno
+-- - tbTipoDocumento: Escopo (familia/aluno/ambos) + cota
+--
+-- FLUXO COMPLETO DE INICIAR MATRÍCULA:
+--
+-- 1. FUNCIONÁRIO CONSULTA DECLARAÇÕES:
+-- SELECT * FROM vw_iniciar_matricula;
+--
+-- 2. FUNCIONÁRIO CONSULTA TURMAS DISPONÍVEIS:
+-- SELECT * FROM tbTurma WHERE ativo = TRUE AND capacidadeAtual < capacidadeMaxima;
+--
+-- 3. VALIDAR SE PODE INICIAR:
+-- SELECT fn_ValidarIniciarMatricula(1, 1) as validacao;
+--
+-- 4. EXECUTAR INICIAR MATRÍCULA:
+-- CALL sp_IniciarMatricula(1, 1, 2);
 -- Parâmetros: idDeclaracao, idTurma, idFuncionario
-```
-
-**5. RESPONSÁVEL CONSULTA DOCUMENTOS**:
-```sql
-CALL sp_ListarDocumentosResponsavel('111.222.333-44');
-```
+--
+-- 5. RESPONSÁVEL CONSULTA DOCUMENTOS:
+-- CALL sp_ListarDocumentosResponsavel('111.222.333-44');
 
 -- ===================================================================
 -- DOCUMENTAÇÃO DAS MELHORIAS IMPLEMENTADAS - 03/09/2025
 -- ===================================================================
 
-/*
-NOVAS FUNCIONALIDADES IMPLEMENTADAS:
-
-1. **FUNCIONALIDADES NO MENU**:
-- Adicionadas funcionalidades contextuais dentro de declarações:
-- Chave: 'detalharDeclaracao' - Visualizar detalhes completos
-- Chave: 'processarMatricula' - Iniciar processo de matrícula
-- Categoria: 'acao' sob 'declaracoesInteresse'
-
-2. **NOVA VIEW vw_detalhamento_declaracao**:
-- Informações completas de uma declaração específica
-- Inclui idade calculada do aluno
-- Endereço formatado completo
-- Todos os dados familiares e integrantes
-- Status para verificar se pode iniciar matrícula
-- Verificação se responsável já existe no sistema
-
-3. **VIEW vw_iniciar_matricula MANTIDA**:
-- Lista declarações prontas para matrícula
-- Informações resumidas para listagem
-- Contagem de documentos necessários
-
-4. **PROCEDURE sp_ObterInfoSelecaoTurma**:
-- Retorna 3 result sets:
-a) Informações da declaração (incluindo idade do aluno)
-b) Turmas disponíveis com vagas (formatadas)
-c) Documentos que serão criados por cota
-- Facilita a interface de seleção de turma
-
-5. **APRIMORAMENTO NA GERAÇÃO DE LOGIN**:
-- Usuário: CPF sem pontos e traços
-- Senha: Hash SHA256 dos últimos 4 dígitos do CPF
-- Processo automático na procedure sp_IniciarMatricula
-
-5. **VIEWS EXISTENTES MANTIDAS**:
--- VIEWS REMOVIDAS: Sistema usa consultas SQL diretas nas tabelas
-
-FLUXO DE USO DA NOVA FUNCIONALIDADE:
-
-1. Funcionário acessa menu "Matrículas" > "Declarações de Interesse"
-2. Sistema lista declarações disponíveis (consulta SQL direta)
-3. Funcionário clica em uma declaração específica para detalhar
-4. Sistema chama vw_detalhamento_declaracao para mostrar todos os detalhes
-5. Interface exibe botão "Iniciar Matrícula" se podeIniciarMatricula = TRUE
-6. Funcionário clica em "Iniciar Matrícula"
-7. Sistema chama sp_ObterInfoSelecaoTurma(idDeclaracao) para seleção de turma
-8. Interface mostra:
-- Dados completos do aluno e responsável
-- Turmas disponíveis para seleção
-- Documentos que serão criados automaticamente
-9. Funcionário seleciona turma e confirma
-10. Sistema chama sp_IniciarMatricula(idDeclaracao, idTurma, idFuncionario)
-11. Processo automatizado executa:
-- Cria família com dados da declaração
-- Cria/localiza responsável
-- Gera login (usuário=CPF, senha=hash dos 4 últimos dígitos)
-- Cria aluno e vincula à turma
-- Distribui integrantes da família
-- Cria documentos pendentes por cota
-- Atualiza status da declaração para 'matricula_iniciada'
-
-EXEMPLO DE USO COMPLETO:
-```sql
+-- NOVAS FUNCIONALIDADES IMPLEMENTADAS:
+--
+-- 1. FUNCIONALIDADES NO MENU:
+-- - Adicionadas funcionalidades contextuais dentro de declarações
+-- - Chave: 'detalharDeclaracao' - Visualizar detalhes completos
+-- - Chave: 'processarMatricula' - Iniciar processo de matrícula
+-- - Categoria: 'acao' sob 'declaracoesInteresse'
+--
+-- 2. NOVA VIEW vw_detalhamento_declaracao:
+-- - Informações completas de uma declaração específica
+-- - Inclui idade calculada do aluno
+-- - Endereço formatado completo
+-- - Todos os dados familiares e integrantes
+-- - Status para verificar se pode iniciar matrícula
+-- - Verificação se responsável já existe no sistema
+--
+-- 3. VIEW vw_iniciar_matricula MANTIDA:
+-- - Lista declarações prontas para matrícula
+-- - Informações resumidas para listagem
+-- - Contagem de documentos necessários
+--
+-- 4. PROCEDURE sp_ObterInfoSelecaoTurma:
+-- - Retorna 3 result sets:
+-- a) Informações da declaração (incluindo idade do aluno)
+-- b) Turmas disponíveis com vagas (formatadas)
+-- c) Documentos que serão criados por cota
+-- - Facilita a interface de seleção de turma
+--
+-- 5. APRIMORAMENTO NA GERAÇÃO DE LOGIN:
+-- - Usuário: CPF sem pontos e traços
+-- - Senha: Hash SHA256 dos últimos 4 dígitos do CPF
+-- - Processo automático na procedure sp_IniciarMatricula
+--
+-- 5. VIEWS EXISTENTES MANTIDAS:
+-- - VIEWS REMOVIDAS: Sistema usa consultas SQL diretas nas tabelas
+--
+-- FLUXO DE USO DA NOVA FUNCIONALIDADE:
+--
+-- 1. Funcionário acessa menu "Matrículas" > "Declarações de Interesse"
+-- 2. Sistema lista declarações disponíveis (consulta SQL direta)
+-- 3. Funcionário clica em uma declaração específica para detalhar
+-- 4. Sistema chama vw_detalhamento_declaracao para mostrar todos os detalhes
+-- 5. Interface exibe botão "Iniciar Matrícula" se podeIniciarMatricula = TRUE
+-- 6. Funcionário clica em "Iniciar Matrícula"
+-- 7. Sistema chama sp_ObterInfoSelecaoTurma(idDeclaracao) para seleção de turma
+-- 8. Interface mostra:
+-- - Dados completos do aluno e responsável
+-- - Turmas disponíveis para seleção
+-- - Documentos que serão criados automaticamente
+-- 9. Funcionário seleciona turma e confirma
+-- 10. Sistema chama sp_IniciarMatricula(idDeclaracao, idTurma, idFuncionario)
+-- 11. Processo automatizado executa:
+-- - Cria família com dados da declaração
+-- - Cria/localiza responsável
+-- - Gera login (usuário=CPF, senha=hash dos 4 últimos dígitos)
+-- - Cria aluno e vincula à turma
+-- - Distribui integrantes da família
+-- - Cria documentos pendentes por cota
+-- - Atualiza status da declaração para 'matricula_iniciada'
+--
+-- EXEMPLO DE USO COMPLETO:
+--
 -- 1. Listar declarações disponíveis
 -- USAR: Consulta SQL direta na tabela tbInteresseMatricula
-
+--
 -- 2. Detalhar declaração específica (ID 1)
-SELECT * FROM vw_detalhamento_declaracao WHERE id = 1;
-
+-- SELECT * FROM vw_detalhamento_declaracao WHERE id = 1;
+--
 -- 3. Obter informações para seleção de turma (declaração ID 1)
-CALL sp_ObterInfoSelecaoTurma(1);
-
+-- CALL sp_ObterInfoSelecaoTurma(1);
+--
 -- 4. Iniciar matrícula (declaração 1, turma 1, funcionário 2)
-CALL sp_IniciarMatricula(1, 1, 2);
-
+-- CALL sp_IniciarMatricula(1, 1, 2);
+--
 -- 5. Verificar resultado
-SELECT * FROM tbAluno WHERE protocoloDeclaracao = 'PROT2025001';
-SELECT * FROM tblogin WHERE usuario = '11122233344';
-
-/*
-LOGIN GERADO AUTOMATICAMENTE:
-- Usuário: CPF sem formatação (exemplo: 11122233344)
-- Senha: Últimos 4 dígitos do CPF (exemplo: 3344)
-- Hash da senha armazenado: SHA256('3344')
-
-6. CONTAR DOCUMENTOS PENDENTES:
-SELECT fn_CountDocumentosPendentesResponsavel('111.222.333-44') as total;
-
-VIEWS ÚTEIS:
-- vw_usuarios_sistema: Única view mantida - Para autenticação no sistema
-- Demais consultas: SQL direto nas tabelas (mais eficiente)
-
-PROCEDURES E FUNCTIONS:
-- sp_IniciarMatricula(): Automatiza todo o fluxo
-- sp_CriarDocumentosPendentes(): Cria documentos baseados na cota
-- sp_ListarDocumentosResponsavel(): Lista documentos do responsável
-- fn_ValidarIniciarMatricula(): Valida se pode iniciar
-- fn_CountDocumentosPendentesResponsavel(): Conta documentos pendentes
-
-TIPOS DE LOGIN NO SISTEMA:
-- admin / password (Administrador completo)
-- joao.professor / password (Funcionário de teste)
-- maria.responsavel / password (Responsável de teste)
-- CPF_SEM_PONTOS / password (Responsáveis auto-criados)
-
-DOCUMENTOS POR COTA:
-- LIVRE: RG, CPF, Comprovante Residência, Certidão Nascimento, Foto 3x4
-- ECONÔMICA: Documentos básicos + Comprovante Renda + Declaração Dependentes  
-- FUNCIONÁRIO: Documentos básicos + Comprovante Vínculo + Declaração Parentesco
-
-PROCESSO AUTOMÁTICO sp_IniciarMatricula():
-1. Validar declaração e turma
-2. Criar família com dados da declaração
-3. Verificar se responsável já existe
-4. Criar responsável (se necessário) + login
-5. Vincular responsável à família
-6. Criar pessoa aluno
-7. Gerar matrícula automática
-8. Matricular aluno na turma selecionada
-9. Processar integrantes familiares (JSON → tabela)
-10. Criar documentos pendentes por cota
-11. Atualizar status da declaração
-12. Atualizar capacidade da turma
-13. Registrar log da ação
-14. Retornar dados do processo
-
-EXEMPLOS PRÁTICOS:
-
-Ver declarações prontas para matricular:
-SELECT protocolo, nomeAluno, tipoCota, DATEDIFF(CURDATE(), dataEnvio) as diasAguardando 
-FROM tbInteresseMatricula 
-WHERE status = 'interesse_declarado' AND etapaAtual = 'finalizado'
-ORDER BY diasAguardando DESC;
-
-Ver turmas com vagas:
-SELECT nomeTurma, capacidadeMaxima, capacidadeAtual, (capacidadeMaxima - capacidadeAtual) as vagasDisponiveis
-FROM tbTurma 
-WHERE ativo = TRUE AND capacidadeAtual < capacidadeMaxima;
-
-Iniciar matrícula (declaração 1, turma 1, funcionário 2):
-CALL sp_IniciarMatricula(1, 1, 2);
-
-Ver documentos de um responsável:
-CALL sp_ListarDocumentosResponsavel('111.222.333-44');
-
-Verificar integrantes de uma família:
-SELECT nomeIntegrante, parentesco, renda, profissao 
-FROM tbIntegranteFamilia 
-WHERE tbFamilia_idtbFamilia = 1;
-
-SISTEMA COMPLETAMENTE PRONTO PARA:
-- Seleção de turma pelo funcionário
-- Distribuição automática de todos os dados
-- Criação automática de integrantes familiares
-- ✅ Documentos organizados por cota e escopo
-- Login automático para responsável
-- Interface responsável para upload de documentos
-- Controle completo do fluxo de matrícula
-
-PARA USAR ESTE BANCO:
-1. Execute este arquivo SQL completo
-2. O banco será recriado do zero com todos os dados
-3. Teste as procedures e views
-4. Integre com o backend/frontend
-
-BANCO COMPLETAMENTE FUNCIONAL E OTIMIZADO!
-*/
+-- SELECT * FROM tbAluno WHERE protocoloDeclaracao = 'PROT2025001';
+-- SELECT * FROM tblogin WHERE usuario = '11122233344';
+--
+-- LOGIN GERADO AUTOMATICAMENTE:
+-- - Usuário: CPF sem formatação (exemplo: 11122233344)
+-- - Senha: Últimos 4 dígitos do CPF (exemplo: 3344)
+-- - Hash da senha armazenado: SHA256('3344')
+--
+-- 6. CONTAR DOCUMENTOS PENDENTES:
+-- SELECT fn_CountDocumentosPendentesResponsavel('111.222.333-44') as total;
+--
+-- VIEWS ÚTEIS:
+-- - vw_usuarios_sistema: Única view mantida - Para autenticação no sistema
+-- - Demais consultas: SQL direto nas tabelas (mais eficiente)
+--
+-- PROCEDURES E FUNCTIONS:
+-- - sp_IniciarMatricula(): Automatiza todo o fluxo
+-- - sp_CriarDocumentosPendentes(): Cria documentos baseados na cota
+-- - sp_ListarDocumentosResponsavel(): Lista documentos do responsável
+-- - fn_ValidarIniciarMatricula(): Valida se pode iniciar
+-- - fn_CountDocumentosPendentesResponsavel(): Conta documentos pendentes
+--
+-- TIPOS DE LOGIN NO SISTEMA:
+-- - admin / password (Administrador completo)
+-- - joao.professor / password (Funcionário de teste)
+-- - maria.responsavel / password (Responsável de teste)
+-- - CPF_SEM_PONTOS / password (Responsáveis auto-criados)
+--
+-- DOCUMENTOS POR COTA:
+-- - LIVRE: RG, CPF, Comprovante Residência, Certidão Nascimento, Foto 3x4
+-- - ECONÔMICA: Documentos básicos + Comprovante Renda + Declaração Dependentes  
+-- - FUNCIONÁRIO: Documentos básicos + Comprovante Vínculo + Declaração Parentesco
+--
+-- PROCESSO AUTOMÁTICO sp_IniciarMatricula():
+-- 1. Validar declaração e turma
+-- 2. Criar família com dados da declaração
+-- 3. Verificar se responsável já existe
+-- 4. Criar responsável (se necessário) + login
+-- 5. Vincular responsável à família
+-- 6. Criar pessoa aluno
+-- 7. Gerar matrícula automática
+-- 8. Matricular aluno na turma selecionada
+-- 9. Processar integrantes familiares (JSON → tabela)
+-- 10. Criar documentos pendentes por cota
+-- 11. Atualizar status da declaração
+-- 12. Atualizar capacidade da turma
+-- 13. Registrar log da ação
+-- 14. Retornar dados do processo
+--
+-- EXEMPLOS PRÁTICOS:
+--
+-- Ver declarações prontas para matricular:
+-- SELECT protocolo, nomeAluno, tipoCota, DATEDIFF(CURDATE(), dataEnvio) as diasAguardando 
+-- FROM tbInteresseMatricula 
+-- WHERE status = 'interesse_declarado' AND etapaAtual = 'finalizado'
+-- ORDER BY diasAguardando DESC;
+--
+-- Ver turmas com vagas:
+-- SELECT nomeTurma, capacidadeMaxima, capacidadeAtual, (capacidadeMaxima - capacidadeAtual) as vagasDisponiveis
+-- FROM tbTurma 
+-- WHERE ativo = TRUE AND capacidadeAtual < capacidadeMaxima;
+--
+-- Iniciar matrícula (declaração 1, turma 1, funcionário 2):
+-- CALL sp_IniciarMatricula(1, 1, 2);
+--
+-- Ver documentos de um responsável:
+-- CALL sp_ListarDocumentosResponsavel('111.222.333-44');
+--
+-- Verificar integrantes de uma família:
+-- SELECT nomeIntegrante, parentesco, renda, profissao 
+-- FROM tbIntegranteFamilia 
+-- WHERE tbFamilia_idtbFamilia = 1;
+--
+-- SISTEMA COMPLETAMENTE PRONTO PARA:
+-- - Seleção de turma pelo funcionário
+-- - Distribuição automática de todos os dados
+-- - Criação automática de integrantes familiares
+-- - Documentos organizados por cota e escopo
+-- - Login automático para responsável
+-- - Interface responsável para upload de documentos
+-- - Controle completo do fluxo de matrícula
+--
+-- PARA USAR ESTE BANCO:
+-- 1. Execute este arquivo SQL completo
+-- 2. O banco será recriado do zero com todos os dados
+-- 3. Teste as procedures e views
+-- 4. Integre com o backend/frontend
+--
+-- BANCO COMPLETAMENTE FUNCIONAL E OTIMIZADO!
 
 -- ===================================================================
 -- SEÇÃO DE VALIDAÇÃO E TESTES AUTOMÁTICOS
@@ -2913,7 +2898,7 @@ BEGIN
     
 END //
 
-DELIMITER;
+DELIMITER ;
 
 -- ===================================================================
 

@@ -62,7 +62,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/public/**").permitAll()
                         .requestMatchers("/api/matricula/**").permitAll() // Endpoint do interesse em matrícula
                         .requestMatchers("/api/matriculas/**").permitAll() // Endpoint de iniciar matrícula
-                        .anyRequest().authenticated() // Proteger todos os outros endpoints
+                        .anyRequest().permitAll() // Liberar tudo temporariamente para testes
                 );
 
         http.authenticationProvider(authenticationProvider());

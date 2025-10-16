@@ -1,9 +1,7 @@
-<ion-header>
-    <ion-toolbar color="primary">
+<ion-header [translucent]="true" class="custom-header">
+    <ion-toolbar>
         <ion-buttons slot="start">
-            <ion-button (click)="voltar()">
-                <ion-icon name="arrow-back"></ion-icon>
-            </ion-button>
+            <ion-back-button defaultHref="/" text=""></ion-back-button>
         </ion-buttons>
         <ion-title>Selecionar Turma</ion-title>
     </ion-toolbar>

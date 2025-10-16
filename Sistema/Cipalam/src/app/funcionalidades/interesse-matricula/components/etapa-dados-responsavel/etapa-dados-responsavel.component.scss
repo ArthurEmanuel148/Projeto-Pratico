@@ -8,6 +8,19 @@
     color: var(--ion-text-color) !important;
 }
 
+// FORÇA O ASTERISCO VERMELHO EM TODOS OS LUGARES
+ion-text[color="danger"] {
+    color: var(--ion-color-danger) !important;
+    font-weight: 700 !important;
+}
+
+// Força com ng-deep para componentes Ionic
+::ng-deep ion-text[color="danger"] {
+    color: #eb445a !important;
+    --color: #eb445a !important;
+    font-weight: 700 !important;
+}
+
 // Aplica tema na lista e itens
 ion-list {
     --background: var(--ion-background-color) !important;
@@ -19,84 +32,190 @@ ion-item-divider {
     --background: var(--ion-item-background) !important;
     --color: var(--ion-text-color) !important;
     background-color: var(--ion-item-background) !important;
+    margin-bottom: 1.5rem;
 
     ion-label {
-        font-weight: 500;
+        font-weight: 600;
+        font-size: 1.1rem;
         color: var(--ion-text-color) !important;
     }
 }
 
-// Container para cada input com seu label (igual ao cadastro de funcionário)
-.input-container {
+// =============================================================================
+// FORM GROUPS - Estilo igual ao cadastro de funcionário
+// =============================================================================
+
+.form-group {
     display: flex;
     flex-direction: column;
-    margin-bottom: 1.5rem;
+    gap: 1rem;
 }
 
-// Labels externos (em cima dos campos)
-.field-label {
-    font-size: 0.9rem;
+.form-field-container {
+    position: relative;
+    margin-bottom: 0.75rem;
+
+    ion-item {
+        --border-width: 1px;
+        --border-color: var(--ion-color-medium-tint);
+        --border-radius: 8px;
+        --padding-start: 16px;
+        --inner-padding-end: 16px;
+        --background: var(--ion-item-background);
+        --min-height: 64px;
+        
+        margin-bottom: 0.75rem;
+        border-radius: 8px;
+        min-height: 64px;
+        overflow: visible;
+        position: relative;
+        transition: all 0.3s ease;
+
+        ion-label {
+            font-weight: 500;
+            color: #222 !important;
+
+            // Comportamento do label flutuante
+            &[position="floating"] {
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+                transform-origin: left top;
+                color: #222 !important;
+                z-index: 10;
+            }
+
+            // Mantém o asterisco vermelho
+            ion-text[color="danger"] {
+                color: var(--ion-color-danger) !important;
+            }
+        }
+
+        // Label flutuante quando o campo tem foco, valor ou está em estado interativo
+        &.item-has-focus ion-label[position="floating"],
+        &.item-has-value ion-label[position="floating"],
+        &.item-interactive.item-input ion-label[position="floating"] {
+            transform: translateY(-1.8rem) scale(0.75) !important;
+            color: #222 !important;
+            background: var(--ion-background-color, #ffffff);
+            padding: 2px 6px;
+            border-radius: 4px;
+            z-index: 20;
+            position: relative;
+            margin-left: -2px;
+
+            // Força o asterisco a permanecer vermelho
+            ion-text[color="danger"] {
+                color: var(--ion-color-danger) !important;
+            }
+        }
+
+        ion-input,
+        ion-select,
+        ion-textarea {
+            --padding-top: 16px;
+            --padding-bottom: 12px;
+            --color: var(--ion-text-color);
+            --placeholder-color: var(--ion-color-medium);
+            min-height: 44px;
+            line-height: 1.4;
+            font-size: 1rem;
+            font-weight: 400;
+        }
+
+        // Estado com foco
+        &.item-has-focus {
+            --border-color: var(--ion-color-primary);
+            --highlight-color-focused: var(--ion-color-primary);
+            box-shadow: 0 4px 12px rgba(var(--ion-color-primary-rgb), 0.15);
+
+            ion-label[position="floating"] {
+                color: var(--ion-color-primary) !important;
+                
+                // Mantém asterisco vermelho
+                ion-text[color="danger"] {
+                    color: var(--ion-color-danger) !important;
+                }
+            }
+        }
+
+        // Estado válido (com valor preenchido)
+        &.item-has-value:not(.item-valid):not(.item-invalid) {
+            --border-color: var(--ion-color-success);
+        }
+
+        // Estado válido explícito
+        &.item-valid {
+            --border-color: var(--ion-color-success);
+            --highlight-color-focused: var(--ion-color-success);
+
+            ion-label[position="floating"] {
+                color: var(--ion-color-success) !important;
+                
+                // Mantém asterisco vermelho
+                ion-text[color="danger"] {
+                    color: var(--ion-color-danger) !important;
+                }
+            }
+        }
+
+        // Estado inválido
+        &.item-invalid {
+            --border-color: var(--ion-color-danger);
+            --highlight-color-focused: var(--ion-color-danger);
+            background: rgba(var(--ion-color-danger-rgb), 0.05);
+
+            ion-label[position="floating"] {
+                color: var(--ion-color-danger) !important;
+                
+                // Mantém asterisco vermelho
+                ion-text[color="danger"] {
+                    color: var(--ion-color-danger) !important;
+                }
+            }
+        }
+    }
+}
+
+// =============================================================================
+// MENSAGENS DE ERRO
+// =============================================================================
+
+.error-message {
+    display: block;
+    font-size: 0.75rem;
+    color: var(--ion-color-danger);
+    padding: 4px 16px 0;
+    margin-top: -4px;
+    animation: slideDown 0.3s ease;
     font-weight: 500;
-    color: var(--ion-color-primary);
-    margin-bottom: 0.4rem;
-    padding-left: 16px;
-    
-    .required {
-        color: var(--ion-color-danger);
-        font-weight: 600;
-        margin-left: 2px;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-4px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
     }
 }
 
-// Itens sem labels internos
-ion-item {
-    --background: var(--ion-item-background) !important;
-    --color: var(--ion-text-color) !important;
-    --border-color: var(--ion-color-medium) !important;
-    --border-width: 0 0 1px 0;
-    --highlight-color-focused: var(--ion-color-primary);
-    background-color: transparent !important;
-    color: var(--ion-text-color) !important;
+// =============================================================================
+// BOTÃO
+// =============================================================================
+
+ion-button {
+    --border-radius: 8px;
+    --padding-top: 14px;
+    --padding-bottom: 14px;
+    font-weight: 600;
+    text-transform: none;
+    letter-spacing: 0.5px;
+    margin-top: 2rem;
     
-    transition: all 0.3s ease;
-    margin-bottom: 0;
-    
-    // Estado de foco (comportamento da declaração)
-    &.item-has-focus {
-        --border-color: var(--ion-color-primary) !important;
-        --highlight-color-focused: var(--ion-color-primary) !important;
+    ion-icon {
+        margin-left: 8px;
     }
-    
-    // Estado com valor preenchido (comportamento da declaração)
-    &.item-has-value {
-        --border-color: var(--ion-color-success) !important;
-    }
-
-    ion-input {
-        --color: var(--ion-color-dark);
-        --placeholder-color: var(--ion-color-medium);
-        font-size: 1rem;
-        padding-top: 8px;
-        padding-bottom: 8px;
-    }
-}
-
-// Quando o campo tem foco, o label também fica azul
-.input-container:has(ion-item.item-has-focus) .field-label {
-    color: var(--ion-color-primary);
-}
-
-// Quando o campo tem valor, o label fica verde
-.input-container:has(ion-item.item-has-value) .field-label {
-    color: var(--ion-color-success);
-}
-
-// Força aplicação do tema em inputs
-ion-input,
-ion-select {
-    --background: var(--ion-item-background) !important;
-    --color: var(--ion-text-color) !important;
-    --placeholder-color: var(--ion-color-medium) !important;
 }
 
 // Botões aplicando classes globais

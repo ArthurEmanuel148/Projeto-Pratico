@@ -20,7 +20,7 @@
   <!-- Link de voltar para a listagem -->
   <div class="content-container">
     <div class="back-link">
-      <ion-button fill="solid" color="primary" routerLink="/sistema/matriculas/declaracoes">
+      <ion-button fill="clear" color="primary" routerLink="/sistema/matriculas/declaracoes">
         <ion-icon name="arrow-back-outline" slot="start"></ion-icon>
         Voltar para a listagem
       </ion-button>
@@ -107,12 +107,24 @@
           <ion-card-title>Vaga de Interesse</ion-card-title>
         </ion-card-header>
         <ion-card-content>
-          <p><strong>Tipo de Cota:</strong> {{ declaracao.tipoCota || (declaracao.tipoVaga &&
-            declaracao.tipoVaga.tipoCota)
-            }}</p>
-          <p><strong>Série Desejada:</strong> {{ declaracao.serieDesejada || 'Não informado' }}</p>
-          <p><strong>Ano Letivo:</strong> {{ declaracao.anoLetivo || 'Não informado' }}</p>
-          <p><strong>Tipo de Escola Anterior:</strong> {{ declaracao.tipoEscola || 'Não informado' }}</p>
+          <div class="dados-pessoais">
+            <div class="campo-linha">
+              <ion-label class="label-campo">Tipo de Cota:</ion-label>
+              <ion-text class="valor-campo">{{ declaracao.tipoCota || (declaracao.tipoVaga && declaracao.tipoVaga.tipoCota) }}</ion-text>
+            </div>
+            <div class="campo-linha">
+              <ion-label class="label-campo">Série Desejada:</ion-label>
+              <ion-text class="valor-campo">{{ declaracao.serieDesejada || 'Não informado' }}</ion-text>
+            </div>
+            <div class="campo-linha">
+              <ion-label class="label-campo">Ano Letivo:</ion-label>
+              <ion-text class="valor-campo">{{ declaracao.anoLetivo || 'Não informado' }}</ion-text>
+            </div>
+            <div class="campo-linha">
+              <ion-label class="label-campo">Tipo de Escola Anterior:</ion-label>
+              <ion-text class="valor-campo">{{ declaracao.tipoEscola || 'Não informado' }}</ion-text>
+            </div>
+          </div>
         </ion-card-content>
       </ion-card>
 
@@ -121,10 +133,24 @@
           <ion-card-title>Dados da Escola Atual do Aluno</ion-card-title>
         </ion-card-header>
         <ion-card-content>
-          <p><strong>Nome da Escola:</strong> {{ declaracao.escolaAluno || 'Não informado' }}</p>
-          <p><strong>Código INEP:</strong> {{ declaracao.codigoInepEscola || 'Não informado' }}</p>
-          <p><strong>Município:</strong> {{ declaracao.municipioEscola || 'Não informado' }}</p>
-          <p><strong>UF:</strong> {{ declaracao.ufEscola || 'Não informado' }}</p>
+          <div class="dados-pessoais">
+            <div class="campo-linha">
+              <ion-label class="label-campo">Nome da Escola:</ion-label>
+              <ion-text class="valor-campo">{{ declaracao.escolaAluno || 'Não informado' }}</ion-text>
+            </div>
+            <div class="campo-linha">
+              <ion-label class="label-campo">Código INEP:</ion-label>
+              <ion-text class="valor-campo">{{ declaracao.codigoInepEscola || 'Não informado' }}</ion-text>
+            </div>
+            <div class="campo-linha">
+              <ion-label class="label-campo">Município:</ion-label>
+              <ion-text class="valor-campo">{{ declaracao.municipioEscola || 'Não informado' }}</ion-text>
+            </div>
+            <div class="campo-linha">
+              <ion-label class="label-campo">UF:</ion-label>
+              <ion-text class="valor-campo">{{ declaracao.ufEscola || 'Não informado' }}</ion-text>
+            </div>
+          </div>
         </ion-card-content>
       </ion-card>
 
@@ -134,10 +160,16 @@
           <ion-card-title>Datas Importantes</ion-card-title>
         </ion-card-header>
         <ion-card-content>
-          <p><strong>Data de Envio da Declaração:</strong> {{ (declaracao.dataEnvio | date:'dd/MM/yyyy') || 'Não
-            informado' }}</p>
-          <p *ngIf="declaracao.dataInicioMatricula"><strong>Data de Início da Matrícula:</strong> {{
-            declaracao.dataInicioMatricula | date:'dd/MM/yyyy' }}</p>
+          <div class="dados-pessoais">
+            <div class="campo-linha">
+              <ion-label class="label-campo">Data de Envio da Declaração:</ion-label>
+              <ion-text class="valor-campo">{{ (declaracao.dataEnvio | date:'dd/MM/yyyy') || 'Não informado' }}</ion-text>
+            </div>
+            <div class="campo-linha" *ngIf="declaracao.dataInicioMatricula">
+              <ion-label class="label-campo">Data de Início da Matrícula:</ion-label>
+              <ion-text class="valor-campo">{{ declaracao.dataInicioMatricula | date:'dd/MM/yyyy' }}</ion-text>
+            </div>
+          </div>
         </ion-card-content>
       </ion-card>
 
@@ -146,19 +178,46 @@
           <ion-card-title>Endereço da Família</ion-card-title>
         </ion-card-header>
         <ion-card-content>
-          <p><strong>CEP:</strong> {{ declaracao.cep || 'Não informado' }}</p>
-          <p><strong>Logradouro:</strong> {{ declaracao.logradouro || 'Não informado' }}</p>
-          <p><strong>Número:</strong> {{ declaracao.numero || 'Não informado' }}</p>
-          <p *ngIf="declaracao.complemento"><strong>Complemento:</strong> {{ declaracao.complemento }}</p>
-          <p><strong>Bairro:</strong> {{ declaracao.bairro || 'Não informado' }}</p>
-          <p><strong>Cidade:</strong> {{ declaracao.cidade || 'Não informado' }}</p>
-          <p><strong>UF:</strong> {{ declaracao.uf || 'Não informado' }}</p>
-          <p *ngIf="declaracao.pontoReferencia"><strong>Ponto de Referência:</strong> {{ declaracao.pontoReferencia }}
-          </p>
+          <div class="dados-pessoais">
+            <div class="campo-linha">
+              <ion-label class="label-campo">CEP:</ion-label>
+              <ion-text class="valor-campo">{{ declaracao.cep || 'Não informado' }}</ion-text>
+            </div>
+            <div class="campo-linha">
+              <ion-label class="label-campo">Logradouro:</ion-label>
+              <ion-text class="valor-campo">{{ declaracao.logradouro || 'Não informado' }}</ion-text>
+            </div>
+            <div class="campo-linha">
+              <ion-label class="label-campo">Número:</ion-label>
+              <ion-text class="valor-campo">{{ declaracao.numero || 'Não informado' }}</ion-text>
+            </div>
+            <div class="campo-linha" *ngIf="declaracao.complemento">
+              <ion-label class="label-campo">Complemento:</ion-label>
+              <ion-text class="valor-campo">{{ declaracao.complemento }}</ion-text>
+            </div>
+            <div class="campo-linha">
+              <ion-label class="label-campo">Bairro:</ion-label>
+              <ion-text class="valor-campo">{{ declaracao.bairro || 'Não informado' }}</ion-text>
+            </div>
+            <div class="campo-linha">
+              <ion-label class="label-campo">Cidade:</ion-label>
+              <ion-text class="valor-campo">{{ declaracao.cidade || 'Não informado' }}</ion-text>
+            </div>
+            <div class="campo-linha">
+              <ion-label class="label-campo">UF:</ion-label>
+              <ion-text class="valor-campo">{{ declaracao.uf || 'Não informado' }}</ion-text>
+            </div>
+            <div class="campo-linha" *ngIf="declaracao.pontoReferencia">
+              <ion-label class="label-campo">Ponto de Referência:</ion-label>
+              <ion-text class="valor-campo">{{ declaracao.pontoReferencia }}</ion-text>
+            </div>
 
-          <div class="endereco-completo" *ngIf="enderecoCompleto">
-            <strong>Endereço Completo:</strong>
-            <p>{{ enderecoCompleto }}</p>
+            <div class="endereco-completo" *ngIf="enderecoCompleto">
+              <div class="campo-linha">
+                <ion-label class="label-campo">Endereço Completo:</ion-label>
+                <ion-text class="valor-campo">{{ enderecoCompleto }}</ion-text>
+              </div>
+            </div>
           </div>
         </ion-card-content>
       </ion-card>
@@ -247,12 +306,16 @@
           <ion-card-title>Observações do Responsável</ion-card-title>
         </ion-card-header>
         <ion-card-content>
-          <p *ngIf="declaracao.observacoesResponsavel"><strong>Observações:</strong> {{
-            declaracao.observacoesResponsavel }}
-          </p>
-          <p *ngIf="declaracao.mensagemAdicional"><strong>Mensagem Adicional:</strong> {{ declaracao.mensagemAdicional
-            }}
-          </p>
+          <div class="dados-pessoais">
+            <div class="campo-linha" *ngIf="declaracao.observacoesResponsavel">
+              <ion-label class="label-campo">Observações:</ion-label>
+              <ion-text class="valor-campo">{{ declaracao.observacoesResponsavel }}</ion-text>
+            </div>
+            <div class="campo-linha" *ngIf="declaracao.mensagemAdicional">
+              <ion-label class="label-campo">Mensagem Adicional:</ion-label>
+              <ion-text class="valor-campo">{{ declaracao.mensagemAdicional }}</ion-text>
+            </div>
+          </div>
         </ion-card-content>
       </ion-card>
 
@@ -261,7 +324,12 @@
           <ion-card-title>Observações Internas</ion-card-title>
         </ion-card-header>
         <ion-card-content>
-          <p>{{ declaracao.observacoes }}</p>
+          <div class="dados-pessoais">
+            <div class="campo-linha">
+              <ion-label class="label-campo">Observações:</ion-label>
+              <ion-text class="valor-campo">{{ declaracao.observacoes }}</ion-text>
+            </div>
+          </div>
         </ion-card-content>
       </ion-card>
 

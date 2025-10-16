@@ -34,29 +34,58 @@ ion-content {
 }
 
 // Header Styles
-ion-header {
-  background-color: white !important;
+.custom-header {
+  background: var(--ion-color-primary) !important;
 
   ion-toolbar {
-    --background: white !important;
-    --color: var(--text-primary) !important;
-    --border-color: var(--border-color);
-    background-color: white !important;
-    color: #111827 !important;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    --background: var(--ion-color-primary) !important;
+    --color: white !important;
+    --min-height: 56px;
+    background: var(--ion-color-primary) !important;
+    color: white !important;
+    padding: 0 !important;
+  }
+
+  ion-toolbar::part(native) {
+    background: var(--ion-color-primary) !important;
+  }
+
+  ion-title {
+    color: white !important;
+    font-weight: 600;
+    font-size: 1.1rem;
+    background: transparent !important;
   }
 
   .header-title {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
     font-weight: 600;
-    color: var(--text-primary) !important;
+    color: white !important;
+    font-size: 1.1rem;
+    background: transparent !important;
   }
 
   .header-icon {
-    font-size: 1.2rem;
-    color: var(--primary-color) !important;
+    font-size: 1.4rem;
+    color: white !important;
+    background: transparent !important;
+  }
+
+  ion-button {
+    --color: white !important;
+    color: white !important;
+    
+    ion-icon {
+      color: white !important;
+    }
+  }
+
+  ion-buttons {
+    ion-icon {
+      color: white !important;
+    }
   }
 }
 
@@ -82,7 +111,7 @@ ion-header {
 // Hero Section - Light Theme
 .hero-section {
   position: relative;
-  background: var(--gradient-primary);
+  background: linear-gradient(135deg, #5B8FB9 0%, #4A7BA7 100%);
   padding: 50px 20px 40px;
   color: white;
   overflow: hidden;

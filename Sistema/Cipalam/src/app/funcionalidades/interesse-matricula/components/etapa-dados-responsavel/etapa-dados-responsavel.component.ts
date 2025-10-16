@@ -35,6 +35,67 @@ export class EtapaDadosResponsavelComponent implements OnInit {
   }
 
   /**
+   * Verifica se um campo é inválido (tocado ou sujo e com erro)
+   */
+  isFieldInvalid(fieldName: string): boolean {
+    const field = this.form.get(fieldName);
+    return !!(field && field.invalid && (field.touched || field.dirty));
+  }
+
+  /**
+   * Verifica se um campo é válido (tocado ou sujo e sem erro)
+   */
+  isFieldValid(fieldName: string): boolean {
+    const field = this.form.get(fieldName);
+    return !!(field && field.valid && (field.touched || field.dirty));
+  }
+
+  /**
+   * Obtém a mensagem de erro personalizada para um campo
+   */
+  getFieldError(fieldName: string): string | null {
+    const field = this.form.get(fieldName);
+    
+    if (!field || !field.errors || !(field.touched || field.dirty)) {
+      return null;
+    }
+
+    const fieldLabels: { [key: string]: string } = {
+      'nomeResponsavel': 'Nome completo',
+      'cpfResponsavel': 'CPF',
+      'dataNascimentoResponsavel': 'Data de nascimento',
+      'emailResponsavel': 'E-mail',
+      'telefoneResponsavel': 'Telefone'
+    };
+
+    const label = fieldLabels[fieldName] || fieldName;
+
+    if (field.errors['required']) {
+      return `${label} é obrigatório`;
+    }
+
+    if (field.errors['email']) {
+      return 'Digite um e-mail válido';
+    }
+
+    if (field.errors['cpfInvalido']) {
+      return 'CPF inválido';
+    }
+
+    if (field.errors['minlength']) {
+      const minLength = field.errors['minlength'].requiredLength;
+      return `${label} deve ter no mínimo ${minLength} caracteres`;
+    }
+
+    if (field.errors['maxlength']) {
+      const maxLength = field.errors['maxlength'].requiredLength;
+      return `${label} deve ter no máximo ${maxLength} caracteres`;
+    }
+
+    return 'Campo inválido';
+  }
+
+  /**
    * Aplica máscara de CPF no campo
    */
   onCpfInput(event: any) {

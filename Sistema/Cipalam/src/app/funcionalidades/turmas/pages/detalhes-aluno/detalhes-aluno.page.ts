@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { TurmasService } from '../../services/turmas.service';
-import { AlertController, ModalController } from '@ionic/angular';
+import { AlertController, ModalController, NavController } from '@ionic/angular';
 import { environment } from '../../../../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 
@@ -41,12 +41,17 @@ export class DetalhesAlunoPage implements OnInit {
         private turmasService: TurmasService,
         private alertController: AlertController,
         private modalController: ModalController,
-        private http: HttpClient
+        private http: HttpClient,
+        private navCtrl: NavController
     ) { }
 
     ngOnInit() {
         this.alunoId = Number(this.route.snapshot.paramMap.get('id'));
         this.carregarDetalhesAluno();
+    }
+
+    voltar() {
+        this.navCtrl.back();
     }
 
     carregarDetalhesAluno() {

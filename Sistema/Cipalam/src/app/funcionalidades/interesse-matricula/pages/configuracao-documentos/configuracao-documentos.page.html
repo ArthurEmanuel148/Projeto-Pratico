@@ -1,6 +1,9 @@
 <ion-header>
   <ion-toolbar color="primary">
-    <ion-title>Configuração de Documentos por Cota</ion-title>
+    <ion-title>
+      <ion-icon name="document-text-outline" slot="start"></ion-icon>
+      Configuração de Documentos por Cota
+    </ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -15,17 +18,24 @@
   <div *ngIf="!carregando" class="cotas-container">
     <ion-card *ngFor="let cota of tiposCota" class="cota-card" (click)="abrirSelecaoDocumentos(cota)">
       <ion-card-header>
-        <ion-card-title>{{ cota.nome }}</ion-card-title>
+        <ion-card-title>
+          <ion-icon name="ribbon-outline"
+            style="font-size: 1.3rem; vertical-align: middle; margin-right: 8px;"></ion-icon>
+          {{ cota.nome }}
+        </ion-card-title>
       </ion-card-header>
       <ion-card-content>
         <ion-icon name="document-outline" size="large" color="primary"></ion-icon>
         <div class="doc-count">
+          <ion-icon name="checkmark-circle"
+            style="font-size: 1.1em; vertical-align: middle; margin-right: 6px;"></ion-icon>
           {{ (documentosPorCota[cota.chave] || []).length }} documento(s) selecionado(s)
         </div>
         <div class="doc-preview" *ngIf="(documentosPorCota[cota.chave] || []).length > 0">
           <small>{{ getDocumentosNomes(cota.chave) }}</small>
         </div>
         <ion-button expand="block" color="light" fill="solid" size="default">
+          <ion-icon name="create-outline" slot="start"></ion-icon>
           Selecionar Documentos
         </ion-button>
       </ion-card-content>

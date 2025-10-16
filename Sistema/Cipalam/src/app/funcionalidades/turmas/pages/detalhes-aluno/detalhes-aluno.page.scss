@@ -549,7 +549,222 @@
     }
 }
 
+/* === ESTILOS PARA DOCUMENTOS === */
+
+.documentos-filtro {
+    margin-bottom: 20px;
+
+    ion-segment {
+        --background: var(--ion-color-light);
+    }
+}
+
+.categoria-secao {
+    margin-bottom: 30px;
+
+    .categoria-titulo {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--ion-color-primary);
+        font-size: 1.2em;
+        font-weight: 600;
+        margin-bottom: 16px;
+        padding-bottom: 8px;
+        border-bottom: 2px solid var(--ion-color-primary);
+
+        ion-icon {
+            font-size: 1.3em;
+        }
+    }
+}
+
+.documentos-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-top: 16px;
+}
+
+.documento-card {
+    position: relative;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+    &:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+    }
+
+    &.familia {
+        border-left: 4px solid var(--ion-color-tertiary);
+    }
+
+    &.aluno {
+        border-left: 4px solid var(--ion-color-secondary);
+    }
+
+    &.integrante {
+        border-left: 4px solid var(--ion-color-warning);
+    }
+
+    &.documento-aprovado {
+        border-left: 4px solid var(--ion-color-success);
+    }
+
+    &.documento-enviado {
+        border-left: 4px solid var(--ion-color-warning);
+    }
+
+    &.documento-rejeitado {
+        border-left: 4px solid var(--ion-color-danger);
+    }
+
+    ion-card-content {
+        padding: 16px;
+    }
+
+    .documento-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 12px;
+
+        h4,
+        h5 {
+            margin: 0;
+            font-size: 1.1em;
+            font-weight: 600;
+            color: var(--ion-color-dark);
+            flex: 1;
+            padding-right: 8px;
+        }
+
+        ion-badge {
+            flex-shrink: 0;
+            font-size: 0.75em;
+            padding: 4px 8px;
+        }
+    }
+
+    .documento-descricao {
+        font-size: 0.9em;
+        color: var(--ion-color-medium);
+        margin: 8px 0;
+        line-height: 1.4;
+    }
+
+    .documento-info {
+        margin: 8px 0;
+        font-size: 0.85em;
+
+        p {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin: 4px 0;
+            color: var(--ion-color-medium-shade);
+
+            ion-icon {
+                font-size: 1.1em;
+                color: var(--ion-color-medium);
+            }
+        }
+
+        .data-envio {
+            color: var(--ion-color-primary);
+            font-weight: 500;
+        }
+
+        .nome-arquivo {
+            font-size: 0.8em;
+            word-break: break-all;
+        }
+    }
+
+    .documento-acoes {
+        display: flex;
+        justify-content: flex-end;
+        gap: 8px;
+        margin-top: 12px;
+        padding-top: 12px;
+        border-top: 1px solid var(--ion-color-light);
+
+        ion-button {
+            margin: 0;
+
+            ion-icon {
+                font-size: 18px;
+            }
+
+            // Botão Visualizar
+            &:not([fill="clear"]) {
+                --padding-start: 12px;
+                --padding-end: 12px;
+                font-size: 0.9em;
+                font-weight: 500;
+            }
+
+            // Botões de ícone apenas
+            &[fill="clear"] {
+                --padding-start: 8px;
+                --padding-end: 8px;
+
+                ion-icon {
+                    font-size: 20px;
+                }
+            }
+        }
+    }
+}
+
+.integrante-secao {
+    margin-bottom: 24px;
+    background: var(--ion-color-light);
+    padding: 16px;
+    border-radius: 12px;
+
+    .integrante-nome {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 1.1em;
+        font-weight: 600;
+        color: var(--ion-color-dark);
+        margin: 0 0 16px 0;
+
+        ion-icon {
+            font-size: 1.4em;
+            color: var(--ion-color-primary);
+        }
+
+        .parentesco-badge {
+            color: var(--ion-color-medium);
+            font-weight: 500;
+            font-size: 0.9em;
+        }
+    }
+}
+
 @media (max-width: 480px) {
+    .documentos-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .documento-card {
+        .documento-icon {
+            width: 40px;
+            height: 40px;
+            top: -12px;
+            right: 12px;
+
+            ion-icon {
+                font-size: 22px;
+            }
+        }
+    }
+
     .documento-meta {
         .meta-item {
             font-size: 0.85em !important;
@@ -576,6 +791,10 @@
             font-size: 1.6em;
         }
     }
+
+    .documentos-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
 }
 
 @media (min-width: 1024px) {
@@ -584,6 +803,10 @@
     }
 
     .detail-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .documentos-grid {
         grid-template-columns: repeat(3, 1fr);
     }
 }

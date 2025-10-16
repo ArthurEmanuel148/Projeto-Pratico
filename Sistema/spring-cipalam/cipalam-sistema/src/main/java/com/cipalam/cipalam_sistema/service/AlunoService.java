@@ -249,6 +249,41 @@ public class AlunoService {
     }
 
     /**
+     * Busca o ID do aluno vinculado a um responsável
+     * Usado para o painel do responsável visualizar documentos após matrícula
+     * finalizada
+     */
+    public Integer buscarAlunoPorResponsavel(Integer idResponsavel) {
+        try {
+            String sql = """
+                    SELECT a.tbPessoa_idPessoa as idAluno
+                    FROM tbAluno a
+                    INNER JOIN tbFamilia f ON a.tbFamilia_idtbFamilia = f.idtbFamilia
+                    INNER JOIN tbResponsavel r ON f.idtbFamilia = r.tbFamilia_idtbFamilia
+                    WHERE r.tbPessoa_idPessoa = ?
+                    AND a.ativo = TRUE
+                    LIMIT 1
+                    """;
+
+            List<Map<String, Object>> result = jdbcTemplate.queryForList(sql, idResponsavel);
+
+            if (result.isEmpty()) {
+                System.out.println("SERVICE: Nenhum aluno encontrado para responsável ID: " + idResponsavel);
+                return null;
+            }
+
+            Integer idAluno = (Integer) result.get(0).get("idAluno");
+            System.out.println("SERVICE: Aluno encontrado - ID: " + idAluno + " para responsável ID: " + idResponsavel);
+            return idAluno;
+
+        } catch (Exception e) {
+            System.err.println("SERVICE: Erro ao buscar aluno por responsável: " + e.getMessage());
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    /**
      * Alterar turma do aluno
      */
     @Transactional
@@ -357,10 +392,22 @@ public class AlunoService {
                     td.nome as tipoDocumento,
                     td.descricao as descricaoDocumento,
                     td.escopo as categoria,
-                    COALESCE(p.NmPessoa, 'Família') as nomeIntegrante
+                    CASE
+                        WHEN p.idPessoa IS NOT NULL THEN p.NmPessoa
+                        WHEN td.escopo = 'FAMILIA' THEN 'Família'
+                        WHEN td.escopo = 'ALUNO' THEN pa.NmPessoa
+                        ELSE 'Desconhecido'
+                    END as nomeIntegrante,
+                    CASE
+                        WHEN i.parentesco IS NOT NULL THEN i.parentesco
+                        WHEN dm.tbAluno_idPessoa IS NOT NULL THEN 'Aluno'
+                        ELSE NULL
+                    END as parentesco
                 FROM tbDocumentoMatricula dm
                 INNER JOIN tbTipoDocumento td ON dm.tbTipoDocumento_idTipoDocumento = td.idTipoDocumento
-                LEFT JOIN tbPessoa p ON dm.tbPessoa_idPessoa = p.IdPessoa
+                LEFT JOIN tbPessoa p ON dm.tbPessoa_idPessoa = p.idPessoa
+                LEFT JOIN tbPessoa pa ON dm.tbAluno_idPessoa = pa.idPessoa
+                LEFT JOIN tbIntegranteFamilia i ON dm.tbPessoa_idPessoa = i.tbPessoa_idPessoa AND dm.tbFamilia_idtbFamilia = i.tbFamilia_idtbFamilia
                 WHERE (
                     -- Documentos específicos do ALUNO
                     (dm.tbAluno_idPessoa = ? AND td.escopo = 'ALUNO') OR
@@ -395,8 +442,14 @@ public class AlunoService {
                 documento.put("observacoes", rs.getString("observacoes"));
                 documento.put("motivoRejeicao", rs.getString("motivoRejeicao"));
                 documento.put("nomeIntegrante", rs.getString("nomeIntegrante"));
+                documento.put("parentesco", rs.getString("parentesco"));
                 documento.put("obrigatorio", true);
                 documento.put("podeAprovar", true);
+
+                // Log para debug
+                System.out.println("📄 Doc ID " + rs.getInt("idDocumentoMatricula") +
+                        " - Status: " + rs.getString("status") +
+                        " - Arquivo: " + rs.getString("nomeArquivoOriginal"));
 
                 return documento;
             }, idAluno, familiaId, familiaId);
@@ -404,6 +457,168 @@ public class AlunoService {
             System.err.println("Erro ao buscar documentos do aluno " + idAluno + ": " + e.getMessage());
             e.printStackTrace();
             return new ArrayList<>();
+        }
+    }
+
+    /**
+     * Lista documentos do aluno organizados no formato FamiliaDocumentos para o
+     * painel do responsável
+     * Retorna estrutura compatível com a interface do responsável
+     */
+    public Map<String, Object> listarDocumentosAlunoParaResponsavel(Integer idAluno, Integer idResponsavel) {
+        System.out.println("=== ORGANIZANDO DOCUMENTOS PARA RESPONSÁVEL - Aluno ID: " + idAluno + " ===");
+
+        try {
+            // 1. Buscar informações básicas do responsável e família
+            String sqlResponsavel = """
+                    SELECT
+                        p.idPessoa,
+                        p.NmPessoa,
+                        p.email,
+                        f.idtbFamilia
+                    FROM tbPessoa p
+                    INNER JOIN tbResponsavel r ON p.idPessoa = r.tbPessoa_idPessoa
+                    INNER JOIN tbFamilia f ON r.tbFamilia_idtbFamilia = f.idtbFamilia
+                    WHERE p.idPessoa = ?
+                    LIMIT 1
+                    """;
+
+            Map<String, Object> responsavelInfo = jdbcTemplate.queryForMap(sqlResponsavel, idResponsavel);
+            Integer familiaId = (Integer) responsavelInfo.get("idtbFamilia");
+
+            // 2. Buscar documentos do aluno
+            List<Map<String, Object>> documentos = listarDocumentosAluno(idAluno);
+
+            // 3. Organizar documentos por pessoa BASEADO NA CATEGORIA
+            Map<String, List<Map<String, Object>>> documentosPorPessoa = new HashMap<>();
+
+            for (Map<String, Object> doc : documentos) {
+                // Transformar estrutura para formato compatível com declaração
+                Map<String, Object> docTransformado = new HashMap<>();
+
+                // Dados principais do documento
+                docTransformado.put("id", doc.get("id"));
+                docTransformado.put("idDocumentoMatricula", doc.get("id"));
+                docTransformado.put("status", doc.get("status"));
+                docTransformado.put("statusDescricao", doc.get("status"));
+                docTransformado.put("nomeArquivo", doc.get("nomeArquivoOriginal"));
+                docTransformado.put("dataEnvio", doc.get("dataEnvio"));
+                docTransformado.put("dataAprovacao", doc.get("dataAprovacao"));
+                docTransformado.put("observacoes", doc.get("observacoes"));
+                docTransformado.put("obrigatorio", doc.get("obrigatorio"));
+
+                // Criar objeto tipoDocumento aninhado (compatível com declaração)
+                Map<String, Object> tipoDocumento = new HashMap<>();
+                tipoDocumento.put("id", 0); // ID genérico para tipo
+                tipoDocumento.put("nome", doc.get("tipoDocumento"));
+                tipoDocumento.put("descricao", doc.get("descricao"));
+                tipoDocumento.put("categoria", doc.get("categoria"));
+                docTransformado.put("tipoDocumento", tipoDocumento);
+
+                String categoria = (String) doc.get("categoria");
+                String nomeIntegrante = (String) doc.get("nomeIntegrante");
+                String parentesco = (String) doc.get("parentesco");
+
+                // Criar chave única BASEADA NA CATEGORIA do documento
+                String chavePessoa;
+                if ("FAMILIA".equals(categoria)) {
+                    chavePessoa = "FAMILIA_Família";
+                } else if ("ALUNO".equals(categoria)) {
+                    chavePessoa = "ALUNO_" + (nomeIntegrante != null ? nomeIntegrante : "Aluno");
+                } else if ("TODOS_INTEGRANTES".equals(categoria)) {
+                    chavePessoa = "INTEGRANTE_" + (nomeIntegrante != null ? nomeIntegrante : "Integrante") + "_"
+                            + (parentesco != null ? parentesco : "");
+                } else {
+                    chavePessoa = categoria + "_" + (nomeIntegrante != null ? nomeIntegrante : "Outros");
+                }
+
+                documentosPorPessoa.computeIfAbsent(chavePessoa, k -> new ArrayList<>()).add(docTransformado);
+            }
+
+            // 4. Transformar em lista de DocumentoPorPessoa
+            List<Map<String, Object>> documentosPorPessoaLista = new ArrayList<>();
+            for (Map.Entry<String, List<Map<String, Object>>> entry : documentosPorPessoa.entrySet()) {
+                List<Map<String, Object>> docsIntegrante = entry.getValue();
+                if (!docsIntegrante.isEmpty()) {
+                    Map<String, Object> primeiroDoc = docsIntegrante.get(0);
+                    String chavePessoa = entry.getKey();
+
+                    // Extrair categoria da chave
+                    String categoriaChave = chavePessoa.split("_")[0];
+
+                    Map<String, Object> pessoa = new HashMap<>();
+                    pessoa.put("id", 0); // ID genérico
+
+                    // Definir nome e parentesco baseado na categoria
+                    if ("FAMILIA".equals(categoriaChave)) {
+                        pessoa.put("nome", "Família");
+                        pessoa.put("parentesco", "familia");
+                    } else if ("ALUNO".equals(categoriaChave)) {
+                        pessoa.put("nome", primeiroDoc.get("nomeIntegrante"));
+                        pessoa.put("parentesco", "aluno");
+                    } else if ("INTEGRANTE".equals(categoriaChave)) {
+                        pessoa.put("nome", primeiroDoc.get("nomeIntegrante"));
+                        pessoa.put("parentesco",
+                                primeiroDoc.get("parentesco") != null ? primeiroDoc.get("parentesco") : "integrante");
+                    } else {
+                        pessoa.put("nome", primeiroDoc.get("nomeIntegrante"));
+                        pessoa.put("parentesco",
+                                primeiroDoc.get("parentesco") != null ? primeiroDoc.get("parentesco") : "outro");
+                    }
+
+                    Map<String, Object> pessoaDocumentos = new HashMap<>();
+                    pessoaDocumentos.put("pessoa", pessoa);
+                    pessoaDocumentos.put("documentos", docsIntegrante);
+
+                    documentosPorPessoaLista.add(pessoaDocumentos);
+                }
+            }
+
+            // 5. Calcular resumo (matrícula finalizada usa 'enviado' ao invés de 'anexado')
+            Map<String, Integer> resumo = new HashMap<>();
+            int totalDocumentos = documentos.size();
+            int pendentes = 0, anexados = 0, aprovados = 0, rejeitados = 0;
+
+            for (Map<String, Object> doc : documentos) {
+                String status = ((String) doc.get("status")).toLowerCase();
+                switch (status) {
+                    case "pendente" -> pendentes++;
+                    case "anexado", "enviado" -> anexados++; // Aceita tanto 'anexado' quanto 'enviado'
+                    case "aprovado" -> aprovados++;
+                    case "rejeitado" -> rejeitados++;
+                }
+            }
+
+            resumo.put("totalDocumentos", totalDocumentos);
+            resumo.put("pendentes", pendentes);
+            resumo.put("anexados", anexados);
+            resumo.put("aprovados", aprovados);
+            resumo.put("rejeitados", rejeitados);
+
+            // 6. Montar resposta final
+            Map<String, Object> familia = new HashMap<>();
+            familia.put("id", familiaId);
+
+            Map<String, Object> responsavel = new HashMap<>();
+            responsavel.put("id", responsavelInfo.get("idPessoa"));
+            responsavel.put("nome", responsavelInfo.get("NmPessoa"));
+            responsavel.put("email", responsavelInfo.get("email"));
+            familia.put("responsavel", responsavel);
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("familia", familia);
+            response.put("documentosPorPessoa", documentosPorPessoaLista);
+            response.put("resumo", resumo);
+
+            System.out.println("✅ Documentos organizados: " + documentosPorPessoaLista.size() + " pessoas, "
+                    + totalDocumentos + " documentos");
+
+            return response;
+
+        } catch (Exception e) {
+            System.err.println("❌ Erro ao organizar documentos para responsável: " + e.getMessage());
+            e.printStackTrace();
+            return new HashMap<>();
         }
     }
 
@@ -499,6 +714,193 @@ public class AlunoService {
             System.err.println("Erro ao rejeitar documento " + idDocumento + ": " + e.getMessage());
             e.printStackTrace();
             return false;
+        }
+    }
+
+    /**
+     * Anexar documento por responsável em matrícula finalizada
+     * Salva o arquivo e atualiza tbDocumentoMatricula
+     */
+    @Transactional
+    public boolean anexarDocumentoPorResponsavel(
+            org.springframework.web.multipart.MultipartFile arquivo,
+            Integer documentoId,
+            Integer responsavelId) {
+        try {
+            System.out.println("=== ANEXANDO DOCUMENTO POR RESPONSÁVEL ===");
+            System.out.println("Responsável ID: " + responsavelId);
+            System.out.println("Documento ID: " + documentoId);
+            System.out.println("Arquivo: " + arquivo.getOriginalFilename());
+
+            // 1. Buscar informações do documento para saber onde salvar
+            String sqlDocumento = """
+                    SELECT
+                        dm.idDocumentoMatricula,
+                        dm.tbFamilia_idtbFamilia,
+                        dm.tbAluno_idPessoa,
+                        dm.tbPessoa_idPessoa,
+                        td.escopo
+                    FROM tbDocumentoMatricula dm
+                    INNER JOIN tbTipoDocumento td ON dm.tbTipoDocumento_idTipoDocumento = td.idTipoDocumento
+                    WHERE dm.idDocumentoMatricula = ?
+                    """;
+
+            Map<String, Object> docInfo = jdbcTemplate.queryForMap(sqlDocumento, documentoId);
+            String escopo = (String) docInfo.get("escopo");
+
+            System.out.println("📋 Informações do documento:");
+            System.out.println("  - Escopo: " + escopo);
+            System.out.println("  - Família ID: " + docInfo.get("tbFamilia_idtbFamilia"));
+            System.out.println("  - Aluno ID: " + docInfo.get("tbAluno_idPessoa"));
+            System.out.println("  - Pessoa ID: " + docInfo.get("tbPessoa_idPessoa"));
+
+            // 2. Determinar o caminho do arquivo baseado no escopo
+            String nomeArquivo = arquivo.getOriginalFilename();
+            String extensao = nomeArquivo.substring(nomeArquivo.lastIndexOf("."));
+            String timestamp = String.valueOf(System.currentTimeMillis());
+            String nomeArquivoFinal = "doc_" + documentoId + "_" + timestamp + extensao;
+
+            // Caminho base dos documentos
+            String caminhoBase = "/Applications/XAMPP/xamppfiles/htdocs/GitHub/Projeto-Pratico/cipalam_documentos/";
+            String caminhoRelativo = "";
+
+            // Definir subcaminho baseado no escopo
+            switch (escopo.toUpperCase()) {
+                case "FAMILIA":
+                    caminhoRelativo = "familia/" + nomeArquivoFinal;
+                    break;
+                case "ALUNO":
+                    caminhoRelativo = "aluno/" + nomeArquivoFinal;
+                    break;
+                case "TODOS_INTEGRANTES":
+                    caminhoRelativo = "integrantes/" + nomeArquivoFinal;
+                    break;
+                default:
+                    caminhoRelativo = "outros/" + nomeArquivoFinal;
+            }
+
+            String caminhoCompleto = caminhoBase + caminhoRelativo;
+
+            // 3. Salvar o arquivo no disco
+            java.io.File diretorio = new java.io.File(caminhoCompleto).getParentFile();
+            if (!diretorio.exists()) {
+                diretorio.mkdirs();
+            }
+
+            arquivo.transferTo(new java.io.File(caminhoCompleto));
+            System.out.println("✅ Arquivo salvo em: " + caminhoCompleto);
+
+            // 4. Atualizar o registro em tbDocumentoMatricula
+            String sqlUpdate = """
+                    UPDATE tbDocumentoMatricula
+                    SET caminhoArquivo = ?,
+                        nomeArquivoOriginal = ?,
+                        tipoArquivo = ?,
+                        tamanhoArquivo = ?,
+                        status = 'enviado',
+                        dataEnvio = NOW(),
+                        dataAtualizacao = NOW()
+                    WHERE idDocumentoMatricula = ?
+                    """;
+
+            int rowsAffected = jdbcTemplate.update(
+                    sqlUpdate,
+                    caminhoRelativo,
+                    nomeArquivo,
+                    arquivo.getContentType(),
+                    arquivo.getSize(),
+                    documentoId);
+
+            System.out.println("📊 Resultado da atualização:");
+            System.out.println("  - Linhas afetadas: " + rowsAffected);
+            System.out.println("  - Caminho relativo salvo: " + caminhoRelativo);
+            System.out.println("  - Status definido: anexado");
+
+            if (rowsAffected > 0) {
+                System.out.println("✅ Documento anexado com sucesso!");
+
+                // Verificar se realmente foi atualizado
+                String sqlVerificar = "SELECT status, caminhoArquivo FROM tbDocumentoMatricula WHERE idDocumentoMatricula = ?";
+                Map<String, Object> verificacao = jdbcTemplate.queryForMap(sqlVerificar, documentoId);
+                System.out.println("🔍 Verificação após atualização:");
+                System.out.println("  - Status atual: " + verificacao.get("status"));
+                System.out.println("  - Caminho atual: " + verificacao.get("caminhoArquivo"));
+
+                return true;
+            } else {
+                System.err.println("❌ Nenhuma linha foi atualizada");
+                return false;
+            }
+
+        } catch (Exception e) {
+            System.err.println("❌ Erro ao anexar documento: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    /**
+     * Obter arquivo físico do documento (retorna bytes do arquivo)
+     */
+    public byte[] obterArquivoDocumento(Integer idDocumento) {
+        try {
+            System.out.println("========================================");
+            System.out.println("📂 SERVICE: Buscando arquivo do documento ID: " + idDocumento);
+
+            // Buscar o caminho do arquivo no banco de dados
+            String sql = "SELECT caminhoArquivo FROM tbDocumentoMatricula WHERE idDocumentoMatricula = ?";
+            String caminhoArquivo = jdbcTemplate.queryForObject(sql, String.class, idDocumento);
+
+            if (caminhoArquivo == null || caminhoArquivo.isEmpty()) {
+                System.err.println("❌ Caminho do arquivo não encontrado no banco");
+                return null;
+            }
+
+            System.out.println("📍 Caminho no banco: " + caminhoArquivo);
+
+            // Caminho base dos documentos
+            String caminhoBase = "/Applications/XAMPP/xamppfiles/htdocs/GitHub/Projeto-Pratico/cipalam_documentos/";
+            String caminhoCompleto;
+
+            // Verificar se o caminho já é absoluto (legado) ou relativo (novo)
+            if (caminhoArquivo.startsWith("/Applications/XAMPP")) {
+                // Caminho absoluto (legado) - usar direto
+                caminhoCompleto = caminhoArquivo;
+                System.out.println("📌 Usando caminho absoluto (legado)");
+            } else {
+                // Caminho relativo (novo) - concatenar com base
+                caminhoCompleto = caminhoBase + caminhoArquivo;
+                System.out.println("📌 Usando caminho relativo (novo)");
+            }
+
+            System.out.println("📂 Caminho completo: " + caminhoCompleto);
+
+            // Ler o arquivo
+            java.io.File arquivo = new java.io.File(caminhoCompleto);
+
+            if (!arquivo.exists()) {
+                System.err.println("❌ Arquivo não existe no disco: " + caminhoCompleto);
+                return null;
+            }
+
+            System.out.println("✅ Arquivo encontrado! Tamanho: " + arquivo.length() + " bytes");
+
+            // Ler todos os bytes do arquivo
+            java.nio.file.Path path = arquivo.toPath();
+            byte[] bytes = java.nio.file.Files.readAllBytes(path);
+
+            System.out.println("✅ Arquivo lido com sucesso: " + bytes.length + " bytes");
+            System.out.println("========================================");
+
+            return bytes;
+
+        } catch (Exception e) {
+            System.err.println("========================================");
+            System.err.println("❌ SERVICE: Erro ao obter arquivo do documento");
+            System.err.println("Mensagem: " + e.getMessage());
+            e.printStackTrace();
+            System.err.println("========================================");
+            return null;
         }
     }
 }

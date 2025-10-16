@@ -304,7 +304,8 @@
             <!-- Seção: Composição Familiar -->
             <div *ngIf="secaoAtiva === 'familia'" class="secao-content">
 
-                <ion-card class="section-card" *ngIf="aluno.integrantesRenda">
+                <!-- Usar dados da tabela (integrantesFamiliaTabela) se disponível, senão usar JSON (integrantesRenda) -->
+                <ion-card class="section-card" *ngIf="aluno.integrantesFamiliaTabela || aluno.integrantesRenda">
                     <ion-card-header>
                         <ion-card-title>
                             <ion-icon name="home-outline" color="primary"></ion-icon>
@@ -319,7 +320,8 @@
                                 <ion-segment-button
                                     *ngFor="let integrante of getIntegrantes(aluno.integrantesRenda); let i = index"
                                     [value]="i">
-                                    <ion-label>{{ integrante.nome.split(' ')[0] }}</ion-label>
+                                    <ion-label>{{ (integrante.nomeIntegrante || integrante.nome || '').split(' ')[0]
+                                        }}</ion-label>
                                 </ion-segment-button>
                             </ion-segment>
                         </div>
@@ -327,30 +329,33 @@
                         <!-- Detalhes do integrante selecionado -->
                         <div *ngIf="integranteAtual" class="integrante-detalhes">
                             <div class="integrante-header">
-                                <h3>{{ integranteAtual.nome }}</h3>
-                                <ion-badge color="primary">{{ integranteAtual.parentesco }}</ion-badge>
+                                <h3>{{ integranteAtual.nomeIntegrante || integranteAtual.nome }}</h3>
+                                <ion-badge color="primary">{{ integranteAtual.parentescoFormatado ||
+                                    integranteAtual.parentesco }}</ion-badge>
                             </div>
 
                             <div class="detail-grid">
                                 <div class="detail-item">
                                     <label>Nome Completo:</label>
-                                    <span>{{ integranteAtual.nome }}</span>
+                                    <span>{{ integranteAtual.nomeIntegrante || integranteAtual.nome }}</span>
                                 </div>
                                 <div class="detail-item">
                                     <label>Parentesco:</label>
-                                    <span>{{ integranteAtual.parentesco }}</span>
+                                    <span>{{ integranteAtual.parentescoFormatado || integranteAtual.parentesco }}</span>
                                 </div>
-                                <div class="detail-item">
+                                <div class="detail-item" *ngIf="integranteAtual.dataNascimento">
                                     <label>Idade:</label>
-                                    <span>{{ integranteAtual.idade }} anos</span>
+                                    <span>{{ calcularIdade(integranteAtual.dataNascimento) }} anos</span>
                                 </div>
                                 <div class="detail-item">
                                     <label>Renda Mensal:</label>
-                                    <span>{{ integranteAtual.renda | currency:'BRL':'symbol':'1.2-2' }}</span>
+                                    <!-- Suporta tanto 'renda' (da tabela) quanto 'rendaMensal' (do JSON) -->
+                                    <span>{{ (integranteAtual.renda ?? integranteAtual.rendaMensal ?? 0) |
+                                        currency:'BRL':'symbol':'1.2-2' }}</span>
                                 </div>
-                                <div class="detail-item">
-                                    <label>Tipo de Renda:</label>
-                                    <span>{{ integranteAtual.tipoRenda }}</span>
+                                <div class="detail-item" *ngIf="integranteAtual.profissao || integranteAtual.ocupacao">
+                                    <label>Profissão:</label>
+                                    <span>{{ integranteAtual.profissao || integranteAtual.ocupacao }}</span>
                                 </div>
                                 <div class="detail-item" *ngIf="integranteAtual.observacoes">
                                     <label>Observações:</label>
@@ -363,7 +368,8 @@
                                 <ion-button fill="outline" color="primary"
                                     (click)="verDocumentosIntegrante(integranteAtual)">
                                     <ion-icon name="document-text-outline" slot="start"></ion-icon>
-                                    Ver Documentos de {{ integranteAtual.nome.split(' ')[0] }}
+                                    Ver Documentos de {{ (integranteAtual.nomeIntegrante || integranteAtual.nome ||
+                                    '').split(' ')[0] }}
                                 </ion-button>
                             </div>
                         </div>
@@ -443,10 +449,6 @@
                                             [class.documento-aprovado]="documento.status === 'aprovado'"
                                             [class.documento-rejeitado]="documento.status === 'rejeitado'">
 
-                                            <div class="documento-icon">
-                                                <ion-icon [name]="getIconeDocumento(documento)"></ion-icon>
-                                            </div>
-
                                             <ion-card-content>
                                                 <div class="documento-header">
                                                     <h4>{{ documento.tipoDocumento }}</h4>
@@ -467,10 +469,11 @@
                                                 </div>
 
                                                 <div class="documento-acoes">
-                                                    <ion-button *ngIf="documento.caminhoArquivo" fill="clear"
-                                                        size="small" (click)="visualizarDocumento(documento)"
+                                                    <ion-button *ngIf="documento.caminhoArquivo" size="small"
+                                                        (click)="visualizarDocumento(documento)"
                                                         title="Visualizar documento">
-                                                        <ion-icon name="eye-outline" slot="icon-only"></ion-icon>
+                                                        <ion-icon name="document-text-outline" slot="start"></ion-icon>
+                                                        Visualizar
                                                     </ion-button>
                                                     <ion-button *ngIf="documento.status === 'enviado'" fill="clear"
                                                         color="success" size="small"
@@ -509,9 +512,10 @@
                                                 </div>
                                                 <p class="documento-descricao">{{ documento.descricao }}</p>
                                                 <div class="documento-acoes">
-                                                    <ion-button *ngIf="documento.caminhoArquivo" fill="clear"
-                                                        size="small" (click)="visualizarDocumento(documento)">
-                                                        <ion-icon name="eye-outline" slot="icon-only"></ion-icon>
+                                                    <ion-button *ngIf="documento.caminhoArquivo" size="small"
+                                                        (click)="visualizarDocumento(documento)">
+                                                        <ion-icon name="document-text-outline" slot="start"></ion-icon>
+                                                        Visualizar
                                                     </ion-button>
                                                     <ion-button *ngIf="documento.status === 'enviado'" fill="clear"
                                                         color="success" size="small"
@@ -542,33 +546,66 @@
                                         class="integrante-secao">
                                         <h4 class="integrante-nome">
                                             <ion-icon name="person-circle-outline"></ion-icon>
-                                            {{ integrante.key }} ({{ integrante.value.length }} documentos)
+                                            {{ integrante.key }}
+                                            <span *ngIf="integrante.value[0]?.parentesco" class="parentesco-badge">
+                                                ({{ formatarParentesco(integrante.value[0].parentesco) }})
+                                            </span>
+                                            - {{ integrante.value.length }} {{ integrante.value.length === 1 ?
+                                            'documento' : 'documentos' }}
                                         </h4>
                                         <div class="documentos-grid">
                                             <ion-card *ngFor="let documento of integrante.value"
-                                                class="documento-card integrante">
+                                                class="documento-card integrante"
+                                                [class.documento-enviado]="documento.status === 'enviado'"
+                                                [class.documento-aprovado]="documento.status === 'aprovado'"
+                                                [class.documento-rejeitado]="documento.status === 'rejeitado'">
+
                                                 <ion-card-content>
                                                     <div class="documento-header">
                                                         <h5>{{ documento.tipoDocumento }}</h5>
                                                         <ion-badge [color]="getCorStatus(documento.status)">
-                                                            {{ documento.status }}
+                                                            {{ formatarStatusDocumento(documento.status) }}
                                                         </ion-badge>
                                                     </div>
-                                                    <p class="documento-descricao">{{ documento.descricao }}</p>
+
+                                                    <p class="documento-descricao" *ngIf="documento.descricao">
+                                                        {{ documento.descricao }}
+                                                    </p>
+
+                                                    <div class="documento-info" *ngIf="documento.dataEnvio">
+                                                        <p class="data-envio">
+                                                            <ion-icon name="time-outline"></ion-icon>
+                                                            {{ documento.dataEnvioFormatada || (documento.dataEnvio |
+                                                            date:'dd/MM/yyyy HH:mm') }}
+                                                        </p>
+                                                    </div>
+
+                                                    <div class="documento-info" *ngIf="documento.nomeArquivoOriginal">
+                                                        <p class="nome-arquivo">
+                                                            <ion-icon name="document-outline"></ion-icon>
+                                                            {{ documento.nomeArquivoOriginal }}
+                                                        </p>
+                                                    </div>
+
                                                     <div class="documento-acoes">
-                                                        <ion-button *ngIf="documento.caminhoArquivo" fill="clear"
-                                                            size="small" (click)="visualizarDocumento(documento)">
-                                                            <ion-icon name="eye-outline" slot="icon-only"></ion-icon>
+                                                        <ion-button *ngIf="documento.caminhoArquivo" size="small"
+                                                            (click)="visualizarDocumento(documento)"
+                                                            title="Visualizar documento">
+                                                            <ion-icon name="document-text-outline"
+                                                                slot="start"></ion-icon>
+                                                            Visualizar
                                                         </ion-button>
                                                         <ion-button *ngIf="documento.status === 'enviado'" fill="clear"
                                                             color="success" size="small"
-                                                            (click)="aprovarDocumento(documento)">
+                                                            (click)="aprovarDocumento(documento)"
+                                                            title="Aprovar documento">
                                                             <ion-icon name="checkmark-circle-outline"
                                                                 slot="icon-only"></ion-icon>
                                                         </ion-button>
                                                         <ion-button *ngIf="documento.status === 'enviado'" fill="clear"
                                                             color="danger" size="small"
-                                                            (click)="rejeitarDocumento(documento)">
+                                                            (click)="rejeitarDocumento(documento)"
+                                                            title="Rejeitar documento">
                                                             <ion-icon name="close-circle-outline"
                                                                 slot="icon-only"></ion-icon>
                                                         </ion-button>
@@ -593,9 +630,10 @@
                                         </div>
                                         <p class="documento-descricao">{{ documento.descricao }}</p>
                                         <div class="documento-acoes">
-                                            <ion-button *ngIf="documento.caminhoArquivo" fill="clear" size="small"
+                                            <ion-button *ngIf="documento.caminhoArquivo" size="small"
                                                 (click)="visualizarDocumento(documento)">
-                                                <ion-icon name="eye-outline" slot="icon-only"></ion-icon>
+                                                <ion-icon name="document-text-outline" slot="start"></ion-icon>
+                                                Visualizar
                                             </ion-button>
                                             <ion-button *ngIf="documento.status === 'enviado'" fill="clear"
                                                 color="success" size="small" (click)="aprovarDocumento(documento)">
@@ -622,9 +660,10 @@
                                         </div>
                                         <p class="documento-descricao">{{ documento.descricao }}</p>
                                         <div class="documento-acoes">
-                                            <ion-button *ngIf="documento.caminhoArquivo" fill="clear" size="small"
+                                            <ion-button *ngIf="documento.caminhoArquivo" size="small"
                                                 (click)="visualizarDocumento(documento)">
-                                                <ion-icon name="eye-outline" slot="icon-only"></ion-icon>
+                                                <ion-icon name="document-text-outline" slot="start"></ion-icon>
+                                                Visualizar
                                             </ion-button>
                                             <ion-button *ngIf="documento.status === 'enviado'" fill="clear"
                                                 color="success" size="small" (click)="aprovarDocumento(documento)">
@@ -659,9 +698,10 @@
                                                 </div>
                                                 <p class="documento-descricao">{{ documento.descricao }}</p>
                                                 <div class="documento-acoes">
-                                                    <ion-button *ngIf="documento.caminhoArquivo" fill="clear"
-                                                        size="small" (click)="visualizarDocumento(documento)">
-                                                        <ion-icon name="eye-outline" slot="icon-only"></ion-icon>
+                                                    <ion-button *ngIf="documento.caminhoArquivo" size="small"
+                                                        (click)="visualizarDocumento(documento)">
+                                                        <ion-icon name="document-text-outline" slot="start"></ion-icon>
+                                                        Visualizar
                                                     </ion-button>
                                                     <ion-button *ngIf="documento.status === 'enviado'" fill="clear"
                                                         color="success" size="small"

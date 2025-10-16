@@ -3,6 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { TurmasService } from '../../services/turmas.service';
 import { AlertController, ModalController } from '@ionic/angular';
 import { environment } from '../../../../../environments/environment';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
     selector: 'app-detalhes-aluno',
@@ -39,7 +40,8 @@ export class DetalhesAlunoPage implements OnInit {
         private route: ActivatedRoute,
         private turmasService: TurmasService,
         private alertController: AlertController,
-        private modalController: ModalController
+        private modalController: ModalController,
+        private http: HttpClient
     ) { }
 
     ngOnInit() {
@@ -54,8 +56,16 @@ export class DetalhesAlunoPage implements OnInit {
                 console.log('Detalhes do aluno recebidos:', response);
                 this.aluno = response;
 
+                // Log para debug
+                console.log('Integrantes da tabela:', this.aluno.integrantesFamiliaTabela);
+                console.log('Integrantes JSON:', this.aluno.integrantesRenda);
+
                 // Inicializar o primeiro integrante se houver família
-                if (this.aluno.integrantesRenda) {
+                // Priorizar dados da tabela (integrantesFamiliaTabela) ao invés do JSON
+                if (this.aluno.integrantesFamiliaTabela && this.aluno.integrantesFamiliaTabela.length > 0) {
+                    this.integranteAtual = this.aluno.integrantesFamiliaTabela[0];
+                    console.log('Primeiro integrante da tabela:', this.integranteAtual);
+                } else if (this.aluno.integrantesRenda) {
                     const integrantes = this.getIntegrantes(this.aluno.integrantesRenda);
                     if (integrantes.length > 0) {
                         this.integranteAtual = integrantes[0];
@@ -84,6 +94,12 @@ export class DetalhesAlunoPage implements OnInit {
 
     // Métodos para trabalhar com integrantes da família
     getIntegrantes(integrantesRenda: string): any[] {
+        // Priorizar dados da tabela se disponíveis
+        if (this.aluno && this.aluno.integrantesFamiliaTabela && this.aluno.integrantesFamiliaTabela.length > 0) {
+            return this.aluno.integrantesFamiliaTabela;
+        }
+
+        // Fallback para o JSON antigo
         if (!integrantesRenda) return [];
 
         try {
@@ -97,9 +113,15 @@ export class DetalhesAlunoPage implements OnInit {
 
     mudarIntegrante(event: any) {
         const index = event.detail.value;
-        const integrantes = this.getIntegrantes(this.aluno.integrantesRenda);
+        // Usar dados da tabela se disponíveis
+        const integrantes = this.aluno.integrantesFamiliaTabela || this.getIntegrantes(this.aluno.integrantesRenda);
         this.integranteAtual = integrantes[index] || null;
         this.integranteSelecionado = index;
+
+        // Log de depuração para verificar os dados do integrante
+        console.log('Integrante selecionado:', this.integranteAtual);
+        console.log('Renda do integrante:', this.integranteAtual?.renda);
+        console.log('RendaMensal do integrante:', this.integranteAtual?.rendaMensal);
     }
 
     // Métodos para cálculos
@@ -119,12 +141,18 @@ export class DetalhesAlunoPage implements OnInit {
     }
 
     calcularRendaTotal(): number {
-        const integrantes = this.getIntegrantes(this.aluno.integrantesRenda);
-        return integrantes.reduce((total, integrante) => total + (integrante.renda || 0), 0);
+        // Priorizar dados da tabela ao invés do JSON
+        const integrantes = this.aluno?.integrantesFamiliaTabela || this.getIntegrantes(this.aluno?.integrantesRenda || '');
+        return integrantes.reduce((total: number, integrante: any) => {
+            // Para dados da tabela, usar 'renda' diretamente
+            // Para dados do JSON antigo, usar 'rendaMensal' ou 'renda'
+            const rendaIntegrante = integrante.renda ?? integrante.rendaMensal ?? 0;
+            return total + Number(rendaIntegrante);
+        }, 0);
     }
 
     calcularRendaPerCapita(): number {
-        const integrantes = this.getIntegrantes(this.aluno.integrantesRenda);
+        const integrantes = this.aluno?.integrantesFamiliaTabela || this.getIntegrantes(this.aluno?.integrantesRenda || '');
         const total = this.calcularRendaTotal();
         return integrantes.length > 0 ? total / integrantes.length : 0;
     }
@@ -157,21 +185,38 @@ export class DetalhesAlunoPage implements OnInit {
         if (this.alunoId) {
             this.isLoading = true;
             this.carregandoDocumentos = true;
-            console.log('Carregando documentos para aluno ID:', this.alunoId);
+            console.log('=== CARREGANDO DOCUMENTOS ===');
+            console.log('Aluno ID:', this.alunoId);
 
             this.turmasService.obterDocumentosAluno(this.alunoId).subscribe({
                 next: (response) => {
-                    console.log('Resposta dos documentos:', response);
+                    console.log('✅ Documentos carregados com sucesso!');
+                    console.log('Resposta completa:', response);
+                    console.log('Total de documentos:', response?.length || 0);
                     this.documentos = response || [];
                     this.organizarDocumentosPorCategoria();
                     this.isLoading = false;
                     this.carregandoDocumentos = false;
                 },
                 error: (error) => {
-                    console.error('Erro ao carregar documentos:', error);
+                    console.error('❌ ERRO ao carregar documentos:');
+                    console.error('Status:', error.status);
+                    console.error('Mensagem:', error.message);
+                    console.error('Erro completo:', error);
                     this.isLoading = false;
                     this.carregandoDocumentos = false;
-                    this.mostrarErro('Erro ao carregar documentos');
+
+                    // Mensagem de erro mais específica
+                    let mensagem = 'Erro ao carregar documentos';
+                    if (error.status === 401) {
+                        mensagem = 'Sessão expirada. Por favor, faça login novamente.';
+                    } else if (error.status === 404) {
+                        mensagem = 'Endpoint de documentos não encontrado';
+                    } else if (error.status === 500) {
+                        mensagem = 'Erro no servidor ao buscar documentos';
+                    }
+
+                    this.mostrarErro(mensagem);
                 }
             });
         }
@@ -537,6 +582,44 @@ export class DetalhesAlunoPage implements OnInit {
         }
     }
 
+    formatarParentesco(parentesco: string): string {
+        if (!parentesco) return '';
+
+        const parentescos: { [key: string]: string } = {
+            'pai': 'Pai',
+            'mae': 'Mãe',
+            'responsavel': 'Responsável',
+            'conjuge': 'Cônjuge',
+            'filho': 'Filho',
+            'filha': 'Filha',
+            'irmao': 'Irmão',
+            'irma': 'Irmã',
+            'avo': 'Avô',
+            'ava': 'Avó',
+            'tio': 'Tio',
+            'tia': 'Tia',
+            'sobrinho': 'Sobrinho',
+            'sobrinha': 'Sobrinha',
+            'aluno': 'Aluno',
+            'outro': 'Outro'
+        };
+
+        return parentescos[parentesco.toLowerCase()] || parentesco;
+    }
+
+    formatarStatusDocumento(status: string): string {
+        if (!status) return 'Pendente';
+
+        const statusMap: { [key: string]: string } = {
+            'pendente': 'Pendente',
+            'enviado': 'Enviado',
+            'aprovado': 'Aprovado',
+            'rejeitado': 'Rejeitado'
+        };
+
+        return statusMap[status.toLowerCase()] || status;
+    }
+
     getTotalDocumentosIntegrantes(): number {
         let total = 0;
         this.documentosIntegrantes.forEach(docs => {
@@ -547,29 +630,62 @@ export class DetalhesAlunoPage implements OnInit {
 
     // Método para visualizar documento
     async visualizarDocumento(documento: any) {
-        if (!documento.caminhoArquivo) {
-            this.mostrarErro('Documento não possui arquivo anexado');
+        console.log('📋 DEBUG: Estrutura completa do documento:', documento);
+        console.log('📋 DEBUG: Propriedades do documento:', Object.keys(documento));
+
+        // Tentar diferentes propriedades que podem conter o ID
+        const documentoId = documento.idDocumentoMatricula || documento.id || documento.idDocumento;
+
+        if (!documentoId) {
+            console.error('❌ Nenhum ID encontrado no documento:', documento);
+            this.mostrarErro('Documento inválido - ID não encontrado');
             return;
         }
 
         try {
-            // Por enquanto, apenas exibir informações do documento
-            const alert = await this.alertController.create({
-                header: 'Documento: ' + documento.tipoDocumento,
-                message: `
-                    <strong>Status:</strong> ${documento.statusFormatado || documento.status}<br>
-                    <strong>Arquivo:</strong> ${documento.nomeArquivoOriginal || 'Sem nome'}<br>
-                    ${documento.dataEnvio ? '<strong>Data de envio:</strong> ' + new Date(documento.dataEnvio).toLocaleString() + '<br>' : ''}
-                    ${documento.observacoes ? '<strong>Observações:</strong> ' + documento.observacoes + '<br>' : ''}
-                    ${documento.motivoRejeicao ? '<strong>Motivo da rejeição:</strong> ' + documento.motivoRejeicao : ''}
-                `,
-                buttons: ['OK']
-            });
+            console.log('👁️ Visualizando documento ID:', documentoId);
 
-            await alert.present();
+            // Usar endpoint do backend que serve o arquivo com autenticação JWT
+            const url = `${environment.apiUrl}/turmas-alunos/documentos/${documentoId}/arquivo`;
+            console.log('🌐 URL:', url);
+
+            // Obter token de autenticação
+            const token = localStorage.getItem('accessToken');
+            if (!token) {
+                this.mostrarErro('Sessão expirada. Faça login novamente.');
+                return;
+            }
+
+            // Fazer download autenticado do arquivo via blob usando o endpoint do backend
+            this.http.get(url, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                },
+                responseType: 'blob'
+            }).subscribe({
+                next: (blob) => {
+                    console.log('✅ Blob recebido:', blob.size, 'bytes');
+
+                    // Criar URL temporária do blob
+                    const blobUrl = window.URL.createObjectURL(blob);
+
+                    // Abrir PDF no visualizador do navegador
+                    const pdfWindow = window.open(blobUrl, '_blank');
+                    if (!pdfWindow || pdfWindow.closed || typeof pdfWindow.closed == 'undefined') {
+                        this.mostrarErro('Pop-up bloqueado! Por favor, permita pop-ups para este site.');
+                    }
+
+                    // Liberar a URL após um tempo
+                    setTimeout(() => window.URL.revokeObjectURL(blobUrl), 10000);
+                },
+                error: (error) => {
+                    console.error('❌ Erro ao visualizar documento:', error);
+                    this.mostrarErro('Erro ao carregar documento. Verifique sua autenticação.');
+                }
+            });
         } catch (error) {
-            console.error('Erro ao visualizar documento:', error);
-            this.mostrarErro('Erro ao carregar documento');
+            console.error('Erro ao abrir documento:', error);
+            this.mostrarErro('Erro ao abrir documento');
         }
     }
 

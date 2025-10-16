@@ -451,14 +451,16 @@
                                 <ion-icon name="eye-outline" slot="start"></ion-icon>
                                 Ver
                               </ion-button>
-                              <ion-button *ngIf="documento.nomeArquivo && documento.nomeArquivo !== 'null'" fill="solid"
-                                class="btn-aprovar" size="small" (click)="aprovarDocumento(documento)"
+                              <ion-button
+                                *ngIf="documento.nomeArquivo && documento.nomeArquivo !== 'null' && documento.status !== 'aprovado' && documento.status !== 'rejeitado'"
+                                fill="solid" class="btn-aprovar" size="small" (click)="aprovarDocumento(documento)"
                                 title="Aprovar documento">
                                 <ion-icon name="checkmark-outline" slot="start"></ion-icon>
                                 Aprovar
                               </ion-button>
-                              <ion-button *ngIf="documento.nomeArquivo && documento.nomeArquivo !== 'null'" fill="solid"
-                                class="btn-negar" size="small" (click)="rejeitarDocumento(documento)"
+                              <ion-button
+                                *ngIf="documento.nomeArquivo && documento.nomeArquivo !== 'null' && documento.status !== 'aprovado' && documento.status !== 'rejeitado'"
+                                fill="solid" class="btn-negar" size="small" (click)="rejeitarDocumento(documento)"
                                 title="Rejeitar documento">
                                 <ion-icon name="close-outline" slot="start"></ion-icon>
                                 Negar
@@ -509,14 +511,16 @@
                                 <ion-icon name="eye-outline" slot="start"></ion-icon>
                                 Ver
                               </ion-button>
-                              <ion-button *ngIf="documento.nomeArquivo && documento.nomeArquivo !== 'null'" fill="solid"
-                                class="btn-aprovar" size="small" (click)="aprovarDocumento(documento)"
+                              <ion-button
+                                *ngIf="documento.nomeArquivo && documento.nomeArquivo !== 'null' && documento.status !== 'aprovado' && documento.status !== 'rejeitado'"
+                                fill="solid" class="btn-aprovar" size="small" (click)="aprovarDocumento(documento)"
                                 title="Aprovar documento">
                                 <ion-icon name="checkmark-outline" slot="start"></ion-icon>
                                 Aprovar
                               </ion-button>
-                              <ion-button *ngIf="documento.nomeArquivo && documento.nomeArquivo !== 'null'" fill="solid"
-                                class="btn-negar" size="small" (click)="rejeitarDocumento(documento)"
+                              <ion-button
+                                *ngIf="documento.nomeArquivo && documento.nomeArquivo !== 'null' && documento.status !== 'aprovado' && documento.status !== 'rejeitado'"
+                                fill="solid" class="btn-negar" size="small" (click)="rejeitarDocumento(documento)"
                                 title="Rejeitar documento">
                                 <ion-icon name="close-outline" slot="start"></ion-icon>
                                 Negar
@@ -573,13 +577,15 @@
                                   <ion-icon name="eye-outline" slot="start"></ion-icon>
                                   Ver
                                 </ion-button>
-                                <ion-button *ngIf="documento.nomeArquivo && documento.nomeArquivo !== 'null'"
+                                <ion-button
+                                  *ngIf="documento.nomeArquivo && documento.nomeArquivo !== 'null' && documento.status !== 'aprovado' && documento.status !== 'rejeitado'"
                                   fill="solid" class="btn-aprovar" size="small" (click)="aprovarDocumento(documento)"
                                   title="Aprovar documento">
                                   <ion-icon name="checkmark-outline" slot="start"></ion-icon>
                                   Aprovar
                                 </ion-button>
-                                <ion-button *ngIf="documento.nomeArquivo && documento.nomeArquivo !== 'null'"
+                                <ion-button
+                                  *ngIf="documento.nomeArquivo && documento.nomeArquivo !== 'null' && documento.status !== 'aprovado' && documento.status !== 'rejeitado'"
                                   fill="solid" class="btn-negar" size="small" (click)="rejeitarDocumento(documento)"
                                   title="Rejeitar documento">
                                   <ion-icon name="close-outline" slot="start"></ion-icon>
@@ -596,15 +602,109 @@
 
                   <!-- APENAS DOCUMENTOS DA FAMÍLIA -->
                   <div *ngIf="categoriaDocumentos === 'familia'" class="documentos-grid">
-                    <ion-card *ngFor="let documento of documentosFamilia" class="documento-card familia">
-                      <!-- mesmo template dos documentos da família acima -->
+                    <ion-card *ngFor="let documento of documentosFamilia" class="documento-card familia"
+                      [class.documento-enviado]="documento.status === 'enviado'"
+                      [class.documento-aprovado]="documento.status === 'aprovado'"
+                      [class.documento-rejeitado]="documento.status === 'rejeitado'">
+
+                      <div class="documento-icon">
+                        <ion-icon name="home-outline"></ion-icon>
+                      </div>
+
+                      <ion-card-content>
+                        <div class="documento-header">
+                          <h4>{{ documento.tipoDocumento?.nome || documento.tipoDocumento }}</h4>
+                          <ion-badge [color]="getStatusColor(documento.status)">
+                            {{ documento.status }}
+                          </ion-badge>
+                        </div>
+
+                        <p class="documento-descricao">{{ documento.tipoDocumento?.descricao ||
+                          documento.tipoDocumento?.nome }}</p>
+
+                        <div class="documento-info" *ngIf="documento.dataEnvio">
+                          <p class="data-envio">
+                            <ion-icon name="calendar-outline"></ion-icon>
+                            {{ documento.dataEnvioFormatada || (documento.dataEnvio | date:'dd/MM/yyyy') }}
+                          </p>
+                        </div>
+
+                        <div class="documento-acoes" *ngIf="isFuncionario()">
+                          <ion-button fill="solid" size="small" (click)="abrirDocumento(documento)"
+                            title="Visualizar documento">
+                            <ion-icon name="eye-outline" slot="start"></ion-icon>
+                            Ver
+                          </ion-button>
+                          <ion-button
+                            *ngIf="documento.nomeArquivo && documento.nomeArquivo !== 'null' && documento.status !== 'aprovado' && documento.status !== 'rejeitado'"
+                            fill="solid" class="btn-aprovar" size="small" (click)="aprovarDocumento(documento)"
+                            title="Aprovar documento">
+                            <ion-icon name="checkmark-outline" slot="start"></ion-icon>
+                            Aprovar
+                          </ion-button>
+                          <ion-button
+                            *ngIf="documento.nomeArquivo && documento.nomeArquivo !== 'null' && documento.status !== 'aprovado' && documento.status !== 'rejeitado'"
+                            fill="solid" class="btn-negar" size="small" (click)="rejeitarDocumento(documento)"
+                            title="Rejeitar documento">
+                            <ion-icon name="close-outline" slot="start"></ion-icon>
+                            Negar
+                          </ion-button>
+                        </div>
+                      </ion-card-content>
                     </ion-card>
                   </div>
 
                   <!-- APENAS DOCUMENTOS DO ALUNO -->
                   <div *ngIf="categoriaDocumentos === 'aluno'" class="documentos-grid">
-                    <ion-card *ngFor="let documento of documentosAluno" class="documento-card aluno">
-                      <!-- mesmo template dos documentos do aluno acima -->
+                    <ion-card *ngFor="let documento of documentosAluno" class="documento-card aluno"
+                      [class.documento-enviado]="documento.status === 'enviado'"
+                      [class.documento-aprovado]="documento.status === 'aprovado'"
+                      [class.documento-rejeitado]="documento.status === 'rejeitado'">
+
+                      <div class="documento-icon">
+                        <ion-icon name="person-outline"></ion-icon>
+                      </div>
+
+                      <ion-card-content>
+                        <div class="documento-header">
+                          <h4>{{ documento.tipoDocumento?.nome || documento.tipoDocumento }}</h4>
+                          <ion-badge [color]="getStatusColor(documento.status)">
+                            {{ documento.status }}
+                          </ion-badge>
+                        </div>
+
+                        <p class="documento-descricao">{{ documento.tipoDocumento?.descricao ||
+                          documento.tipoDocumento?.nome }}</p>
+
+                        <div class="documento-info" *ngIf="documento.dataEnvio">
+                          <p class="data-envio">
+                            <ion-icon name="calendar-outline"></ion-icon>
+                            {{ documento.dataEnvioFormatada || (documento.dataEnvio | date:'dd/MM/yyyy') }}
+                          </p>
+                        </div>
+
+                        <div class="documento-acoes" *ngIf="isFuncionario()">
+                          <ion-button fill="solid" size="small" (click)="abrirDocumento(documento)"
+                            title="Visualizar documento">
+                            <ion-icon name="eye-outline" slot="start"></ion-icon>
+                            Ver
+                          </ion-button>
+                          <ion-button
+                            *ngIf="documento.nomeArquivo && documento.nomeArquivo !== 'null' && documento.status !== 'aprovado' && documento.status !== 'rejeitado'"
+                            fill="solid" class="btn-aprovar" size="small" (click)="aprovarDocumento(documento)"
+                            title="Aprovar documento">
+                            <ion-icon name="checkmark-outline" slot="start"></ion-icon>
+                            Aprovar
+                          </ion-button>
+                          <ion-button
+                            *ngIf="documento.nomeArquivo && documento.nomeArquivo !== 'null' && documento.status !== 'aprovado' && documento.status !== 'rejeitado'"
+                            fill="solid" class="btn-negar" size="small" (click)="rejeitarDocumento(documento)"
+                            title="Rejeitar documento">
+                            <ion-icon name="close-outline" slot="start"></ion-icon>
+                            Negar
+                          </ion-button>
+                        </div>
+                      </ion-card-content>
                     </ion-card>
                   </div>
 
@@ -616,8 +716,55 @@
                         {{ integrante.key }} ({{ integrante.value.length }} documentos)
                       </h4>
                       <div class="documentos-grid">
-                        <ion-card *ngFor="let documento of integrante.value" class="documento-card integrante">
-                          <!-- mesmo template dos documentos de integrantes acima -->
+                        <ion-card *ngFor="let documento of integrante.value" class="documento-card integrante"
+                          [class.documento-enviado]="documento.status === 'enviado'"
+                          [class.documento-aprovado]="documento.status === 'aprovado'"
+                          [class.documento-rejeitado]="documento.status === 'rejeitado'">
+
+                          <div class="documento-icon">
+                            <ion-icon name="person-circle-outline"></ion-icon>
+                          </div>
+
+                          <ion-card-content>
+                            <div class="documento-header">
+                              <h5>{{ documento.tipoDocumento?.nome || documento.tipoDocumento }}</h5>
+                              <ion-badge [color]="getStatusColor(documento.status)">
+                                {{ documento.status }}
+                              </ion-badge>
+                            </div>
+
+                            <p class="documento-descricao">{{ documento.tipoDocumento?.descricao ||
+                              documento.tipoDocumento?.nome }}</p>
+
+                            <div class="documento-info" *ngIf="documento.dataEnvio">
+                              <p class="data-envio">
+                                <ion-icon name="calendar-outline"></ion-icon>
+                                {{ documento.dataEnvioFormatada || (documento.dataEnvio | date:'dd/MM/yyyy') }}
+                              </p>
+                            </div>
+
+                            <div class="documento-acoes" *ngIf="isFuncionario()">
+                              <ion-button fill="solid" size="small" (click)="abrirDocumento(documento)"
+                                title="Visualizar documento">
+                                <ion-icon name="eye-outline" slot="start"></ion-icon>
+                                Ver
+                              </ion-button>
+                              <ion-button
+                                *ngIf="documento.nomeArquivo && documento.nomeArquivo !== 'null' && documento.status !== 'aprovado' && documento.status !== 'rejeitado'"
+                                fill="solid" class="btn-aprovar" size="small" (click)="aprovarDocumento(documento)"
+                                title="Aprovar documento">
+                                <ion-icon name="checkmark-outline" slot="start"></ion-icon>
+                                Aprovar
+                              </ion-button>
+                              <ion-button
+                                *ngIf="documento.nomeArquivo && documento.nomeArquivo !== 'null' && documento.status !== 'aprovado' && documento.status !== 'rejeitado'"
+                                fill="solid" class="btn-negar" size="small" (click)="rejeitarDocumento(documento)"
+                                title="Rejeitar documento">
+                                <ion-icon name="close-outline" slot="start"></ion-icon>
+                                Negar
+                              </ion-button>
+                            </div>
+                          </ion-card-content>
                         </ion-card>
                       </div>
                     </div>

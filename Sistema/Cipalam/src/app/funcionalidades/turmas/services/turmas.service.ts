@@ -108,9 +108,20 @@ export class TurmasService {
         );
     }
 
-    // Obter documentos de um aluno via ResponsavelDocumentosService (com separação individual)
+    // Obter documentos de um aluno (da família, do aluno e dos integrantes)
     obterDocumentosAluno(alunoId: number): Observable<any> {
-        return this.http.get<any>(`${environment.apiUrl}/responsavel-documentos/matricula/aluno/${alunoId}`);
+        const url = `${this.apiUrl}/alunos/${alunoId}/documentos`;
+        console.log('🔍 TurmasService - Buscando documentos...');
+        console.log('URL completa:', url);
+        console.log('API URL base:', this.apiUrl);
+        console.log('Aluno ID:', alunoId);
+
+        return this.http.get<any>(url).pipe(
+            map((response: any) => {
+                console.log('📦 Resposta da API de documentos:', response);
+                return response.data || [];
+            })
+        );
     }
 
     // Aprovar documento
@@ -121,13 +132,13 @@ export class TurmasService {
 
     // Rejeitar documento
     rejeitarDocumento(documentoId: number, motivo: string): Observable<any> {
-        return this.http.post(`${this.apiUrl}/turmas-alunos/documentos/${documentoId}/rejeitar`, {
+        return this.http.post(`${this.apiUrl}/documentos/${documentoId}/rejeitar`, {
             motivo: motivo
         });
     }
 
     visualizarDocumento(documentoId: number): Observable<any> {
-        return this.http.get(`${this.apiUrl}/turmas-alunos/documentos/${documentoId}/visualizar`);
+        return this.http.get(`${this.apiUrl}/documentos/${documentoId}/visualizar`);
     }
 
     // Transferir aluno para outra turma

@@ -45,7 +45,7 @@ CREATE TABLE `tbPessoa` (
     `NmPessoa` VARCHAR(100) NOT NULL,
     `CpfPessoa` CHAR(14) NULL,
     `caminhoImagem` VARCHAR(255) NULL,
-    `dtNascPessoa` DATE NOT NULL,
+    `dtNascPessoa` DATE NULL,
     `caminhoIdentidadePessoa` VARCHAR(255) NULL,
     `email` VARCHAR(100) NULL,
     `telefone` VARCHAR(20) NULL,
@@ -1011,84 +1011,9 @@ BEGIN
     
 END$$
 
--- -----------------------------------------------------
--- Procedure: sp_FinalizarMatricula
--- Descrição: Finaliza a matrícula marcando o status como 'matriculado'
---           Mantém a declaração como histórico (não exclui)
--- Parâmetros:
---   - p_idDeclaracao: ID da declaração de interesse a finalizar
---   - p_idFuncionario: ID do funcionário que está finalizando
--- -----------------------------------------------------
-CREATE PROCEDURE `sp_FinalizarMatricula`(
-    IN p_idDeclaracao INT,
-    IN p_idFuncionario INT
-)
-BEGIN
-    DECLARE v_statusAtual VARCHAR(50);
-    DECLARE v_nomeAluno VARCHAR(100);
-    DECLARE v_matriculaAluno VARCHAR(20);
-    
-    DECLARE EXIT HANDLER FOR SQLEXCEPTION
-    BEGIN
-        ROLLBACK;
-        RESIGNAL;
-    END;
-
-    START TRANSACTION;
-    
-    -- Verificar se a declaração existe e está no status correto
-    SELECT status, nomeAluno 
-    INTO v_statusAtual, v_nomeAluno
-    FROM tbInteresseMatricula 
-    WHERE id = p_idDeclaracao;
-    
-    IF v_statusAtual IS NULL THEN
-        SIGNAL SQLSTATE '45000' 
-        SET MESSAGE_TEXT = 'Declaração não encontrada';
-    END IF;
-    
-    IF v_statusAtual != 'matricula_iniciada' THEN
-        SIGNAL SQLSTATE '45000' 
-        SET MESSAGE_TEXT = 'Apenas declarações com matrícula iniciada podem ser finalizadas';
-    END IF;
-    
-    -- Obter matrícula do aluno criado
-    SELECT a.matricula INTO v_matriculaAluno
-    FROM tbAluno a
-    JOIN tbInteresseMatricula i ON i.id = p_idDeclaracao
-    WHERE a.protocoloDeclaracao = i.protocolo
-    LIMIT 1;
-    
-    -- Atualizar status da declaração para 'matriculado' (ocultar da listagem ativa)
-    UPDATE tbInteresseMatricula 
-    SET 
-        status = 'matriculado',
-        dataFinalizacao = NOW()
-    WHERE id = p_idDeclaracao;
-    
-    -- Log da ação
-    INSERT INTO tbLogMatricula (
-        tbInteresseMatricula_id, acao, descricao, usuario_idPessoa
-    ) VALUES (
-        p_idDeclaracao, 
-        'MATRICULA_FINALIZADA', 
-        CONCAT('Matrícula finalizada - Aluno: ', COALESCE(v_matriculaAluno, 'N/A'), ' - ', v_nomeAluno),
-        p_idFuncionario
-    );
-    
-    COMMIT;
-    
-    -- Retornar confirmação
-    SELECT 
-        'SUCCESS' as resultado,
-        'Matrícula finalizada com sucesso' as mensagem,
-        v_matriculaAluno as matricula,
-        v_nomeAluno as nomeAluno;
-        
-END$$
-
 DELIMITER;
 
+-- -----------------------------------------------------
 -- ===================================================================
 -- INSERÇÃO DE FUNCIONALIDADES (SEM ROTAS)
 -- ===================================================================
@@ -2877,26 +2802,342 @@ CREATE PROCEDURE sp_FinalizarMatricula(
     IN p_idFuncionario BIGINT
 )
 BEGIN
-    -- Versão simplificada: apenas oculta a declaração
-    -- As migrações de dados serão implementadas gradualmente
+    -- Variáveis para armazenar dados da declaração
+    DECLARE v_idFamilia INT;
+    DECLARE v_idPessoaAluno INT;
+    DECLARE v_idPessoaResponsavel INT;
+    DECLARE v_idTurma INT;
+    DECLARE v_cpfResponsavel VARCHAR(14);
+    DECLARE v_cpfAluno VARCHAR(14);
+    DECLARE v_nomeAluno VARCHAR(100);
+    DECLARE v_dataNascAluno DATE;
+    DECLARE v_protocolo VARCHAR(50);
+    DECLARE v_integrantesRenda JSON;
+    DECLARE v_numeroIntegrantes INT DEFAULT 0;
+    DECLARE v_contador INT DEFAULT 0;
+    DECLARE v_nomeIntegrante VARCHAR(100);
+    DECLARE v_cpfIntegrante VARCHAR(14);
+    DECLARE v_parentescoIntegrante VARCHAR(50);
+    DECLARE v_rendaIntegrante DECIMAL(10,2);
+    DECLARE v_dataNascIntegrante DATE;
+    DECLARE v_idPessoaIntegrante INT;
+    DECLARE v_matriculaAluno VARCHAR(20);
+    DECLARE v_anoAtual INT;
+    DECLARE v_rendaFamiliarTotal DECIMAL(10,2) DEFAULT 0;
+    DECLARE v_rendaPerCapitaCalc DECIMAL(10,2) DEFAULT 0;
+    DECLARE v_numIntegrantes INT DEFAULT 1;
+    
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+        RESIGNAL;
+    END;
     
     START TRANSACTION;
     
-    -- 1. Verificar se a declaração existe
-    IF NOT EXISTS (SELECT 1 FROM tbInteresseMatricula WHERE idInteresseMatricula = p_idDeclaracao) THEN
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Declaração de interesse não encontrada';
+    -- 1. VERIFICAR SE A DECLARAÇÃO EXISTE E ESTÁ COM STATUS CORRETO
+    IF NOT EXISTS (
+        SELECT 1 FROM tbInteresseMatricula 
+        WHERE id = p_idDeclaracao 
+        AND status = 'matricula_iniciada'
+    ) THEN
+        SIGNAL SQLSTATE '45000' 
+        SET MESSAGE_TEXT = 'Declaração não encontrada ou não está com status matricula_iniciada';
     END IF;
     
-    -- 2. Ocultar declaração de interesse (mudar status para matriculado)
+    -- 2. BUSCAR DADOS DA DECLARAÇÃO
+    SELECT 
+        cpfResponsavel,
+        cpfAluno,
+        nomeAluno,
+        dataNascimentoAluno,
+        protocolo,
+        responsavelLogin_idPessoa,
+        turmaSelecionada_idTurma,
+        integrantesRenda
+    INTO 
+        v_cpfResponsavel,
+        v_cpfAluno,
+        v_nomeAluno,
+        v_dataNascAluno,
+        v_protocolo,
+        v_idPessoaResponsavel,
+        v_idTurma,
+        v_integrantesRenda
+    FROM tbInteresseMatricula 
+    WHERE id = p_idDeclaracao;
+    
+    -- Validar se tem turma selecionada
+    IF v_idTurma IS NULL THEN
+        SIGNAL SQLSTATE '45000' 
+        SET MESSAGE_TEXT = 'Turma não foi selecionada ao iniciar a matrícula';
+    END IF;
+    
+    -- 3. CRIAR/BUSCAR FAMÍLIA DO RESPONSÁVEL
+    SELECT tbFamilia_idtbFamilia INTO v_idFamilia
+    FROM tbResponsavel
+    WHERE tbPessoa_idPessoa = v_idPessoaResponsavel
+    AND ativo = TRUE
+    LIMIT 1;
+    
+    -- Se responsável ainda não tem família, criar uma nova
+    IF v_idFamilia IS NULL THEN
+        -- Obter número de integrantes
+        SELECT COALESCE(numeroIntegrantes, 1) INTO v_numIntegrantes
+        FROM tbInteresseMatricula
+        WHERE id = p_idDeclaracao;
+        
+        -- Calcular renda total se tiver JSON de integrantes
+        IF v_integrantesRenda IS NOT NULL AND JSON_LENGTH(v_integrantesRenda) > 0 THEN
+            SELECT COALESCE(SUM(CAST(JSON_UNQUOTE(JSON_EXTRACT(v_integrantesRenda, CONCAT('$[', idx, '].renda'))) AS DECIMAL(10,2))), 0)
+            INTO v_rendaFamiliarTotal
+            FROM (
+                SELECT 0 AS idx UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 
+                UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9
+            ) numbers
+            WHERE idx < JSON_LENGTH(v_integrantesRenda);
+        END IF;
+        
+        -- Calcular renda per capita
+        IF v_numIntegrantes > 0 THEN
+            SET v_rendaPerCapitaCalc = v_rendaFamiliarTotal / v_numIntegrantes;
+        END IF;
+        
+        -- Criar família com dados da declaração (endereço já incluído na tabela)
+        INSERT INTO tbFamilia (
+            numeroIntegrantes,
+            integrantesRenda,
+            tipoCota,
+            cep,
+            logradouro,
+            numero,
+            complemento,
+            bairro,
+            cidade,
+            uf,
+            codigoIbgeCidade,
+            pontoReferencia,
+            dadosFamiliaresPreenchidos
+        )
+        SELECT 
+            COALESCE(numeroIntegrantes, 1),
+            integrantesRenda,
+            tipoCota,
+            cep,
+            logradouro,
+            numero,
+            complemento,
+            bairro,
+            cidade,
+            uf,
+            codigoIbgeCidade,
+            pontoReferencia,
+            TRUE
+        FROM tbInteresseMatricula
+        WHERE id = p_idDeclaracao;
+        
+        SET v_idFamilia = LAST_INSERT_ID();
+        
+        -- Atualizar responsável com a família criada
+        UPDATE tbResponsavel
+        SET tbFamilia_idtbFamilia = v_idFamilia
+        WHERE tbPessoa_idPessoa = v_idPessoaResponsavel;
+    END IF;
+    
+    -- 4. CRIAR PESSOA DO ALUNO (se não existir)
+    IF v_cpfAluno IS NOT NULL THEN
+        SELECT idPessoa INTO v_idPessoaAluno
+        FROM tbPessoa
+        WHERE CpfPessoa = v_cpfAluno
+        LIMIT 1;
+    END IF;
+    
+    IF v_idPessoaAluno IS NULL THEN
+        INSERT INTO tbPessoa (
+            NmPessoa,
+            CpfPessoa,
+            dtNascPessoa,
+            ativo
+        )
+        SELECT 
+            COALESCE(nomeAluno, 'Aluno sem nome'),
+            NULLIF(NULLIF(cpfAluno, ''), 'null'),
+            dataNascimentoAluno,
+            TRUE
+        FROM tbInteresseMatricula
+        WHERE id = p_idDeclaracao;
+        
+        SET v_idPessoaAluno = LAST_INSERT_ID();
+    END IF;
+    
+    -- 5. CRIAR INTEGRANTES DA RENDA COMO PESSOAS (se tiver dados no JSON)
+    IF v_integrantesRenda IS NOT NULL AND JSON_LENGTH(v_integrantesRenda) > 0 THEN
+        SET v_numeroIntegrantes = JSON_LENGTH(v_integrantesRenda);
+        SET v_contador = 0;
+        
+        WHILE v_contador < v_numeroIntegrantes DO
+            -- Extrair dados do integrante (CORRIGIDO: rendaMensal em vez de renda)
+            SET v_nomeIntegrante = JSON_UNQUOTE(JSON_EXTRACT(v_integrantesRenda, CONCAT('$[', v_contador, '].nome')));
+            SET v_cpfIntegrante = JSON_UNQUOTE(JSON_EXTRACT(v_integrantesRenda, CONCAT('$[', v_contador, '].cpf')));
+            SET v_parentescoIntegrante = JSON_UNQUOTE(JSON_EXTRACT(v_integrantesRenda, CONCAT('$[', v_contador, '].parentesco')));
+            SET v_rendaIntegrante = JSON_UNQUOTE(JSON_EXTRACT(v_integrantesRenda, CONCAT('$[', v_contador, '].rendaMensal')));
+            SET v_dataNascIntegrante = JSON_UNQUOTE(JSON_EXTRACT(v_integrantesRenda, CONCAT('$[', v_contador, '].dataNascimento')));
+            
+            -- Verificar se já existe pessoa com este CPF
+            SET v_idPessoaIntegrante = NULL;
+            IF v_cpfIntegrante IS NOT NULL AND v_cpfIntegrante != 'null' AND v_cpfIntegrante != '' THEN
+                SELECT idPessoa INTO v_idPessoaIntegrante
+                FROM tbPessoa
+                WHERE CpfPessoa = v_cpfIntegrante
+                LIMIT 1;
+            END IF;
+            
+            -- Se não existe, criar pessoa
+            IF v_idPessoaIntegrante IS NULL AND v_nomeIntegrante IS NOT NULL AND v_nomeIntegrante != 'null' THEN
+                INSERT INTO tbPessoa (
+                    NmPessoa,
+                    CpfPessoa,
+                    dtNascPessoa,
+                    renda,
+                    ativo
+                )
+                VALUES (
+                    v_nomeIntegrante,
+                    NULLIF(NULLIF(v_cpfIntegrante, ''), 'null'),
+                    NULLIF(NULLIF(v_dataNascIntegrante, 'null'), ''),
+                    COALESCE(v_rendaIntegrante, 0),
+                    TRUE
+                );
+                
+                SET v_idPessoaIntegrante = LAST_INSERT_ID();
+                
+                -- Associar integrante à família
+                INSERT INTO tbIntegranteFamilia (
+                    tbFamilia_idtbFamilia,
+                    tbPessoa_idPessoa,
+                    nomeIntegrante,
+                    cpfIntegrante,
+                    dataNascimento,
+                    parentesco,
+                    renda,
+                    ativo
+                )
+                VALUES (
+                    v_idFamilia,
+                    v_idPessoaIntegrante,
+                    v_nomeIntegrante,
+                    NULLIF(NULLIF(v_cpfIntegrante, ''), 'null'),
+                    NULLIF(NULLIF(v_dataNascIntegrante, 'null'), ''),
+                    COALESCE(v_parentescoIntegrante, 'Outro'),
+                    COALESCE(v_rendaIntegrante, 0),
+                    TRUE
+                );
+                
+                -- MIGRAR DOCUMENTOS DESTE INTEGRANTE
+                UPDATE tbDocumentoMatricula dm
+                SET dm.tbFamilia_idtbFamilia = v_idFamilia,
+                    dm.tbPessoa_idPessoa = v_idPessoaIntegrante,
+                    dm.tbInteresseMatricula_id = NULL
+                WHERE dm.tbInteresseMatricula_id = p_idDeclaracao
+                AND dm.tbTipoDocumento_idTipoDocumento IN (
+                    SELECT idTipoDocumento FROM tbTipoDocumento WHERE escopo = 'TODOS_INTEGRANTES'
+                )
+                AND dm.observacoes LIKE CONCAT('%', v_nomeIntegrante, '%');
+            END IF;
+            
+            SET v_contador = v_contador + 1;
+        END WHILE;
+    END IF;
+    
+    -- 6. GERAR MATRÍCULA ÚNICA PARA O ALUNO
+    SET v_anoAtual = YEAR(CURDATE());
+    SET v_matriculaAluno = CONCAT('CIP', v_anoAtual, LPAD(v_idPessoaAluno, 6, '0'));
+    
+    -- 7. CRIAR REGISTRO DO ALUNO NA tbAluno
+    INSERT INTO tbAluno (
+        tbPessoa_idPessoa,
+        tbFamilia_idtbFamilia,
+        tbTurma_idtbTurma,
+        matricula,
+        dataMatricula,
+        statusAluno,
+        escolaAluno,
+        codigoInepEscola,
+        municipioEscola,
+        ufEscola,
+        horariosSelecionados,
+        observacoesResponsavel,
+        protocoloDeclaracao,
+        funcionarioMatricula_idPessoa,
+        dataInicioMatricula,
+        dataFinalizacaoMatricula,
+        ativo
+    )
+    SELECT 
+        v_idPessoaAluno,
+        v_idFamilia,
+        v_idTurma,
+        v_matriculaAluno,
+        CURDATE(),
+        'matriculado',
+        escolaAluno,
+        codigoInepEscola,
+        municipioEscola,
+        ufEscola,
+        horariosSelecionados,
+        observacoesResponsavel,
+        v_protocolo,
+        p_idFuncionario,
+        dataInicioMatricula,
+        NOW(),
+        TRUE
+    FROM tbInteresseMatricula
+    WHERE id = p_idDeclaracao;
+    
+    -- 8. ATUALIZAR CAPACIDADE DA TURMA
+    UPDATE tbTurma
+    SET capacidadeAtual = capacidadeAtual + 1
+    WHERE idtbTurma = v_idTurma;
+    
+    -- 9. MIGRAR DOCUMENTOS - RE-ASSOCIAR IDS
+    -- Documentos da FAMÍLIA
+    UPDATE tbDocumentoMatricula
+    SET tbFamilia_idtbFamilia = v_idFamilia,
+        tbInteresseMatricula_id = NULL
+    WHERE tbInteresseMatricula_id = p_idDeclaracao
+    AND tbTipoDocumento_idTipoDocumento IN (
+        SELECT idTipoDocumento FROM tbTipoDocumento WHERE escopo = 'FAMILIA'
+    );
+    
+    -- Documentos do ALUNO
+    UPDATE tbDocumentoMatricula
+    SET tbAluno_idPessoa = v_idPessoaAluno,
+        tbInteresseMatricula_id = NULL
+    WHERE tbInteresseMatricula_id = p_idDeclaracao
+    AND tbTipoDocumento_idTipoDocumento IN (
+        SELECT idTipoDocumento FROM tbTipoDocumento WHERE escopo = 'ALUNO'
+    );
+    
+    -- Nota: Documentos dos integrantes já foram migrados dentro do loop de criação dos integrantes
+    
+    -- 10. ATUALIZAR STATUS DA DECLARAÇÃO (OCULTAR)
     UPDATE tbInteresseMatricula 
     SET status = 'matriculado',
-        dataProcessamento = NOW(),
-        idFuncionarioProcessou = p_idFuncionario
-    WHERE idInteresseMatricula = p_idDeclaracao;
+        dataFinalizacao = NOW()
+    WHERE id = p_idDeclaracao;
     
     COMMIT;
     
-END //
+    -- Retornar informações da matrícula finalizada
+    SELECT 
+        v_idPessoaAluno as idAluno,
+        v_matriculaAluno as matricula,
+        v_idFamilia as idFamilia,
+        v_idTurma as idTurma,
+        v_protocolo as protocolo,
+        'Matrícula finalizada com sucesso!' as mensagem;
+    
+END//
 
 DELIMITER;
 

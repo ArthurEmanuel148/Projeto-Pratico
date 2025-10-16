@@ -24,6 +24,9 @@ export class PainelResponsavelPage implements OnInit {
   documentosAluno: DocumentoIndividual[] = [];
   documentosIntegrantes: DocumentoIndividual[] = [];
 
+  // Rastrear se estamos usando matrícula finalizada ou declaração
+  usandoMatriculaFinalizada = false;
+
   constructor(
     private authService: AuthService,
     private responsavelDocumentosService: ResponsavelDocumentosService,
@@ -38,17 +41,16 @@ export class PainelResponsavelPage implements OnInit {
 
   /**
    * Carrega os documentos da família do responsável
+   * Tenta primeiro da declaração de interesse, se não encontrar busca da matrícula finalizada
    */
   async carregarDocumentosFamilia() {
     this.carregando = true;
     try {
-      // Buscar dados reais do backend usando o ID do usuário logado
       const usuarioLogado = this.authService.getFuncionarioLogado();
       console.log('👤 Dados completos do usuário logado:', usuarioLogado);
 
       if (!usuarioLogado?.pessoaId && !usuarioLogado?.usuarioId) {
         console.error('❌ Usuário não está logado ou ID não disponível');
-        console.error('Dados do usuário:', usuarioLogado);
         this.familiaDocumentos = null;
         this.carregando = false;
         return;
@@ -56,44 +58,49 @@ export class PainelResponsavelPage implements OnInit {
 
       const idUsuario = usuarioLogado.pessoaId || usuarioLogado.usuarioId;
 
-      if (!idUsuario) {
-        console.error('❌ ID do usuário não disponível');
+      console.log('🔍 Tentando carregar documentos para usuário ID:', idUsuario);
+
+      // Validar se idUsuario é um número válido
+      if (!idUsuario || typeof idUsuario !== 'number') {
+        console.error('❌ ID do usuário inválido:', idUsuario);
         this.familiaDocumentos = null;
         this.carregando = false;
+        await this.mostrarToastErro('Erro: ID do usuário não disponível.');
         return;
       }
 
-      console.log('🔍 Carregando documentos da MATRÍCULA para usuário ID:', idUsuario);
-
-      // Chamar o serviço que busca dados da MATRÍCULA (não família, que ainda não existe)
+      // PRIMEIRA TENTATIVA: Buscar da declaração de interesse
       this.responsavelDocumentosService.getDocumentosPorMatricula(idUsuario).subscribe({
         next: (documentos) => {
-          console.log('✅ Documentos recebidos do backend:', documentos);
-          this.familiaDocumentos = documentos;
-          this.carregando = false;
+          console.log('✅ Documentos encontrados na DECLARAÇÃO DE INTERESSE:', documentos);
 
-          // Organizar documentos por categoria
-          this.organizarDocumentosPorCategoria();
+          // Verificar se realmente há documentos
+          const temDocumentos = documentos?.documentosPorPessoa && documentos.documentosPorPessoa.length > 0;
+
+          if (temDocumentos) {
+            console.log('✅ Declaração possui documentos, usando estes dados');
+            this.familiaDocumentos = documentos;
+            this.usandoMatriculaFinalizada = false; // Usando declaração
+            this.carregando = false;
+            this.organizarDocumentosPorCategoria();
+          } else {
+            console.warn('⚠️ Declaração encontrada mas SEM documentos, tentando matrícula finalizada...');
+            this.tentarCarregarDocumentosMatriculaFinalizada(idUsuario);
+          }
         },
         error: async (error) => {
-          console.error('❌ Erro ao carregar documentos da família:', error);
-          console.error('Detalhes do erro:', {
-            status: error.status,
-            message: error.message,
-            url: error.url,
-            error: error.error
-          });
+          console.warn('⚠️ Não encontrou na declaração de interesse, tentando matrícula finalizada...');
+          console.log('Erro da primeira tentativa:', error.status);
 
-          // Verificar se é erro 404 (não encontrado)
-          if (error.status === 404) {
-            console.warn('⚠️ Responsável não encontrado ou sem documentos configurados');
-            await this.mostrarToastErro('Nenhum documento encontrado para este responsável');
+          // SEGUNDA TENTATIVA: Buscar da matrícula finalizada (se não encontrou na declaração)
+          if (error.status === 404 || error.status === 500) {
+            this.tentarCarregarDocumentosMatriculaFinalizada(idUsuario);
           } else {
+            console.error('❌ Erro inesperado ao carregar documentos:', error);
             await this.mostrarToastErro('Erro ao carregar documentos. Tente novamente.');
+            this.familiaDocumentos = null;
+            this.carregando = false;
           }
-
-          this.familiaDocumentos = null;
-          this.carregando = false;
         }
       });
 
@@ -102,6 +109,38 @@ export class PainelResponsavelPage implements OnInit {
       this.familiaDocumentos = null;
       this.carregando = false;
     }
+  }
+
+  /**
+   * Tenta carregar documentos da matrícula finalizada
+   */
+  private async tentarCarregarDocumentosMatriculaFinalizada(idUsuario: number) {
+    console.log('🔍 Buscando documentos da MATRÍCULA FINALIZADA para usuário:', idUsuario);
+
+    // Aqui você precisa buscar o ID do aluno vinculado a este responsável
+    // Por enquanto, vou usar um endpoint que busca pelo responsável
+    this.responsavelDocumentosService.getDocumentosPorResponsavelMatriculaFinalizada(idUsuario).subscribe({
+      next: (documentos) => {
+        console.log('✅ Documentos encontrados na MATRÍCULA FINALIZADA:', documentos);
+        this.familiaDocumentos = documentos;
+        this.usandoMatriculaFinalizada = true; // Usando matrícula finalizada
+        this.carregando = false;
+        this.organizarDocumentosPorCategoria();
+      },
+      error: async (error) => {
+        console.error('❌ Erro ao carregar documentos da matrícula finalizada:', error);
+
+        if (error.status === 404) {
+          console.warn('⚠️ Responsável não possui matrícula finalizada nem declaração de interesse');
+          await this.mostrarToastErro('Nenhum documento encontrado para este responsável');
+        } else {
+          await this.mostrarToastErro('Erro ao carregar documentos. Tente novamente.');
+        }
+
+        this.familiaDocumentos = null;
+        this.carregando = false;
+      }
+    });
   }
 
 
@@ -216,11 +255,39 @@ export class PainelResponsavelPage implements OnInit {
 
       try {
         console.log('📤 Enviando arquivo:', arquivo.name);
-        await this.responsavelDocumentosService.anexarDocumento(
-          arquivo,
-          documento.idDocumentoMatricula,
-          this.usuarioLogado?.pessoaId || this.usuarioLogado?.usuarioId
-        ).toPromise();
+        console.log('🔍 Tipo de matrícula:', this.usandoMatriculaFinalizada ? 'FINALIZADA' : 'DECLARAÇÃO');
+        console.log('📋 Documento completo:', JSON.stringify(documento, null, 2));
+
+        // Extrair ID do documento (pode variar entre declaração e matrícula finalizada)
+        const documentoId = documento.idDocumentoMatricula || documento.id;
+
+        if (!documentoId) {
+          console.error('❌ ID do documento não encontrado:', documento);
+          await this.mostrarToastErro('Erro: ID do documento não encontrado.');
+          return;
+        }
+
+        console.log('🆔 ID do documento a anexar:', documentoId);
+
+        if (this.usandoMatriculaFinalizada) {
+          // Anexar em matrícula finalizada (tbDocumentoMatricula)
+          console.log('🔄 Chamando anexarDocumentoMatriculaFinalizada...');
+          const resultado = await this.responsavelDocumentosService.anexarDocumentoMatriculaFinalizada(
+            arquivo,
+            documentoId,
+            this.usuarioLogado?.pessoaId || this.usuarioLogado?.usuarioId
+          ).toPromise();
+          console.log('✅ Resultado da anexação (matrícula finalizada):', resultado);
+        } else {
+          // Anexar em declaração de interesse (tbDocumentoInteresse)
+          console.log('🔄 Chamando anexarDocumento (declaração)...');
+          const resultado = await this.responsavelDocumentosService.anexarDocumento(
+            arquivo,
+            documentoId,
+            this.usuarioLogado?.pessoaId || this.usuarioLogado?.usuarioId
+          ).toPromise();
+          console.log('✅ Resultado da anexação (declaração):', resultado);
+        }
 
         console.log('✅ Documento anexado com sucesso');
         await this.mostrarToastSucesso('Documento anexado com sucesso!');
@@ -238,14 +305,29 @@ export class PainelResponsavelPage implements OnInit {
 
   /**
    * Visualizar documento em uma nova guia
+   * Funciona tanto para declaração quanto para matrícula finalizada
    */
   async visualizarDocumento(documento: DocumentoIndividual) {
     console.log('👁️ Visualizando documento:', documento);
+    console.log('🔍 Tipo de matrícula:', this.usandoMatriculaFinalizada ? 'FINALIZADA' : 'DECLARAÇÃO');
 
     try {
-      const blob = await this.responsavelDocumentosService.visualizarDocumento(
-        documento.idDocumentoMatricula
-      ).toPromise();
+      let blob: Blob | undefined;
+
+      if (this.usandoMatriculaFinalizada) {
+        // Matrícula finalizada: usar endpoint do backend que serve o arquivo com JWT
+        console.log('📂 Buscando arquivo via backend (com JWT)');
+
+        blob = await this.responsavelDocumentosService.visualizarDocumentoMatriculaFinalizada(
+          documento.idDocumentoMatricula
+        ).toPromise();
+
+      } else {
+        // Declaração de interesse: usar serviço existente
+        blob = await this.responsavelDocumentosService.visualizarDocumento(
+          documento.idDocumentoMatricula
+        ).toPromise();
+      }
 
       if (blob) {
         // Criar URL temporária e abrir em nova guia
@@ -264,9 +346,7 @@ export class PainelResponsavelPage implements OnInit {
       console.error('❌ Erro ao visualizar documento:', error);
       await this.mostrarToastErro('Erro ao visualizar documento');
     }
-  }
-
-  /**
+  }  /**
    * Baixar documento (mantido como método auxiliar)
    */
   async baixarDocumento(documento: DocumentoIndividual) {
@@ -363,12 +443,13 @@ export class PainelResponsavelPage implements OnInit {
 
     // Organizar baseado no parentesco/tipo da pessoa
     this.familiaDocumentos.documentosPorPessoa.forEach(pessoaDocumentos => {
-      const parentesco = pessoaDocumentos.pessoa.parentesco?.toLowerCase();
+      const parentesco = pessoaDocumentos.pessoa.parentesco?.toLowerCase() || '';
+      const nomePessoa = pessoaDocumentos.pessoa.nome?.toLowerCase() || '';
 
-      if (parentesco === 'responsavel' || pessoaDocumentos.pessoa.nome.includes('Família')) {
+      if (parentesco === 'responsavel' || parentesco === 'familia' || nomePessoa.includes('família')) {
         // Documentos da família
         this.documentosFamilia.push(...pessoaDocumentos.documentos);
-      } else if (parentesco === 'aluno' || pessoaDocumentos.pessoa.nome.includes('Aluno')) {
+      } else if (parentesco === 'aluno' || nomePessoa.includes('aluno')) {
         // Documentos do aluno
         this.documentosAluno.push(...pessoaDocumentos.documentos);
       } else {

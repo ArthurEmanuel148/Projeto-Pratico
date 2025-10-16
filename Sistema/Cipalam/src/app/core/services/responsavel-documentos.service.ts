@@ -121,6 +121,30 @@ export class ResponsavelDocumentosService {
     }
 
     /**
+     * Busca documentos da matrícula FINALIZADA pelo ID do responsável
+     * Usa endpoint de turmas-alunos que busca aluno vinculado ao responsável
+     */
+    getDocumentosPorResponsavelMatriculaFinalizada(idResponsavel: number): Observable<FamiliaDocumentos> {
+        const url = `${environment.apiUrl}/turmas-alunos/responsavel/${idResponsavel}/documentos`;
+        console.log(`🌐 Buscando documentos de matrícula finalizada para responsável ID ${idResponsavel}: ${url}`);
+
+        return this.http.get<FamiliaDocumentos>(url, this.getHttpOptions())
+            .pipe(
+                map(response => {
+                    console.log('✅ Documentos da matrícula finalizada recebidos do backend:', response);
+                    return response;
+                }),
+                catchError(error => {
+                    console.error('❌ Erro ao buscar documentos da matrícula finalizada:', error);
+                    console.error('URL tentativa:', url);
+                    console.error('Status:', error.status);
+                    console.error('Mensagem:', error.message);
+                    throw error; // Propagar o erro real
+                })
+            );
+    }
+
+    /**
      * Busca documentos de uma declaração específica para área administrativa
      */
     getDocumentosPorDeclaracao(idDeclaracao: number): Observable<any[]> {
@@ -190,6 +214,53 @@ export class ResponsavelDocumentosService {
     }
 
     /**
+     * Anexa um arquivo para um documento de matrícula FINALIZADA
+     * Salva em tbDocumentoMatricula vinculado às tabelas finais (tbFamilia, tbAluno, tbIntegranteFamilia)
+     */
+    anexarDocumentoMatriculaFinalizada(arquivo: File, idDocumentoMatricula: number, idResponsavel: number): Observable<any> {
+        console.log('🔵 === INICIANDO ANEXAÇÃO MATRÍCULA FINALIZADA ===');
+        console.log('📂 Arquivo:', arquivo.name, '- Tamanho:', arquivo.size, 'bytes');
+        console.log('🆔 Documento ID:', idDocumentoMatricula);
+        console.log('👤 Responsável ID:', idResponsavel);
+
+        const formData = new FormData();
+        formData.append('arquivo', arquivo);
+        formData.append('documentoId', idDocumentoMatricula.toString());
+        formData.append('responsavelId', idResponsavel.toString());
+
+        console.log('📦 FormData criado com 3 campos');
+
+        const usuario = this.authService.getFuncionarioLogado();
+        const token = usuario?.token || '';
+
+        console.log('🔑 Token para anexo (matrícula finalizada):', token ? 'Token presente' : 'Token ausente');
+
+        // Para FormData, não definir Content-Type para deixar o browser definir automaticamente
+        const headers = new HttpHeaders({
+            ...(token && { 'Authorization': `Bearer ${token}` })
+        });
+
+        const url = `${environment.apiUrl}/turmas-alunos/responsavel/anexar-documento`;
+        console.log(`🌐 URL da requisição: ${url}`);
+        console.log('📡 Enviando requisição POST...');
+
+        return this.http.post(url, formData, { headers })
+            .pipe(
+                map(response => {
+                    console.log('✅ SUCESSO - Documento de matrícula finalizada anexado:', response);
+                    return response;
+                }),
+                catchError(error => {
+                    console.error('❌ ERRO ao anexar documento de matrícula finalizada:');
+                    console.error('Status:', error.status);
+                    console.error('Mensagem:', error.message);
+                    console.error('Detalhes:', error);
+                    throw error;
+                })
+            );
+    }
+
+    /**
      * Remove um documento anexado
      */
     removerDocumento(idDocumentoMatricula: number, idPessoa: number): Observable<any> {
@@ -207,7 +278,7 @@ export class ResponsavelDocumentosService {
     }
 
     /**
-     * Visualiza um documento em nova guia
+     * Visualiza um documento em nova guia (DECLARAÇÃO)
      */
     visualizarDocumento(idDocumentoMatricula: number): Observable<Blob> {
         return this.http.get(`${this.API_BASE_URL}/familia/visualizar-documento/${idDocumentoMatricula}`, {
@@ -215,6 +286,37 @@ export class ResponsavelDocumentosService {
         }).pipe(
             catchError(error => {
                 console.error('❌ Erro ao visualizar documento:', error);
+                throw error;
+            })
+        );
+    }
+
+    /**
+     * Visualiza um documento em nova guia (MATRÍCULA FINALIZADA)
+     * Usa o endpoint do backend que serve o arquivo com autenticação JWT
+     */
+    visualizarDocumentoMatriculaFinalizada(idDocumentoMatricula: number): Observable<Blob> {
+        console.log('========================================');
+        console.log('📥 SERVICE: Visualizando documento (Matrícula Finalizada)');
+        console.log('ID do Documento:', idDocumentoMatricula);
+
+        const url = `${environment.apiUrl}/turmas-alunos/documentos/${idDocumentoMatricula}/arquivo`;
+        console.log('🌐 URL:', url);
+
+        return this.http.get(url, {
+            responseType: 'blob'
+        }).pipe(
+            map(blob => {
+                console.log('✅ Arquivo recebido! Tamanho:', blob.size, 'bytes');
+                console.log('========================================');
+                return blob;
+            }),
+            catchError(error => {
+                console.error('========================================');
+                console.error('❌ Erro ao visualizar documento:', error);
+                console.error('Status:', error.status);
+                console.error('Mensagem:', error.message);
+                console.error('========================================');
                 throw error;
             })
         );

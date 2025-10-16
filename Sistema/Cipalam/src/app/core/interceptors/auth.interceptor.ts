@@ -22,24 +22,22 @@ export class AuthInterceptor implements HttpInterceptor {
     ) { }
 
     intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-        // Não adicionar token em requisições de login ou refresh
+        // Não adicionar token em requisições de login, refresh ou documentos
         if (this.isAuthRequest(request.url)) {
+            console.log('🔓 Requisição sem autenticação:', request.url);
             return next.handle(request);
         }
 
         // Adicionar token se disponível
         const token = this.authService.getToken();
+
         if (token) {
             request = this.addToken(request, token);
         }
 
         return next.handle(request).pipe(
             catchError((error: HttpErrorResponse) => {
-                // Se erro 401 (não autorizado) e não é refresh token
-                if (error.status === 401 && !this.isAuthRequest(request.url)) {
-                    return this.handle401Error(request, next);
-                }
-
+                // Apenas retornar o erro sem fazer logout
                 return throwError(() => error);
             })
         );
@@ -76,9 +74,10 @@ export class AuthInterceptor implements HttpInterceptor {
                     }),
                     catchError((error) => {
                         this.isRefreshing = false;
-                        // Se falhou o refresh, redirecionar para login
-                        this.authService.logout();
-                        this.router.navigate(['/login']);
+                        console.warn('⚠️ Refresh token falhou, mas não vamos deslogar automaticamente');
+                        // NÃO deslogar automaticamente - deixar o usuário tentar novamente
+                        // this.authService.logout();
+                        // this.router.navigate(['/login']);
                         return throwError(() => error);
                     })
                 );

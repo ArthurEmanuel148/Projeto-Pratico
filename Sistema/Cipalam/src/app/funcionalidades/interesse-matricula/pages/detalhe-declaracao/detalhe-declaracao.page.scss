@@ -748,6 +748,48 @@ ion-card {
 
       &:hover:not(.segment-button-checked) {
         --background: var(--custom-surface-variant);
+
+        // Filtro de integrantes (chips)
+        .integrantes-filtro {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 10px;
+          margin-bottom: 20px;
+          padding: 15px;
+          background: var(--custom-surface-variant);
+          border-radius: 12px;
+
+          ion-chip {
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            font-size: 0.9rem;
+            padding: 8px 16px;
+            height: auto;
+
+            &:hover {
+              transform: translateY(-2px);
+              box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            }
+
+            &.chip-selected {
+              --background: var(--ion-color-primary);
+              --color: white;
+              font-weight: 600;
+              box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+            }
+
+            ion-icon {
+              margin-right: 6px;
+              font-size: 1.2rem;
+            }
+
+            ion-label {
+              margin: 0;
+            }
+          }
+        }
+
         --color: var(--custom-primary);
       }
     }

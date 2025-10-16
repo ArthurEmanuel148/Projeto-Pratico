@@ -64,6 +64,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/public/**").permitAll()
                         .requestMatchers("/cipalam_documentos/**").authenticated() // Permitir acesso autenticado aos
                                                                                    // documentos
+                        .requestMatchers("/api/turmas-alunos/**").permitAll() // LIBERADO TEMPORARIAMENTE PARA TESTE
                         // Permitir leitura pública (GET) das declarações de interesse para exibição no
                         // front
                         .requestMatchers(HttpMethod.GET, "/api/interesse-matricula/**").permitAll()

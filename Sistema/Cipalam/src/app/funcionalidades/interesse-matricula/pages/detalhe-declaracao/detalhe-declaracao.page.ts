@@ -432,6 +432,10 @@ export class DetalheDeclaracaoPage implements OnInit {
       return;
     }
 
+    // Pegar o nome do aluno da declaração
+    const nomeAluno = this.declaracao?.nomeAluno || this.declaracao?.dadosAluno?.nomeAluno;
+    console.log('Nome do aluno (para filtrar):', nomeAluno);
+
     this.documentosEnviados.forEach((documento: any) => {
       console.log('Processando documento:', documento.tipoDocumento?.nome, '- Categoria:', documento.tipoDocumento?.categoria);
 
@@ -459,11 +463,18 @@ export class DetalheDeclaracaoPage implements OnInit {
           const nomeIntegrante = documento.nomeIntegrante || 'Sem identificação';
           console.log('Documento de integrante - Nome:', nomeIntegrante);
 
-          if (!this.documentosIntegrantes.has(nomeIntegrante)) {
-            this.documentosIntegrantes.set(nomeIntegrante, []);
+          // FILTRAR: Se o integrante for o aluno, adicionar aos documentos do aluno
+          if (nomeAluno && nomeIntegrante.toLowerCase().includes(nomeAluno.toLowerCase())) {
+            console.log('⚠️ Documento é do ALUNO, movendo para categoria ALUNO:', nomeIntegrante);
+            this.documentosAluno.push(documento);
+          } else {
+            // Se NÃO for o aluno, adicionar aos integrantes
+            if (!this.documentosIntegrantes.has(nomeIntegrante)) {
+              this.documentosIntegrantes.set(nomeIntegrante, []);
+            }
+            this.documentosIntegrantes.get(nomeIntegrante)!.push(documento);
+            console.log('Adicionado à categoria INTEGRANTES para:', nomeIntegrante);
           }
-          this.documentosIntegrantes.get(nomeIntegrante)!.push(documento);
-          console.log('Adicionado à categoria INTEGRANTES para:', nomeIntegrante);
           break;
 
         default:
@@ -476,7 +487,7 @@ export class DetalheDeclaracaoPage implements OnInit {
     console.log('=== RESUMO DA ORGANIZAÇÃO ===');
     console.log('Documentos da Família:', this.documentosFamilia.length);
     console.log('Documentos do Aluno:', this.documentosAluno.length);
-    console.log('Integrantes com documentos:', this.documentosIntegrantes.size);
+    console.log('Integrantes com documentos (SEM o aluno):', this.documentosIntegrantes.size);
     this.documentosIntegrantes.forEach((docs, nome) => {
       console.log(`  ${nome}: ${docs.length} documentos`);
     });

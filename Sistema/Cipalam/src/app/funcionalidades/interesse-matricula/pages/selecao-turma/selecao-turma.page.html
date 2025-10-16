@@ -1,9 +1,6 @@
 <ion-header [translucent]="true" class="custom-header">
     <ion-toolbar>
-        <ion-buttons slot="start">
-            <ion-back-button defaultHref="/" text=""></ion-back-button>
-        </ion-buttons>
-        <ion-title>Selecionar Turma</ion-title>
+        <ion-title class="centered-title">Selecionar Turma</ion-title>
     </ion-toolbar>
 </ion-header>
 
@@ -132,17 +129,18 @@
             </ion-card-content>
         </ion-card>
 
-        <!-- Botões de ação -->
-        <div class="form-actions">
-            <ion-button fill="clear" color="medium" size="large" (click)="voltar()">
-                <ion-icon name="arrow-back-outline" slot="start"></ion-icon>
-                Voltar para Lista
-            </ion-button>
+    </div>
 
-            <ion-button color="primary" size="large" [disabled]="!turmaSelecionada" (click)="confirmarSelecao()">
-                <ion-icon name="checkmark-outline" slot="start"></ion-icon>
-                Confirmar Seleção
-            </ion-button>
-        </div>
+    <!-- Botões de ação fixos no rodapé -->
+    <div class="form-actions-footer">
+        <ion-button fill="clear" color="medium" size="large" (click)="voltar()">
+            <ion-icon name="arrow-back-outline" slot="start"></ion-icon>
+            Voltar para Lista
+        </ion-button>
+
+        <ion-button color="success" size="large" [disabled]="!turmaSelecionada" (click)="confirmarSelecao()">
+            <ion-icon name="checkmark-outline" slot="start"></ion-icon>
+            Confirmar Seleção
+        </ion-button>
     </div>
 </ion-content>

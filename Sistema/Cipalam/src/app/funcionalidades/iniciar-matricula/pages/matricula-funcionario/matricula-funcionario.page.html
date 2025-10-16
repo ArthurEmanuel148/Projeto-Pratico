@@ -280,7 +280,7 @@
 
         <!-- Botões de Ação -->
         <div class="acoes-finais">
-          <ion-button expand="block" size="large" [disabled]="!isFormValid || isLoading" (click)="iniciarMatricula()">
+          <ion-button expand="block" size="large" color="success" [disabled]="!isFormValid || isLoading" (click)="iniciarMatricula()">
             <ion-icon name="rocket" slot="start"></ion-icon>
             {{ isLoading ? 'Processando...' : 'Iniciar Matrícula Automática' }}
           </ion-button>

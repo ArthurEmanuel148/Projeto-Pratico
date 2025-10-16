@@ -1,6 +1,73 @@
 // Importar novos estilos para organização de documentos
 @import './detalhes-aluno-novos-estilos.scss';
 
+// FORÇAR REMOÇÃO TOTAL DO QUADRADO BRANCO
+.documentos-filtro {
+    ion-segment-button::part(indicator) {
+        display: none !important;
+    }
+    
+    ion-segment-button::part(indicator-background) {
+        display: none !important;
+    }
+}
+
+::ng-deep .documentos-filtro {
+    .segment-button-indicator {
+        display: none !important;
+        opacity: 0 !important;
+        width: 0 !important;
+        height: 0 !important;
+        visibility: hidden !important;
+    }
+    
+    .segment-button-indicator-background {
+        display: none !important;
+        opacity: 0 !important;
+        width: 0 !important;
+        height: 0 !important;
+        visibility: hidden !important;
+    }
+}
+
+// Header customizado
+.custom-header {
+    ion-toolbar {
+        --background: var(--ion-color-primary);
+        --color: white;
+        --min-height: 56px;
+    }
+
+    .page-title {
+        text-align: center;
+        font-weight: 700;
+        font-size: 1.2rem;
+        color: white;
+    }
+
+    .back-button-custom {
+        --color: white;
+        --background: transparent;
+        --background-hover: rgba(255, 255, 255, 0.1);
+        --background-activated: rgba(255, 255, 255, 0.2);
+        --border-radius: 50%;
+        --padding-start: 8px;
+        --padding-end: 8px;
+        width: 40px;
+        height: 40px;
+        
+        ion-icon {
+            font-size: 24px;
+            color: white;
+        }
+        
+        &:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transition: background 0.3s ease;
+        }
+    }
+}
+
 .container {
     padding: 16px;
     max-width: 100%;
@@ -33,17 +100,19 @@
     display: flex;
     align-items: center;
     padding: 20px;
-    background: linear-gradient(135deg, var(--ion-color-primary), var(--ion-color-primary-shade));
+    background: #f5f5f5;
     border-radius: 12px;
     margin-bottom: 20px;
-    color: white;
+    color: var(--ion-color-dark);
+    border: 1px solid #e0e0e0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 
     .aluno-avatar {
         margin-right: 16px;
 
         ion-icon {
             font-size: 60px;
-            color: white;
+            color: var(--ion-color-primary);
         }
     }
 
@@ -54,11 +123,12 @@
             margin: 0 0 8px 0;
             font-size: 1.4em;
             font-weight: 600;
+            color: var(--ion-color-dark);
         }
 
         p {
             margin: 0 0 8px 0;
-            opacity: 0.9;
+            color: var(--ion-color-medium);
             font-size: 0.9em;
         }
     }
@@ -69,12 +139,18 @@
     margin-bottom: 20px;
 
     ion-segment {
-        background: var(--ion-color-light);
+        background: #f8f8f8;
         border-radius: 8px;
         padding: 4px;
+        border: 1px solid #e0e0e0;
 
         ion-segment-button {
+            --indicator-height: 0;
+            --indicator-color: transparent;
+            
             min-height: 48px;
+            --color: var(--ion-color-medium);
+            --color-checked: var(--ion-color-primary);
 
             ion-icon {
                 margin-bottom: 4px;
@@ -87,9 +163,11 @@
             }
 
             &.segment-button-checked {
-                background: var(--ion-color-primary);
-                color: white;
+                background: white;
+                color: var(--ion-color-primary);
                 border-radius: 6px;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                font-weight: 600;
             }
         }
     }
@@ -252,21 +330,19 @@
 /* Seção de documentos */
 .documentos-filtro {
     margin-bottom: 20px;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
 
-    ion-segment {
-        background: var(--ion-color-light);
-        border-radius: 8px;
-        padding: 4px;
-
-        ion-segment-button {
-            min-height: 40px;
-            font-size: 0.85em;
-
-            &.segment-button-checked {
-                background: var(--ion-color-tertiary);
-                color: white;
-                border-radius: 6px;
-            }
+    ion-button {
+        --border-radius: 20px;
+        font-size: 0.85em;
+        height: 36px;
+        text-transform: none;
+        
+        &::before,
+        &::after {
+            display: none;
         }
     }
 }
@@ -320,7 +396,6 @@
     padding: 16px;
     border-radius: 8px;
     margin: 0;
-    border-left: 4px solid var(--ion-color-primary);
 }
 
 /* Seção de documentos */
@@ -415,7 +490,6 @@
                 padding: 8px;
                 background: var(--ion-color-light-tint);
                 border-radius: 4px;
-                border-left: 3px solid var(--ion-color-primary);
 
                 p {
                     margin: 0;
@@ -551,12 +625,17 @@
 
 /* === ESTILOS PARA DOCUMENTOS === */
 
+// Remover completamente o indicador branco
+::ng-deep .documentos-filtro ion-segment .segment-button-indicator {
+    display: none !important;
+}
+
+::ng-deep .documentos-filtro ion-segment .segment-button-indicator-background {
+    display: none !important;
+}
+
 .documentos-filtro {
     margin-bottom: 20px;
-
-    ion-segment {
-        --background: var(--ion-color-light);
-    }
 }
 
 .categoria-secao {

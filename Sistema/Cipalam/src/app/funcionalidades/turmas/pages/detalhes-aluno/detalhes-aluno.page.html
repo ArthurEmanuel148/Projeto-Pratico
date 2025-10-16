@@ -1,9 +1,11 @@
-<ion-header>
+<ion-header [translucent]="true" class="custom-header">
     <ion-toolbar>
-        <ion-title>Detalhes do Aluno</ion-title>
         <ion-buttons slot="start">
-            <ion-back-button></ion-back-button>
+            <ion-button class="back-button-custom" (click)="voltar()">
+                <ion-icon name="arrow-back-outline" slot="icon-only"></ion-icon>
+            </ion-button>
         </ion-buttons>
+        <ion-title class="page-title">Detalhes do Aluno</ion-title>
     </ion-toolbar>
 </ion-header>
 
@@ -35,7 +37,7 @@
 
             <!-- Menu de navegação por seções -->
             <div class="secoes-menu">
-                <ion-segment [(ngModel)]="secaoAtiva" (ionChange)="mudarSecao($event)">
+                <ion-segment mode="md" [(ngModel)]="secaoAtiva" (ionChange)="mudarSecao($event)">
                     <ion-segment-button value="estudante">
                         <ion-icon name="person-outline"></ion-icon>
                         <ion-label>Estudante</ion-label>
@@ -407,21 +409,34 @@
 
                         <!-- Filtro por categoria -->
                         <div class="documentos-filtro">
-                            <ion-segment [(ngModel)]="categoriaDocumentos"
-                                (ionChange)="filtrarDocumentosPorCategoria($event)">
-                                <ion-segment-button value="todos">
-                                    <ion-label>TODOS</ion-label>
-                                </ion-segment-button>
-                                <ion-segment-button value="familia">
-                                    <ion-label>FAMÍLIA</ion-label>
-                                </ion-segment-button>
-                                <ion-segment-button value="aluno">
-                                    <ion-label>ALUNO</ion-label>
-                                </ion-segment-button>
-                                <ion-segment-button value="integrantes">
-                                    <ion-label>INTEGRANTES</ion-label>
-                                </ion-segment-button>
-                            </ion-segment>
+                            <ion-button 
+                                [fill]="categoriaDocumentos === 'todos' ? 'solid' : 'outline'"
+                                [color]="categoriaDocumentos === 'todos' ? 'primary' : 'medium'"
+                                size="small"
+                                (click)="categoriaDocumentos = 'todos'; filtrarDocumentosPorCategoria({detail: {value: 'todos'}})">
+                                TODOS
+                            </ion-button>
+                            <ion-button 
+                                [fill]="categoriaDocumentos === 'familia' ? 'solid' : 'outline'"
+                                [color]="categoriaDocumentos === 'familia' ? 'primary' : 'medium'"
+                                size="small"
+                                (click)="categoriaDocumentos = 'familia'; filtrarDocumentosPorCategoria({detail: {value: 'familia'}})">
+                                FAMÍLIA
+                            </ion-button>
+                            <ion-button 
+                                [fill]="categoriaDocumentos === 'aluno' ? 'solid' : 'outline'"
+                                [color]="categoriaDocumentos === 'aluno' ? 'primary' : 'medium'"
+                                size="small"
+                                (click)="categoriaDocumentos = 'aluno'; filtrarDocumentosPorCategoria({detail: {value: 'aluno'}})">
+                                ALUNO
+                            </ion-button>
+                            <ion-button 
+                                [fill]="categoriaDocumentos === 'integrantes' ? 'solid' : 'outline'"
+                                [color]="categoriaDocumentos === 'integrantes' ? 'primary' : 'medium'"
+                                size="small"
+                                (click)="categoriaDocumentos = 'integrantes'; filtrarDocumentosPorCategoria({detail: {value: 'integrantes'}})">
+                                INTEGRANTES
+                            </ion-button>
                         </div>
 
                         <!-- Loading -->

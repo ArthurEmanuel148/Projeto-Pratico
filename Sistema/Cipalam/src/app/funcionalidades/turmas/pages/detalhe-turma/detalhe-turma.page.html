@@ -1,9 +1,9 @@
-<ion-header>
+<ion-header class="custom-header">
     <ion-toolbar>
-        <ion-title>{{ turmaName }}</ion-title>
         <ion-buttons slot="start">
             <ion-back-button></ion-back-button>
         </ion-buttons>
+        <ion-title class="page-title">{{ turmaName }}</ion-title>
     </ion-toolbar>
 </ion-header>
 
@@ -12,15 +12,21 @@
 
         <!-- Header com informações da turma -->
         <div class="header-info">
-            <h2>{{ turmaName }}</h2>
             <p>{{ alunosFiltrados.length }} aluno(s) matriculado(s)</p>
         </div>
 
-        <!-- Barra de pesquisa -->
-        <div class="search-container" *ngIf="alunos.length > 0">
-            <ion-searchbar [(ngModel)]="termoPesquisa" (ionInput)="filtrarAlunos()"
-                placeholder="Pesquisar por nome do aluno..." debounce="300" show-clear-button="focus">
-            </ion-searchbar>
+        <!-- Barra de pesquisa estilo Gmail -->
+        <div class="pesquisa-gmail" *ngIf="alunos.length > 0">
+            <div class="search-container">
+                <ion-searchbar 
+                    [(ngModel)]="termoPesquisa" 
+                    (ionInput)="filtrarAlunos()"
+                    placeholder="Pesquisar por nome do aluno..." 
+                    debounce="300" 
+                    show-clear-button="focus"
+                    class="gmail-search">
+                </ion-searchbar>
+            </div>
         </div>
 
         <!-- Loading -->
@@ -47,22 +53,22 @@
             </div>
 
             <!-- Lista simplificada de alunos -->
-            <ion-list *ngIf="alunosFiltrados.length > 0">
-                <ion-item *ngFor="let aluno of alunosFiltrados" class="aluno-item">
-                    <div class="aluno-info">
-                        <h3>{{ aluno.nome }}</h3>
-                        <p>{{ aluno.cpf }} • {{ formatarTipoCota(aluno.tipoCota) }}</p>
+            <ion-list *ngIf="alunosFiltrados.length > 0" class="alunos-list">
+                <ion-item *ngFor="let aluno of alunosFiltrados" class="aluno-item" lines="none">
+                    <ion-icon name="person-circle-outline" slot="start" class="aluno-icon"></ion-icon>
+                    <ion-label>
+                        <h2>{{ aluno.nome }}</h2>
+                        <p>{{ aluno.cpf }}</p>
                         <ion-badge [color]="aluno.status === 'matriculado' ? 'success' : 'primary'">
                             {{ formatarStatus(aluno.status) }}
                         </ion-badge>
-                    </div>
-
+                    </ion-label>
                     <div class="aluno-actions" slot="end">
-                        <ion-button fill="clear" color="primary" (click)="verDetalhesCompletos(aluno)">
+                        <ion-button fill="outline" color="primary" size="small" (click)="verDetalhesCompletos(aluno)">
                             <ion-icon name="eye-outline" slot="start"></ion-icon>
-                            Ver Detalhes
+                            Detalhes
                         </ion-button>
-                        <ion-button fill="clear" color="warning" (click)="transferirAluno(aluno)">
+                        <ion-button fill="outline" color="warning" size="small" (click)="transferirAluno(aluno)">
                             <ion-icon name="swap-horizontal-outline" slot="start"></ion-icon>
                             Transferir
                         </ion-button>

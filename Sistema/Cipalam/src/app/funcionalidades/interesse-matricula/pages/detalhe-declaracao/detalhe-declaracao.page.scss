@@ -47,17 +47,17 @@
 .campo-linha {
   display: flex;
   align-items: center;
-  margin-bottom: 12px;
-  min-height: 35px;
-  padding: 8px 0;
+  margin-bottom: 10px;
+  min-height: 30px;
+  padding: 6px 0;
 }
 
 .label-campo {
-  font-weight: bold;
+  font-weight: 600;
   color: var(--custom-text-secondary);
-  width: 160px;
+  width: auto;
   flex-shrink: 0;
-  margin-right: 20px;
+  margin-right: 8px;
   display: inline-block;
   font-size: 0.95em;
 }

@@ -2187,6 +2187,46 @@ ion-label {
   }
 }
 
+.form-input-renda {
+  width: 100%;
+  margin-bottom: 12px;
+  
+  &::part(native) {
+    font-size: 14px;
+  }
+}
+
+// Atualiza o grid para funcionar com os campos
+.inputs-info {
+  display: grid;
+  gap: 12px;
+  margin-top: 12px;
+
+  @media (min-width: 768px) {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+// LABEL FLUTUANTE COM FUNDO BRANCO (Material Design style)
+ion-input[fill="outline"],
+ion-textarea[fill="outline"] {
+  // Label quando está flutuando (focado ou com valor)
+  &.has-focus,
+  &.has-value {
+    --padding-top: 20px;
+  }
+
+  // Força o label a ter fundo branco e cortar a borda
+  &::part(label) {
+    background: white !important;
+    padding: 0 6px !important;
+    margin-left: -6px !important;
+    font-weight: 600 !important;
+    color: #000000 !important;
+    font-size: 14px !important;
+  }
+}
+
 .add-integrante-btn {
   width: 100%;
   margin: 20px 0;

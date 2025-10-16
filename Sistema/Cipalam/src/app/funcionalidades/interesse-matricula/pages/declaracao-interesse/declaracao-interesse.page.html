@@ -309,16 +309,14 @@
                 <span>{{ dadosResponsavel.telefone }}</span>
               </div>
               <div class="inputs-renda">
-                <ion-item class="form-item-small">
-                  <ion-input placeholder="Ex: Professor, Vendedor, Autônomo" fill="outline" label="Ocupação"
-                    labelPlacement="floating" [(ngModel)]="responsavelOcupacao" [ngModelOptions]="{standalone: true}">
-                  </ion-input>
-                </ion-item>
-                <ion-item class="form-item-small">
-                  <ion-input type="number" fill="outline" label="Renda Mensal (R$)"
-                    labelPlacement="floating" [(ngModel)]="responsavelRenda" [ngModelOptions]="{standalone: true}">
-                  </ion-input>
-                </ion-item>
+                <ion-input class="form-input-renda" placeholder="Ex: Professor, Vendedor, Autônomo" fill="outline"
+                  label="Ocupação" labelPlacement="floating"
+                  [(ngModel)]="responsavelOcupacao" [ngModelOptions]="{standalone: true}">
+                </ion-input>
+                <ion-input class="form-input-renda" type="number" fill="outline"
+                  label="Renda Mensal (R$)" labelPlacement="floating"
+                  [(ngModel)]="responsavelRenda" [ngModelOptions]="{standalone: true}">
+                </ion-input>
               </div>
 
               <!-- Informação sobre dados pré-cadastrados -->
@@ -346,16 +344,14 @@
                 <span>{{ dadosAlunoForm.get('cpf')?.value || 'Não informado' }}</span>
               </div>
               <div class="inputs-renda">
-                <ion-item class="form-item-small">
-                  <ion-input placeholder="Ex: Estudante, Estagiário, Não trabalha" fill="outline" label="Ocupação"
-                    labelPlacement="floating" [(ngModel)]="alunoOcupacao" [ngModelOptions]="{standalone: true}">
-                  </ion-input>
-                </ion-item>
-                <ion-item class="form-item-small">
-                  <ion-input type="number" fill="outline" label="Renda Mensal (R$)"
-                    labelPlacement="floating" [(ngModel)]="alunoRenda" [ngModelOptions]="{standalone: true}">
-                  </ion-input>
-                </ion-item>
+                <ion-input class="form-input-renda" placeholder="Ex: Estudante, Estagiário, Não trabalha" fill="outline"
+                  label="Ocupação" labelPlacement="floating"
+                  [(ngModel)]="alunoOcupacao" [ngModelOptions]="{standalone: true}">
+                </ion-input>
+                <ion-input class="form-input-renda" type="number" fill="outline"
+                  label="Renda Mensal (R$)" labelPlacement="floating"
+                  [(ngModel)]="alunoRenda" [ngModelOptions]="{standalone: true}">
+                </ion-input>
               </div>
             </div>
           </div>
@@ -376,35 +372,29 @@
               </div>
               <div class="membro-dados">
                 <div class="inputs-info">
-                  <ion-item class="form-item-small">
-                    <ion-input placeholder="Nome completo" fill="outline" label="Nome" labelPlacement="floating"
-                      [(ngModel)]="integrante.nome" [ngModelOptions]="{standalone: true}">
-                    </ion-input>
-                  </ion-item>
-                  <ion-item class="form-item-small">
-                    <ion-input placeholder="000.000.000-00" maxlength="14" fill="outline" label="CPF"
-                      labelPlacement="floating" [(ngModel)]="integrante.cpf" [ngModelOptions]="{standalone: true}"
-                      (ionInput)="formatarCpfIntegrante($event, integrante)">
-                    </ion-input>
-                  </ion-item>
+                  <ion-input class="form-input-renda" placeholder="Nome completo" fill="outline"
+                    label="Nome" labelPlacement="floating"
+                    [(ngModel)]="integrante.nome" [ngModelOptions]="{standalone: true}">
+                  </ion-input>
+                  <ion-input class="form-input-renda" placeholder="000.000.000-00" maxlength="14" fill="outline"
+                    label="CPF" labelPlacement="floating"
+                    [(ngModel)]="integrante.cpf" [ngModelOptions]="{standalone: true}"
+                    (ionInput)="formatarCpfIntegrante($event, integrante)">
+                  </ion-input>
                 </div>
                 <div class="inputs-renda">
-                  <ion-item class="form-item-small">
-                    <ion-input placeholder="Ex: Pai, Mãe, Irmão, Avô" fill="outline" label="Parentesco"
-                      labelPlacement="floating" [(ngModel)]="integrante.parentesco"
-                      [ngModelOptions]="{standalone: true}">
-                    </ion-input>
-                  </ion-item>
-                  <ion-item class="form-item-small">
-                    <ion-input placeholder="Ex: Enfermeiro, Motorista, Aposentado" fill="outline" label="Ocupação"
-                      labelPlacement="floating" [(ngModel)]="integrante.ocupacao" [ngModelOptions]="{standalone: true}">
-                    </ion-input>
-                  </ion-item>
-                  <ion-item class="form-item-small">
-                    <ion-input type="number" fill="outline" label="Renda Mensal (R$)"
-                      labelPlacement="floating" [(ngModel)]="integrante.renda" [ngModelOptions]="{standalone: true}">
-                    </ion-input>
-                  </ion-item>
+                  <ion-input class="form-input-renda" placeholder="Ex: Pai, Mãe, Irmão, Avô" fill="outline"
+                    label="Parentesco" labelPlacement="floating"
+                    [(ngModel)]="integrante.parentesco" [ngModelOptions]="{standalone: true}">
+                  </ion-input>
+                  <ion-input class="form-input-renda" placeholder="Ex: Enfermeiro, Motorista, Aposentado" fill="outline"
+                    label="Ocupação" labelPlacement="floating"
+                    [(ngModel)]="integrante.ocupacao" [ngModelOptions]="{standalone: true}">
+                  </ion-input>
+                  <ion-input class="form-input-renda" type="number" fill="outline"
+                    label="Renda Mensal (R$)" labelPlacement="floating"
+                    [(ngModel)]="integrante.renda" [ngModelOptions]="{standalone: true}">
+                  </ion-input>
                 </div>
               </div>
             </div>

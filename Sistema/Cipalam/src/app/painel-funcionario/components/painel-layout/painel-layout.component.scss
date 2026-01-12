@@ -33,17 +33,37 @@ ion-header {
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15); // Sombra consistente
 
     ion-toolbar {
-        --background: var(--ion-color-danger);
-        --color: var(--ion-color-danger-contrast);
+        --background: #A9A9A9;
+        --color: #ffffff;
         --min-height: 56px; // Altura mínima padrão
 
         ion-title {
-            color: var(--ion-color-danger-contrast);
+            color: #ffffff;
         }
 
         ion-menu-button {
-            --color: var(--ion-color-danger-contrast);
+            --color: #ffffff;
         }
+    }
+}
+
+// Classe customizada para cinza claro
+.custom-gray-toolbar {
+    --background: #A9A9A9 !important;
+    background: #A9A9A9 !important;
+    --color: #ffffff !important;
+    
+    ion-title {
+        color: #ffffff !important;
+    }
+    
+    ion-button {
+        --color: #ffffff !important;
+        color: #ffffff !important;
+    }
+    
+    ion-icon {
+        color: #ffffff !important;
     }
 }
 
@@ -65,12 +85,12 @@ ion-router-outlet {
 }
 
 .top-menu-button {
-    --color: var(--ion-color-danger-contrast);
+    --color: #ffffff;
     font-size: 0.9em;
     min-height: 40px;
 
     &.active-top-menu {
-        --background: rgba(255, 255, 255, 0.1);
+        --background: rgba(255, 255, 255, 0.2);
     }
 }
 
@@ -94,22 +114,24 @@ ion-router-outlet {
 ion-menu {
     ion-header {
         ion-toolbar {
-            --background: var(--ion-color-danger) !important;
-            --color: white !important;
-            background-color: var(--ion-color-danger) !important;
+            --background: #A9A9A9 !important;
+            --color: #000000 !important;
+            background-color: #A9A9A9 !important;
             
             ion-title {
-                color: white !important;
-                font-weight: 600;
-                --color: white !important;
+                color: #000000 !important;
+                font-weight: 400;
+                --color: #000000 !important;
+                background: transparent !important;
+                --background: transparent !important;
             }
             
             ion-buttons ion-button {
-                --color: white !important;
-                color: white !important;
+                --color: #000000 !important;
+                color: #000000 !important;
                 
                 ion-icon {
-                    color: white !important;
+                    color: #000000 !important;
                 }
             }
         }
@@ -121,9 +143,9 @@ ion-menu {
 }
 
 // FORÇA MAIS ESPECÍFICA PARA O TÍTULO DO MENU LATERAL
-ion-menu[side="end"] ion-header ion-toolbar[color="danger"] ion-title {
-    color: white !important;
-    --color: white !important;
+ion-menu[side="end"] ion-header ion-toolbar ion-title {
+    color: #000000 !important;
+    --color: #000000 !important;
     background-color: transparent !important;
     --background: transparent !important;
 }

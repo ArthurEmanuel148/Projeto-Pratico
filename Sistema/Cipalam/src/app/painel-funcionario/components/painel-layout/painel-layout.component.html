@@ -1,7 +1,7 @@
 <!-- 1. MENU LATERAL (SLIDE) - DO LADO DIREITO - APENAS PARA FUNCIONÁRIOS -->
 <ion-menu side="end" contentId="main-content" #appMenu *ngIf="!isResponsavel">
   <ion-header>
-    <ion-toolbar color="danger">
+    <ion-toolbar class="custom-gray-toolbar">
       <ion-title>Menu Principal</ion-title>
       <ion-buttons slot="end">
         <ion-button (click)="appMenu.close()">
@@ -60,7 +60,7 @@
 <div id="main-content">
   <!-- HEADER PROFISSIONAL SIMPLES -->
   <ion-header class="professional-header">
-    <ion-toolbar color="primary" class="main-toolbar">
+    <ion-toolbar class="main-toolbar custom-gray-toolbar">
       <!-- Logo -->
       <div class="brand-section" slot="start">
         <div class="brand-container" (click)="navigateTo('/sistema/dashboard')">>

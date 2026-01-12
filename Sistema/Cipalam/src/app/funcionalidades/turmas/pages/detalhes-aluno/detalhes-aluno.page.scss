@@ -249,18 +249,34 @@
     margin-bottom: 20px;
 
     ion-segment {
-        background: var(--ion-color-light);
+        background: #f5f5f5;
         border-radius: 8px;
         padding: 4px;
+        border: 1px solid #e0e0e0;
 
         ion-segment-button {
+            --indicator-height: 0;
+            --indicator-color: transparent;
+            --indicator-box-shadow: none;
             min-height: 40px;
             font-size: 0.9em;
+            --color: var(--ion-color-medium);
+            --color-checked: var(--ion-color-dark);
 
             &.segment-button-checked {
-                background: var(--ion-color-secondary);
-                color: white;
+                background: #e8e8e8;
+                color: var(--ion-color-dark);
                 border-radius: 6px;
+                font-weight: 600;
+            }
+
+            // Remover completamente o indicador branco
+            &::part(indicator) {
+                display: none !important;
+            }
+
+            &::part(indicator-background) {
+                display: none !important;
             }
         }
     }

@@ -65,8 +65,8 @@ public class SecurityConfig {
                         .requestMatchers("/cipalam_documentos/**").authenticated() // Permitir acesso autenticado aos
                                                                                    // documentos
                         .requestMatchers("/api/turmas-alunos/**").permitAll() // LIBERADO TEMPORARIAMENTE PARA TESTE
-                        // Permitir leitura pública (GET) das declarações de interesse para exibição no
-                        // front
+                        // Permitir acesso público ao formulário de declaração de interesse
+                        .requestMatchers(HttpMethod.POST, "/api/interesse-matricula").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/interesse-matricula/**").permitAll()
                         // Manter os endpoints relacionados à matrícula protegidos (POST/PUT/DELETE)
                         .requestMatchers("/api/matricula/**").permitAll() // endpoint legado, revisar se necessário

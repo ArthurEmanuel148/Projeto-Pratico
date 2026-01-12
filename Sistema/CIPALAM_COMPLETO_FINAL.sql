@@ -2981,7 +2981,9 @@ BEGIN
             SET v_cpfIntegrante = JSON_UNQUOTE(JSON_EXTRACT(v_integrantesRenda, CONCAT('$[', v_contador, '].cpf')));
             SET v_parentescoIntegrante = JSON_UNQUOTE(JSON_EXTRACT(v_integrantesRenda, CONCAT('$[', v_contador, '].parentesco')));
             SET v_rendaIntegrante = JSON_UNQUOTE(JSON_EXTRACT(v_integrantesRenda, CONCAT('$[', v_contador, '].rendaMensal')));
-            SET v_dataNascIntegrante = JSON_UNQUOTE(JSON_EXTRACT(v_integrantesRenda, CONCAT('$[', v_contador, '].dataNascimento')));
+            
+            -- Converter data de nascimento de forma segura (evitar string 'null')
+            SET v_dataNascIntegrante = NULLIF(NULLIF(JSON_UNQUOTE(JSON_EXTRACT(v_integrantesRenda, CONCAT('$[', v_contador, '].dataNascimento'))), 'null'), '');
             
             -- Verificar se já existe pessoa com este CPF
             SET v_idPessoaIntegrante = NULL;
@@ -3004,7 +3006,7 @@ BEGIN
                 VALUES (
                     v_nomeIntegrante,
                     NULLIF(NULLIF(v_cpfIntegrante, ''), 'null'),
-                    NULLIF(NULLIF(v_dataNascIntegrante, 'null'), ''),
+                    v_dataNascIntegrante,
                     COALESCE(v_rendaIntegrante, 0),
                     TRUE
                 );
@@ -3027,7 +3029,7 @@ BEGIN
                     v_idPessoaIntegrante,
                     v_nomeIntegrante,
                     NULLIF(NULLIF(v_cpfIntegrante, ''), 'null'),
-                    NULLIF(NULLIF(v_dataNascIntegrante, 'null'), ''),
+                    v_dataNascIntegrante,
                     COALESCE(v_parentescoIntegrante, 'Outro'),
                     COALESCE(v_rendaIntegrante, 0),
                     TRUE
@@ -3163,3 +3165,4 @@ SELECT
     'BANCO CIPALAM VALIDADO COM SUCESSO!' as status,
     NOW() as data_validacao,
     'Sistema pronto para desenvolvimento e produção' as observacao;
+

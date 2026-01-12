@@ -100,9 +100,9 @@ export class ResponsavelDocumentosService {
      * Busca documentos da matrícula/declaração do responsável (MÉTODO CORRETO)
      */
     getDocumentosPorMatricula(idResponsavel: number): Observable<FamiliaDocumentos> {
-        // TEMPORÁRIO: usar declaração ID 4 diretamente para teste
-        const url = `${this.API_BASE_URL}/declaracao/4/documentos`;
-        console.log(`🌐 TESTE: Fazendo requisição direta para declaração ID 4: ${url}`);
+        // Busca documentos pela declaração do responsável
+        const url = `${this.API_BASE_URL}/${idResponsavel}/matricula/documentos`;
+        console.log(`🌐 Buscando documentos do responsável ID ${idResponsavel}: ${url}`);
 
         return this.http.get<FamiliaDocumentos>(url, this.getHttpOptions())
             .pipe(

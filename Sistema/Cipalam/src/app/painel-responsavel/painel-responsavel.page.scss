@@ -35,19 +35,19 @@ ion-content {
 
 // Header Styles
 .custom-header {
-  background: var(--ion-color-primary) !important;
+  background: #A9A9A9 !important;
 
   ion-toolbar {
-    --background: var(--ion-color-primary) !important;
+    --background: #A9A9A9 !important;
     --color: white !important;
     --min-height: 56px;
-    background: var(--ion-color-primary) !important;
+    background: #A9A9A9 !important;
     color: white !important;
     padding: 0 !important;
   }
 
   ion-toolbar::part(native) {
-    background: var(--ion-color-primary) !important;
+    background: #A9A9A9 !important;
   }
 
   ion-title {

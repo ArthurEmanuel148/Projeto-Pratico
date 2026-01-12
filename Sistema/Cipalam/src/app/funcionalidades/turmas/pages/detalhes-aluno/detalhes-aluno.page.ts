@@ -66,15 +66,14 @@ export class DetalhesAlunoPage implements OnInit {
                 console.log('Integrantes JSON:', this.aluno.integrantesRenda);
 
                 // Inicializar o primeiro integrante se houver família
-                // Priorizar dados da tabela (integrantesFamiliaTabela) ao invés do JSON
-                if (this.aluno.integrantesFamiliaTabela && this.aluno.integrantesFamiliaTabela.length > 0) {
-                    this.integranteAtual = this.aluno.integrantesFamiliaTabela[0];
-                    console.log('Primeiro integrante da tabela:', this.integranteAtual);
-                } else if (this.aluno.integrantesRenda) {
+                // Usar dados do JSON que contém os valores corretos de renda
+                if (this.aluno.integrantesRenda) {
                     const integrantes = this.getIntegrantes(this.aluno.integrantesRenda);
                     if (integrantes.length > 0) {
                         this.integranteAtual = integrantes[0];
                     }
+                } else if (this.aluno.integrantesFamiliaTabela && this.aluno.integrantesFamiliaTabela.length > 0) {
+                    this.integranteAtual = this.aluno.integrantesFamiliaTabela[0];
                 }
 
                 this.carregando = false;
@@ -99,12 +98,7 @@ export class DetalhesAlunoPage implements OnInit {
 
     // Métodos para trabalhar com integrantes da família
     getIntegrantes(integrantesRenda: string): any[] {
-        // Priorizar dados da tabela se disponíveis
-        if (this.aluno && this.aluno.integrantesFamiliaTabela && this.aluno.integrantesFamiliaTabela.length > 0) {
-            return this.aluno.integrantesFamiliaTabela;
-        }
-
-        // Fallback para o JSON antigo
+        // Usar dados do JSON que contém os valores corretos de renda
         if (!integrantesRenda) return [];
 
         try {
@@ -118,15 +112,10 @@ export class DetalhesAlunoPage implements OnInit {
 
     mudarIntegrante(event: any) {
         const index = event.detail.value;
-        // Usar dados da tabela se disponíveis
-        const integrantes = this.aluno.integrantesFamiliaTabela || this.getIntegrantes(this.aluno.integrantesRenda);
+        // Usar dados do JSON que contém os valores corretos de renda
+        const integrantes = this.getIntegrantes(this.aluno.integrantesRenda);
         this.integranteAtual = integrantes[index] || null;
         this.integranteSelecionado = index;
-
-        // Log de depuração para verificar os dados do integrante
-        console.log('Integrante selecionado:', this.integranteAtual);
-        console.log('Renda do integrante:', this.integranteAtual?.renda);
-        console.log('RendaMensal do integrante:', this.integranteAtual?.rendaMensal);
     }
 
     // Métodos para cálculos
@@ -146,18 +135,16 @@ export class DetalhesAlunoPage implements OnInit {
     }
 
     calcularRendaTotal(): number {
-        // Priorizar dados da tabela ao invés do JSON
-        const integrantes = this.aluno?.integrantesFamiliaTabela || this.getIntegrantes(this.aluno?.integrantesRenda || '');
+        // Usar dados do JSON que contém os valores corretos de renda
+        const integrantes = this.getIntegrantes(this.aluno?.integrantesRenda || '');
         return integrantes.reduce((total: number, integrante: any) => {
-            // Para dados da tabela, usar 'renda' diretamente
-            // Para dados do JSON antigo, usar 'rendaMensal' ou 'renda'
             const rendaIntegrante = integrante.renda ?? integrante.rendaMensal ?? 0;
             return total + Number(rendaIntegrante);
         }, 0);
     }
 
     calcularRendaPerCapita(): number {
-        const integrantes = this.aluno?.integrantesFamiliaTabela || this.getIntegrantes(this.aluno?.integrantesRenda || '');
+        const integrantes = this.getIntegrantes(this.aluno?.integrantesRenda || '');
         const total = this.calcularRendaTotal();
         return integrantes.length > 0 ? total / integrantes.length : 0;
     }

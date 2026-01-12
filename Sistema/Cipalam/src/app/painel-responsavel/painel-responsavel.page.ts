@@ -291,8 +291,14 @@ export class PainelResponsavelPage implements OnInit {
 
         console.log('✅ Documento anexado com sucesso');
         await this.mostrarToastSucesso('Documento anexado com sucesso!');
+        
+        // Aguardar um pouco antes de recarregar (dar tempo pro backend processar)
+        console.log('⏳ Aguardando 500ms antes de recarregar...');
+        await new Promise(resolve => setTimeout(resolve, 500));
+        
         // Recarregar dados
-        this.carregarDocumentosFamilia();
+        console.log('🔄 Recarregando documentos da família...');
+        await this.carregarDocumentosFamilia();
 
       } catch (error) {
         console.error('❌ Erro ao anexar documento:', error);
@@ -432,19 +438,31 @@ export class PainelResponsavelPage implements OnInit {
    * Organiza os documentos por categoria baseado na nova estrutura
    */
   organizarDocumentosPorCategoria() {
+    console.log('🔄 Organizando documentos por categoria...');
+    console.log('📦 Dados da família recebidos:', this.familiaDocumentos);
+    
     // Limpar organizações anteriores
     this.documentosFamilia = [];
     this.documentosAluno = [];
     this.documentosIntegrantes = [];
 
     if (!this.familiaDocumentos?.documentosPorPessoa) {
+      console.warn('⚠️ Nenhum documentosPorPessoa encontrado');
       return;
     }
 
+    console.log('👥 Total de pessoas:', this.familiaDocumentos.documentosPorPessoa.length);
+
     // Organizar baseado no parentesco/tipo da pessoa
-    this.familiaDocumentos.documentosPorPessoa.forEach(pessoaDocumentos => {
+    this.familiaDocumentos.documentosPorPessoa.forEach((pessoaDocumentos, index) => {
       const parentesco = pessoaDocumentos.pessoa.parentesco?.toLowerCase() || '';
       const nomePessoa = pessoaDocumentos.pessoa.nome?.toLowerCase() || '';
+      
+      console.log(`👤 Pessoa ${index + 1}:`, {
+        nome: pessoaDocumentos.pessoa.nome,
+        parentesco: parentesco,
+        totalDocumentos: pessoaDocumentos.documentos.length
+      });
 
       if (parentesco === 'responsavel' || parentesco === 'familia' || nomePessoa.includes('família')) {
         // Documentos da família

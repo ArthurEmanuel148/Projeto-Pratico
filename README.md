@@ -3,6 +3,10 @@
 ## 📋 Visão Geral
 O Sistema CIPALAM é uma plataforma completa desenvolvida para o Instituto Cipalam, oferecendo gestão integrada de matrículas, documentos, funcionários e diversos processos administrativos. Com interface moderna e responsiva, o sistema facilita tanto o trabalho administrativo quanto o acesso às informações por responsáveis e alunos.
 
+## Videos Demonstrativos
+
+📺 [Assista aos vídeos demonstrativos do sistema](https://youtube.com/playlist?list=PL_Xkf7MCzYCFyUs5uww2DKXy81IlOg4J1&si=ds-oC9ubJsFlLdFo)
+
 ## 🚀 Principais Funcionalidades
 
 - **Gestão de Matrículas**: Processo completo desde manifestação de interesse até efetivação
